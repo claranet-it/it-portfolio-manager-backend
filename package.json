@@ -1,0 +1,50 @@
+{
+  "name": "fastify-ts-mock",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev -r tsconfig-paths/register --exit-child ./src/server.ts",
+    "offline": "sls offline start",
+    "test": "tap test --ts --no-coverage",
+    "test:coverage": "npm run fixtures:load && ENV=test tap test --node-arg=--require=ts-node/register",
+    "test:filter": "npm run fixtures:load && ENV=test tap test --grep=$npm_config_filter --node-arg=--require=ts-node/register --no-coverage",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "precommit:init": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/module-alias": "^2.0.2",
+    "@types/node": "^20.5.4",
+    "@types/tap": "^15.0.8",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    "husky": "^8.0.3",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
+    "serverless-offline": "^12.0.4",
+    "serverless-plugin-typescript": "^2.1.5",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@fastify/autoload": "^5.7.1",
+    "@fastify/aws-lambda": "^3.3.0",
+    "@fastify/env": "^4.2.0",
+    "@fastify/jwt": "^7.2.1",
+    "@fastify/swagger": "^8.10.0",
+    "@fastify/swagger-ui": "^1.9.3",
+    "@sinclair/typebox": "^0.31.2",
+    "fastify": "^4.23.2",
+    "fastify-plugin": "^4.5.1",
+    "get-jwks": "^8.3.0",
+    "module-alias": "^2.2.3",
+    "serverless-tscpaths": "^0.0.8",
+    "tap": "^16.3.8"
+  }
+}

@@ -1,0 +1,20 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18.x
+    commands:
+      - npm ci --ignore-scripts
+  pre_build:
+    commands:
+      - echo "Running linter..."
+      - npm run lint
+      - echo "Running tests..."
+      - npm run test
+  build:
+    commands:
+      - echo "Deploying to AWS - Stage $STAGE_NAME..."
+      - npx serverless deploy --stage $STAGE_NAME
+  post_build:
+    commands:
+      - echo "Build completed on `date`"

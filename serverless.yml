@@ -1,0 +1,46 @@
+service: fastify-serverless-spike-sso
+frameworkVersion: '3'
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stackTags:
+    Owner: 'Massimo Biagioli'
+    Destroy: 'false'
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-tscpaths
+  - serverless-offline
+
+package:
+  patterns:
+    - node_modules/**
+    - .serverless/**
+
+functions:
+  app:
+    handler: src/handlers/app.handler
+    environment:
+      AWS_BUCKET_NAME: ${self:resources.Resources.FastifyServerlessSpikeSSOBucket.Properties.BucketName}
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{any+}
+          method: ANY
+
+resources:
+  Resources:
+    FastifyServerlessSpikeSSOBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: fastify-serverless-starter
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        AccessControl: Private
