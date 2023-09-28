@@ -4,6 +4,13 @@ import autoload from '@fastify/autoload'
 import { join } from 'path'
 import swagger from '@fastify/swagger'
 import swaggerUI from '@fastify/swagger-ui'
+import { JwtTokenType } from '@models/jwtToken.model'
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    createTestJwt: (jwtToken: JwtTokenType) => string
+  }
+}
 
 export default function createApp(
   opts?: FastifyServerOptions,
@@ -17,8 +24,8 @@ export default function createApp(
   app.register(swagger, {
     swagger: {
       info: {
-        title: 'Fastify Serverless Spike SSO',
-        description: 'Fastify Serverless Spike SSO',
+        title: 'Portfolio Manager',
+        description: 'Claranet Italy Portfolio Manager Backend',
         version: '0.1.0',
       },
       securityDefinitions: {
@@ -37,9 +44,13 @@ export default function createApp(
     dir: join(__dirname, 'core'),
   })
 
-  // app.register(autoload, {
-  //   dir: join(__dirname, 'features'),
-  // })
+  app.register(autoload, {
+    dir: join(__dirname, 'features'),
+  })
+
+  app.register(autoload, {
+    dir: join(__dirname, 'helpers'),
+  })
 
   app.register(autoload, {
     dir: join(__dirname, 'routes'),

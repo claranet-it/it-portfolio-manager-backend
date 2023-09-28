@@ -1,32 +1,48 @@
 import fp from 'fastify-plugin'
-import {
-  FastifyInstance,
-  FastifyReply,
-  FastifyRequest,
-} from 'fastify'
-import fastifyJwt, {JwtHeader, TokenOrHeader} from '@fastify/jwt'
-import buildGetJwks from "get-jwks";
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import fastifyJwt, { JwtHeader, TokenOrHeader } from '@fastify/jwt'
+import buildGetJwks from 'get-jwks'
+import { JwtTokenType } from '@models/jwtToken.model'
+import * as process from 'process'
 
 declare module 'fastify' {
   interface FastifyInstance {
-    authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>
+    authenticate: (
+      request: FastifyRequest,
+      reply: FastifyReply,
+    ) => Promise<void>
+  }
+}
+
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    user: JwtTokenType
   }
 }
 
 const getJwks = buildGetJwks()
 
-async function jwtPlugin(
-  fastify: FastifyInstance,
-): Promise<void> {
-  fastify.register(fastifyJwt, {
-    decode: { complete: true },
-    secret: (_request: FastifyRequest, token: TokenOrHeader) => {
-      const jwtHeader: JwtHeader = 'header' in token ? token.header : token
-      const { kid, alg } = jwtHeader
-      const iss = 'payload' in token ? token.payload.iss : ''
-      return getJwks.getPublicKey({ kid, domain: iss, alg })
+const TEST_JWT_SECRET = Symbol('TEST-JWT-SECRET')
+
+async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
+  const getFastifyJwtOptions = () => {
+    if (process.env.STAGE_NAME === 'test') {
+      return {
+        secret: TEST_JWT_SECRET.toString(),
+      }
     }
-  })
+    return {
+      decode: { complete: true },
+      secret: (_request: FastifyRequest, token: TokenOrHeader) => {
+        const jwtHeader: JwtHeader = 'header' in token ? token.header : token
+        const { kid, alg } = jwtHeader
+        const iss = 'payload' in token ? token.payload.iss : ''
+        return getJwks.getPublicKey({ kid, domain: iss, alg })
+      },
+    }
+  }
+
+  fastify.register(fastifyJwt, getFastifyJwtOptions())
 
   fastify.decorate(
     'authenticate',

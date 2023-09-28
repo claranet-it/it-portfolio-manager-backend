@@ -73,7 +73,7 @@ npm run format
 npm run prepare
 ```
 
-then copy the content of `pre-commit-dist` into `.husky/pre-commit`
+then copy the content of `pre-commit.dist` into `.husky/pre-commit`
 
 ## Use Cases
 

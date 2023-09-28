@@ -1,14 +1,14 @@
 {
-  "name": "fastify-ts-mock",
+  "name": "it-portfolio-manager-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev -r tsconfig-paths/register --exit-child ./src/server.ts",
     "offline": "sls offline start",
-    "test": "tap test --ts --no-coverage",
-    "test:coverage": "npm run fixtures:load && ENV=test tap test --node-arg=--require=ts-node/register",
-    "test:filter": "npm run fixtures:load && ENV=test tap test --grep=$npm_config_filter --node-arg=--require=ts-node/register --no-coverage",
+    "test": "STAGE_NAME=test tap test --node-arg=--require=ts-node/register --no-coverage",
+    "test:coverage": "STAGE_NAME=test tap test --node-arg=--require=ts-node/register",
+    "test:filter": "STAGE_NAME=test tap test --grep=$npm_config_filter --node-arg=--require=ts-node/register --no-coverage",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",

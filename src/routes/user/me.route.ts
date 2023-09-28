@@ -1,10 +1,8 @@
 import { FastifyInstance } from 'fastify'
-import {DecodedToken, DecodedTokenType} from "@models/user.model";
+import { User, UserType } from '@models/user.model'
 
-export default async function (
-  fastify: FastifyInstance
-): Promise<void> {
-  fastify.get<{ Reply: DecodedTokenType }>(
+export default async function (fastify: FastifyInstance): Promise<void> {
+  fastify.get<{ Reply: UserType }>(
     '/me',
     {
       onRequest: [fastify.authenticate],
@@ -16,19 +14,17 @@ export default async function (
           },
         ],
         response: {
-          200: DecodedToken,
-          500: {
+          200: User,
+          401: {
             type: 'null',
-            description: 'Error retrieving user',
+            description: 'Unauthorized',
           },
         },
       },
     },
     async (request, reply) => {
       try {
-        return {
-          raw: JSON.stringify(request.user),
-        }
+        return fastify.getCurrentUser(request.user)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

@@ -6,7 +6,7 @@ export default async function (app: FastifyInstance): Promise<void> {
     '/health',
     {
       schema: {
-        tags: ['Health'],
+        tags: ['System'],
         response: {
           200: HealthResponse,
         },

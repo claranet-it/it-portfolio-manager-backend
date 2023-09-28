@@ -1,7 +1,7 @@
 import { Static, Type } from '@sinclair/typebox'
 
-export const DecodedToken = Type.Object({
-  raw: Type.String(),
+export const User = Type.Object({
+  email: Type.String(),
 })
 
-export type DecodedTokenType = Static<typeof DecodedToken>
+export type UserType = Static<typeof User>
