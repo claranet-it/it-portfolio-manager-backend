@@ -6,6 +6,22 @@ useDotenv: true
 provider:
   name: aws
   runtime: nodejs18.x
+  region: eu-south-1
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:DescribeTable"
+            - "dynamodb:Query"
+            - "dynamodb:Scan"
+            - "dynamodb:GetItem"
+            - "dynamodb:PutItem"
+            - "dynamodb:UpdateItem"
+            - "dynamodb:DeleteItem"
+          Resource:
+            - "Fn::GetAtt": [ ItPortfolioManagerSkillMatrix, Arn ]
+            - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerSkillMatrix, Arn ], 'index', 'companyIndex' ] ]
   stackTags:
     Owner: 'Massimo Biagioli'
     Destroy: 'false'
@@ -31,3 +47,34 @@ functions:
           path: /{any+}
           method: ANY
 
+resources:
+  Resources:
+    ItPortfolioManagerSkillMatrix:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "ItPortfolioManager-SkillMatrix-${opt:stage, 'dev'}"
+        AttributeDefinitions:
+          - AttributeName: uid
+            AttributeType: S
+          - AttributeName: skill
+            AttributeType: S
+          - AttributeName: company
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uid
+            KeyType: HASH
+          - AttributeName: skill
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: companyIndex
+            KeySchema:
+              - AttributeName: company
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
