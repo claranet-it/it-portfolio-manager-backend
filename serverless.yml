@@ -1,4 +1,4 @@
-service: fastify-serverless-spike-sso
+service: it-portfolio-manager-backend
 frameworkVersion: '3'
 
 useDotenv: true
@@ -23,8 +23,6 @@ package:
 functions:
   app:
     handler: src/handlers/app.handler
-    environment:
-      AWS_BUCKET_NAME: ${self:resources.Resources.FastifyServerlessSpikeSSOBucket.Properties.BucketName}
     events:
       - http:
           path: /
@@ -33,14 +31,3 @@ functions:
           path: /{any+}
           method: ANY
 
-resources:
-  Resources:
-    FastifyServerlessSpikeSSOBucket:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: fastify-serverless-starter
-        BucketEncryption:
-          ServerSideEncryptionConfiguration:
-            - ServerSideEncryptionByDefault:
-                SSEAlgorithm: AES256
-        AccessControl: Private
