@@ -12,7 +12,7 @@ declare module 'fastify' {
 async function getCurrentUserPlugin(fastify: FastifyInstance): Promise<void> {
   const getCurrentUser = (jwtToken: JwtTokenType): UserType => {
     return {
-      email: jwtToken['https://claranet/email'],
+      ...jwtToken
     }
   }
 

@@ -1,7 +1,9 @@
 import { Static, Type } from '@sinclair/typebox'
 
 export const JwtToken = Type.Object({
-  'https://claranet/email': Type.String(),
+  'email': Type.String(),
+  'name': Type.String(),
+  'picture': Type.String(),
 })
 
 export type JwtTokenType = Static<typeof JwtToken>

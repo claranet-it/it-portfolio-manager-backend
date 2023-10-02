@@ -14,7 +14,9 @@ test('get user info', async t => {
     await app.ready()
 
     const token = app.createTestJwt({
-        "https://claranet/email": "tester@claranet",
+        "email": "tester@claranet",
+        "name": "Tester",
+        "picture": "https://test.com/test.jpg",
     })
 
     const response = await app.inject({
@@ -29,6 +31,8 @@ test('get user info', async t => {
 
     t.equal(response.statusCode, 200)
     t.equal(user.email, 'tester@claranet')
+    t.equal(user.name, 'Tester')
+    t.equal(user.picture, 'https://test.com/test.jpg')
 })
 
 test('get user info without authentication', async t => {
@@ -45,5 +49,5 @@ test('get user info without authentication', async t => {
         url: '/api/user/me',
     })
 
-    t.equal(response.statusCode, 401, )
+    t.equal(response.statusCode, 401)
 })
