@@ -46,6 +46,7 @@
     "@aws-sdk/client-dynamodb": "^3.421.0",
     "@fastify/autoload": "^5.7.1",
     "@fastify/aws-lambda": "^3.3.0",
+    "@fastify/cors": "^8.4.0",
     "@fastify/env": "^4.2.0",
     "@fastify/jwt": "^7.2.1",
     "@fastify/swagger": "^8.10.0",

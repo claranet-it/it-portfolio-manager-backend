@@ -4,6 +4,7 @@ import autoload from '@fastify/autoload'
 import { join } from 'path'
 import swagger from '@fastify/swagger'
 import swaggerUI from '@fastify/swagger-ui'
+import cors from '@fastify/cors'
 import { JwtTokenType } from '@models/jwtToken.model'
 
 declare module 'fastify' {
@@ -39,6 +40,8 @@ export default function createApp(
   })
 
   app.register(swaggerUI)
+
+  app.register(cors, {})
 
   app.register(autoload, {
     dir: join(__dirname, 'core'),
