@@ -11,12 +11,10 @@ Stack:
 
 ## Commands
 
-### Start server
-
-Start local server (use only for development and testing purposes)
+### Install DynamoDB local
 
 ```bash
-npm run dev
+npm run dynamodb:install
 ```
 
 ### Start serverless offline
@@ -25,6 +23,19 @@ Start serverless in offline mode (use only for development and testing purposes)
 
 ```bash
 npm run offline
+npm run dynamodb:start:dev
+```
+
+after that you can use the following command to stop dynamodb
+
+```bash
+npm run dynamodb:kill
+```
+
+You can open DynamoDB Admin UI using the command:
+
+```bash
+npm run dynamodb:admin
 ```
 
 ### Testing

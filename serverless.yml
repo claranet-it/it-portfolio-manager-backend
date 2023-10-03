@@ -29,7 +29,27 @@ provider:
 plugins:
   - serverless-plugin-typescript
   - serverless-tscpaths
+  - serverless-dynamodb
   - serverless-offline
+
+custom:
+  serverless-dynamodb:
+    stages:
+      - dev
+      - test
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+    seed:
+      test:
+        sources:
+          - table: ItPortfolioManager-SkillMatrix-${opt:stage, 'dev'}
+            sources: [ ./seed/skill-matrix.json ]
 
 package:
   patterns:

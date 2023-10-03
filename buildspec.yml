@@ -3,12 +3,18 @@ phases:
   install:
     runtime-versions:
       nodejs: 18.x
+      java: corretto11
     commands:
+      - echo "Installing dependencies..."
       - npm ci --ignore-scripts
+      - echo "Installing DynamoDB local..."
+      - npx serverless dynamodb install
   pre_build:
     commands:
       - echo "Running linter..."
       - npm run lint
+      - echo "Start DynamoDB local..."
+      - nohup npx serverless dynamodb start --stage=$STAGE_NAME --seed >/dev/null &
       - echo "Running tests..."
       - npm run test
   build:
