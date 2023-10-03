@@ -18,6 +18,7 @@ export default function createApp(
 ): FastifyInstance {
   const defaultOptions = {
     logger: true,
+    ignoreTrailingSlash: true,
   }
 
   const app = fastify({ ...defaultOptions, ...opts })
