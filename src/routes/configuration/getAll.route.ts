@@ -19,6 +19,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             type: 'null',
             description: 'Unauthorized',
           },
+          500: {
+            type: 'null',
+            description: 'Internal server error',
+          },
         },
       },
     },

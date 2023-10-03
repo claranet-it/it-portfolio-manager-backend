@@ -1,18 +1,27 @@
 import fp from 'fastify-plugin'
 import { FastifyInstance } from 'fastify'
 import { JwtTokenType } from '@models/jwtToken.model'
-import { UserType } from '@models/user.model'
+import { UserWithProfileType } from '@models/user.model'
 
 declare module 'fastify' {
   interface FastifyInstance {
-    getCurrentUser: (jwtToken: JwtTokenType) => UserType
+    getCurrentUser: (jwtToken: JwtTokenType) => Promise<UserWithProfileType>
   }
 }
 
 async function getCurrentUserPlugin(fastify: FastifyInstance): Promise<void> {
-  const getCurrentUser = (jwtToken: JwtTokenType): UserType => {
+  const getCurrentUser = async (
+    jwtToken: JwtTokenType,
+  ): Promise<UserWithProfileType> => {
+    const userProfile = await fastify.getUserProfile(jwtToken.email)
+    if (!userProfile) {
+      return {
+        ...jwtToken,
+      }
+    }
     return {
       ...jwtToken,
+      crew: userProfile.crew,
     }
   }
 

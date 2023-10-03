@@ -1,27 +1,24 @@
 import { FastifyInstance } from 'fastify'
-import {
-  SkillMatrix,
-  SkillMatrixReadParamsType,
-  SkillMatrixType,
-} from '@models/skillMatrix.model'
+import { UserProfileType, UserProfile } from '@models/user.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.get<{
-    Querystring: SkillMatrixReadParamsType
-    Reply: SkillMatrixType
-  }>(
-    '/',
+  fastify.post<{ Body: UserProfileType }>(
+    '/profile',
     {
       onRequest: [fastify.authenticate],
       schema: {
-        tags: ['Skill Matrix'],
+        tags: ['Users'],
+        body: UserProfile,
         security: [
           {
             apiKey: [],
           },
         ],
         response: {
-          200: SkillMatrix,
+          201: {
+            type: 'null',
+            description: 'User profile updated successfully',
+          },
           401: {
             type: 'null',
             description: 'Unauthorized',
@@ -35,8 +32,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        const { uid } = request.query
-        return fastify.getSkillMatrix(uid)
+        await fastify.saveUserProfile(request.user.email, request.body)
+        reply.code(201).send()
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

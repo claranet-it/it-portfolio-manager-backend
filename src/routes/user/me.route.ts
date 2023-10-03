@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify'
-import { User, UserType } from '@models/user.model'
+import { UserWithProfile, UserWithProfileType } from '@models/user.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.get<{ Reply: UserType }>(
+  fastify.get<{ Reply: UserWithProfileType }>(
     '/me',
     {
       onRequest: [fastify.authenticate],
@@ -14,10 +14,14 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: User,
+          200: UserWithProfile,
           401: {
             type: 'null',
             description: 'Unauthorized',
+          },
+          500: {
+            type: 'null',
+            description: 'Internal server error',
           },
         },
       },

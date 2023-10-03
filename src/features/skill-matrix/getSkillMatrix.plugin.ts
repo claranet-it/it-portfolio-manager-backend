@@ -2,7 +2,6 @@ import fp from 'fastify-plugin'
 import { FastifyInstance } from 'fastify'
 import { SkillMatrixType } from '@models/skillMatrix.model'
 import { QueryCommand } from '@aws-sdk/client-dynamodb'
-import * as process from 'process'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -12,11 +11,8 @@ declare module 'fastify' {
 
 async function getSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
   const getSkillMatrix = async (uid: string): Promise<SkillMatrixType> => {
-    const stage = process.env.STAGE_NAME || 'dev'
-    const tableName = `ItPortfolioManager-SkillMatrix-${stage}`
-
     const command = new QueryCommand({
-      TableName: tableName,
+      TableName: fastify.getTableName('SkillMatrix'),
       KeyConditionExpression: 'uid = :uid',
       ExpressionAttributeValues: { ':uid': { S: uid } },
     })
