@@ -30,6 +30,13 @@ test('get all configuration', async t => {
     const configuration = response.json<ConfigurationType>()
 
     t.equal(response.statusCode, 200)
+
+    // check if the configuration object has keys crews, skills and scoreRange
+    t.equal(Object.keys(configuration).length, 3)
+    t.equal(Object.keys(configuration).includes('crews'), true)
+    t.equal(Object.keys(configuration).includes('skills'), true)
+    t.equal(Object.keys(configuration).includes('scoreRange'), true)
+    t.equal(configuration.crews.length, 6)
     t.equal(configuration.skills.length, 34)
     t.equal(configuration.scoreRange.min, 1)
     t.equal(configuration.scoreRange.max, 5)

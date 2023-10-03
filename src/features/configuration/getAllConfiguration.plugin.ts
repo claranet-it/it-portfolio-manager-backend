@@ -8,6 +8,8 @@ declare module 'fastify' {
   }
 }
 
+const crews = ['Moon', 'Cloud', 'Bees', 'Polaris', 'Rohan', 'Hydra']
+
 const skills = [
   'PHP - Backend',
   'JavaScript/TypeScript - Frontend',
@@ -54,6 +56,7 @@ async function getAllConfigurationPlugin(
   fastify: FastifyInstance,
 ): Promise<void> {
   const getAllConfiguration = (): ConfigurationType => ({
+    crews,
     skills,
     scoreRange,
   })
