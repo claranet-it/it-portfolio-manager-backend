@@ -22,6 +22,7 @@ provider:
           Resource:
             - "Fn::GetAtt": [ ItPortfolioManagerSkillMatrix, Arn ]
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerSkillMatrix, Arn ], 'index', 'companyIndex' ] ]
+            - "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ]
   stackTags:
     Owner: 'Massimo Biagioli'
     Destroy: 'false'
