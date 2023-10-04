@@ -19,9 +19,10 @@ async function getUserProfilePlugin(fastify: FastifyInstance): Promise<void> {
       ExpressionAttributeValues: { ':uid': { S: uid } },
     })
     const result = await fastify.dynamoDBClient.send(command)
-    if (result?.Items?.length === 1 && result?.Items[0]?.crew?.S) {
+    if (result?.Items?.length === 1 && (result?.Items[0]?.crew?.S || result?.Items[0]?.company?.S)) { // TODO: (crew || company) or (crew && company) ?
       return {
         crew: result.Items[0].crew?.S ?? '',
+        company: result.Items[0].company?.S ?? '',
       }
     }
     return null

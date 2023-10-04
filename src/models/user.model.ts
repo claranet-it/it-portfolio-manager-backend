@@ -10,6 +10,7 @@ export type UserType = Static<typeof User>
 
 export const UserProfile = Type.Object({
   crew: Type.String(),
+  company: Type.String()
 })
 
 export type UserProfileType = Static<typeof UserProfile>

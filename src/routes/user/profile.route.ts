@@ -19,6 +19,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             type: 'null',
             description: 'User profile updated successfully',
           },
+          400: {
+            type: 'null',
+            description: 'Bad request',
+          },
           401: {
             type: 'null',
             description: 'Unauthorized',

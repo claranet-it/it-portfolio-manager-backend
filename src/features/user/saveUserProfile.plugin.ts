@@ -15,11 +15,12 @@ declare module 'fastify' {
 async function saveUserProfilePlugin(fastify: FastifyInstance): Promise<void> {
   const saveUserProfile = async (
     uid: string,
-    { crew }: UserProfileType,
+    { crew, company }: UserProfileType,
   ): Promise<void> => {
     const item = {
       uid: { S: uid },
       crew: { S: crew },
+      company: { S: company },
     }
     const putItemCommand = new PutItemCommand({
       TableName: fastify.getTableName('UserProfile'),

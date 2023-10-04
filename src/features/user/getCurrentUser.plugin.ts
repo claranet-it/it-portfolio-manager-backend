@@ -22,6 +22,7 @@ async function getCurrentUserPlugin(fastify: FastifyInstance): Promise<void> {
     return {
       ...jwtToken,
       crew: userProfile.crew,
+      company: userProfile.company,
     }
   }
 

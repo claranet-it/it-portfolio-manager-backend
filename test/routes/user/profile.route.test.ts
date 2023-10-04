@@ -26,10 +26,73 @@ test('save user profile', async t => {
         },
         payload: {
             crew: 'moon',
+            company: 'us'
         }
     })
 
     t.equal(response.statusCode, 201)
+})
+
+test('save user profile with only crew', async t => {
+    const app = createApp({
+        logger: false,
+    })
+
+    t.teardown(() => {
+        app.close();
+    })
+
+    await app.ready()
+
+    const token = app.createTestJwt({
+        "email": "user@without.profile",
+        "name": "User Without Profile",
+        "picture": "https://test.com/user.without.profile.jpg",
+    })
+
+    const response = await app.inject({
+        method: 'POST',
+        url: '/api/user/profile',
+        headers: {
+            authorization: `Bearer ${token}`
+        },
+        payload: {
+            crew: 'moon'
+        }
+    })
+
+    t.equal(response.statusCode, 400)
+})
+
+test('save user profile with only company', async t => {
+    const app = createApp({
+        logger: false,
+    })
+
+    t.teardown(() => {
+        app.close();
+    })
+
+    await app.ready()
+
+    const token = app.createTestJwt({
+        "email": "user@without.profile",
+        "name": "User Without Profile",
+        "picture": "https://test.com/user.without.profile.jpg",
+    })
+
+    const response = await app.inject({
+        method: 'POST',
+        url: '/api/user/profile',
+        headers: {
+            authorization: `Bearer ${token}`
+        },
+        payload: {
+            company: 'us'
+        }
+    })
+
+    t.equal(response.statusCode, 400)
 })
 
 

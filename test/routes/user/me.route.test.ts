@@ -34,6 +34,7 @@ test('get user info without user profile', async t => {
     t.equal(user.name, 'Tester')
     t.equal(user.picture, 'https://test.com/test.jpg')
     t.notOk(user.crew)
+    t.notOk(user.company)
 })
 
 test('get user info with user profile', async t => {
@@ -68,6 +69,7 @@ test('get user info with user profile', async t => {
     t.equal(user.name, 'Nicholas Crow')
     t.equal(user.picture, 'https://test.com/nicholas.crow.jpg')
     t.equal(user.crew, 'moon')
+    t.equal(user.company, 'us')
 })
 
 test('get user info without authentication', async t => {
