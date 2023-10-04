@@ -62,6 +62,8 @@ package:
 functions:
   app:
     handler: src/handlers/app.handler
+    environment:
+      STAGE_NAME: ${opt:stage, 'dev'}
     events:
       - http:
           path: /
