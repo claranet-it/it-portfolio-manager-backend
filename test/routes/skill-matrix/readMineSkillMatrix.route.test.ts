@@ -46,7 +46,7 @@ test('read skill matrix for the logged user', async t => {
             "company": "it",
             "crew": "moon",
             "skill": "PHP - Backend",
-            "score": 4,
+            "score": 3,
             "updatedAt": "2023-01-01T00:00:00.000Z"
         },
     ]

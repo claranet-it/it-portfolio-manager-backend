@@ -28,7 +28,7 @@ export type SkillMatrixReadParamsType = Static<typeof SkillMatrixReadParams>
 
 export const SkillMatrixUpdateParams = Type.Object({
   skill: Type.String(),
-  score: Type.Number()
+  score: Type.Number({minimum: 1, maximum: 3})
 })
 
 export type SkillMatrixUpdateParamsType = Static<typeof SkillMatrixUpdateParams>

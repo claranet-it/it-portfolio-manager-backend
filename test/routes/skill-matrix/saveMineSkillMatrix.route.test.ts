@@ -169,9 +169,73 @@ test('update skill matrix for the logged user with skill on DB', async t => {
         },
         payload: {
             skill: 'Python - Backend',
-            score: 4
+            score: 3
         }
     })
 
     t.equal(response.statusCode, 204)
+})
+
+test('update skill matrix for the logged user with score outside max range', async t => {
+    const app = createApp({
+        logger: false,
+    })
+
+    t.teardown(() => {
+        app.close();
+    })
+
+    await app.ready()
+
+    const token = app.createTestJwt({
+        "email": "george.python",
+        "name": "George Python",
+        "picture": "https://test.com/george.python.jpg",
+    })
+
+    const response = await app.inject({
+        method: 'PATCH',
+        url: '/api/skill-matrix/mine',
+        headers: {
+            authorization: `Bearer ${token}`
+        },
+        payload: {
+            skill: 'Python - Backend',
+            score: 4
+        }
+    })
+
+    t.equal(response.statusCode, 400)
+})
+
+test('update skill matrix for the logged user with score outside min range', async t => {
+    const app = createApp({
+        logger: false,
+    })
+
+    t.teardown(() => {
+        app.close();
+    })
+
+    await app.ready()
+
+    const token = app.createTestJwt({
+        "email": "george.python",
+        "name": "George Python",
+        "picture": "https://test.com/george.python.jpg",
+    })
+
+    const response = await app.inject({
+        method: 'PATCH',
+        url: '/api/skill-matrix/mine',
+        headers: {
+            authorization: `Bearer ${token}`
+        },
+        payload: {
+            skill: 'Python - Backend',
+            score: 0
+        }
+    })
+
+    t.equal(response.statusCode, 400)
 })

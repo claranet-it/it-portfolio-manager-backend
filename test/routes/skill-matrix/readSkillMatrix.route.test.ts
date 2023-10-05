@@ -139,7 +139,7 @@ test('read all skill matrix with company param', async t => {
             "company": "it",
             "crew": "moon",
             "skill": "PHP - Backend",
-            "score": 4,
+            "score": 3,
             "updatedAt": "2023-01-01T00:00:00.000Z"
         },
         {

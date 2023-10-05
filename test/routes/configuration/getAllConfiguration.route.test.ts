@@ -39,7 +39,7 @@ test('get all configuration', async t => {
     t.equal(configuration.crews.length, 6)
     t.equal(configuration.skills.length, 34)
     t.equal(configuration.scoreRange.min, 1)
-    t.equal(configuration.scoreRange.max, 5)
+    t.equal(configuration.scoreRange.max, 3)
 })
 
 test('get all configuration without authentication', async t => {

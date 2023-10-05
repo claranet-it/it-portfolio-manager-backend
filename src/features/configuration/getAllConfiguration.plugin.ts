@@ -49,7 +49,7 @@ const skills = [
 
 const scoreRange = {
   min: 1,
-  max: 5,
+  max: 3,
 }
 
 async function getAllConfigurationPlugin(
