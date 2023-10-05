@@ -3,7 +3,6 @@ import { FastifyInstance } from 'fastify'
 import { SkillMatrixUpdateParamsType } from '@models/skillMatrix.model'
 import { JwtTokenType } from '@src/models/jwtToken.model'
 import { PutItemCommand } from '@aws-sdk/client-dynamodb'
-import { UserWithProfileType } from '@src/models/user.model'
 import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserProfileNotInitializedError'
 
 declare module 'fastify' {
