@@ -88,3 +88,31 @@ test('get user info without authentication', async t => {
 
     t.equal(response.statusCode, 401)
 })
+
+test('get user info with invalid token', async t => {
+    const app = createApp({
+        logger: false,
+    })
+
+    t.teardown(() => {
+        app.close();
+    })
+
+    await app.ready()
+
+    const token = app.createTestJwt({
+        "email_invalid": "nicholas.crow@email.com",
+        "name_invalid": "Nicholas Crow",
+        "picture_invalid": "https://test.com/nicholas.crow.jpg",
+    })
+
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/user/me',
+        headers: {
+            authorization: `Bearer ${token}`
+        },
+    })
+
+    t.equal(response.statusCode, 401)
+})

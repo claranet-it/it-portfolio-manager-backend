@@ -7,3 +7,11 @@ export const JwtToken = Type.Object({
 })
 
 export type JwtTokenType = Static<typeof JwtToken>
+
+export const JwtInvalidToken = Type.Object({
+  email_invalid: Type.String(),
+  name_invalid: Type.String(),
+  picture_invalid: Type.String(),
+})
+
+export type JwtInvalidTokenType = Static<typeof JwtInvalidToken>

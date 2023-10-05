@@ -5,11 +5,11 @@ import { join } from 'path'
 import swagger from '@fastify/swagger'
 import swaggerUI from '@fastify/swagger-ui'
 import cors from '@fastify/cors'
-import { JwtTokenType } from '@models/jwtToken.model'
+import { JwtInvalidTokenType, JwtTokenType } from '@models/jwtToken.model'
 
 declare module 'fastify' {
   interface FastifyInstance {
-    createTestJwt: (jwtToken: JwtTokenType) => string
+    createTestJwt: (jwtToken: JwtTokenType | JwtInvalidTokenType) => string
   }
 }
 
