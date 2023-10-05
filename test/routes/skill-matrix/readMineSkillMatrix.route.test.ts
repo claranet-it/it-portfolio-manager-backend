@@ -2,7 +2,7 @@ import {test} from "tap"
 import createApp from "@src/app";
 import {SkillMatrixType} from "@models/skillMatrix.model";
 
-test('read skill matrix for a user', async t => {
+test('read skill matrix for the logged user', async t => {
     const app = createApp({
         logger: false,
     })
