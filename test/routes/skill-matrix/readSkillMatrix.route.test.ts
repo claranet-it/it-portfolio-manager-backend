@@ -21,7 +21,7 @@ test('read skill matrix for a user', async t => {
 
     const response = await app.inject({
         method: 'GET',
-        url: '/api/skill-matrix?uid=nicholas.crow@email.com',
+        url: '/api/skill-matrix/mine',
         headers: {
             authorization: `Bearer ${token}`
         }
@@ -64,7 +64,7 @@ test('read skill matrix without authentication', async t => {
 
     const response = await app.inject({
         method: 'GET',
-        url: '/api/skill-matrix',
+        url: '/api/skill-matrix/mine',
     })
 
     t.equal(response.statusCode, 401)

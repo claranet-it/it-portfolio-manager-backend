@@ -13,8 +13,8 @@ export const SkillMatrix = Type.Array(SkillMatrixRow)
 
 export type SkillMatrixType = Static<typeof SkillMatrix>
 
-export const SkillMatrixReadParams = Type.Object({
-  uid: Type.String(),
+export const SkillMatrixQueryParams = Type.Object({
+  uid: Type.String()
 })
 
-export type SkillMatrixReadParamsType = Static<typeof SkillMatrixReadParams>
+export type SkillMatrixQueryParamsType = Static<typeof SkillMatrixQueryParams>

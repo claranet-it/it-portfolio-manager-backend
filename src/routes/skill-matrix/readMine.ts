@@ -1,16 +1,14 @@
 import { FastifyInstance } from 'fastify'
 import {
   SkillMatrix,
-  SkillMatrixReadParamsType,
   SkillMatrixType,
 } from '@models/skillMatrix.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Querystring: SkillMatrixReadParamsType
     Reply: SkillMatrixType
   }>(
-    '/',
+    '/mine',
     {
       onRequest: [fastify.authenticate],
       schema: {
@@ -35,8 +33,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        const { uid } = request.query
-        return fastify.getSkillMatrix(uid)
+        return fastify.getMineSkillMatrix(request.user)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
