@@ -18,3 +18,10 @@ export const SkillMatrixQueryParams = Type.Object({
 })
 
 export type SkillMatrixQueryParamsType = Static<typeof SkillMatrixQueryParams>
+
+export const SkillMatrixUpdateParams = Type.Object({
+  skill: Type.String(),
+  score: Type.Number()
+})
+
+export type SkillMatrixUpdateParamsType = Static<typeof SkillMatrixUpdateParams>
