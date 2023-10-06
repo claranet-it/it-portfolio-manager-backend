@@ -66,7 +66,7 @@ test('read all skill matrix with invalid params', async t => {
 
     const response = await app.inject({
         method: 'GET',
-        url: '/api/skill-matrix/?invalid_param=test',
+        url: '/api/skill-matrix?invalid_param=test',
         headers: {
             authorization: `Bearer ${token}`
         }
@@ -94,7 +94,7 @@ test('read all skill matrix with empty param', async t => {
 
     const response = await app.inject({
         method: 'GET',
-        url: '/api/skill-matrix/?invalid_param=',
+        url: '/api/skill-matrix?company=',
         headers: {
             authorization: `Bearer ${token}`
         }
@@ -122,7 +122,7 @@ test('read all skill matrix with company param', async t => {
 
     const response = await app.inject({
         method: 'GET',
-        url: '/api/skill-matrix/?company=it',
+        url: '/api/skill-matrix?company=it',
         headers: {
             authorization: `Bearer ${token}`
         }
