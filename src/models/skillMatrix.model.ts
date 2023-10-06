@@ -21,7 +21,7 @@ export const SkillMatrixQueryParams = Type.Object({
 export type SkillMatrixQueryParamsType = Static<typeof SkillMatrixQueryParams>
 
 export const SkillMatrixReadParams = Type.Object({
-  company: Type.String()
+  company: Type.String({minLength: 1})
 })
 
 export type SkillMatrixReadParamsType = Static<typeof SkillMatrixReadParams>
