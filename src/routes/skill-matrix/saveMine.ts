@@ -8,7 +8,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     {
       onRequest: [fastify.authenticate],
       schema: {
-        tags: ['Users'],
+        tags: ['Skill Matrix'],
         body: SkillMatrixUpdateParams,
         security: [
           {
