@@ -1,6 +1,7 @@
 import fp from 'fastify-plugin'
 import { FastifyInstance } from 'fastify'
 import { ConfigurationType } from '@models/configuration.model'
+import { getMaximumScore, getMinimumScore } from '@src/models/skillMatrix.model'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -48,8 +49,8 @@ const skills = [
 ]
 
 const scoreRange = {
-  min: 1,
-  max: 3,
+  min: getMinimumScore(),
+  max: getMaximumScore()
 }
 
 async function getAllConfigurationPlugin(
