@@ -139,6 +139,7 @@ test('read all skill matrix with company param', async t => {
             "company": "it",
             "crew": "moon",
             "skill": "PHP - Backend",
+            "skillCategory": "Developer",
             "score": 3,
             "updatedAt": "2023-01-01T00:00:00.000Z"
         },
@@ -147,6 +148,7 @@ test('read all skill matrix with company param', async t => {
             "company": "it",
             "crew": "sun",
             "skill": "Python - Backend",
+            "skillCategory": "",
             "score": 3,
             "updatedAt": "2023-01-01T04:00:00.000Z"
         },
@@ -155,6 +157,7 @@ test('read all skill matrix with company param', async t => {
             "company": "it",
             "crew": "moon",
             "skill": "Java/Kotlin - Backend",
+            "skillCategory": "",
             "score": 3,
             "updatedAt": "2023-01-01T01:00:00.000Z"
         },
@@ -163,6 +166,7 @@ test('read all skill matrix with company param', async t => {
             "company": "it",
             "crew": "sun",
             "skill": "PHP - Backend",
+            "skillCategory": "Developer",
             "score": 1,
             "updatedAt": "2023-01-01T02:00:00.000Z"
         }

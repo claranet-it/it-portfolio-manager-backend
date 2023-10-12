@@ -32,6 +32,7 @@ async function getSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
         company: item.company?.S ?? '',
         crew: item.crew?.S ?? '',
         skill: item.skill?.S ?? '',
+        skillCategory: item.skillCategory?.S ?? '',
         score: parseInt(item.score?.N ?? '0'),
         updatedAt: item.updatedAt?.S ?? '',
       }))

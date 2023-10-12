@@ -63,6 +63,38 @@ test('update skill matrix for the logged user with only score', async t => {
     t.equal(response.statusCode, 400)
 })
 
+test('update skill matrix for the logged user without skill category', async t => {
+    const app = createApp({
+        logger: false,
+    })
+
+    t.teardown(() => {
+        app.close();
+    })
+
+    await app.ready()
+
+    const token = app.createTestJwt({
+        "email": "george.python",
+        "name": "George Python",
+        "picture": "https://test.com/george.python.jpg",
+    })
+
+    const response = await app.inject({
+        method: 'PATCH',
+        url: '/api/skill-matrix/mine',
+        headers: {
+            authorization: `Bearer ${token}`
+        },
+        payload: {
+            skill: 'C# - Backend',
+            score: 2
+        }
+    })
+
+    t.equal(response.statusCode, 400)
+})
+
 test('update skill matrix without authentication', async t => {
     const app = createApp({
         logger: false,
@@ -105,6 +137,7 @@ test('update skill matrix for the logged user without UserProfile', async t => {
         },
         payload: {
             skill: 'Python - Backend',
+            skillCategory: "Developer",
             score: 1
         }
     })
@@ -137,6 +170,7 @@ test('update skill matrix for the logged user with no skill on DB', async t => {
         },
         payload: {
             skill: 'C# - Backend',
+            skillCategory: "Developer",
             score: 2
         }
     })
@@ -169,6 +203,7 @@ test('update skill matrix for the logged user with skill on DB', async t => {
         },
         payload: {
             skill: 'Python - Backend',
+            skillCategory: "Developer",
             score: 3
         }
     })
@@ -201,6 +236,7 @@ test('update skill matrix for the logged user with score 0', async t => {
         },
         payload: {
             skill: 'Python - Backend',
+            skillCategory: "Developer",
             score: 0
         }
     })
@@ -233,6 +269,7 @@ test('update skill matrix for the logged user with score outside max range', asy
         },
         payload: {
             skill: 'Python - Backend',
+            skillCategory: "Developer",
             score: 4
         }
     })
@@ -265,6 +302,7 @@ test('update skill matrix for the logged user with score outside min range', asy
         },
         payload: {
             skill: 'Python - Backend',
+            skillCategory: "Developer",
             score: -1
         }
     })
