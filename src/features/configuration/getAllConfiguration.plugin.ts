@@ -11,42 +11,50 @@ declare module 'fastify' {
 
 const crews = ['Moon', 'Cloud', 'Bees', 'Polaris', 'Rohan', 'Hydra']
 
-const skills = [
-  'PHP - Backend',
-  'JavaScript/TypeScript - Frontend',
-  'JavaScript/TypeScript - Backend',
-  'Native Android',
-  'Native iOS',
-  'Multiplatform Mobile (ionic, react-native, flutter, etc etc)',
-  'UI Development (HTML/CSS/SCSS, etc etc)',
-  'C# - Backend',
-  'Python - Backend',
-  'Java/Kotlin - Backend',
-  'Elixir - Backend',
-  'Ruby (Rails)',
-  'Rust - Backend',
-  'Serverless (AWS Lambda, DynamoDB, Step Function...)',
-  'Servizi core (IAM, EC2,VPC,RDS,S3, Elasticache)',
-  'Servizi Migration (CloudEndure, SMS)',
-  'Servizi Data Migration (DMS, DataSync, Transfer Family)',
-  'Servizi Serverless (Lambda, APIGW, Step Functions, DynamoDB)',
-  'Servizi Data Visualization (QuickSight, ...)',
-  'Servizi Data Analytics (Glue, Athena, Redshift, EMR)',
-  'Servizi CI/CD (codepipeline, codebuild, codedeploy)',
-  'Servizi Security (IAM advanced, KMS, HSM, WAF)',
-  'Servizi Networking (VPN, Transit Gateway, VPC Advanced)',
-  'Servizi Container Orchestration (ECS, EKS, Kubernetes)',
-  'Serverless (Serverless Framework, AWS SAM)',
-  'IAC (Terraform, Cloudformation, CDK, Ansible)',
-  'Monitoring (Cloudwatch, New Relic, Prometheus, Grafana)',
-  'Machine Learning (Amazon Sagemaker, Rekognition, Lex..)',
-  'Cloud Governance (Control Tower)',
-  'Cloud Finance (Billing e Cost explorer)',
-  'Programmazione (Bash, Python)',
-  'OS Server (Linux, Windows)',
-  'Servizi Data Streaming (Kinesis, MSK, Kafka)',
-  'Servizi IoT',
-]
+const skills = 
+{
+  Developer : 
+  [
+    'PHP - Backend',
+    'JavaScript/TypeScript - Frontend',
+    'JavaScript/TypeScript - Backend',
+    'Native Android',
+    'Native iOS',
+    'Multiplatform Mobile (ionic, react-native, flutter, etc etc)',
+    'UI Development (HTML/CSS/SCSS, etc etc)',
+    'C# - Backend',
+    'Python - Backend',
+    'Java/Kotlin - Backend',
+    'Elixir - Backend',
+    'Ruby (Rails)',
+    'Rust - Backend'
+  ],
+  Cloud :
+  [
+    'Serverless (AWS Lambda, DynamoDB, Step Function...)',
+    'Servizi core (IAM, EC2,VPC,RDS,S3, Elasticache)',
+    'Servizi Migration (CloudEndure, SMS)',
+    'Servizi Data Migration (DMS, DataSync, Transfer Family)',
+    'Servizi Serverless (Lambda, APIGW, Step Functions, DynamoDB)',
+    'Servizi Data Visualization (QuickSight, ...)',
+    'Servizi Data Analytics (Glue, Athena, Redshift, EMR)',
+    'Servizi CI/CD (codepipeline, codebuild, codedeploy)',
+    'Servizi Security (IAM advanced, KMS, HSM, WAF)',
+    'Servizi Networking (VPN, Transit Gateway, VPC Advanced)',
+    'Servizi Container Orchestration (ECS, EKS, Kubernetes)',
+    'Serverless (Serverless Framework, AWS SAM)',
+    'IAC (Terraform, Cloudformation, CDK, Ansible)',
+    'Monitoring (Cloudwatch, New Relic, Prometheus, Grafana)',
+    'Machine Learning (Amazon Sagemaker, Rekognition, Lex..)',
+    'Cloud Governance (Control Tower)',
+    'Cloud Finance (Billing e Cost explorer)',
+    'Programmazione (Bash, Python)',
+    'OS Server (Linux, Windows)',
+    'Servizi Data Streaming (Kinesis, MSK, Kafka)',
+    'Servizi IoT'
+  ]
+}
+
 
 const scoreRange = {
   min: getMinimumScore(),
