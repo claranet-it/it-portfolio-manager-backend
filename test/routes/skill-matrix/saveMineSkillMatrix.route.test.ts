@@ -176,6 +176,38 @@ test('update skill matrix for the logged user with skill on DB', async t => {
     t.equal(response.statusCode, 204)
 })
 
+test('update skill matrix for the logged user with score 0', async t => {
+    const app = createApp({
+        logger: false,
+    })
+
+    t.teardown(() => {
+        app.close();
+    })
+
+    await app.ready()
+
+    const token = app.createTestJwt({
+        "email": "george.python",
+        "name": "George Python",
+        "picture": "https://test.com/george.python.jpg",
+    })
+
+    const response = await app.inject({
+        method: 'PATCH',
+        url: '/api/skill-matrix/mine',
+        headers: {
+            authorization: `Bearer ${token}`
+        },
+        payload: {
+            skill: 'Python - Backend',
+            score: 0
+        }
+    })
+
+    t.equal(response.statusCode, 204)
+})
+
 test('update skill matrix for the logged user with score outside max range', async t => {
     const app = createApp({
         logger: false,
@@ -233,7 +265,7 @@ test('update skill matrix for the logged user with score outside min range', asy
         },
         payload: {
             skill: 'Python - Backend',
-            score: 0
+            score: -1
         }
     })
 
