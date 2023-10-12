@@ -61,6 +61,13 @@ const scoreRange = {
   max: getMaximumScore()
 }
 
+const scoreRangeLabels = {
+  0: 'Niente',
+  1: 'Poco',
+  2: 'Medio',
+  3: 'Alto'
+}
+
 async function getAllConfigurationPlugin(
   fastify: FastifyInstance,
 ): Promise<void> {
@@ -68,6 +75,7 @@ async function getAllConfigurationPlugin(
     crews,
     skills,
     scoreRange,
+    scoreRangeLabels
   })
 
   fastify.decorate('getAllConfiguration', getAllConfiguration)
