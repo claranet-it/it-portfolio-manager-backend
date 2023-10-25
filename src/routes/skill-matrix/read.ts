@@ -8,7 +8,7 @@ import {
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Querystring: SkillMatrixReadParamsType,
+    Querystring: SkillMatrixReadParamsType
     Reply: SkillMatrixMineResponseType
   }>(
     '/',

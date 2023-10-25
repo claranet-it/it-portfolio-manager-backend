@@ -41,9 +41,9 @@ export default function createApp(
     transform: ({ schema, url }) => {
       const stage_name = process.env.STAGE_NAME || 'dev'
       url = stage_name.concat(url)
-     
+
       return { schema: schema, url: url }
-    }
+    },
   })
 
   app.register(swaggerUI)

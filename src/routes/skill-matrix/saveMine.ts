@@ -1,5 +1,8 @@
 import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserProfileNotInitializedError'
-import { SkillMatrixUpdateParams, SkillMatrixUpdateParamsType } from '@src/models/skillMatrix.model'
+import {
+  SkillMatrixUpdateParams,
+  SkillMatrixUpdateParamsType,
+} from '@src/models/skillMatrix.model'
 import { FastifyInstance } from 'fastify'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
@@ -45,8 +48,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         reply.code(204).send()
       } catch (error) {
         let errorCode = 500
-        let errorMessage = ""
-        if(error instanceof UserProfileNotInitializedError) {
+        let errorMessage = ''
+        if (error instanceof UserProfileNotInitializedError) {
           errorCode = 304
           errorMessage = error.message
         }

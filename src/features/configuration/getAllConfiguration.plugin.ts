@@ -11,10 +11,8 @@ declare module 'fastify' {
 
 const crews = ['Moon', 'Cloud', 'Bees', 'Polaris', 'Rohan', 'Hydra']
 
-const skills = 
-{
-  Developer : 
-  [
+const skills = {
+  Developer: [
     'PHP - Backend',
     'JavaScript/TypeScript - Frontend',
     'JavaScript/TypeScript - Backend',
@@ -27,10 +25,9 @@ const skills =
     'Java/Kotlin - Backend',
     'Elixir - Backend',
     'Ruby (Rails)',
-    'Rust - Backend'
+    'Rust - Backend',
   ],
-  Cloud :
-  [
+  Cloud: [
     'Serverless (AWS Lambda, DynamoDB, Step Function...)',
     'Servizi core (IAM, EC2,VPC,RDS,S3, Elasticache)',
     'Servizi Migration (CloudEndure, SMS)',
@@ -51,21 +48,20 @@ const skills =
     'Programmazione (Bash, Python)',
     'OS Server (Linux, Windows)',
     'Servizi Data Streaming (Kinesis, MSK, Kafka)',
-    'Servizi IoT'
-  ]
+    'Servizi IoT',
+  ],
 }
-
 
 const scoreRange = {
   min: getMinimumScore(),
-  max: getMaximumScore()
+  max: getMaximumScore(),
 }
 
 const scoreRangeLabels = {
   0: 'Niente',
   1: 'Poco',
   2: 'Medio',
-  3: 'Alto'
+  3: 'Alto',
 }
 
 async function getAllConfigurationPlugin(
@@ -75,7 +71,7 @@ async function getAllConfigurationPlugin(
     crews,
     skills,
     scoreRange,
-    scoreRangeLabels
+    scoreRangeLabels,
   })
 
   fastify.decorate('getAllConfiguration', getAllConfiguration)

@@ -7,16 +7,22 @@ import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserP
 
 declare module 'fastify' {
   interface FastifyInstance {
-    saveMineSkillMatrix: (jwtToken: JwtTokenType, skillMatrixUpdateParams: SkillMatrixUpdateParamsType) => Promise<void>
+    saveMineSkillMatrix: (
+      jwtToken: JwtTokenType,
+      skillMatrixUpdateParams: SkillMatrixUpdateParamsType,
+    ) => Promise<void>
   }
 }
 
 async function saveSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
-  const saveMineSkillMatrix = async (jwtToken: JwtTokenType, skillMatrixUpdateParams: SkillMatrixUpdateParamsType): Promise<void> => {
+  const saveMineSkillMatrix = async (
+    jwtToken: JwtTokenType,
+    skillMatrixUpdateParams: SkillMatrixUpdateParamsType,
+  ): Promise<void> => {
     const userProfile = await fastify.getUserProfile(jwtToken.email)
     if (!userProfile) {
       throw new UserProfileNotInitializedError()
-    } 
+    }
 
     const item = {
       uid: { S: jwtToken.email },
@@ -24,7 +30,7 @@ async function saveSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
       crew: { S: userProfile.crew },
       skill: { S: skillMatrixUpdateParams.skill },
       score: { N: skillMatrixUpdateParams.score.toString() },
-      updatedAt: { S: new Date().toISOString() }
+      updatedAt: { S: new Date().toISOString() },
     }
     const putItemCommand = new PutItemCommand({
       TableName: fastify.getTableName('SkillMatrix'),

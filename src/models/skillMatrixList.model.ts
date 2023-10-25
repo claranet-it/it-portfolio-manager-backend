@@ -1,17 +1,20 @@
-import { SkillMatrixMineResponseType, SkillMatrixRowType } from '@models/skillMatrix.model'
+import {
+  SkillMatrixMineResponseType,
+  SkillMatrixRowType,
+} from '@models/skillMatrix.model'
 
 export class SkillMatrixList {
-    private skillMatrixList: SkillMatrixRowType[]
+  private skillMatrixList: SkillMatrixRowType[]
 
-    constructor(skillMatrixList: SkillMatrixRowType[]) {
-        this.skillMatrixList = skillMatrixList
-    }
+  constructor(skillMatrixList: SkillMatrixRowType[]) {
+    this.skillMatrixList = skillMatrixList
+  }
 
-    getSkillMatrixList(): SkillMatrixRowType[] {
-        return this.skillMatrixList
-    }
+  getSkillMatrixList(): SkillMatrixRowType[] {
+    return this.skillMatrixList
+  }
 
-    toSkilMatrixMineResponse(): SkillMatrixMineResponseType {
-        return this.skillMatrixList
-    }
+  toSkilMatrixMineResponse(): SkillMatrixMineResponseType {
+    return this.skillMatrixList
+  }
 }

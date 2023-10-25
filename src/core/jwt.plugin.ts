@@ -49,8 +49,12 @@ async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
     async function (request: FastifyRequest, reply: FastifyReply) {
       try {
         await request.jwtVerify()
-        if(!request.user.email || !request.user.name || !request.user.picture) {
-          reply.code(401).send("Invalid Token")
+        if (
+          !request.user.email ||
+          !request.user.name ||
+          !request.user.picture
+        ) {
+          reply.code(401).send('Invalid Token')
         }
       } catch (err) {
         reply.send(err)
