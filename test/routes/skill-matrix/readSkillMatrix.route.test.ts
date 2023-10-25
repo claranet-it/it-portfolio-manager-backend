@@ -1,6 +1,6 @@
 import {test} from "tap"
 import createApp from "@src/app";
-import {SkillMatrixType} from "@models/skillMatrix.model";
+import {SkillMatrixMineResponseType} from "@models/skillMatrix.model";
 
 test('read skill matrix without authentication', async t => {
     const app = createApp({
@@ -128,7 +128,7 @@ test('read all skill matrix with company param', async t => {
         }
     })
 
-    const userSkillMatrix = response.json<SkillMatrixType>()
+    const userSkillMatrix = response.json<SkillMatrixMineResponseType>()
 
     t.equal(response.statusCode, 200)
     t.equal(userSkillMatrix.length, 4)

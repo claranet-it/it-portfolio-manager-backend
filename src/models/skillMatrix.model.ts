@@ -10,7 +10,7 @@ export const SkillMatrixRow = Type.Object({
   updatedAt: Type.String(),
 })
 
-export const SkillMatrix = Type.Array(SkillMatrixRow)
+export const SkillMatrixMineResponse = Type.Array(SkillMatrixRow)
 
 export const getMinimumScore = (): number => {
   return (SkillMatrixRow.properties.score.minimum ? SkillMatrixRow.properties.score.minimum : 0)
@@ -20,7 +20,7 @@ export const getMaximumScore = (): number => {
   return (SkillMatrixRow.properties.score.maximum ? SkillMatrixRow.properties.score.maximum : 0)
 }
 
-export type SkillMatrixType = Static<typeof SkillMatrix>
+export type SkillMatrixMineResponseType = Static<typeof SkillMatrixMineResponse>
 
 export const SkillMatrixQueryParams = Type.Object({
   uid: Type.Optional(Type.String()),

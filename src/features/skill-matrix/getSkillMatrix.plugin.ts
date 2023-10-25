@@ -1,18 +1,18 @@
 import fp from 'fastify-plugin'
 import { FastifyInstance } from 'fastify'
-import { SkillMatrixQueryParamsType, SkillMatrixReadParamsType, SkillMatrixType } from '@models/skillMatrix.model'
+import { SkillMatrixQueryParamsType, SkillMatrixReadParamsType, SkillMatrixMineResponseType } from '@models/skillMatrix.model'
 import { QueryCommand } from '@aws-sdk/client-dynamodb'
 import { JwtTokenType } from '@src/models/jwtToken.model'
 
 declare module 'fastify' {
   interface FastifyInstance {
-    getMineSkillMatrix: (jwtToken: JwtTokenType) => Promise<SkillMatrixType>,
-    getAllSkillMatrix: (params: SkillMatrixReadParamsType) => Promise<SkillMatrixType>
+    getMineSkillMatrix: (jwtToken: JwtTokenType) => Promise<SkillMatrixMineResponseType>,
+    getAllSkillMatrix: (params: SkillMatrixReadParamsType) => Promise<SkillMatrixMineResponseType>
   }
 }
 
 async function getSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
-  const getSkillMatrix = async (params: SkillMatrixQueryParamsType): Promise<SkillMatrixType> => {
+  const getSkillMatrix = async (params: SkillMatrixQueryParamsType): Promise<SkillMatrixMineResponseType> => {
     const command = new QueryCommand({TableName: fastify.getTableName('SkillMatrix')})
 
     if(params.uid) {
@@ -40,10 +40,10 @@ async function getSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
 
     return []
   }
-  const getMineSkillMatrix = async (jwtToken: JwtTokenType): Promise<SkillMatrixType> => {
+  const getMineSkillMatrix = async (jwtToken: JwtTokenType): Promise<SkillMatrixMineResponseType> => {
     return await getSkillMatrix({ uid: jwtToken.email })
   }
-  const getAllSkillMatrix = async (params: SkillMatrixReadParamsType): Promise<SkillMatrixType> => {
+  const getAllSkillMatrix = async (params: SkillMatrixReadParamsType): Promise<SkillMatrixMineResponseType> => {
     return await getSkillMatrix(params)
   }
 
