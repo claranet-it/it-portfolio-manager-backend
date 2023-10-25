@@ -10,6 +10,8 @@ export const SkillMatrixRow = Type.Object({
   updatedAt: Type.String(),
 })
 
+export type SkillMatrixRowType = Static<typeof SkillMatrixRow>
+
 export const SkillMatrixMineResponse = Type.Array(SkillMatrixRow)
 
 export const getMinimumScore = (): number => {
