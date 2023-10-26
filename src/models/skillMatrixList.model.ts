@@ -28,31 +28,31 @@ export class SkillMatrixList {
         skillMatrixList: SkillMatrixResponseType,
         skillMatrixRow: SkillMatrixRowType,
       ) => {
-        const skillMatrixRowPerUid = skillMatrixList.find(
+        let skillMatrixRowPerUid = skillMatrixList.find(
           (skillMatrixRowPerUid: SkillMatrixResponsePerUidType) => {
             return skillMatrixRowPerUid[skillMatrixRow.uid]
           },
         )
 
-        if (skillMatrixRowPerUid) {
-          skillMatrixRowPerUid[skillMatrixRow.uid].skills[
-            skillMatrixRow.skill
-          ] = skillMatrixRow.score
-        } else {
+        if (!skillMatrixRowPerUid) {
           const skillsDefault: SkillMatrixSkillsType = {}
           skillsList.map((skill: string) => {
             skillsDefault[skill] = 0
           })
-          skillsDefault[skillMatrixRow.skill] = skillMatrixRow.score
 
-          skillMatrixList.push({
+          skillMatrixRowPerUid = {
             [skillMatrixRow.uid]: {
               company: skillMatrixRow.company,
               crew: skillMatrixRow.crew,
               skills: skillsDefault,
             },
-          })
+          }
+
+          skillMatrixList.push(skillMatrixRowPerUid)
         }
+
+        skillMatrixRowPerUid[skillMatrixRow.uid].skills[skillMatrixRow.skill] =
+          skillMatrixRow.score
 
         return skillMatrixList
       },
