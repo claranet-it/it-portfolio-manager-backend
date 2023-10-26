@@ -9,10 +9,19 @@ declare module 'fastify' {
   }
 }
 
-const crews = ['Moon', 'Cloud', 'Bees', 'Polaris', 'Rohan', 'Hydra']
+const serviceLines = ['Developer', 'Cloud']
+
+const crews = [
+  { name: 'Moon', service_line: serviceLines[0] },
+  { name: 'Cloud', service_line: serviceLines[1] },
+  { name: 'Bees', service_line: serviceLines[0] },
+  { name: 'Polaris', service_line: serviceLines[0] },
+  { name: 'Rohan', service_line: serviceLines[0] },
+  { name: 'Hydra', service_line: serviceLines[1] },
+]
 
 const skills = {
-  Developer: [
+  [serviceLines[0]]: [
     'PHP - Backend',
     'JavaScript/TypeScript - Frontend',
     'JavaScript/TypeScript - Backend',
@@ -27,7 +36,7 @@ const skills = {
     'Ruby (Rails)',
     'Rust - Backend',
   ],
-  Cloud: [
+  [serviceLines[1]]: [
     'Serverless (AWS Lambda, DynamoDB, Step Function...)',
     'Servizi core (IAM, EC2,VPC,RDS,S3, Elasticache)',
     'Servizi Migration (CloudEndure, SMS)',

@@ -1,9 +1,16 @@
 import { Static, Type } from '@sinclair/typebox'
 
-const ConfigurationSkills = Type.Object({
-  Developer: Type.Array(Type.String()),
-  Cloud: Type.Array(Type.String()),
-})
+const ConfigurationCrews = Type.Array(
+  Type.Object({
+    name: Type.String(),
+    service_line: Type.String(),
+  }),
+)
+
+const ConfigurationSkills = Type.Record(
+  Type.String(),
+  Type.Array(Type.String()),
+)
 
 const ScoreRangeLabels = Type.Object({
   0: Type.String(),
@@ -13,7 +20,7 @@ const ScoreRangeLabels = Type.Object({
 })
 
 export const Configuration = Type.Object({
-  crews: Type.Array(Type.String()),
+  crews: ConfigurationCrews,
   skills: ConfigurationSkills,
   scoreRange: Type.Object({
     min: Type.Number(),
