@@ -52,6 +52,8 @@ const skills = {
   ],
 }
 
+export const skillsList = skills.Developer.concat(skills.Cloud)
+
 const scoreRange = {
   min: getMinimumScore(),
   max: getMaximumScore(),

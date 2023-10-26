@@ -1,15 +1,15 @@
 import { FastifyInstance } from 'fastify'
 import {
-  SkillMatrixMineResponse,
   SkillMatrixReadParams,
   SkillMatrixReadParamsType,
-  SkillMatrixMineResponseType,
+  SkillMatrixResponse,
+  SkillMatrixResponseType,
 } from '@models/skillMatrix.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: SkillMatrixReadParamsType
-    Reply: SkillMatrixMineResponseType
+    Reply: SkillMatrixResponseType
   }>(
     '/',
     {
@@ -23,7 +23,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: SkillMatrixMineResponse,
+          200: SkillMatrixResponse,
           400: {
             type: 'null',
             description: 'Bad request',

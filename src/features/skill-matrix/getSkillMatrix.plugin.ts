@@ -4,6 +4,7 @@ import {
   SkillMatrixQueryParamsType,
   SkillMatrixReadParamsType,
   SkillMatrixMineResponseType,
+  SkillMatrixResponseType,
 } from '@models/skillMatrix.model'
 import { QueryCommand } from '@aws-sdk/client-dynamodb'
 import { JwtTokenType } from '@src/models/jwtToken.model'
@@ -16,7 +17,7 @@ declare module 'fastify' {
     ) => Promise<SkillMatrixMineResponseType>
     getAllSkillMatrix: (
       params: SkillMatrixReadParamsType,
-    ) => Promise<SkillMatrixMineResponseType>
+    ) => Promise<SkillMatrixResponseType>
   }
 }
 
@@ -65,9 +66,9 @@ async function getSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
   }
   const getAllSkillMatrix = async (
     params: SkillMatrixReadParamsType,
-  ): Promise<SkillMatrixMineResponseType> => {
+  ): Promise<SkillMatrixResponseType> => {
     const skillMatrixList = await getSkillMatrix(params)
-    return skillMatrixList.toSkilMatrixMineResponse()
+    return skillMatrixList.toSkillMatrixResponse()
   }
 
   fastify.decorate('getMineSkillMatrix', getMineSkillMatrix)

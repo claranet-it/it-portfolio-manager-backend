@@ -51,3 +51,29 @@ export const SkillMatrixUpdateParams = Type.Object({
 })
 
 export type SkillMatrixUpdateParamsType = Static<typeof SkillMatrixUpdateParams>
+
+const SkillMatrixSkills = Type.Record(
+  Type.String(),
+  Type.Number({ default: 0 }),
+)
+
+export type SkillMatrixSkillsType = Static<typeof SkillMatrixSkills>
+
+const SkillMatrixResponseRowPerUid = Type.Object({
+  company: Type.String(),
+  crew: Type.String(),
+  skills: SkillMatrixSkills,
+})
+
+export const SkillMatrixResponsePerUid = Type.Record(
+  Type.String(),
+  SkillMatrixResponseRowPerUid,
+)
+
+export type SkillMatrixResponsePerUidType = Static<
+  typeof SkillMatrixResponsePerUid
+>
+
+export const SkillMatrixResponse = Type.Array(SkillMatrixResponsePerUid)
+
+export type SkillMatrixResponseType = Static<typeof SkillMatrixResponse>
