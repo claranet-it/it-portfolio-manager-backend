@@ -33,7 +33,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return fastify.getMineSkillMatrix(request.user)
+        return fastify.getMineSkillMatrixFormattedReponse(request.user)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

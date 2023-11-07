@@ -12,10 +12,10 @@ import { SkillMatrixList } from '@src/models/skillMatrixList.model'
 
 declare module 'fastify' {
   interface FastifyInstance {
-    getMineSkillMatrix: (
+    getMineSkillMatrixFormattedReponse: (
       jwtToken: JwtTokenType,
     ) => Promise<SkillMatrixMineResponseType>
-    getAllSkillMatrix: (
+    getAllSkillMatrixFormattedResponse: (
       params: SkillMatrixReadParamsType,
     ) => Promise<SkillMatrixResponseType>
   }
@@ -58,21 +58,21 @@ async function getSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
 
     return new SkillMatrixList([])
   }
-  const getMineSkillMatrix = async (
+  const getMineSkillMatrixFormattedReponse = async (
     jwtToken: JwtTokenType,
   ): Promise<SkillMatrixMineResponseType> => {
     const skillMatrixList = await getSkillMatrix({ uid: jwtToken.email })
     return skillMatrixList.toSkilMatrixMineResponse()
   }
-  const getAllSkillMatrix = async (
+  const getAllSkillMatrixFormattedResponse = async (
     params: SkillMatrixReadParamsType,
   ): Promise<SkillMatrixResponseType> => {
     const skillMatrixList = await getSkillMatrix(params)
     return skillMatrixList.toSkillMatrixResponse()
   }
 
-  fastify.decorate('getMineSkillMatrix', getMineSkillMatrix)
-  fastify.decorate('getAllSkillMatrix', getAllSkillMatrix)
+  fastify.decorate('getMineSkillMatrixFormattedReponse', getMineSkillMatrixFormattedReponse)
+  fastify.decorate('getAllSkillMatrixFormattedResponse', getAllSkillMatrixFormattedResponse)
 }
 
 export default fp(getSkillMatrixPlugin)

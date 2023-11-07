@@ -41,7 +41,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return await fastify.getAllSkillMatrix(request.query)
+        return await fastify.getAllSkillMatrixFormattedResponse(request.query)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
