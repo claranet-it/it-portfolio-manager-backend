@@ -71,8 +71,14 @@ async function getSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
     return skillMatrixList.toSkillMatrixResponse()
   }
 
-  fastify.decorate('getMineSkillMatrixFormattedReponse', getMineSkillMatrixFormattedReponse)
-  fastify.decorate('getAllSkillMatrixFormattedResponse', getAllSkillMatrixFormattedResponse)
+  fastify.decorate(
+    'getMineSkillMatrixFormattedReponse',
+    getMineSkillMatrixFormattedReponse,
+  )
+  fastify.decorate(
+    'getAllSkillMatrixFormattedResponse',
+    getAllSkillMatrixFormattedResponse,
+  )
 }
 
 export default fp(getSkillMatrixPlugin)
