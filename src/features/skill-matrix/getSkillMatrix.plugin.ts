@@ -12,6 +12,9 @@ import { SkillMatrixList } from '@src/models/skillMatrixList.model'
 
 declare module 'fastify' {
   interface FastifyInstance {
+    getAllSkillMatrix: (
+      params: SkillMatrixQueryParamsType,
+    ) => Promise<SkillMatrixList>
     getMineSkillMatrixFormattedReponse: (
       jwtToken: JwtTokenType,
     ) => Promise<SkillMatrixMineResponseType>
@@ -58,6 +61,11 @@ async function getSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
 
     return new SkillMatrixList([])
   }
+  const getAllSkillMatrix = async (
+    params: SkillMatrixQueryParamsType,
+  ): Promise<SkillMatrixList> => {
+    return await getSkillMatrix(params)
+  }
   const getMineSkillMatrixFormattedReponse = async (
     jwtToken: JwtTokenType,
   ): Promise<SkillMatrixMineResponseType> => {
@@ -71,6 +79,7 @@ async function getSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
     return skillMatrixList.toSkillMatrixResponse()
   }
 
+  fastify.decorate('getAllSkillMatrix', getAllSkillMatrix)
   fastify.decorate(
     'getMineSkillMatrixFormattedReponse',
     getMineSkillMatrixFormattedReponse,
