@@ -55,7 +55,15 @@ export default function createApp(
   })
 
   app.register(autoload, {
-    dir: join(__dirname, 'features'),
+    dir: join(__dirname, 'features', 'configuration'),
+  })
+
+  app.register(autoload, {
+    dir: join(__dirname, 'features', 'skill-matrix'),
+  })
+
+  app.register(autoload, {
+    dir: join(__dirname, 'features', 'user'),
   })
 
   app.register(autoload, {
