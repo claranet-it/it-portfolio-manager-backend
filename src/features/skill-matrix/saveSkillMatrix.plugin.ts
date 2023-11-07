@@ -1,8 +1,15 @@
 import fp from 'fastify-plugin'
 import { FastifyInstance } from 'fastify'
-import { SkillMatrixUpdateParamsType } from '@models/skillMatrix.model'
+import {
+  SkillMatrixUpdateOfUserParamsType,
+  SkillMatrixUpdateParamsType,
+} from '@models/skillMatrix.model'
 import { JwtTokenType } from '@src/models/jwtToken.model'
-import { PutItemCommand } from '@aws-sdk/client-dynamodb'
+import {
+  PutItemCommand,
+  TransactWriteItemsCommand,
+  TransactWriteItemsCommandInput,
+} from '@aws-sdk/client-dynamodb'
 import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserProfileNotInitializedError'
 
 declare module 'fastify' {
@@ -10,6 +17,9 @@ declare module 'fastify' {
     saveMineSkillMatrix: (
       jwtToken: JwtTokenType,
       skillMatrixUpdateParams: SkillMatrixUpdateParamsType,
+    ) => Promise<void>
+    updateSkillMatrixOfUser: (
+      skillMatrixUpdateOfUserParams: SkillMatrixUpdateOfUserParamsType,
     ) => Promise<void>
   }
 }
@@ -38,8 +48,54 @@ async function saveSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
     })
     await fastify.dynamoDBClient.send(putItemCommand)
   }
+  const updateSkillMatrixOfUser = async (
+    skillMatrixUpdateOfUserParams: SkillMatrixUpdateOfUserParamsType,
+  ): Promise<void> => {
+    if (
+      skillMatrixUpdateOfUserParams.crew ||
+      skillMatrixUpdateOfUserParams.company
+    ) {
+      const uid = skillMatrixUpdateOfUserParams.uid
+      const skillMatrixList = await fastify.getAllSkillMatrix({ uid })
+
+      if (skillMatrixList.getSkillMatrixList().length > 0) {
+        const input: TransactWriteItemsCommandInput = {
+          TransactItems: skillMatrixList
+            .getSkillMatrixList()
+            .map((skillMatrix) => ({
+              Update: {
+                Key: {
+                  uid: { S: uid },
+                  skill: { S: skillMatrix.skill },
+                },
+                TableName: fastify.getTableName('SkillMatrix'),
+                UpdateExpression: 'SET #company = :company, #crew = :crew',
+                ExpressionAttributeNames: {
+                  '#company': 'company',
+                  '#crew': 'crew',
+                },
+                ExpressionAttributeValues: {
+                  ':company': {
+                    S:
+                      skillMatrixUpdateOfUserParams.company ||
+                      skillMatrix.company,
+                  },
+                  ':crew': {
+                    S: skillMatrixUpdateOfUserParams.crew || skillMatrix.crew,
+                  },
+                },
+              },
+            })),
+        }
+
+        const command = new TransactWriteItemsCommand(input)
+        await fastify.dynamoDBClient.send(command)
+      }
+    }
+  }
 
   fastify.decorate('saveMineSkillMatrix', saveMineSkillMatrix)
+  fastify.decorate('updateSkillMatrixOfUser', updateSkillMatrixOfUser)
 }
 
 export default fp(saveSkillMatrixPlugin)
