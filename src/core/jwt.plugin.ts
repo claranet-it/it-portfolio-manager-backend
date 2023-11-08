@@ -49,6 +49,7 @@ async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
     async function (request: FastifyRequest, reply: FastifyReply) {
       try {
         await request.jwtVerify()
+        request.user.email = request.user.email.replace('it.clara.net', 'claranet.com')
         if (
           !request.user.email ||
           !request.user.name ||
