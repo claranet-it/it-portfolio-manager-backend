@@ -37,7 +37,7 @@ test('read skill matrix for the logged user', async t => {
             "uid": "nicholas.crow@email.com",
             "company": "it",
             "crew": "moon",
-            "skill": "Java/Kotlin - Backend",
+            "skill": "Java/Kotlin",
             "skillCategory": "",
             "score": 3,
             "updatedAt": "2023-01-01T01:00:00.000Z"
@@ -46,7 +46,7 @@ test('read skill matrix for the logged user', async t => {
             "uid": "nicholas.crow@email.com",
             "company": "it",
             "crew": "moon",
-            "skill": "PHP - Backend",
+            "skill": "PHP",
             "skillCategory": "Developer",
             "score": 3,
             "updatedAt": "2023-01-01T00:00:00.000Z"
