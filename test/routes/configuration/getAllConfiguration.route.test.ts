@@ -39,7 +39,7 @@ test('get all configuration', async t => {
     t.equal(Object.keys(configuration).includes('scoreRangeLabels'), true)
     t.equal(configuration.crews.length, 6)
     t.equal(configuration.skills.Developer.length, 13)
-    t.equal(configuration.skills.Cloud.length, 8)
+    t.equal(configuration.skills.Cloud.length, 7)
     t.equal(configuration.scoreRange.min, 0)
     t.equal(configuration.scoreRange.max, 3)
     t.equal(Object.keys(configuration.scoreRangeLabels).length, 4)
