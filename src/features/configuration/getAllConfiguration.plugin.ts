@@ -70,7 +70,7 @@ const scoreRange = {
 
 const scoreRangeLabels = {
   0: 'Niente',
-  1: 'Necessito Affiancamento',
+  1: 'Con Affiancamento',
   2: 'Autonomo',
   3: 'Esperto',
 }
