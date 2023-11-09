@@ -43,7 +43,7 @@ const skills = {
     'Security',
     'Serverless',
     'IaC'
-  ],
+  ].sort(),
 }
 
 export const skillsList = skills.Developer.concat(skills.Cloud)
