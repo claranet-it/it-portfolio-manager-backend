@@ -103,16 +103,3 @@ resources:
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
-    ItPortfolioManagerUserProfile:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: "ItPortfolioManager-UserProfile-${opt:stage, 'dev'}"
-        AttributeDefinitions:
-          - AttributeName: uid
-            AttributeType: S
-        KeySchema:
-          - AttributeName: uid
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
