@@ -70,9 +70,9 @@ const scoreRange = {
 
 const scoreRangeLabels = {
   0: 'Niente',
-  1: 'Poco',
-  2: 'Medio',
-  3: 'Alto',
+  1: 'Necessito Affiancamento',
+  2: 'Autonomo',
+  3: 'Esperto',
 }
 
 async function getAllConfigurationPlugin(
