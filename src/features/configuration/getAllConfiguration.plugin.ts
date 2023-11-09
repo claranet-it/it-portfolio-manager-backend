@@ -37,7 +37,6 @@ const skills = {
     'Rust',
   ].sort(),
   [serviceLines[1]]: [
-    'Serverless',
     'Data',
     'Networking',
     'Container',
