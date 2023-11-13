@@ -51,7 +51,7 @@ export default function createApp(
   app.register(cors, {})
 
   app.register(autoload, {
-    dir: join(__dirname, 'core'),
+    dir: join(__dirname, 'core', 'plugin'),
   })
 
   app.register(autoload, {
