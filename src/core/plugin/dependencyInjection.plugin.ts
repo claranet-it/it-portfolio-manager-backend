@@ -5,6 +5,7 @@ import * as awilix from 'awilix'
 import { DynamoDBConnection } from '@src/infrastructure/db/DynamoDBConnection'
 import { UserProfileRepository } from '@src/infrastructure/User/repository/UserProfileRepository'
 import { UserProfileService } from '../User/service/UserProfileService'
+import { ConfigurationService } from '../Configuration/service/ConfigurationService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -23,11 +24,16 @@ async function dependencyInjectionContainerPlugin(
     container.register({
       dynamoDBClient: awilix.asValue(DynamoDBConnection.getClient()),
     })
+
     container.register({
       userProfileRepository: asClass(UserProfileRepository),
     })
     container.register({
       userProfileService: asClass(UserProfileService),
+    })
+
+    container.register({
+      configurationService: asClass(ConfigurationService),
     })
 
     return container

@@ -1,13 +1,5 @@
-import fp from 'fastify-plugin'
-import { FastifyInstance } from 'fastify'
-import { ConfigurationType } from '@models/configuration.model'
+import { ConfigurationType } from '@src/models/configuration.model'
 import { getMaximumScore, getMinimumScore } from '@src/models/skillMatrix.model'
-
-declare module 'fastify' {
-  interface FastifyInstance {
-    getAllConfiguration: () => ConfigurationType
-  }
-}
 
 const serviceLines = ['Developer', 'Cloud']
 
@@ -61,17 +53,13 @@ const scoreRangeLabels = {
   3: 'Esperto',
 }
 
-async function getAllConfigurationPlugin(
-  fastify: FastifyInstance,
-): Promise<void> {
-  const getAllConfiguration = (): ConfigurationType => ({
-    crews,
-    skills,
-    scoreRange,
-    scoreRangeLabels,
-  })
-
-  fastify.decorate('getAllConfiguration', getAllConfiguration)
+export class ConfigurationService {
+  getAllConfiguration(): ConfigurationType {
+    return {
+      crews,
+      skills,
+      scoreRange,
+      scoreRangeLabels,
+    }
+  }
 }
-
-export default fp(getAllConfigurationPlugin)

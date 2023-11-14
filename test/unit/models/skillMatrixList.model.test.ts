@@ -1,7 +1,7 @@
 import {test} from "tap"
 import createApp from "@src/app";
 import { SkillMatrixList } from "@src/models/skillMatrixList.model";
-import { skillsList } from '@src/features/configuration/getAllConfiguration.plugin'
+import { skillsList } from "@src/core/Configuration/service/ConfigurationService";
 
 test('skillMatrixList toSkilMatrixMineResponse', async t => {
   const app = createApp({

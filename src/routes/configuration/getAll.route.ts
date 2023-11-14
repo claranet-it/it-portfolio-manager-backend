@@ -28,7 +28,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return fastify.getAllConfiguration()
+        return fastify
+          .dependencyInjectionContainer()
+          .resolve('configurationService')
+          .getAllConfiguration()
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
