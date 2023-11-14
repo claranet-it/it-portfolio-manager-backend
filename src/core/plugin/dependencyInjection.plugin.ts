@@ -3,8 +3,8 @@ import { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
 import * as awilix from 'awilix'
 import { DynamoDBConnection } from '@src/infrastructure/db/DynamoDBConnection'
-import { UserProfileRepository } from '@src/infrastructure/UserProfile/repository/UserProfileRepository'
-import { UserProfileService } from '../UserProfile/service/UserProfileService'
+import { UserProfileRepository } from '@src/infrastructure/User/repository/UserProfileRepository'
+import { UserProfileService } from '../User/service/UserProfileService'
 
 declare module 'fastify' {
   interface FastifyInstance {

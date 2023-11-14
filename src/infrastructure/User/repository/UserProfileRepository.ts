@@ -1,5 +1,5 @@
 import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb'
-import { UserProfileRepositoryInterface } from '@src/core/UserProfile/repository/UserProfileRepositoryInterface'
+import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
 import { UserProfileType } from '@src/models/user.model'
 
