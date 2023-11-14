@@ -13,7 +13,10 @@ async function getCurrentUserPlugin(fastify: FastifyInstance): Promise<void> {
   const getCurrentUser = async (
     jwtToken: JwtTokenType,
   ): Promise<UserWithProfileType> => {
-    const userProfile = await fastify.getUserProfile(jwtToken.email)
+    const userProfile = await fastify
+      .dependencyInjectionContainer()
+      .resolve('userProfileService')
+      .getUserProfile(jwtToken.email)
     if (!userProfile) {
       return {
         ...jwtToken,

@@ -2,6 +2,7 @@ import fp from 'fastify-plugin'
 import { FastifyInstance } from 'fastify'
 import { UserProfileType } from '@models/user.model'
 import { PutItemCommand } from '@aws-sdk/client-dynamodb'
+import { getTableName } from '@src/core/db/TableName'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -23,7 +24,7 @@ async function saveUserProfilePlugin(fastify: FastifyInstance): Promise<void> {
       company: { S: company },
     }
     const putItemCommand = new PutItemCommand({
-      TableName: fastify.getTableName('UserProfile'),
+      TableName: getTableName('UserProfile'),
       Item: item,
     })
     await fastify.dynamoDBClient.send(putItemCommand)

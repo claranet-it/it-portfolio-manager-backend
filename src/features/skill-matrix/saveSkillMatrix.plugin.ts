@@ -11,6 +11,7 @@ import {
   TransactWriteItemsCommandInput,
 } from '@aws-sdk/client-dynamodb'
 import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserProfileNotInitializedError'
+import { getTableName } from '@src/core/db/TableName'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -29,7 +30,10 @@ async function saveSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
     jwtToken: JwtTokenType,
     skillMatrixUpdateParams: SkillMatrixUpdateParamsType,
   ): Promise<void> => {
-    const userProfile = await fastify.getUserProfile(jwtToken.email)
+    const userProfile = await fastify
+      .dependencyInjectionContainer()
+      .resolve('userProfileService')
+      .getUserProfile(jwtToken.email)
     if (!userProfile) {
       throw new UserProfileNotInitializedError()
     }
@@ -43,7 +47,7 @@ async function saveSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
       updatedAt: { S: new Date().toISOString() },
     }
     const putItemCommand = new PutItemCommand({
-      TableName: fastify.getTableName('SkillMatrix'),
+      TableName: getTableName('SkillMatrix'),
       Item: item,
     })
     await fastify.dynamoDBClient.send(putItemCommand)
@@ -68,7 +72,7 @@ async function saveSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
                   uid: { S: uid },
                   skill: { S: skillMatrix.skill },
                 },
-                TableName: fastify.getTableName('SkillMatrix'),
+                TableName: getTableName('SkillMatrix'),
                 UpdateExpression: 'SET #company = :company, #crew = :crew',
                 ExpressionAttributeNames: {
                   '#company': 'company',

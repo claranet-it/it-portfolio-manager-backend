@@ -9,6 +9,7 @@ import {
 import { QueryCommand } from '@aws-sdk/client-dynamodb'
 import { JwtTokenType } from '@src/models/jwtToken.model'
 import { SkillMatrixList } from '@src/models/skillMatrixList.model'
+import { getTableName } from '@src/core/db/TableName'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -29,7 +30,7 @@ async function getSkillMatrixPlugin(fastify: FastifyInstance): Promise<void> {
     params: SkillMatrixQueryParamsType,
   ): Promise<SkillMatrixList> => {
     const command = new QueryCommand({
-      TableName: fastify.getTableName('SkillMatrix'),
+      TableName: getTableName('SkillMatrix'),
     })
 
     if (params.uid) {

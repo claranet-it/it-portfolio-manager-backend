@@ -6,6 +6,7 @@ import swagger from '@fastify/swagger'
 import swaggerUI from '@fastify/swagger-ui'
 import cors from '@fastify/cors'
 import { JwtInvalidTokenType, JwtTokenType } from '@models/jwtToken.model'
+import { fastifyAwilixPlugin } from '@fastify/awilix'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -49,6 +50,11 @@ export default function createApp(
   app.register(swaggerUI)
 
   app.register(cors, {})
+
+  app.register(fastifyAwilixPlugin, {
+    disposeOnClose: true,
+    disposeOnResponse: true,
+  })
 
   app.register(autoload, {
     dir: join(__dirname, 'core', 'plugin'),

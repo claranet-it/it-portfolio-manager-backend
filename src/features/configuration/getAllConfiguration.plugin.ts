@@ -43,7 +43,7 @@ const skills = {
     'Security',
     'Serverless',
     'IaC',
-    'ML'
+    'ML',
   ].sort(),
 }
 
