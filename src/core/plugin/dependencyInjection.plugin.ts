@@ -29,10 +29,6 @@ async function dependencyInjectionContainerPlugin(
     })
 
     container.register({
-      dynamoDBClient: awilix.asValue(DynamoDBConnection.getClient()),
-    })
-
-    container.register({
       configurationService: asClass(ConfigurationService),
     })
 
