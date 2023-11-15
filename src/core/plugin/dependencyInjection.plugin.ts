@@ -1,4 +1,4 @@
-import { AwilixContainer, Lifetime, asClass, asValue } from 'awilix'
+import { AwilixContainer, asClass } from 'awilix'
 import { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
 import * as awilix from 'awilix'
