@@ -36,7 +36,20 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        await fastify.saveUserProfile(request.user.email, request.body)
+        await fastify
+          .dependencyInjectionContainer()
+          .resolve('userProfileService')
+          .saveUserProfile(request.user.email, request.body)
+
+        await fastify
+          .dependencyInjectionContainer()
+          .resolve('skillMatrixService')
+          .updateSkillMatrixOfUser(
+            request.user.email,
+            request.body.crew,
+            request.body.company,
+          )
+
         reply.code(201).send()
       } catch (error) {
         request.log.error(error)

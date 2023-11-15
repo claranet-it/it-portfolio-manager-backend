@@ -1,4 +1,8 @@
-import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb'
+import {
+  DynamoDBClient,
+  PutItemCommand,
+  QueryCommand,
+} from '@aws-sdk/client-dynamodb'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
 import { UserProfileType } from '@src/models/user.model'
@@ -26,5 +30,21 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     }
 
     return null
+  }
+
+  async saveUserProfile(
+    uid: string,
+    { crew, company }: UserProfileType,
+  ): Promise<void> {
+    const item = {
+      uid: { S: uid },
+      crew: { S: crew },
+      company: { S: company },
+    }
+    const putItemCommand = new PutItemCommand({
+      TableName: getTableName('UserProfile'),
+      Item: item,
+    })
+    await this.dynamoDBClient.send(putItemCommand)
   }
 }

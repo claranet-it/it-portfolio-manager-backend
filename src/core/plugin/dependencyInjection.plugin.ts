@@ -1,4 +1,4 @@
-import { AwilixContainer, asClass } from 'awilix'
+import { AwilixContainer, Lifetime, asClass, asValue } from 'awilix'
 import { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
 import * as awilix from 'awilix'
@@ -8,6 +8,7 @@ import { UserProfileService } from '../User/service/UserProfileService'
 import { ConfigurationService } from '../Configuration/service/ConfigurationService'
 import { SkillMatrixRepository } from '@src/infrastructure/SkillMatrix/repository/SkillMatrixRepository'
 import { SkillMatrixService } from '../SkillMatrix/service/SkillMatrixService'
+import { UserService } from '../User/service/UserService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -28,10 +29,7 @@ async function dependencyInjectionContainerPlugin(
     })
 
     container.register({
-      userProfileRepository: asClass(UserProfileRepository),
-    })
-    container.register({
-      userProfileService: asClass(UserProfileService),
+      dynamoDBClient: awilix.asValue(DynamoDBConnection.getClient()),
     })
 
     container.register({
@@ -43,6 +41,17 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       skillMatrixService: asClass(SkillMatrixService),
+    })
+
+    container.register({
+      userProfileRepository: asClass(UserProfileRepository),
+    })
+    container.register({
+      userProfileService: asClass(UserProfileService),
+    })
+
+    container.register({
+      userService: asClass(UserService),
     })
 
     return container

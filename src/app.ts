@@ -61,10 +61,6 @@ export default function createApp(
   })
 
   app.register(autoload, {
-    dir: join(__dirname, 'features', 'user'),
-  })
-
-  app.register(autoload, {
     dir: join(__dirname, 'helpers'),
   })
 

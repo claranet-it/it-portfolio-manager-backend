@@ -7,4 +7,11 @@ export class UserProfileService {
   async getUserProfile(uid: string): Promise<UserProfileType | null> {
     return await this.userProfileRepository.getUserProfile(uid)
   }
+
+  async saveUserProfile(
+    uid: string,
+    { crew, company }: UserProfileType,
+  ): Promise<void> {
+    this.userProfileRepository.saveUserProfile(uid, { crew, company })
+  }
 }
