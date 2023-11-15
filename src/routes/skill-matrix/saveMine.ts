@@ -44,7 +44,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        await fastify.saveMineSkillMatrix(request.user, request.body)
+        await fastify.dependencyInjectionContainer().resolve('skillMatrixService').saveMineSkillMatrix(request.user, request.body)
         reply.code(204).send()
       } catch (error) {
         let errorCode = 500

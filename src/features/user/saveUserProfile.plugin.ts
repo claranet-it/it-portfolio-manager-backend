@@ -29,7 +29,7 @@ async function saveUserProfilePlugin(fastify: FastifyInstance): Promise<void> {
     })
     await fastify.dynamoDBClient.send(putItemCommand)
 
-    await fastify.updateSkillMatrixOfUser({ uid, crew, company })
+    await fastify.dependencyInjectionContainer().resolve('skillMatrixService').updateSkillMatrixOfUser({ uid, crew, company })
   }
 
   fastify.decorate('saveUserProfile', saveUserProfile)

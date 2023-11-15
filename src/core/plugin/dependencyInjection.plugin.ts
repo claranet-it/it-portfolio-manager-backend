@@ -6,6 +6,8 @@ import { DynamoDBConnection } from '@src/infrastructure/db/DynamoDBConnection'
 import { UserProfileRepository } from '@src/infrastructure/User/repository/UserProfileRepository'
 import { UserProfileService } from '../User/service/UserProfileService'
 import { ConfigurationService } from '../Configuration/service/ConfigurationService'
+import { SkillMatrixRepository } from '@src/infrastructure/SkillMatrix/repository/SkillMatrixRepository'
+import { SkillMatrixService } from '../SkillMatrix/service/SkillMatrixService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -34,6 +36,13 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       configurationService: asClass(ConfigurationService),
+    })
+
+    container.register({
+      skillMatrixRepository: asClass(SkillMatrixRepository),
+    })
+    container.register({
+      skillMatrixService: asClass(SkillMatrixService),
     })
 
     return container
