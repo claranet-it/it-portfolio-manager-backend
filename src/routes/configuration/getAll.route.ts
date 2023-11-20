@@ -1,5 +1,8 @@
 import { FastifyInstance } from 'fastify'
-import { Configuration, ConfigurationType } from '@src/core/Configuration/model/configuration.model'
+import {
+  Configuration,
+  ConfigurationType,
+} from '@src/core/Configuration/model/configuration.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{ Reply: ConfigurationType }>(
