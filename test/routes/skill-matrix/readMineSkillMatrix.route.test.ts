@@ -1,6 +1,6 @@
 import {test} from "tap"
 import createApp from "@src/app";
-import {SkillMatrixMineResponseType} from "@models/skillMatrix.model";
+import {SkillMatrixMineResponseType} from "@src/core/SkillMatrix/model/skillMatrix.model";
 
 test('read skill matrix for the logged user', async t => {
     const app = createApp({

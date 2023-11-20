@@ -1,6 +1,6 @@
 import {test} from "tap"
 import createApp from "@src/app";
-import { SkillMatrixList } from "@src/models/skillMatrixList.model";
+import { SkillMatrixList } from "@src/core/SkillMatrix/model/skillMatrixList.model";
 import { skillsList } from "@src/core/Configuration/service/ConfigurationService";
 
 test('skillMatrixList toSkilMatrixMineResponse', async t => {

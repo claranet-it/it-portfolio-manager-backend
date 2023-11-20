@@ -1,4 +1,7 @@
-import { getMaximumScore, getMinimumScore } from '@src/models/skillMatrix.model'
+import {
+  getMaximumScore,
+  getMinimumScore,
+} from '@src/core/SkillMatrix/model/skillMatrix.model'
 import { ConfigurationType } from '@src/core/Configuration/model/configuration.model'
 
 const serviceLines = ['Developer', 'Cloud']

@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify'
 import {
   SkillMatrixMineResponse,
   SkillMatrixMineResponseType,
-} from '@models/skillMatrix.model'
+} from '@src/core/SkillMatrix/model/skillMatrix.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{

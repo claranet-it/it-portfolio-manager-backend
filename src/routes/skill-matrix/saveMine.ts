@@ -2,7 +2,7 @@ import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserP
 import {
   SkillMatrixUpdateParams,
   SkillMatrixUpdateParamsType,
-} from '@src/models/skillMatrix.model'
+} from '@src/core/SkillMatrix/model/skillMatrix.model'
 import { FastifyInstance } from 'fastify'
 
 export default async function (fastify: FastifyInstance): Promise<void> {

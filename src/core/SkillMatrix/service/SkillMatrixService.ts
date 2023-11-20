@@ -1,5 +1,5 @@
 import { SkillMatrixRepositoryInterface } from '../repository/SkillMatrixRepositoryInterface'
-import { SkillMatrixList } from '@src/models/skillMatrixList.model'
+import { SkillMatrixList } from '@src/core/SkillMatrix/model/skillMatrixList.model'
 import {
   SkillMatrixMineResponseType,
   SkillMatrixQueryParamsType,
@@ -7,7 +7,7 @@ import {
   SkillMatrixResponseType,
   SkillMatrixUpdateOfUserParamsType,
   SkillMatrixUpdateParamsType,
-} from '@src/models/skillMatrix.model'
+} from '@src/core/SkillMatrix/model/skillMatrix.model'
 import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { UserProfileService } from '@src/core/User/service/UserProfileService'
 import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserProfileNotInitializedError'

@@ -14,8 +14,8 @@ import {
   SkillMatrixResponseType,
   SkillMatrixUpdateOfUserParamsType,
   SkillMatrixUpdateParamsType,
-} from '@src/models/skillMatrix.model'
-import { SkillMatrixList } from '@src/models/skillMatrixList.model'
+} from '@src/core/SkillMatrix/model/skillMatrix.model'
+import { SkillMatrixList } from '@src/core/SkillMatrix/model/skillMatrixList.model'
 import { UserProfileType } from '@src/models/user.model'
 
 export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
