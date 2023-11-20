@@ -1,4 +1,4 @@
-import { UserProfileType } from '@src/core/User/model/user.model'
+import { UserProfileType } from '../model/user.model'
 import { UserProfileRepositoryInterface } from '../repository/UserProfileRepositoryInterface'
 
 export class UserProfileService {
@@ -12,6 +12,6 @@ export class UserProfileService {
     uid: string,
     { crew, company }: UserProfileType,
   ): Promise<void> {
-    this.userProfileRepository.saveUserProfile(uid, { crew, company })
+    return this.userProfileRepository.saveUserProfile(uid, { crew, company })
   }
 }
