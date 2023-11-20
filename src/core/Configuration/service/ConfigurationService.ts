@@ -1,5 +1,5 @@
-import { ConfigurationType } from '@src/models/configuration.model'
 import { getMaximumScore, getMinimumScore } from '@src/models/skillMatrix.model'
+import { ConfigurationType } from '@src/core/Configuration/model/configuration.model'
 
 const serviceLines = ['Developer', 'Cloud']
 
