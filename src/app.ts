@@ -5,7 +5,10 @@ import { join } from 'path'
 import swagger from '@fastify/swagger'
 import swaggerUI from '@fastify/swagger-ui'
 import cors from '@fastify/cors'
-import { JwtInvalidTokenType, JwtTokenType } from '@models/jwtToken.model'
+import {
+  JwtInvalidTokenType,
+  JwtTokenType,
+} from '@src/core/JwtToken/model/jwtToken.model'
 import { fastifyAwilixPlugin } from '@fastify/awilix'
 
 declare module 'fastify' {

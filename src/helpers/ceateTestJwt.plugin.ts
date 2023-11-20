@@ -1,4 +1,7 @@
-import { JwtInvalidTokenType, JwtTokenType } from '@models/jwtToken.model'
+import {
+  JwtInvalidTokenType,
+  JwtTokenType,
+} from '@src/core/JwtToken/model/jwtToken.model'
 import { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
 

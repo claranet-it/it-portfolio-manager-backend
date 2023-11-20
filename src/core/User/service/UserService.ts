@@ -1,5 +1,5 @@
 import { UserWithProfileType } from '@src/models/user.model'
-import { JwtTokenType } from '@src/models/jwtToken.model'
+import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { UserProfileService } from './UserProfileService'
 
 export class UserService {

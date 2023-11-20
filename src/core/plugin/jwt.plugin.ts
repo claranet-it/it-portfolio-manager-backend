@@ -2,7 +2,7 @@ import fp from 'fastify-plugin'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import fastifyJwt, { JwtHeader, TokenOrHeader } from '@fastify/jwt'
 import buildGetJwks from 'get-jwks'
-import { JwtTokenType } from '@models/jwtToken.model'
+import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import * as process from 'process'
 
 declare module 'fastify' {

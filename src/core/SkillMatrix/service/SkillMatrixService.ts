@@ -8,7 +8,7 @@ import {
   SkillMatrixUpdateOfUserParamsType,
   SkillMatrixUpdateParamsType,
 } from '@src/models/skillMatrix.model'
-import { JwtTokenType } from '@src/models/jwtToken.model'
+import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { UserProfileService } from '@src/core/User/service/UserProfileService'
 import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserProfileNotInitializedError'
 
