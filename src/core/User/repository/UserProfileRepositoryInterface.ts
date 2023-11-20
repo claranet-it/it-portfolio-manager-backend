@@ -1,4 +1,4 @@
-import { UserProfileType } from '@src/models/user.model'
+import { UserProfileType } from '@src/core/User/model/user.model'
 
 export interface UserProfileRepositoryInterface {
   getUserProfile(uid: string): Promise<UserProfileType | null>

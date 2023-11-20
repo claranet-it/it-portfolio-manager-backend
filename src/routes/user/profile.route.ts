@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { UserProfileType, UserProfile } from '@models/user.model'
+import { UserProfileType, UserProfile } from '@src/core/User/model/user.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post<{ Body: UserProfileType }>(

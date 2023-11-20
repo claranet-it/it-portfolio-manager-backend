@@ -1,5 +1,8 @@
 import { FastifyInstance } from 'fastify'
-import { UserWithProfile, UserWithProfileType } from '@models/user.model'
+import {
+  UserWithProfile,
+  UserWithProfileType,
+} from '@src/core/User/model/user.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{ Reply: UserWithProfileType }>(

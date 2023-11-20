@@ -1,6 +1,6 @@
 import {test} from "tap"
 import createApp from "@src/app";
-import {UserWithProfileType} from "@models/user.model";
+import {UserWithProfileType} from "@src/core/User/model/user.model";
 
 test('get user info without user profile', async t => {
     const app = createApp({

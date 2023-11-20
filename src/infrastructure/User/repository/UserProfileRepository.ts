@@ -5,7 +5,7 @@ import {
 } from '@aws-sdk/client-dynamodb'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
-import { UserProfileType } from '@src/models/user.model'
+import { UserProfileType } from '@src/core/User/model/user.model'
 
 export class UserProfileRepository implements UserProfileRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}

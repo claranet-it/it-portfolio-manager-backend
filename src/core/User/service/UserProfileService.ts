@@ -1,4 +1,4 @@
-import { UserProfileType } from '@src/models/user.model'
+import { UserProfileType } from '@src/core/User/model/user.model'
 import { UserProfileRepositoryInterface } from '../repository/UserProfileRepositoryInterface'
 
 export class UserProfileService {
