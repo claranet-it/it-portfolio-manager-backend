@@ -1,6 +1,6 @@
 import {test} from "tap"
 import createApp from "@src/app";
-import {ConfigurationType} from "@models/configuration.model";
+import { ConfigurationType } from '@src/core/Configuration/model/configuration.model'
 
 test('get all configuration', async t => {
     const app = createApp({

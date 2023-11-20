@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify'
 import {
   SkillMatrixMineResponse,
   SkillMatrixMineResponseType,
-} from '@models/skillMatrix.model'
+} from '@src/core/SkillMatrix/model/skillMatrix.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
@@ -33,7 +33,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return fastify.getMineSkillMatrixFormattedReponse(request.user)
+        return await fastify
+          .dependencyInjectionContainer()
+          .resolve('skillMatrixService')
+          .getMineSkillMatrixFormattedReponse(request.user)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

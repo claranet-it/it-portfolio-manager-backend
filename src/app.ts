@@ -5,7 +5,11 @@ import { join } from 'path'
 import swagger from '@fastify/swagger'
 import swaggerUI from '@fastify/swagger-ui'
 import cors from '@fastify/cors'
-import { JwtInvalidTokenType, JwtTokenType } from '@models/jwtToken.model'
+import {
+  JwtInvalidTokenType,
+  JwtTokenType,
+} from '@src/core/JwtToken/model/jwtToken.model'
+import { fastifyAwilixPlugin } from '@fastify/awilix'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -50,20 +54,13 @@ export default function createApp(
 
   app.register(cors, {})
 
-  app.register(autoload, {
-    dir: join(__dirname, 'core'),
+  app.register(fastifyAwilixPlugin, {
+    disposeOnClose: true,
+    disposeOnResponse: true,
   })
 
   app.register(autoload, {
-    dir: join(__dirname, 'features', 'configuration'),
-  })
-
-  app.register(autoload, {
-    dir: join(__dirname, 'features', 'skill-matrix'),
-  })
-
-  app.register(autoload, {
-    dir: join(__dirname, 'features', 'user'),
+    dir: join(__dirname, 'core', 'plugin'),
   })
 
   app.register(autoload, {

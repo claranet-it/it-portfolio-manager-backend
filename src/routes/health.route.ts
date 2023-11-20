@@ -1,5 +1,8 @@
 import { FastifyInstance } from 'fastify'
-import { HealthResponse, HealthResponseType } from '@models/health.model'
+import {
+  HealthResponse,
+  HealthResponseType,
+} from '@src/core/Health/model/health.model'
 
 export default async function (app: FastifyInstance): Promise<void> {
   app.get<{ Reply: HealthResponseType }>(

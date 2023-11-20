@@ -1,6 +1,6 @@
 import {test} from "tap"
 import createApp from "@src/app";
-import {HealthResponseType} from "@src/models/health.model";
+import {HealthResponseType} from "@src/core/Health/model/health.model";
 
 test('health', async t => {
   const app = createApp({

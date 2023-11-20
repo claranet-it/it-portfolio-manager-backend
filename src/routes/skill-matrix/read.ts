@@ -4,7 +4,7 @@ import {
   SkillMatrixReadParamsType,
   SkillMatrixResponse,
   SkillMatrixResponseType,
-} from '@models/skillMatrix.model'
+} from '@src/core/SkillMatrix/model/skillMatrix.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
@@ -41,7 +41,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return await fastify.getAllSkillMatrixFormattedResponse(request.query)
+        return await fastify
+          .dependencyInjectionContainer()
+          .resolve('skillMatrixService')
+          .getAllSkillMatrixFormattedResponse(request.query)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

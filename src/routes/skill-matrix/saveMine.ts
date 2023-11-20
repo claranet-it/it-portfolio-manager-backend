@@ -2,7 +2,7 @@ import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserP
 import {
   SkillMatrixUpdateParams,
   SkillMatrixUpdateParamsType,
-} from '@src/models/skillMatrix.model'
+} from '@src/core/SkillMatrix/model/skillMatrix.model'
 import { FastifyInstance } from 'fastify'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
@@ -44,7 +44,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        await fastify.saveMineSkillMatrix(request.user, request.body)
+        await fastify
+          .dependencyInjectionContainer()
+          .resolve('skillMatrixService')
+          .saveMineSkillMatrix(request.user, request.body)
         reply.code(204).send()
       } catch (error) {
         let errorCode = 500

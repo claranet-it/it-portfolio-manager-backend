@@ -4,8 +4,8 @@ import {
   SkillMatrixResponseType,
   SkillMatrixRowType,
   SkillMatrixSkillsType,
-} from '@models/skillMatrix.model'
-import { skillsList } from '@src/features/configuration/getAllConfiguration.plugin'
+} from '@src/core/SkillMatrix/model/skillMatrix.model'
+import { skillsList } from '@src/core/Configuration/service/ConfigurationService'
 
 export class SkillMatrixList {
   private skillMatrixList: SkillMatrixRowType[]

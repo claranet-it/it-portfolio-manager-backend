@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { UserProfileType, UserProfile } from '@models/user.model'
+import { UserProfileType, UserProfile } from '@src/core/User/model/user.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post<{ Body: UserProfileType }>(
@@ -36,7 +36,20 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        await fastify.saveUserProfile(request.user.email, request.body)
+        await fastify
+          .dependencyInjectionContainer()
+          .resolve('userProfileService')
+          .saveUserProfile(request.user.email, request.body)
+
+        await fastify
+          .dependencyInjectionContainer()
+          .resolve('skillMatrixService')
+          .updateSkillMatrixOfUser(
+            request.user.email,
+            request.body.crew,
+            request.body.company,
+          )
+
         reply.code(201).send()
       } catch (error) {
         request.log.error(error)
