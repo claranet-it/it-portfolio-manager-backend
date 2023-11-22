@@ -9,6 +9,8 @@ import { ConfigurationService } from '../Configuration/service/ConfigurationServ
 import { SkillMatrixRepository } from '@src/infrastructure/SkillMatrix/repository/SkillMatrixRepository'
 import { SkillMatrixService } from '../SkillMatrix/service/SkillMatrixService'
 import { UserService } from '../User/service/UserService'
+import { EffortRepository } from '@src/infrastructure/Effort/repository/EffortRepository'
+import { EffortService } from '../Effort/service/EffortService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -48,6 +50,13 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       userService: asClass(UserService),
+    })
+
+    container.register({
+      effortRepository: asClass(EffortRepository),
+    })
+    container.register({
+      effortService: asClass(EffortService),
     })
 
     return container
