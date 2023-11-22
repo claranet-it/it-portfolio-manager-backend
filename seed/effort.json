@@ -1,0 +1,30 @@
+[
+  {
+    "uid": "nicholas.crow@email.com",
+    "month_year": "01_23",
+    "confirmedEffort": 50,
+    "tentativeEffort": 0,
+    "notes": "Scouting"
+  },
+  {
+    "uid": "nicholas.crow@email.com",
+    "month_year": "02_23",
+    "confirmedEffort": 50,
+    "tentativeEffort": 30,
+    "notes": "Scouting + Carimali"
+  },
+  {
+    "uid": "george.python",
+    "month_year": "01_23",
+    "confirmedEffort": 80,
+    "tentativeEffort": 0,
+    "notes": "Moovtech"
+  },
+  {
+    "uid": "george.python",
+    "month_year": "02_23",
+    "confirmedEffort": 50,
+    "tentativeEffort": 0,
+    "notes": "Moovtech"
+  }
+]
