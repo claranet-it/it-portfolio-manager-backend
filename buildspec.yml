@@ -14,7 +14,7 @@ phases:
       - echo "Running linter..."
       - npm run lint
       - echo "Running tests..."
-      - npm run test
+      - npm run test:ci
   build:
     commands:
       - echo "Deploying to AWS - Stage $STAGE_NAME..."
