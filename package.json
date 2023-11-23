@@ -10,7 +10,7 @@
     "dynamodb:start:test": "nohup sls dynamodb start --stage=test --seed >/dev/null &",
     "dynamodb:kill": "pgrep -f \"DynamoDBLocal.jar\" | xargs kill",
     "dynamodb:admin": "npx dynamodb-admin",
-    "test:execute": "STAGE_NAME=test IS_OFFLINE=true tap test --node-arg=--require=ts-node/register",
+    "test:execute": "STAGE_NAME=test IS_OFFLINE=true tap test --node-arg=--require=ts-node/register --disable-coverage",
     "test": "npm run dynamodb:start:test && npm run test:execute && npm run dynamodb:kill",
     "test:ci": "npm run dynamodb:start:test && sleep 30 && npm run test:execute",
     "test:coverage:execute": "STAGE_NAME=test IS_OFFLINE=true tap test --node-arg=--require=ts-node/register",
