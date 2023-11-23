@@ -81,7 +81,7 @@ test('insert effort', async t => {
         }
     })
 
-    t.equal(response.statusCode, 200)
+    t.equal(response.statusCode, 204)
 })
 
 test('update effort', async t => {
@@ -116,7 +116,7 @@ test('update effort', async t => {
         }
     })
 
-    t.equal(response.statusCode, 200)
+    t.equal(response.statusCode, 204)
 })
 
 test('update effort for the logged user without UserProfile', async t => {
