@@ -7,7 +7,7 @@
     "offline": "STAGE_NAME=dev sls offline --stage=dev start",
     "dynamodb:install": "sls dynamodb install",
     "dynamodb:start:dev": "nohup sls dynamodb start --stage=dev --seed >/dev/null &",
-    "dynamodb:start:test": "nohup sls dynamodb start --stage=test --seed >/dev/null &",
+    "dynamodb:start:test": "nohup sls dynamodb start --stage=test --migrate --seed >/dev/null &",
     "dynamodb:kill": "pgrep -f \"DynamoDBLocal.jar\" | xargs kill",
     "dynamodb:admin": "npx dynamodb-admin",
     "test:execute": "STAGE_NAME=test IS_OFFLINE=true tap test --node-arg=--require=ts-node/register --serial=user --serial=skill-matrix --serial=effort",
