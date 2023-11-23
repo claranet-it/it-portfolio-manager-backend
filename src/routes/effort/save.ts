@@ -39,10 +39,12 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return await fastify
+        await fastify
           .dependencyInjectionContainer()
           .resolve('effortService')
           .saveEffort(request.body)
+
+        reply.code(204).send()
       } catch (error) {
         let errorCode = 500
         let errorMessage = ''
