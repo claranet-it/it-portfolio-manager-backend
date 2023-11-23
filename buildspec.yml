@@ -8,7 +8,7 @@ phases:
       - echo "Installing dependencies..."
       - npm ci --ignore-scripts
       - echo "Installing DynamoDB local..."
-      - npm run dynamodb:install:ci
+      - npm run dynamodb:install
   pre_build:
     commands:
       - echo "Running linter..."
