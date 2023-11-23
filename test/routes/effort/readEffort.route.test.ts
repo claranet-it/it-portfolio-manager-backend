@@ -81,6 +81,12 @@ test('read all efforts without params', async t => {
                     "confirmedEffort": 50,
                     "tentativeEffort": 30,
                     "notes": "Scouting + Carimali"
+                },
+                {
+                    "month_year": "03_23",
+                    "confirmedEffort": 50,
+                    "tentativeEffort": 0,
+                    "notes": "Scouting"
                 }
             ]
         }
@@ -134,6 +140,12 @@ test('read all efforts with uid param', async t => {
                     "confirmedEffort": 50,
                     "tentativeEffort": 30,
                     "notes": "Scouting + Carimali"
+                },
+                {
+                    "month_year": "03_23",
+                    "confirmedEffort": 50,
+                    "tentativeEffort": 0,
+                    "notes": "Scouting"
                 }
             ]
         }
