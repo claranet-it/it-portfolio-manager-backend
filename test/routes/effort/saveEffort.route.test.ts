@@ -118,3 +118,38 @@ test('update effort', async t => {
 
     t.equal(response.statusCode, 200)
 })
+
+test('update effort for the logged user without UserProfile', async t => {
+    const app = createApp({
+        logger: false,
+    })
+
+    t.teardown(() => {
+        app.close();
+    })
+
+    await app.ready()
+
+    const token = app.createTestJwt({
+        "email": "max.power@email.com",
+        "name": "Max Power",
+        "picture": "https://test.com/max.power.jpg",
+    })
+
+    const response = await app.inject({
+        method: 'PUT',
+        url: '/api/effort',
+        headers: {
+            authorization: `Bearer ${token}`
+        },
+        payload: {
+            uid: 'max.power@email.com',
+            month_year: '04_23',
+            confirmedEffort: 50,
+            tentativeEffort: 0,
+            notes: 'Scouting'
+        }
+    })
+
+    t.equal(response.statusCode, 304)
+})

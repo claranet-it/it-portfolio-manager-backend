@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { EffortRow, EffortRowType } from '@src/core/Effort/model/effort'
+import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserProfileNotInitializedError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.put<{
@@ -43,8 +44,15 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .resolve('effortService')
           .saveEffort(request.body)
       } catch (error) {
+        let errorCode = 500
+        let errorMessage = ''
+        if (error instanceof UserProfileNotInitializedError) {
+          errorCode = 304
+          errorMessage = error.message
+        }
+
         request.log.error(error)
-        return reply.code(500).send()
+        return reply.code(errorCode).send(errorMessage)
       }
     },
   )
