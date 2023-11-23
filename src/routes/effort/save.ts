@@ -1,8 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import {
-  EffortRow,
-  EffortRowType,
-} from '@src/core/Effort/model/effort'
+import { EffortRow, EffortRowType } from '@src/core/Effort/model/effort'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.put<{

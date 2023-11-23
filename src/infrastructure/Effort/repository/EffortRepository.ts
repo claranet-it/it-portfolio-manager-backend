@@ -4,7 +4,10 @@ import {
   QueryCommand,
   ScanCommand,
 } from '@aws-sdk/client-dynamodb'
-import { EffortReadParamsType, EffortRowType } from '@src/core/Effort/model/effort'
+import {
+  EffortReadParamsType,
+  EffortRowType,
+} from '@src/core/Effort/model/effort'
 import { EffortList } from '@src/core/Effort/model/effortList'
 import { EffortRepositoryInterface } from '@src/core/Effort/repository/EffortRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
@@ -41,8 +44,7 @@ export class EffortRepository implements EffortRepositoryInterface {
     return new EffortList([])
   }
 
-  async saveEffort(params: EffortRowType): Promise<void>
-  {
+  async saveEffort(params: EffortRowType): Promise<void> {
     const command = new PutItemCommand({
       TableName: getTableName('Effort'),
       Item: {
