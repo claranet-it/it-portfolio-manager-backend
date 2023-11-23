@@ -8,7 +8,10 @@ import { EffortRepositoryInterface } from '../repository/EffortRepositoryInterfa
 import { UserProfileService } from '@src/core/User/service/UserProfileService'
 
 export class EffortService {
-  constructor(private effortRepository: EffortRepositoryInterface, private userProfileService: UserProfileService) {}
+  constructor(
+    private effortRepository: EffortRepositoryInterface,
+    private userProfileService: UserProfileService,
+  ) {}
 
   async getEffortFormattedResponse(
     params: EffortReadParamsType,
@@ -19,9 +22,7 @@ export class EffortService {
   }
 
   async saveEffort(params: EffortRowType): Promise<void> {
-    const userProfile = await this.userProfileService.getUserProfile(
-      params.uid,
-    )
+    const userProfile = await this.userProfileService.getUserProfile(params.uid)
     if (!userProfile) {
       throw new UserProfileNotInitializedError()
     }
