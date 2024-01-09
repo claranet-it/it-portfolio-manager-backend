@@ -18,3 +18,11 @@ export type UserProfileType = Static<typeof UserProfile>
 export const UserWithProfile = Type.Intersect([User, Type.Partial(UserProfile)])
 
 export type UserWithProfileType = Static<typeof UserWithProfile>
+
+export const UserProfileWithUid = Type.Object({
+  uid: Type.String(),
+  crew: Type.String(),
+  company: Type.String(),
+})
+
+export type UserProfileWithUidType = Static<typeof UserProfileWithUid>

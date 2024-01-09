@@ -2,10 +2,14 @@ import {
   DynamoDBClient,
   PutItemCommand,
   QueryCommand,
+  ScanCommand,
 } from '@aws-sdk/client-dynamodb'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
-import { UserProfileType } from '@src/core/User/model/user.model'
+import {
+  UserProfileType,
+  UserProfileWithUidType,
+} from '@src/core/User/model/user.model'
 
 export class UserProfileRepository implements UserProfileRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
@@ -46,5 +50,21 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
       Item: item,
     })
     await this.dynamoDBClient.send(putItemCommand)
+  }
+
+  async getAllUserProfiles(): Promise<UserProfileWithUidType[]> {
+    const command = new ScanCommand({
+      TableName: getTableName('UserProfile'),
+    })
+    const result = await this.dynamoDBClient.send(command)
+    if (result?.Items) {
+      return result.Items.map((item) => ({
+        uid: item.uid?.S ?? '',
+        crew: item.crew?.S ?? '',
+        company: item.company?.S ?? '',
+      }))
+    }
+
+    return []
   }
 }

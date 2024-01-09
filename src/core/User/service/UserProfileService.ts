@@ -1,4 +1,4 @@
-import { UserProfileType } from '../model/user.model'
+import { UserProfileType, UserProfileWithUidType } from '../model/user.model'
 import { UserProfileRepositoryInterface } from '../repository/UserProfileRepositoryInterface'
 
 export class UserProfileService {
@@ -13,5 +13,9 @@ export class UserProfileService {
     { crew, company }: UserProfileType,
   ): Promise<void> {
     return this.userProfileRepository.saveUserProfile(uid, { crew, company })
+  }
+
+  async getAllUserProfiles(): Promise<UserProfileWithUidType[]> {
+    return this.userProfileRepository.getAllUserProfiles()
   }
 }

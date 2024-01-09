@@ -67,6 +67,12 @@ export class EffortRepository implements EffortRepositoryInterface {
     if (params.uid) {
       command.input.KeyConditionExpression = 'uid = :uid'
       command.input.ExpressionAttributeValues = { ':uid': { S: params.uid } }
+      if (params.month_year) {
+        command.input.KeyConditionExpression += ' AND month_year = :month_year'
+        command.input.ExpressionAttributeValues[':month_year'] = {
+          S: params.month_year,
+        }
+      }
     }
 
     return command
