@@ -15,6 +15,10 @@ export class EffortList {
     return this.effortList
   }
 
+  pushEffort(effort: EffortRowType): void {
+    this.effortList.push(effort)
+  }
+
   toEffortReponse(): EffortResponseType {
     return this.effortList.reduce(
       (effortList: EffortResponseType, effortRow: EffortRowType) => {
