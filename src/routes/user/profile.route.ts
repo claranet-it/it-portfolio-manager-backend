@@ -1,14 +1,14 @@
 import { FastifyInstance } from 'fastify'
-import { UserProfileType, UserProfile } from '@src/core/User/model/user.model'
+import { Type } from '@sinclair/typebox'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.post<{ Body: UserProfileType }>(
+  fastify.post<{ Body:  {crew: string, company: string} }>(
     '/profile',
     {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Users'],
-        body: UserProfile,
+        body: {crew: Type.String(), company: Type.String()},
         security: [
           {
             apiKey: [],
@@ -39,7 +39,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         await fastify
           .dependencyInjectionContainer()
           .resolve('userProfileService')
-          .saveUserProfile(request.user.email, request.body)
+          .saveUserProfile(request.user.email, {name: request.user.name, ...request.body})
 
         await fastify
           .dependencyInjectionContainer()

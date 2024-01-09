@@ -10,9 +10,10 @@ export class UserProfileService {
 
   async saveUserProfile(
     uid: string,
-    { crew, company }: UserProfileType,
+    { name, crew, company }: UserProfileType,
   ): Promise<void> {
-    return this.userProfileRepository.saveUserProfile(uid, { crew, company })
+    console.log(name);
+    return this.userProfileRepository.saveUserProfile(uid, { name, crew, company })
   }
 
   async getAllUserProfiles(): Promise<UserProfileWithUidType[]> {

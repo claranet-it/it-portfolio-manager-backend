@@ -56,7 +56,6 @@ async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
             'claranet.com',
           )
         }
-
         if (
           !request.user.email ||
           !request.user.name ||
