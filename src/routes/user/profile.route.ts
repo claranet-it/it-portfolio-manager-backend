@@ -1,14 +1,14 @@
 import { FastifyInstance } from 'fastify'
-import { Type } from '@sinclair/typebox'
+import { UpdateUserProfile, UpdateUserProfileType } from '@src/core/User/model/user.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.post<{ Body:  {crew: string, company: string} }>(
+  fastify.post<{ Body:  UpdateUserProfileType }>(
     '/profile',
     {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Users'],
-        body: {crew: Type.String(), company: Type.String()},
+        body: UpdateUserProfile,
         security: [
           {
             apiKey: [],
