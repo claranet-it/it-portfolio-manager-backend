@@ -12,7 +12,6 @@ export class UserProfileService {
     uid: string,
     { name, crew, company }: UserProfileType,
   ): Promise<void> {
-    console.log(name);
     return this.userProfileRepository.saveUserProfile(uid, { name, crew, company })
   }
 
