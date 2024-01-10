@@ -45,9 +45,11 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .dependencyInjectionContainer()
           .resolve('skillMatrixService')
           .updateSkillMatrixOfUser(
-            request.user.email,
-            request.body.crew,
-            request.body.company,
+            {
+              uid: request.user.email,
+              crew: request.body.crew,
+              company: request.body.company,
+             }
           )
 
         reply.code(201).send()
