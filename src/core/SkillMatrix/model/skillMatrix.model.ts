@@ -4,6 +4,7 @@ export const SkillMatrixRow = Type.Object({
   uid: Type.String(),
   company: Type.String(),
   crew: Type.String(),
+  name: Type.String(),
   skill: Type.String(),
   skillCategory: Type.String(),
   score: Type.Number({ minimum: 0, maximum: 3 }),

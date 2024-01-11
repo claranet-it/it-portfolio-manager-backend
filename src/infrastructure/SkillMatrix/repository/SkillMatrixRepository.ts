@@ -50,6 +50,7 @@ export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
       uid: { S: uid },
       company: { S: userProfile.company },
       crew: { S: userProfile.crew },
+      name: {S: userProfile.name},
       skill: { S: skillMatrixUpdateParams.skill },
       score: { N: skillMatrixUpdateParams.score.toString() },
       updatedAt: { S: new Date().toISOString() },
@@ -134,6 +135,7 @@ export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
         result.Items.map((item) => ({
           uid: item.uid?.S ?? '',
           company: item.company?.S ?? '',
+          name: item.name?.S ?? '',
           crew: item.crew?.S ?? '',
           skill: item.skill?.S ?? '',
           skillCategory: item.skillCategory?.S ?? '',
