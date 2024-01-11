@@ -30,7 +30,7 @@ export class SkillMatrixList {
       ) => {
         let skillMatrixRowPerUid = skillMatrixList.find(
           (skillMatrixRowPerUid: SkillMatrixResponsePerUidType) => {
-            return skillMatrixRowPerUid[skillMatrixRow.uid]
+            return skillMatrixRowPerUid[skillMatrixRow.name]
           },
         )
 
@@ -41,7 +41,7 @@ export class SkillMatrixList {
           })
 
           skillMatrixRowPerUid = {
-            [skillMatrixRow.uid]: {
+            [skillMatrixRow.name]: {
               company: skillMatrixRow.company,
               crew: skillMatrixRow.crew,
               skills: skillsDefault,
@@ -51,9 +51,8 @@ export class SkillMatrixList {
           skillMatrixList.push(skillMatrixRowPerUid)
         }
 
-        skillMatrixRowPerUid[skillMatrixRow.uid].skills[skillMatrixRow.skill] =
+        skillMatrixRowPerUid[skillMatrixRow.name].skills[skillMatrixRow.skill] =
           skillMatrixRow.score
-
         return skillMatrixList
       },
       [],
