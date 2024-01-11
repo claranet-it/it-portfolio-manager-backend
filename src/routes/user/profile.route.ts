@@ -44,11 +44,12 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         await fastify
           .dependencyInjectionContainer()
           .resolve('skillMatrixService')
-          .updateSkillMatrixOfUser(
-            request.user.email,
-            request.body.crew,
-            request.body.company,
-          )
+          .updateSkillMatrixOfUser({
+            uid:  request.user.email,
+            name: request.user.name,
+            crew: request.body.crew,
+            company: request.body.company,
+      })
 
         reply.code(201).send()
       } catch (error) {
