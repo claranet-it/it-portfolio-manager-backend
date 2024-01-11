@@ -163,7 +163,7 @@ test('read all skill matrix with company param', async t => {
             },
         },
         {
-            "nicholas.crow@email.com": {
+            "Nicholas Crow": {
                 "company": "it",
                 "crew": "moon",
                 "skills": {
