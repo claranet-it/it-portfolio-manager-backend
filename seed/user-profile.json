@@ -2,11 +2,13 @@
   {
     "uid": "nicholas.crow@email.com",
     "crew": "moon",
-    "company": "us"
+    "company": "us",
+    "name": "Nicholas Crow"
   },
   {
     "uid": "george.python",
     "crew": "sun",
-    "company": "us"
+    "company": "us",
+    "name": "George Python"
   }
 ]

@@ -1,6 +1,7 @@
 [
   {
     "uid": "nicholas.crow@email.com",
+    "name": "Nicholas Crow",
     "company": "it",
     "crew": "moon",
     "skill": "PHP",
@@ -10,6 +11,7 @@
   },
   {
     "uid": "nicholas.crow@email.com",
+    "name": "Nicholas Crow",
     "company": "it",
     "crew": "moon",
     "skill": "Java/Kotlin",
@@ -19,6 +21,7 @@
   },
   {
     "uid": "george.python",
+    "name": "George Python",
     "company": "it",
     "crew": "sun",
     "skill": "PHP",
@@ -28,6 +31,7 @@
   },
   {
     "uid": "george.python",
+    "name": "George Python",
     "company": "it",
     "crew": "sun",
     "skill": "Python",

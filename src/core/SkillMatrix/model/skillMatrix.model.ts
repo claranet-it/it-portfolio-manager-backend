@@ -4,6 +4,7 @@ export const SkillMatrixRow = Type.Object({
   uid: Type.String(),
   company: Type.String(),
   crew: Type.String(),
+  name: Type.String(),
   skill: Type.String(),
   skillCategory: Type.String(),
   score: Type.Number({ minimum: 0, maximum: 3 }),
@@ -56,6 +57,7 @@ export const SkillMatrixUpdateOfUserParams = Type.Object({
   uid: Type.String(),
   crew: Type.Optional(Type.String()),
   company: Type.Optional(Type.String()),
+  name: Type.Optional(Type.String())
 })
 
 export type SkillMatrixUpdateOfUserParamsType = Static<

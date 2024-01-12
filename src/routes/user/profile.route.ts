@@ -1,14 +1,14 @@
 import { FastifyInstance } from 'fastify'
-import { UserProfileType, UserProfile } from '@src/core/User/model/user.model'
+import { UpdateUserProfile, UpdateUserProfileType } from '@src/core/User/model/user.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.post<{ Body: UserProfileType }>(
+  fastify.post<{ Body:  UpdateUserProfileType }>(
     '/profile',
     {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Users'],
-        body: UserProfile,
+        body: UpdateUserProfile,
         security: [
           {
             apiKey: [],
@@ -39,18 +39,17 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         await fastify
           .dependencyInjectionContainer()
           .resolve('userProfileService')
-          .saveUserProfile(request.user.email, request.body)
+          .saveUserProfile(request.user.email, {name: request.user.name, ...request.body})
 
         await fastify
           .dependencyInjectionContainer()
           .resolve('skillMatrixService')
-          .updateSkillMatrixOfUser(
-            {
-              uid: request.user.email,
-              crew: request.body.crew,
-              company: request.body.company,
-             }
-          )
+          .updateSkillMatrixOfUser({
+            uid:  request.user.email,
+            name: request.user.name,
+            crew: request.body.crew,
+            company: request.body.company,
+      })
 
         reply.code(201).send()
       } catch (error) {

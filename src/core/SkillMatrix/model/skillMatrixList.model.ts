@@ -28,9 +28,10 @@ export class SkillMatrixList {
         skillMatrixList: SkillMatrixResponseType,
         skillMatrixRow: SkillMatrixRowType,
       ) => {
+        const name = skillMatrixRow.name !== '' ? skillMatrixRow.name : this.getNameByEmail(skillMatrixRow.uid);
         let skillMatrixRowPerUid = skillMatrixList.find(
           (skillMatrixRowPerUid: SkillMatrixResponsePerUidType) => {
-            return skillMatrixRowPerUid[skillMatrixRow.uid]
+            return skillMatrixRowPerUid[name]
           },
         )
 
@@ -41,7 +42,7 @@ export class SkillMatrixList {
           })
 
           skillMatrixRowPerUid = {
-            [skillMatrixRow.uid]: {
+            [name]: {
               company: skillMatrixRow.company,
               crew: skillMatrixRow.crew,
               skills: skillsDefault,
@@ -51,12 +52,18 @@ export class SkillMatrixList {
           skillMatrixList.push(skillMatrixRowPerUid)
         }
 
-        skillMatrixRowPerUid[skillMatrixRow.uid].skills[skillMatrixRow.skill] =
+        skillMatrixRowPerUid[name].skills[skillMatrixRow.skill] =
           skillMatrixRow.score
-
         return skillMatrixList
       },
       [],
     )
+  }
+
+  private getNameByEmail(email:string): string {
+    return email.substring(0, email.indexOf('@'))
+      .split('.')
+      .map((name) => name.charAt(0).toUpperCase() + name.slice(1))
+      .join(' ');
   }
 }

@@ -28,6 +28,7 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     ) {
       // TODO: (crew || company) or (crew && company) ?
       return {
+        name: result.Items[0].name?.S ?? '',
         crew: result.Items[0].crew?.S ?? '',
         company: result.Items[0].company?.S ?? '',
       }
@@ -38,10 +39,11 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
 
   async saveUserProfile(
     uid: string,
-    { crew, company }: UserProfileType,
+    { name, crew, company }: UserProfileType,
   ): Promise<void> {
     const item = {
       uid: { S: uid },
+      name: {S: name},
       crew: { S: crew },
       company: { S: company },
     }
