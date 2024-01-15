@@ -133,6 +133,4 @@ resources:
             KeyType: HASH
           - AttributeName: month_year
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        BillingMode: PAY_PER_REQUEST
