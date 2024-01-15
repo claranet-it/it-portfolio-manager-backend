@@ -8,7 +8,7 @@ export interface UserProfileRepositoryInterface {
 
   saveUserProfile(
     uid: string,
-   { name, crew, company }: UserProfileType,
+    { name, crew, company }: UserProfileType,
   ): Promise<void>
 
   getAllUserProfiles(): Promise<UserProfileWithUidType[]>

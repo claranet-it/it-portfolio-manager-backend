@@ -43,7 +43,7 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
   ): Promise<void> {
     const item = {
       uid: { S: uid },
-      name: {S: name},
+      name: { S: name },
       crew: { S: crew },
       company: { S: company },
     }

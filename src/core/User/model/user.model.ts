@@ -30,7 +30,7 @@ export type UserProfileWithUidType = Static<typeof UserProfileWithUid>
 
 export const UpdateUserProfile = Type.Object({
   crew: Type.String(),
-  company: Type.String()
-});
+  company: Type.String(),
+})
 
 export type UpdateUserProfileType = Static<typeof UpdateUserProfile>

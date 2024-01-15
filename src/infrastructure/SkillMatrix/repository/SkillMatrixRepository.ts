@@ -50,7 +50,7 @@ export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
       uid: { S: uid },
       company: { S: userProfile.company },
       crew: { S: userProfile.crew },
-      name: {S: userProfile.name},
+      name: { S: userProfile.name },
       skill: { S: skillMatrixUpdateParams.skill },
       score: { N: skillMatrixUpdateParams.score.toString() },
       updatedAt: { S: new Date().toISOString() },

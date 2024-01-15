@@ -25,7 +25,6 @@ export class EffortService {
   async getEffortNextFormattedResponse(
     params: EffortReadParamsType,
   ): Promise<EffortResponseType> {
-
     let users = []
     if (!params.uid) {
       users = await this.userProfileService.getAllUserProfiles()

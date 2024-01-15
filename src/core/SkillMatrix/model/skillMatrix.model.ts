@@ -57,7 +57,7 @@ export const SkillMatrixUpdateOfUserParams = Type.Object({
   uid: Type.String(),
   crew: Type.Optional(Type.String()),
   company: Type.Optional(Type.String()),
-  name: Type.Optional(Type.String())
+  name: Type.Optional(Type.String()),
 })
 
 export type SkillMatrixUpdateOfUserParamsType = Static<
