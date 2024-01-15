@@ -26,8 +26,16 @@ export class EffortService {
     params: EffortReadParamsType,
   ): Promise<EffortResponseType> {
 
-    const efforts = new EffortList([])
+    let users = []
+    if (!params.uid) {
+      users = await this.userProfileService.getAllUserProfiles()
+    } else {
+      users.push({ uid: params.uid })
+    }
 
+    const efforts = new EffortList([])
+    for (const user of users) {
+      params.uid = user.uid
 
       for (let i = 0; i <= 3; i++) {
         const date = new Date()
@@ -43,13 +51,14 @@ export class EffortService {
         const effortOfUser = effortsOfUser.getEffortList()[0]
 
         efforts.pushEffort({
-          uid: effortOfUser.uid,
+          uid: user.uid,
           month_year: month_year,
           confirmedEffort: effortOfUser?.confirmedEffort ?? 0,
           tentativeEffort: effortOfUser?.tentativeEffort ?? 0,
           notes: effortOfUser?.notes ?? '',
         })
       }
+    }
 
     return efforts.toEffortReponse()
   }
