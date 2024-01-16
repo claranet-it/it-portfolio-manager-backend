@@ -27,6 +27,10 @@ async function dependencyInjectionContainerPlugin(
     })
 
     container.register({
+      isTest: awilix.asValue(process.env.STAGE_NAME === 'test'),
+    })
+
+    container.register({
       dynamoDBClient: awilix.asValue(DynamoDBConnection.getClient()),
     })
 
