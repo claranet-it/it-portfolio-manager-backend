@@ -13,7 +13,10 @@ import { EffortRepositoryInterface } from '@src/core/Effort/repository/EffortRep
 import { getTableName } from '@src/core/db/TableName'
 
 export class EffortRepository implements EffortRepositoryInterface {
-  constructor(private dynamoDBClient: DynamoDBClient) {}
+  constructor(
+    private dynamoDBClient: DynamoDBClient,
+    private isTest: boolean,
+  ) {}
 
   async getEffort(params: EffortReadParamsType): Promise<EffortList> {
     let command = null
@@ -56,7 +59,9 @@ export class EffortRepository implements EffortRepositoryInterface {
       },
     })
 
-    await this.dynamoDBClient.send(command)
+    if (!this.isTest) {
+      await this.dynamoDBClient.send(command)
+    }
   }
 
   createQueryCommand(params: EffortReadParamsType): QueryCommand {
