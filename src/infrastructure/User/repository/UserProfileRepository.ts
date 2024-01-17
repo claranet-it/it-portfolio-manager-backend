@@ -64,6 +64,7 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
         uid: item.uid?.S ?? '',
         crew: item.crew?.S ?? '',
         company: item.company?.S ?? '',
+        name: item.name?.S ?? ''
       }))
     }
 

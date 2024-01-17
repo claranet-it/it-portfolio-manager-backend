@@ -25,6 +25,7 @@ export const EffortResponsePerUid = Type.Record(
   Type.Object({
     crew: Type.String(),
     company: Type.String(),
+    name: Type.String(),
     effort: Type.Array(EffortRowPerUid)
   })
 )

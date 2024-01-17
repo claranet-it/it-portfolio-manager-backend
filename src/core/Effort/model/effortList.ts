@@ -28,22 +28,23 @@ export class EffortList {
           : this.getNameByEmail(effortRow.uid)
         let effortRowPerUid = effortList.find(
           (effortRowPerUid: EffortResponsePerUidType) => {
-            return effortRowPerUid[name]
+            return effortRowPerUid[effortRow.uid]
           },
         )
 
         if (!effortRowPerUid) {
           effortRowPerUid = {
-            [name]: {
+            [effortRow.uid]: {
             crew: effortRow.crew,
             company: effortRow.company,
+            name: name,
              effort: []
             },
           }
           effortList.push(effortRowPerUid)
         }
 
-        effortRowPerUid[name].effort.push({
+        effortRowPerUid[effortRow.uid].effort.push({
           month_year: effortRow.month_year,
           confirmedEffort: effortRow.confirmedEffort,
           tentativeEffort: effortRow.tentativeEffort,
