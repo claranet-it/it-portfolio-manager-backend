@@ -19,8 +19,15 @@ export class EffortService {
     params: EffortReadParamsType,
   ): Promise<EffortResponseType> {
     const efforts = await this.effortRepository.getEffort(params)
-
-    return efforts.toEffortReponse()
+    const userProfiles = await this.userProfileService.getAllUserProfiles();
+    const results = new EffortList([]);
+    userProfiles.forEach(userProfile => {
+      const effortsOfUser = efforts.filter((effort) => effort.uid === userProfile.uid);
+      effortsOfUser.forEach(effortOfUser =>{
+        results.pushEffort({...userProfile, ...effortOfUser});
+      })
+    });
+    return results.toEffortReponse()
   }
 
   async getEffortNextFormattedResponse(
@@ -51,17 +58,17 @@ export class EffortService {
           date.getFullYear().toString().slice(-2)
 
         params.month_year = month_year
-        const effortsOfUser = await this.effortRepository.getEffort(params)
-        const effortOfUser = effortsOfUser.getEffortList()[0]
+        const effortsOfUser = await this.effortRepository.getEffort(params);
+        const effortOfUser = effortsOfUser[0];
         efforts.pushEffort({
           uid: user.uid,
           month_year: month_year,
           confirmedEffort: effortOfUser?.confirmedEffort ?? 0,
           tentativeEffort: effortOfUser?.tentativeEffort ?? 0,
           notes: effortOfUser?.notes ?? '',
-          crew: effortOfUser?.crew ?? user.crew,
-          company: effortOfUser?.company ?? user.company,
-          name: effortOfUser?.name ?? user.name
+          crew: user.crew,
+          company:  user.company,
+          name: user.name
         })
       }
     }
@@ -75,6 +82,6 @@ export class EffortService {
       throw new UserProfileNotInitializedError()
     }
 
-    await this.effortRepository.saveEffort(userProfile, params)
+    await this.effortRepository.saveEffort(params)
   }
 }

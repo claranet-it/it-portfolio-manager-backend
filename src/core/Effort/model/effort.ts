@@ -1,4 +1,5 @@
 import { Static, Type } from '@sinclair/typebox'
+import { UserProfile } from '@src/core/User/model/user.model'
 
 export const EffortRow = Type.Object({
   uid: Type.String(),
@@ -6,9 +7,6 @@ export const EffortRow = Type.Object({
   confirmedEffort: Type.Number(),
   tentativeEffort: Type.Number(),
   notes: Type.String(),
-  crew: Type.String(),
-  company: Type.String(),
-  name: Type.String(),
 })
 
 export type EffortRowType = Static<typeof EffortRow>
@@ -42,3 +40,7 @@ export const EffortReadParams = Type.Object({
 })
 
 export type EffortReadParamsType = Static<typeof EffortReadParams>
+
+export const EffortWithUserProfile = Type.Intersect([EffortRow, UserProfile])
+
+export type EffortWithUserProfileType = Static<typeof EffortWithUserProfile>

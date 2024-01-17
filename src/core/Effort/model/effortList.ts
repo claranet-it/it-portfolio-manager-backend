@@ -1,27 +1,27 @@
 import {
   EffortResponsePerUidType,
   EffortResponseType,
-  EffortRowType,
+  EffortWithUserProfileType,
 } from './effort'
 
 export class EffortList {
-  private effortList: EffortRowType[]
+  private effortList: EffortWithUserProfileType[]
 
-  constructor(effortList: EffortRowType[]) {
+  constructor(effortList: EffortWithUserProfileType[]) {
     this.effortList = effortList
   }
 
-  getEffortList(): EffortRowType[] {
+  getEffortList(): EffortWithUserProfileType[] {
     return this.effortList
   }
 
-  pushEffort(effort: EffortRowType): void {
+  pushEffort(effort: EffortWithUserProfileType): void {
     this.effortList.push(effort)
   }
 
   toEffortReponse(): EffortResponseType {
     return this.effortList.reduce(
-      (effortList: EffortResponseType, effortRow: EffortRowType) => {
+      (effortList: EffortResponseType, effortRow: EffortWithUserProfileType) => {
         const name =
         effortRow.name !== ''
           ? effortRow.name
