@@ -10,6 +10,7 @@ import {
 } from '@src/core/Effort/model/effort'
 import { EffortList } from '@src/core/Effort/model/effortList'
 import { EffortRepositoryInterface } from '@src/core/Effort/repository/EffortRepositoryInterface'
+import { UserProfileType } from '@src/core/User/model/user.model'
 import { getTableName } from '@src/core/db/TableName'
 
 export class EffortRepository implements EffortRepositoryInterface {
@@ -47,7 +48,7 @@ export class EffortRepository implements EffortRepositoryInterface {
     return new EffortList([])
   }
 
-  async saveEffort(params: EffortRowType): Promise<void> {
+  async saveEffort(userProfile: UserProfileType, params: EffortRowType): Promise<void> {
     const command = new PutItemCommand({
       TableName: getTableName('Effort'),
       Item: {
@@ -56,6 +57,9 @@ export class EffortRepository implements EffortRepositoryInterface {
         confirmedEffort: { N: params.confirmedEffort.toString() },
         tentativeEffort: { N: params.tentativeEffort.toString() },
         notes: { S: params.notes },
+        name: {S: userProfile.name},
+        crew: {S: userProfile.crew},
+        company: {S: userProfile.company}
       },
     })
 

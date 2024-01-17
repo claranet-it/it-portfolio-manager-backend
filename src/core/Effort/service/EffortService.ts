@@ -68,6 +68,6 @@ export class EffortService {
       throw new UserProfileNotInitializedError()
     }
 
-    await this.effortRepository.saveEffort(params)
+    await this.effortRepository.saveEffort(userProfile, params)
   }
 }
