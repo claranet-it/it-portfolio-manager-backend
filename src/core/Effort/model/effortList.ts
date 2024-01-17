@@ -22,15 +22,19 @@ export class EffortList {
   toEffortReponse(): EffortResponseType {
     return this.effortList.reduce(
       (effortList: EffortResponseType, effortRow: EffortRowType) => {
+        const name =
+        effortRow.name !== ''
+          ? effortRow.name
+          : this.getNameByEmail(effortRow.uid)
         let effortRowPerUid = effortList.find(
           (effortRowPerUid: EffortResponsePerUidType) => {
-            return effortRowPerUid[effortRow.uid]
+            return effortRowPerUid[name]
           },
         )
 
         if (!effortRowPerUid) {
           effortRowPerUid = {
-            [effortRow.uid]: {
+            [name]: {
             crew: effortRow.crew,
             company: effortRow.company,
              effort: []
@@ -39,7 +43,7 @@ export class EffortList {
           effortList.push(effortRowPerUid)
         }
 
-        effortRowPerUid[effortRow.uid].effort.push({
+        effortRowPerUid[name].effort.push({
           month_year: effortRow.month_year,
           confirmedEffort: effortRow.confirmedEffort,
           tentativeEffort: effortRow.tentativeEffort,
@@ -50,5 +54,13 @@ export class EffortList {
       },
       [],
     )
+  }
+  private getNameByEmail(email: string): string {
+    console.log(email);
+    return email
+      .substring(0, email.indexOf('@'))
+      .split('.')
+      .map((name) => name.charAt(0).toUpperCase() + name.slice(1))
+      .join(' ')
   }
 }
