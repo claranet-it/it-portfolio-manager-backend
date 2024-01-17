@@ -59,8 +59,8 @@ export class EffortService {
           confirmedEffort: effortOfUser?.confirmedEffort ?? 0,
           tentativeEffort: effortOfUser?.tentativeEffort ?? 0,
           notes: effortOfUser?.notes ?? '',
-          crew: effortOfUser?.company ?? user.company,
-          company: effortOfUser?.crew ?? user.crew,
+          crew: effortOfUser?.crew ?? user.crew,
+          company: effortOfUser?.company ?? user.company,
           name: effortOfUser?.name ?? user.name
         })
       }
