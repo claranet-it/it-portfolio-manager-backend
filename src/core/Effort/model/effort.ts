@@ -6,6 +6,9 @@ export const EffortRow = Type.Object({
   confirmedEffort: Type.Number(),
   tentativeEffort: Type.Number(),
   notes: Type.String(),
+  crew: Type.String(),
+  company: Type.String(),
+  name: Type.String(),
 })
 
 export type EffortRowType = Static<typeof EffortRow>
@@ -19,7 +22,11 @@ const EffortRowPerUid = Type.Object({
 
 export const EffortResponsePerUid = Type.Record(
   Type.String(),
-  Type.Array(EffortRowPerUid),
+  Type.Object({
+    crew: Type.String(),
+    company: Type.String(),
+    effort: Type.Array(EffortRowPerUid)
+  })
 )
 
 export type EffortResponsePerUidType = Static<typeof EffortResponsePerUid>

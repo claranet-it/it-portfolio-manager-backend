@@ -41,6 +41,9 @@ export class EffortRepository implements EffortRepositoryInterface {
             ? Number(item.tentativeEffort.N)
             : 0,
           notes: item.notes?.S ?? '',
+          crew: item.crew.S ?? '',
+          company: item.company.S ?? '',
+          name: item.name.S ?? ''
         })),
       )
     }

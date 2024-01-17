@@ -30,12 +30,16 @@ export class EffortList {
 
         if (!effortRowPerUid) {
           effortRowPerUid = {
-            [effortRow.uid]: [],
+            [effortRow.uid]: {
+            crew: effortRow.crew,
+            company: effortRow.company,
+             effort: []
+            },
           }
           effortList.push(effortRowPerUid)
         }
 
-        effortRowPerUid[effortRow.uid].push({
+        effortRowPerUid[effortRow.uid].effort.push({
           month_year: effortRow.month_year,
           confirmedEffort: effortRow.confirmedEffort,
           tentativeEffort: effortRow.tentativeEffort,
