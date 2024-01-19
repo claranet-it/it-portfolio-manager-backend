@@ -1,19 +1,29 @@
-import {test} from "tap"
+import {test, beforeEach, afterEach} from "tap"
 import createApp from "@src/app";
+import { FastifyInstance } from "fastify";
+import { DeleteItemCommand } from "@aws-sdk/client-dynamodb";
+import { getTableName } from "@src/core/db/TableName";
 
-test('save user profile', async t => {
-    const app = createApp({
+let app: FastifyInstance;
+
+const email = "user@without.profile";
+
+beforeEach(async () => {
+    app = createApp({
         logger: false,
     })
-
-    t.teardown(() => {
-        app.close();
-    })
-
     await app.ready()
+})
+
+afterEach(async () => {
+   await app.dynamoDBClient.send(new DeleteItemCommand({TableName: getTableName('UserProfile'),  Key: {uid: {S: email}}}))
+   await app.close();
+})
+
+test('save user profile', async t => {
 
     const token = app.createTestJwt({
-        "email": "user@without.profile",
+        "email": email,
         "name": "User Without Profile",
         "picture": "https://test.com/user.without.profile.jpg",
     })
@@ -34,18 +44,8 @@ test('save user profile', async t => {
 })
 
 test('save user profile with only crew', async t => {
-    const app = createApp({
-        logger: false,
-    })
-
-    t.teardown(() => {
-        app.close();
-    })
-
-    await app.ready()
-
     const token = app.createTestJwt({
-        "email": "user@without.profile",
+        "email": email,
         "name": "User Without Profile",
         "picture": "https://test.com/user.without.profile.jpg",
     })
@@ -65,18 +65,9 @@ test('save user profile with only crew', async t => {
 })
 
 test('save user profile with only company', async t => {
-    const app = createApp({
-        logger: false,
-    })
-
-    t.teardown(() => {
-        app.close();
-    })
-
-    await app.ready()
 
     const token = app.createTestJwt({
-        "email": "user@without.profile",
+        "email": email,
         "name": "User Without Profile",
         "picture": "https://test.com/user.without.profile.jpg",
     })
@@ -97,13 +88,6 @@ test('save user profile with only company', async t => {
 
 
 test('save user profile without authentication', async t => {
-    const app = createApp({
-        logger: false,
-    })
-
-    t.teardown(() => {
-        app.close();
-    })
 
     const response = await app.inject({
         method: 'POST',
