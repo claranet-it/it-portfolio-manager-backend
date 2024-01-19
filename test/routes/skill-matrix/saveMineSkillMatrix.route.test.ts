@@ -157,7 +157,7 @@ test('update skill matrix for the logged user with no skill on DB', async t => {
     await app.ready()
 
     const token = app.createTestJwt({
-        "email": "george.python",
+        "email": "george.python@email.com",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
     })
@@ -190,7 +190,7 @@ test('update skill matrix for the logged user with skill on DB', async t => {
     await app.ready()
 
     const token = app.createTestJwt({
-        "email": "george.python",
+        "email": "george.python@email.com",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
     })
@@ -223,7 +223,7 @@ test('update skill matrix for the logged user with score 0', async t => {
     await app.ready()
 
     const token = app.createTestJwt({
-        "email": "george.python",
+        "email": "george.python@email.com",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
     })
@@ -256,7 +256,7 @@ test('update skill matrix for the logged user with score outside max range', asy
     await app.ready()
 
     const token = app.createTestJwt({
-        "email": "george.python",
+        "email": "george.python@email.com",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
     })
@@ -289,7 +289,7 @@ test('update skill matrix for the logged user with score outside min range', asy
     await app.ready()
 
     const token = app.createTestJwt({
-        "email": "george.python",
+        "email": "george.python@email.com",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
     })
