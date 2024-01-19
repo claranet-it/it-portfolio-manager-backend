@@ -33,16 +33,7 @@ export class EffortService {
   async getEffortNextFormattedResponse(
     params: EffortReadParamsType,
   ): Promise<EffortResponseType> {
-    let users : UserProfileWithUidType[] = []
-    if (!params.uid) {
-      users = await this.userProfileService.getAllUserProfiles()
-    } else {
-      const userProfile = await this.userProfileService.getUserProfile(params.uid);
-      if(!userProfile){
-        throw new UserProfileNotInitializedError();
-      }
-      users.push({uid: params.uid, ...userProfile})
-    }
+    const users = await this.getUserProfiles(params);
 
     const efforts = new EffortList([])
     for (const user of users) {
@@ -74,6 +65,20 @@ export class EffortService {
     }
 
     return efforts.toEffortReponse()
+  }
+
+  private async getUserProfiles(params:EffortReadParamsType): Promise<UserProfileWithUidType[]> {
+    if(params.uid){
+        const userProfile = await this.userProfileService.getUserProfile(params.uid);
+        if(!userProfile){
+          throw new UserProfileNotInitializedError();
+        }
+        return [{uid: params.uid, ...userProfile}]
+    }
+    else if (params.company){
+      return this.userProfileService.getByCompany(params.company);
+    }
+    return await this.userProfileService.getAllUserProfiles();
   }
 
   async saveEffort(params: EffortRowType): Promise<void> {

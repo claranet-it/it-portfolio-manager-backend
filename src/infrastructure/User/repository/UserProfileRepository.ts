@@ -70,4 +70,24 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
 
     return []
   }
+
+  async getByCompany(company: string): Promise<UserProfileWithUidType[]>{
+    const command = new QueryCommand({
+      TableName: getTableName('UserProfile'),
+      IndexName: 'companyIndex',
+      KeyConditionExpression: 'company = :company',
+      ExpressionAttributeValues: {':company': {S: company}}
+    })
+    const result = await this.dynamoDBClient.send(command)
+    if (result?.Items) {
+      return result.Items.map((item) => ({
+        uid: item.uid?.S ?? '',
+        crew: item.crew?.S ?? '',
+        company: item.company?.S ?? '',
+        name: item.name?.S ?? ''
+      }))
+    }
+
+    return []
+  }
 }

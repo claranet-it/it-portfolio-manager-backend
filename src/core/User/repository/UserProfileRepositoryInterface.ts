@@ -12,4 +12,6 @@ export interface UserProfileRepositoryInterface {
   ): Promise<void>
 
   getAllUserProfiles(): Promise<UserProfileWithUidType[]>
+
+  getByCompany(company: string): Promise<UserProfileWithUidType[]>
 }
