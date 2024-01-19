@@ -1,3 +1,4 @@
+import { getNameByEmail } from '@src/helpers/email.helper'
 import {
   EffortResponsePerUidType,
   EffortResponseType,
@@ -25,7 +26,7 @@ export class EffortList {
         const name =
         effortRow.name !== ''
           ? effortRow.name
-          : this.getNameByEmail(effortRow.uid)
+          : getNameByEmail(effortRow.uid)
         let effortRowPerUid = effortList.find(
           (effortRowPerUid: EffortResponsePerUidType) => {
             return effortRowPerUid[effortRow.uid]
@@ -55,13 +56,5 @@ export class EffortList {
       },
       [],
     )
-  }
-  private getNameByEmail(email: string): string {
-    console.log(email);
-    return email
-      .substring(0, email.indexOf('@'))
-      .split('.')
-      .map((name) => name.charAt(0).toUpperCase() + name.slice(1))
-      .join(' ')
   }
 }

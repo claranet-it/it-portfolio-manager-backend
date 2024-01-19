@@ -6,6 +6,7 @@ import {
   SkillMatrixSkillsType,
 } from '@src/core/SkillMatrix/model/skillMatrix.model'
 import { skillsList } from '@src/core/Configuration/service/ConfigurationService'
+import { getNameByEmail } from '@src/helpers/email.helper'
 
 export class SkillMatrixList {
   private skillMatrixList: SkillMatrixRowType[]
@@ -31,7 +32,7 @@ export class SkillMatrixList {
         const name =
           skillMatrixRow.name !== ''
             ? skillMatrixRow.name
-            : this.getNameByEmail(skillMatrixRow.uid)
+            : getNameByEmail(skillMatrixRow.uid)
         let skillMatrixRowPerUid = skillMatrixList.find(
           (skillMatrixRowPerUid: SkillMatrixResponsePerUidType) => {
             return skillMatrixRowPerUid[name]
@@ -61,13 +62,5 @@ export class SkillMatrixList {
       },
       [],
     )
-  }
-
-  private getNameByEmail(email: string): string {
-    return email
-      .substring(0, email.indexOf('@'))
-      .split('.')
-      .map((name) => name.charAt(0).toUpperCase() + name.slice(1))
-      .join(' ')
   }
 }
