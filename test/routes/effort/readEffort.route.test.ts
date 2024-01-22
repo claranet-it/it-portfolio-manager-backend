@@ -157,7 +157,7 @@ test('read next efforts without params', async (t) => {
   t.equal(response.statusCode, 200)
 
   const efforts = response.json<EffortResponseType>()
-  t.equal(efforts.length, 2)
+  t.equal(efforts.length, 3)
 
   const now = new Date()
   const nextMonth1 = new Date()
@@ -258,6 +258,51 @@ test('read next efforts without params', async (t) => {
         ],
       },
     },
+    {
+    'testIt@test.com': {
+      crew: 'bees',
+      company: 'it',
+      name: 'test italian',
+      effort: [
+        {
+          month_year:
+            ('0' + (now.getMonth() + 1)).slice(-2) +
+            '_' +
+            now.getFullYear().toString().slice(-2),
+          confirmedEffort: 0,
+          tentativeEffort: 0,
+          notes: '',
+        },
+        {
+          month_year:
+            ('0' + (nextMonth1.getMonth() + 1)).slice(-2) +
+            '_' +
+            nextMonth1.getFullYear().toString().slice(-2),
+          confirmedEffort: 0,
+          tentativeEffort: 0,
+          notes: '',
+        },
+        {
+          month_year:
+            ('0' + (nextMonth2.getMonth() + 1)).slice(-2) +
+            '_' +
+            nextMonth2.getFullYear().toString().slice(-2),
+          confirmedEffort: 0,
+          tentativeEffort: 0,
+          notes: '',
+        },
+        {
+          month_year:
+            ('0' + (nextMonth3.getMonth() + 1)).slice(-2) +
+            '_' +
+            nextMonth3.getFullYear().toString().slice(-2),
+          confirmedEffort: 0,
+          tentativeEffort: 0,
+          notes: '',
+        },
+      ],
+    },
+  },
   ]
   t.same(efforts, expectedResult)
 })
