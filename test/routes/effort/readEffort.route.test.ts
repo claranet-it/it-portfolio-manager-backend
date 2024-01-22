@@ -386,3 +386,66 @@ test('read next efforts with uid param', async (t) => {
 
   t.same(efforts, expectedResult)
 })
+
+const inputs = [
+  {
+    company: 'us',
+    expctedUsers: [
+      {
+        uid: 'nicholas.crow@email.com',
+        crew: "moon",
+        company: "us",
+        name: "Nicholas Crow"
+      }, 
+      {
+        uid: 'george.python@email.com',
+        crew: "sun",
+        company: "us",
+        name: "George Python"
+      }
+      ]
+  },
+  {
+    company: 'it',
+    expctedUsers: [
+      {
+        uid: "testIt@test.com",
+        crew: "bees",
+        company: "it",
+        name : "test italian"
+      }
+    ]
+  }
+]
+
+inputs.forEach((input) => {
+  test(`read next effort with company param ${input.company}`, async (t) =>{
+    const token = app.createTestJwt({
+      email: 'nicholas.crow@email.com',
+      name: 'Nicholas Crow',
+      picture: 'https://test.com/nicholas.crow.jpg',
+    })
+  
+    const response = await app.inject({
+      method: 'GET',
+      url: `/api/effort/next?company=${input.company}`,
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    })
+  
+    t.equal(response.statusCode, 200)
+    const efforts = response.json<EffortResponseType>()
+    t.equal(efforts.length, input.expctedUsers.length)
+    input.expctedUsers.forEach((user) => {
+      const effort = efforts.find((effort) => Object.keys(effort)[0] === user.uid);
+      if(!effort){
+        t.fail(`user ${user.uid} not found`)
+        return;
+      }
+      t.equal(effort[user.uid].company, user.company);
+      t.equal(effort[user.uid].crew, user.crew);
+      t.equal(effort[user.uid].name, user.name);
+    })
+  } )
+})
