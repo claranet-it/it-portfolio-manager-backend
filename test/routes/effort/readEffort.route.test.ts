@@ -1,16 +1,20 @@
-import { test } from 'tap'
+import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { EffortResponseType } from '@src/core/Effort/model/effort'
+import { FastifyInstance } from 'fastify'
+
+let app: FastifyInstance;
+
+beforeEach(async () => {
+  app = createApp({logger: false});
+  await app.ready();
+})
+
+afterEach(async () => {
+  await app.close();
+})
 
 test('read efforts without authentication', async (t) => {
-  const app = createApp({
-    logger: false,
-  })
-
-  t.teardown(() => {
-    app.close()
-  })
-
   const response = await app.inject({
     method: 'GET',
     url: '/api/effort/',
@@ -20,16 +24,6 @@ test('read efforts without authentication', async (t) => {
 })
 
 test('read all efforts without params', async (t) => {
-  const app = createApp({
-    logger: false,
-  })
-
-  t.teardown(() => {
-    app.close()
-  })
-
-  await app.ready()
-
   const token = app.createTestJwt({
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
@@ -98,16 +92,6 @@ test('read all efforts without params', async (t) => {
 })
 
 test('read all efforts with uid param', async (t) => {
-  const app = createApp({
-    logger: false,
-  })
-
-  t.teardown(() => {
-    app.close()
-  })
-
-  await app.ready()
-
   const token = app.createTestJwt({
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
@@ -155,15 +139,6 @@ test('read all efforts with uid param', async (t) => {
 })
 
 test('read next efforts without params', async (t) => {
-  const app = createApp({
-    logger: false,
-  })
-
-  t.teardown(() => {
-    app.close()
-  })
-
-  await app.ready()
 
   const token = app.createTestJwt({
     email: 'nicholas.crow@email.com',
@@ -288,15 +263,6 @@ test('read next efforts without params', async (t) => {
 })
 
 test('read next efforts with uid param', async (t) => {
-  const app = createApp({
-    logger: false,
-  })
-
-  t.teardown(() => {
-    app.close()
-  })
-
-  await app.ready()
 
   const token = app.createTestJwt({
     email: 'nicholas.crow@email.com',
