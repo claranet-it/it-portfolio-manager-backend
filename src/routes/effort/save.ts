@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { EffortRow, EffortRowType } from '@src/core/Effort/model/effort'
 import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserProfileNotInitializedError'
+import { EffortExcedsMaxError } from '@src/core/customExceptions/EffortExcedesMaxError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.put<{
@@ -50,6 +51,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         let errorMessage = ''
         if (error instanceof UserProfileNotInitializedError) {
           errorCode = 304
+          errorMessage = error.message
+        }
+        if(error instanceof EffortExcedsMaxError){
+          errorCode = 400;
           errorMessage = error.message
         }
 
