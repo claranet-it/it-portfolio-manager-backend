@@ -159,58 +159,13 @@ test('read next efforts without params', async (t) => {
   const efforts = response.json<EffortResponseType>()
   t.equal(efforts.length, 3)
 
-  const now = new Date()
-  const nextMonth1 = new Date()
-  nextMonth1.setMonth(nextMonth1.getMonth() + 1)
-  const nextMonth2 = new Date()
-  nextMonth2.setMonth(nextMonth2.getMonth() + 2)
-  const nextMonth3 = new Date()
-  nextMonth3.setMonth(nextMonth3.getMonth() + 3)
-
   const expectedResult = [
     {
       'george.python@email.com': {
         crew: 'sun',
         company: 'us',
         name: 'George Python',
-        effort: [
-          {
-            month_year:
-              ('0' + (now.getMonth() + 1)).slice(-2) +
-              '_' +
-              now.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-          {
-            month_year:
-              ('0' + (nextMonth1.getMonth() + 1)).slice(-2) +
-              '_' +
-              nextMonth1.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-          {
-            month_year:
-              ('0' + (nextMonth2.getMonth() + 1)).slice(-2) +
-              '_' +
-              nextMonth2.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-          {
-            month_year:
-              ('0' + (nextMonth3.getMonth() + 1)).slice(-2) +
-              '_' +
-              nextMonth3.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-        ],
+        effort: next3MonthsEmptyEffort(),
       },
     },
     {
@@ -218,44 +173,7 @@ test('read next efforts without params', async (t) => {
         crew: 'moon',
         company: 'us',
         name: 'Nicholas Crow',
-        effort: [
-          {
-            month_year:
-              ('0' + (now.getMonth() + 1)).slice(-2) +
-              '_' +
-              now.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-          {
-            month_year:
-              ('0' + (nextMonth1.getMonth() + 1)).slice(-2) +
-              '_' +
-              nextMonth1.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-          {
-            month_year:
-              ('0' + (nextMonth2.getMonth() + 1)).slice(-2) +
-              '_' +
-              nextMonth2.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-          {
-            month_year:
-              ('0' + (nextMonth3.getMonth() + 1)).slice(-2) +
-              '_' +
-              nextMonth3.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-        ],
+        effort: next3MonthsEmptyEffort(),
       },
     },
     {
@@ -263,44 +181,7 @@ test('read next efforts without params', async (t) => {
       crew: 'bees',
       company: 'it',
       name: 'test italian',
-      effort: [
-        {
-          month_year:
-            ('0' + (now.getMonth() + 1)).slice(-2) +
-            '_' +
-            now.getFullYear().toString().slice(-2),
-          confirmedEffort: 0,
-          tentativeEffort: 0,
-          notes: '',
-        },
-        {
-          month_year:
-            ('0' + (nextMonth1.getMonth() + 1)).slice(-2) +
-            '_' +
-            nextMonth1.getFullYear().toString().slice(-2),
-          confirmedEffort: 0,
-          tentativeEffort: 0,
-          notes: '',
-        },
-        {
-          month_year:
-            ('0' + (nextMonth2.getMonth() + 1)).slice(-2) +
-            '_' +
-            nextMonth2.getFullYear().toString().slice(-2),
-          confirmedEffort: 0,
-          tentativeEffort: 0,
-          notes: '',
-        },
-        {
-          month_year:
-            ('0' + (nextMonth3.getMonth() + 1)).slice(-2) +
-            '_' +
-            nextMonth3.getFullYear().toString().slice(-2),
-          confirmedEffort: 0,
-          tentativeEffort: 0,
-          notes: '',
-        },
-      ],
+      effort: next3MonthsEmptyEffort(),
     },
   },
   ]
@@ -328,58 +209,13 @@ test('read next efforts with uid param', async (t) => {
   const efforts = response.json<EffortResponseType>()
   t.equal(efforts.length, 1)
 
-  const now = new Date()
-  const nextMonth1 = new Date()
-  nextMonth1.setMonth(nextMonth1.getMonth() + 1)
-  const nextMonth2 = new Date()
-  nextMonth2.setMonth(nextMonth2.getMonth() + 2)
-  const nextMonth3 = new Date()
-  nextMonth3.setMonth(nextMonth3.getMonth() + 3)
-
   const expectedResult = [
     {
       'nicholas.crow@email.com': {
         crew: 'moon',
         company: 'us',
         name: 'Nicholas Crow',
-        effort: [
-          {
-            month_year:
-              ('0' + (now.getMonth() + 1)).slice(-2) +
-              '_' +
-              now.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-          {
-            month_year:
-              ('0' + (nextMonth1.getMonth() + 1)).slice(-2) +
-              '_' +
-              nextMonth1.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-          {
-            month_year:
-              ('0' + (nextMonth2.getMonth() + 1)).slice(-2) +
-              '_' +
-              nextMonth2.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-          {
-            month_year:
-              ('0' + (nextMonth3.getMonth() + 1)).slice(-2) +
-              '_' +
-              nextMonth3.getFullYear().toString().slice(-2),
-            confirmedEffort: 0,
-            tentativeEffort: 0,
-            notes: '',
-          },
-        ],
+        effort: next3MonthsEmptyEffort(),
       },
     },
   ]
@@ -437,15 +273,69 @@ inputs.forEach((input) => {
     t.equal(response.statusCode, 200)
     const efforts = response.json<EffortResponseType>()
     t.equal(efforts.length, input.expctedUsers.length)
+
+ 
     input.expctedUsers.forEach((user) => {
       const effort = efforts.find((effort) => Object.keys(effort)[0] === user.uid);
       if(!effort){
         t.fail(`user ${user.uid} not found`)
         return;
       }
-      t.equal(effort[user.uid].company, user.company);
-      t.equal(effort[user.uid].crew, user.crew);
-      t.equal(effort[user.uid].name, user.name);
+      t.same(effort[user.uid].company, user.company);
+      t.same(effort[user.uid].crew, user.crew);
+      t.same(effort[user.uid].name, user.name);
+      t.same(effort[user.uid].effort, next3MonthsEmptyEffort())
     })
   } )
 })
+
+
+function next3MonthsEmptyEffort() {
+  const now = new Date()
+  const nextMonth1 = new Date()
+  nextMonth1.setMonth(nextMonth1.getMonth() + 1)
+  const nextMonth2 = new Date()
+  nextMonth2.setMonth(nextMonth2.getMonth() + 2)
+  const nextMonth3 = new Date()
+  nextMonth3.setMonth(nextMonth3.getMonth() + 3)
+
+    return [
+      {
+        month_year:
+          ('0' + (now.getMonth() + 1)).slice(-2) +
+          '_' +
+          now.getFullYear().toString().slice(-2),
+        confirmedEffort: 0,
+        tentativeEffort: 0,
+        notes: '',
+      },
+      {
+        month_year:
+          ('0' + (nextMonth1.getMonth() + 1)).slice(-2) +
+          '_' +
+          nextMonth1.getFullYear().toString().slice(-2),
+        confirmedEffort: 0,
+        tentativeEffort: 0,
+        notes: '',
+      },
+      {
+        month_year:
+          ('0' + (nextMonth2.getMonth() + 1)).slice(-2) +
+          '_' +
+          nextMonth2.getFullYear().toString().slice(-2),
+        confirmedEffort: 0,
+        tentativeEffort: 0,
+        notes: '',
+      },
+      {
+        month_year:
+          ('0' + (nextMonth3.getMonth() + 1)).slice(-2) +
+          '_' +
+          nextMonth3.getFullYear().toString().slice(-2),
+        confirmedEffort: 0,
+        tentativeEffort: 0,
+        notes: '',
+      },
+    ]
+
+}
