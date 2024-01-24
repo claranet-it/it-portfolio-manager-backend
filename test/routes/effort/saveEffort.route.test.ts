@@ -43,6 +43,31 @@ test('save effort with incomplete params', async t => {
     t.equal(response.statusCode, 400)
 })
 
+test('save effort greater than 100', async (t) => {
+    const token = app.createTestJwt({
+        "email": "nicholas.crow@email.com",
+        "name": "Nicholas Crow",
+        "picture": "https://test.com/nicholas.crow.jpg",
+    })
+
+    const response = await app.inject({
+        method: 'PUT',
+        url: '/api/effort/',
+        headers: {
+            authorization: `Bearer ${token}`
+        },
+        payload: {
+            uid: 'nicholas.crow@email.com',
+            month_year: '01_24',
+            confirmedEffort: 60,
+            tentativeEffort: 60,
+            notes: ''
+        }
+    })
+
+    t.equal(response.statusCode, 400)
+})
+
 test('insert effort', async t => {
     const token = app.createTestJwt({
         "email": "nicholas.crow@email.com",
