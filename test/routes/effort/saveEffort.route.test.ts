@@ -66,7 +66,7 @@ test('save effort greater than 100', async (t) => {
     })
 
     t.equal(response.statusCode, 400)
-    t.equal(response.body, 'Total effort for period January 24 is greater then 100')
+    t.equal(response.body, JSON.stringify({message: 'Total effort for period January 24 is greater then 100'}))
 })
 
 test('insert effort', async t => {
