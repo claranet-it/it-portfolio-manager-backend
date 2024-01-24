@@ -20,21 +20,23 @@ export class EffortService {
     params: EffortReadParamsType,
   ): Promise<EffortResponseType> {
     const efforts = await this.effortRepository.getEffort(params)
-    const userProfiles = await this.userProfileService.getAllUserProfiles();
-    const results = new EffortList([]);
-    userProfiles.forEach(userProfile => {
-      const effortsOfUser = efforts.filter((effort) => effort.uid === userProfile.uid);
-      effortsOfUser.forEach(effortOfUser =>{
-        results.pushEffort({...userProfile, ...effortOfUser});
+    const userProfiles = await this.userProfileService.getAllUserProfiles()
+    const results = new EffortList([])
+    userProfiles.forEach((userProfile) => {
+      const effortsOfUser = efforts.filter(
+        (effort) => effort.uid === userProfile.uid,
+      )
+      effortsOfUser.forEach((effortOfUser) => {
+        results.pushEffort({ ...userProfile, ...effortOfUser })
       })
-    });
+    })
     return results.toEffortReponse()
   }
 
   async getEffortNextFormattedResponse(
     params: EffortReadParamsType,
   ): Promise<EffortResponseType> {
-    const users = await this.getUserProfiles(params);
+    const users = await this.getUserProfiles(params)
 
     const efforts = new EffortList([])
     for (const user of users) {
@@ -50,8 +52,8 @@ export class EffortService {
           date.getFullYear().toString().slice(-2)
 
         params.month_year = month_year
-        const effortsOfUser = await this.effortRepository.getEffort(params);
-        const effortOfUser = effortsOfUser[0];
+        const effortsOfUser = await this.effortRepository.getEffort(params)
+        const effortOfUser = effortsOfUser[0]
         efforts.pushEffort({
           uid: user.uid,
           month_year: month_year,
@@ -59,8 +61,8 @@ export class EffortService {
           tentativeEffort: effortOfUser?.tentativeEffort ?? 0,
           notes: effortOfUser?.notes ?? '',
           crew: user.crew,
-          company:  user.company,
-          name: user.name
+          company: user.company,
+          name: user.name,
         })
       }
     }
@@ -68,18 +70,21 @@ export class EffortService {
     return efforts.toEffortReponse()
   }
 
-  private async getUserProfiles(params:EffortReadParamsType): Promise<UserProfileWithUidType[]> {
-    if(params.uid){
-        const userProfile = await this.userProfileService.getUserProfile(params.uid);
-        if(!userProfile){
-          throw new UserProfileNotInitializedError();
-        }
-        return [{uid: params.uid, ...userProfile}]
+  private async getUserProfiles(
+    params: EffortReadParamsType,
+  ): Promise<UserProfileWithUidType[]> {
+    if (params.uid) {
+      const userProfile = await this.userProfileService.getUserProfile(
+        params.uid,
+      )
+      if (!userProfile) {
+        throw new UserProfileNotInitializedError()
+      }
+      return [{ uid: params.uid, ...userProfile }]
+    } else if (params.company) {
+      return this.userProfileService.getByCompany(params.company)
     }
-    else if (params.company){
-      return this.userProfileService.getByCompany(params.company);
-    }
-    return await this.userProfileService.getAllUserProfiles();
+    return await this.userProfileService.getAllUserProfiles()
   }
 
   async saveEffort(params: EffortRowType): Promise<void> {
@@ -87,8 +92,8 @@ export class EffortService {
     if (!userProfile) {
       throw new UserProfileNotInitializedError()
     }
-    if((params.confirmedEffort + params.tentativeEffort) > 100){
-      throw new EffortExcedsMaxError(params.month_year);
+    if (params.confirmedEffort + params.tentativeEffort > 100) {
+      throw new EffortExcedsMaxError(params.month_year)
     }
 
     await this.effortRepository.saveEffort(params)

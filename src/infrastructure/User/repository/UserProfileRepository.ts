@@ -63,12 +63,12 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     return []
   }
 
-  async getByCompany(company: string): Promise<UserProfileWithUidType[]>{
+  async getByCompany(company: string): Promise<UserProfileWithUidType[]> {
     const command = new QueryCommand({
       TableName: getTableName('UserProfile'),
       IndexName: 'companyIndex',
       KeyConditionExpression: 'company = :company',
-      ExpressionAttributeValues: {':company': {S: company}}
+      ExpressionAttributeValues: { ':company': { S: company } },
     })
     const result = await this.dynamoDBClient.send(command)
     if (result?.Items) {
@@ -78,12 +78,14 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     return []
   }
 
-  private getUserProfileFromDynamoItem(item: Record<string, AttributeValue>): UserProfileWithUidType{
-    return{
+  private getUserProfileFromDynamoItem(
+    item: Record<string, AttributeValue>,
+  ): UserProfileWithUidType {
+    return {
       uid: item.uid?.S ?? '',
       crew: item.crew?.S ?? '',
       company: item.company?.S ?? '',
-      name: item.name?.S ?? ''
+      name: item.name?.S ?? '',
     }
   }
 }

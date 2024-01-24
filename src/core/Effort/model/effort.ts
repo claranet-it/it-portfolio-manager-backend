@@ -24,8 +24,8 @@ export const EffortResponsePerUid = Type.Record(
     crew: Type.String(),
     company: Type.String(),
     name: Type.String(),
-    effort: Type.Array(EffortRowPerUid)
-  })
+    effort: Type.Array(EffortRowPerUid),
+  }),
 )
 
 export type EffortResponsePerUidType = Static<typeof EffortResponsePerUid>
@@ -37,7 +37,7 @@ export type EffortResponseType = Static<typeof EffortResponse>
 export const EffortReadParams = Type.Object({
   uid: Type.Optional(Type.String()),
   month_year: Type.Optional(Type.RegExp(/(0[1-9]|1[012])_([0-9][0-9])$/)),
-  company: Type.Optional(Type.String())
+  company: Type.Optional(Type.String()),
 })
 
 export type EffortReadParamsType = Static<typeof EffortReadParams>

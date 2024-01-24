@@ -28,17 +28,17 @@ export class EffortRepository implements EffortRepositoryInterface {
     const result = await this.dynamoDBClient.send(command)
 
     if (result?.Items) {
-        return result.Items.map((item) => ({
-          uid: item.uid?.S ?? '',
-          month_year: item.month_year?.S ?? '',
-          confirmedEffort: item.confirmedEffort.N
-            ? Number(item.confirmedEffort.N)
-            : 0,
-          tentativeEffort: item.tentativeEffort.N
-            ? Number(item.tentativeEffort.N)
-            : 0,
-          notes: item.notes?.S ?? ''
-        }))
+      return result.Items.map((item) => ({
+        uid: item.uid?.S ?? '',
+        month_year: item.month_year?.S ?? '',
+        confirmedEffort: item.confirmedEffort.N
+          ? Number(item.confirmedEffort.N)
+          : 0,
+        tentativeEffort: item.tentativeEffort.N
+          ? Number(item.tentativeEffort.N)
+          : 0,
+        notes: item.notes?.S ?? '',
+      }))
     }
 
     return []
@@ -52,7 +52,7 @@ export class EffortRepository implements EffortRepositoryInterface {
         month_year: { S: params.month_year },
         confirmedEffort: { N: params.confirmedEffort.toString() },
         tentativeEffort: { N: params.tentativeEffort.toString() },
-        notes: { S: params.notes }
+        notes: { S: params.notes },
       },
     })
 

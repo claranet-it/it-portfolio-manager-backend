@@ -22,11 +22,12 @@ export class EffortList {
 
   toEffortReponse(): EffortResponseType {
     return this.effortList.reduce(
-      (effortList: EffortResponseType, effortRow: EffortWithUserProfileType) => {
+      (
+        effortList: EffortResponseType,
+        effortRow: EffortWithUserProfileType,
+      ) => {
         const name =
-        effortRow.name !== ''
-          ? effortRow.name
-          : getNameByEmail(effortRow.uid)
+          effortRow.name !== '' ? effortRow.name : getNameByEmail(effortRow.uid)
         let effortRowPerUid = effortList.find(
           (effortRowPerUid: EffortResponsePerUidType) => {
             return effortRowPerUid[effortRow.uid]
@@ -36,10 +37,10 @@ export class EffortList {
         if (!effortRowPerUid) {
           effortRowPerUid = {
             [effortRow.uid]: {
-            crew: effortRow.crew,
-            company: effortRow.company,
-            name: name,
-             effort: []
+              crew: effortRow.crew,
+              company: effortRow.company,
+              name: name,
+              effort: [],
             },
           }
           effortList.push(effortRowPerUid)

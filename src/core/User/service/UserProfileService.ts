@@ -22,9 +22,8 @@ export class UserProfileService {
   async getAllUserProfiles(): Promise<UserProfileWithUidType[]> {
     return this.userProfileRepository.getAllUserProfiles()
   }
-  
-  async getByCompany(company: string): Promise<UserProfileWithUidType[]> {
-    return this.userProfileRepository.getByCompany(company);
-  }
 
+  async getByCompany(company: string): Promise<UserProfileWithUidType[]> {
+    return this.userProfileRepository.getByCompany(company)
+  }
 }

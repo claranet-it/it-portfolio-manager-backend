@@ -53,8 +53,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           errorCode = 304
           errorMessage = error.message
         }
-        if(error instanceof EffortExcedsMaxError){
-          errorCode = 400;
+        if (error instanceof EffortExcedsMaxError) {
+          errorCode = 400
           errorMessage = error.message
         }
 
