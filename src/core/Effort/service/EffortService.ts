@@ -83,7 +83,6 @@ export class EffortService {
   }
 
   async saveEffort(params: EffortRowType): Promise<void> {
-    console.log(params)
     const userProfile = await this.userProfileService.getUserProfile(params.uid)
     if (!userProfile) {
       throw new UserProfileNotInitializedError()
