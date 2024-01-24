@@ -41,8 +41,7 @@ export class EffortService {
     const efforts = new EffortList([])
     for (const user of users) {
       params.uid = user.uid
-
-      for (let i = 0; i <= 3; i++) {
+      for (let i = 0; i <= params.months; i++) {
         const date = new Date()
         date.setDate(1)
         date.setMonth(date.getMonth() + i)

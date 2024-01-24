@@ -38,6 +38,7 @@ export const EffortReadParams = Type.Object({
   uid: Type.Optional(Type.String()),
   month_year: Type.Optional(Type.RegExp(/(0[1-9]|1[012])_([0-9][0-9])$/)),
   company: Type.Optional(Type.String()),
+  months: Type.Number({default: 3})
 })
 
 export type EffortReadParamsType = Static<typeof EffortReadParams>
