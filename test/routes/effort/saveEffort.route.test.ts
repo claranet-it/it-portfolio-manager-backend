@@ -1,15 +1,19 @@
-import { test } from "tap"
+import { test, beforeEach, afterEach } from "tap"
 import createApp from "@src/app";
+import { FastifyInstance } from "fastify";
+
+let app: FastifyInstance;
+
+beforeEach(async () => {
+  app = createApp({logger: false});
+  await app.ready();
+})
+
+afterEach(async () => {
+  await app.close();
+})
 
 test('save effort without authentication', async t => {
-    const app = createApp({
-        logger: false,
-    })
-
-    t.teardown(() => {
-        app.close();
-    })
-
     const response = await app.inject({
         method: 'PUT',
         url: '/api/effort/',
@@ -19,16 +23,6 @@ test('save effort without authentication', async t => {
 })
 
 test('save effort with incomplete params', async t => {
-    const app = createApp({
-        logger: false,
-    })
-
-    t.teardown(() => {
-        app.close();
-    })
-
-    await app.ready()
-
     const token = app.createTestJwt({
         "email": "nicholas.crow@email.com",
         "name": "Nicholas Crow",
@@ -50,16 +44,6 @@ test('save effort with incomplete params', async t => {
 })
 
 test('insert effort', async t => {
-    const app = createApp({
-        logger: false,
-    })
-
-    t.teardown(() => {
-        app.close();
-    })
-
-    await app.ready()
-
     const token = app.createTestJwt({
         "email": "nicholas.crow@email.com",
         "name": "Nicholas Crow",
@@ -85,16 +69,6 @@ test('insert effort', async t => {
 })
 
 test('update effort', async t => {
-    const app = createApp({
-        logger: false,
-    })
-
-    t.teardown(() => {
-        app.close();
-    })
-
-    await app.ready()
-
     const token = app.createTestJwt({
         "email": "nicholas.crow@email.com",
         "name": "Nicholas Crow",
@@ -120,16 +94,6 @@ test('update effort', async t => {
 })
 
 test('update effort for the logged user without UserProfile', async t => {
-    const app = createApp({
-        logger: false,
-    })
-
-    t.teardown(() => {
-        app.close();
-    })
-
-    await app.ready()
-
     const token = app.createTestJwt({
         "email": "max.power@email.com",
         "name": "Max Power",
