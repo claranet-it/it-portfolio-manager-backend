@@ -4,27 +4,39 @@
     "month_year": "01_23",
     "confirmedEffort": 50,
     "tentativeEffort": 0,
-    "notes": "Scouting"
+    "notes": "Scouting",
+    "name": "Nicholas Crow",
+    "company": "it",
+    "crew": "moon"
   },
   {
     "uid": "nicholas.crow@email.com",
     "month_year": "02_23",
     "confirmedEffort": 50,
     "tentativeEffort": 30,
-    "notes": "Scouting + Carimali"
+    "notes": "Scouting + Carimali",
+    "name": "Nicholas Crow",
+    "company": "it",
+    "crew": "moon"
   },
   {
-    "uid": "george.python",
+    "uid": "george.python@email.com",
     "month_year": "01_23",
     "confirmedEffort": 80,
     "tentativeEffort": 0,
-    "notes": "Moovtech"
+    "notes": "Moovtech",
+    "name": "Nicholas Crow",
+    "company": "it",
+    "crew": "sun"
   },
   {
-    "uid": "george.python",
+    "uid": "george.python@email.com",
     "month_year": "02_23",
     "confirmedEffort": 50,
     "tentativeEffort": 0,
-    "notes": "Moovtech"
+    "notes": "Moovtech",
+    "name": "Nicholas Crow",
+    "company": "it",
+    "crew": "sun"
   }
 ]

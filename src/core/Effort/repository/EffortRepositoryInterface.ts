@@ -1,8 +1,7 @@
 import { EffortReadParamsType, EffortRowType } from '../model/effort'
-import { EffortList } from '../model/effortList'
 
 export interface EffortRepositoryInterface {
-  getEffort(params: EffortReadParamsType): Promise<EffortList>
+  getEffort(params: EffortReadParamsType): Promise<EffortRowType[]>
 
   saveEffort(params: EffortRowType): Promise<void>
 }

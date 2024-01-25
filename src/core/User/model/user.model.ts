@@ -24,6 +24,7 @@ export const UserProfileWithUid = Type.Object({
   uid: Type.String(),
   crew: Type.String(),
   company: Type.String(),
+  name: Type.String(),
 })
 
 export type UserProfileWithUidType = Static<typeof UserProfileWithUid>

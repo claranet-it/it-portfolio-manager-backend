@@ -113,12 +113,24 @@ resources:
         AttributeDefinitions:
           - AttributeName: uid
             AttributeType: S
+          - AttributeName: company
+            AttributeType: S
         KeySchema:
           - AttributeName: uid
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: companyIndex
+            KeySchema:
+              - AttributeName: company
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
     ItPortfolioManagerEffort:
       Type: AWS::DynamoDB::Table
       Properties:

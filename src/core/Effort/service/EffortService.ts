@@ -7,6 +7,8 @@ import {
 import { EffortRepositoryInterface } from '../repository/EffortRepositoryInterface'
 import { UserProfileService } from '@src/core/User/service/UserProfileService'
 import { EffortList } from '../model/effortList'
+import { UserProfileWithUidType } from '@src/core/User/model/user.model'
+import { EffortExcedsMaxError } from '@src/core/customExceptions/EffortExcedesMaxError'
 
 export class EffortService {
   constructor(
@@ -18,25 +20,28 @@ export class EffortService {
     params: EffortReadParamsType,
   ): Promise<EffortResponseType> {
     const efforts = await this.effortRepository.getEffort(params)
-
-    return efforts.toEffortReponse()
+    const userProfiles = await this.userProfileService.getAllUserProfiles()
+    const results = new EffortList([])
+    userProfiles.forEach((userProfile) => {
+      const effortsOfUser = efforts.filter(
+        (effort) => effort.uid === userProfile.uid,
+      )
+      effortsOfUser.forEach((effortOfUser) => {
+        results.pushEffort({ ...userProfile, ...effortOfUser })
+      })
+    })
+    return results.toEffortReponse()
   }
 
   async getEffortNextFormattedResponse(
     params: EffortReadParamsType,
   ): Promise<EffortResponseType> {
-    let users = []
-    if (!params.uid) {
-      users = await this.userProfileService.getAllUserProfiles()
-    } else {
-      users.push({ uid: params.uid })
-    }
+    const users = await this.getUserProfiles(params)
 
     const efforts = new EffortList([])
     for (const user of users) {
       params.uid = user.uid
-
-      for (let i = 0; i <= 3; i++) {
+      for (let i = 0; i <= params.months; i++) {
         const date = new Date()
         date.setDate(1)
         date.setMonth(date.getMonth() + i)
@@ -47,14 +52,16 @@ export class EffortService {
 
         params.month_year = month_year
         const effortsOfUser = await this.effortRepository.getEffort(params)
-        const effortOfUser = effortsOfUser.getEffortList()[0]
-
+        const effortOfUser = effortsOfUser[0]
         efforts.pushEffort({
           uid: user.uid,
           month_year: month_year,
           confirmedEffort: effortOfUser?.confirmedEffort ?? 0,
           tentativeEffort: effortOfUser?.tentativeEffort ?? 0,
           notes: effortOfUser?.notes ?? '',
+          crew: user.crew,
+          company: user.company,
+          name: user.name,
         })
       }
     }
@@ -62,10 +69,30 @@ export class EffortService {
     return efforts.toEffortReponse()
   }
 
+  private async getUserProfiles(
+    params: EffortReadParamsType,
+  ): Promise<UserProfileWithUidType[]> {
+    if (params.uid) {
+      const userProfile = await this.userProfileService.getUserProfile(
+        params.uid,
+      )
+      if (!userProfile) {
+        throw new UserProfileNotInitializedError()
+      }
+      return [{ uid: params.uid, ...userProfile }]
+    } else if (params.company) {
+      return this.userProfileService.getByCompany(params.company)
+    }
+    return await this.userProfileService.getAllUserProfiles()
+  }
+
   async saveEffort(params: EffortRowType): Promise<void> {
     const userProfile = await this.userProfileService.getUserProfile(params.uid)
     if (!userProfile) {
       throw new UserProfileNotInitializedError()
+    }
+    if (params.confirmedEffort + params.tentativeEffort > 100) {
+      throw new EffortExcedsMaxError(params.month_year)
     }
 
     await this.effortRepository.saveEffort(params)

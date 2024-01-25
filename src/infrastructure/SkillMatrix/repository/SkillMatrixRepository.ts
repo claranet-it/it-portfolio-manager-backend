@@ -85,11 +85,12 @@ export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
                   skill: { S: skillMatrix.skill },
                 },
                 TableName: getTableName('SkillMatrix'),
-                UpdateExpression: 'SET #company = :company, #crew = :crew, #name= :name',
+                UpdateExpression:
+                  'SET #company = :company, #crew = :crew, #name= :name',
                 ExpressionAttributeNames: {
                   '#company': 'company',
                   '#crew': 'crew',
-                  '#name': 'name'
+                  '#name': 'name',
                 },
                 ExpressionAttributeValues: {
                   ':company': {
@@ -101,8 +102,8 @@ export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
                     S: skillMatrixUpdateOfUserParams.crew || skillMatrix.crew,
                   },
                   ':name': {
-                    S: skillMatrixUpdateOfUserParams.name || skillMatrix.name
-                  }
+                    S: skillMatrixUpdateOfUserParams.name || skillMatrix.name,
+                  },
                 },
               },
             })),

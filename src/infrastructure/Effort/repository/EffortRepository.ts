@@ -8,7 +8,6 @@ import {
   EffortReadParamsType,
   EffortRowType,
 } from '@src/core/Effort/model/effort'
-import { EffortList } from '@src/core/Effort/model/effortList'
 import { EffortRepositoryInterface } from '@src/core/Effort/repository/EffortRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
 
@@ -18,7 +17,7 @@ export class EffortRepository implements EffortRepositoryInterface {
     private isTest: boolean,
   ) {}
 
-  async getEffort(params: EffortReadParamsType): Promise<EffortList> {
+  async getEffort(params: EffortReadParamsType): Promise<EffortRowType[]> {
     let command = null
     if (params.uid) {
       command = this.createQueryCommand(params)
@@ -29,22 +28,20 @@ export class EffortRepository implements EffortRepositoryInterface {
     const result = await this.dynamoDBClient.send(command)
 
     if (result?.Items) {
-      return new EffortList(
-        result.Items.map((item) => ({
-          uid: item.uid?.S ?? '',
-          month_year: item.month_year?.S ?? '',
-          confirmedEffort: item.confirmedEffort.N
-            ? Number(item.confirmedEffort.N)
-            : 0,
-          tentativeEffort: item.tentativeEffort.N
-            ? Number(item.tentativeEffort.N)
-            : 0,
-          notes: item.notes?.S ?? '',
-        })),
-      )
+      return result.Items.map((item) => ({
+        uid: item.uid?.S ?? '',
+        month_year: item.month_year?.S ?? '',
+        confirmedEffort: item.confirmedEffort.N
+          ? Number(item.confirmedEffort.N)
+          : 0,
+        tentativeEffort: item.tentativeEffort.N
+          ? Number(item.tentativeEffort.N)
+          : 0,
+        notes: item.notes?.S ?? '',
+      }))
     }
 
-    return new EffortList([])
+    return []
   }
 
   async saveEffort(params: EffortRowType): Promise<void> {

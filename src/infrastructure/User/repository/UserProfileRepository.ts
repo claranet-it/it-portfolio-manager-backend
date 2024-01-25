@@ -1,4 +1,5 @@
 import {
+  AttributeValue,
   DynamoDBClient,
   PutItemCommand,
   QueryCommand,
@@ -27,11 +28,7 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
       (result?.Items[0]?.crew?.S || result?.Items[0]?.company?.S)
     ) {
       // TODO: (crew || company) or (crew && company) ?
-      return {
-        name: result.Items[0].name?.S ?? '',
-        crew: result.Items[0].crew?.S ?? '',
-        company: result.Items[0].company?.S ?? '',
-      }
+      return this.getUserProfileFromDynamoItem(result.Items[0])
     }
 
     return null
@@ -60,13 +57,35 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     })
     const result = await this.dynamoDBClient.send(command)
     if (result?.Items) {
-      return result.Items.map((item) => ({
-        uid: item.uid?.S ?? '',
-        crew: item.crew?.S ?? '',
-        company: item.company?.S ?? '',
-      }))
+      return result.Items.map((item) => this.getUserProfileFromDynamoItem(item))
     }
 
     return []
+  }
+
+  async getByCompany(company: string): Promise<UserProfileWithUidType[]> {
+    const command = new QueryCommand({
+      TableName: getTableName('UserProfile'),
+      IndexName: 'companyIndex',
+      KeyConditionExpression: 'company = :company',
+      ExpressionAttributeValues: { ':company': { S: company } },
+    })
+    const result = await this.dynamoDBClient.send(command)
+    if (result?.Items) {
+      return result.Items.map((item) => this.getUserProfileFromDynamoItem(item))
+    }
+
+    return []
+  }
+
+  private getUserProfileFromDynamoItem(
+    item: Record<string, AttributeValue>,
+  ): UserProfileWithUidType {
+    return {
+      uid: item.uid?.S ?? '',
+      crew: item.crew?.S ?? '',
+      company: item.company?.S ?? '',
+      name: item.name?.S ?? '',
+    }
   }
 }

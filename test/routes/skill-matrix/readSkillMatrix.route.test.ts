@@ -1,6 +1,6 @@
 import { test } from "tap"
 import createApp from "@src/app";
-import { SkillMatrixMineResponseType } from "@src/core/SkillMatrix/model/skillMatrix.model";
+import { SkillMatrixResponsePerUidType, SkillMatrixResponseType } from "@src/core/SkillMatrix/model/skillMatrix.model";
 
 test('read skill matrix without authentication', async t => {
     const app = createApp({
@@ -128,68 +128,67 @@ test('read all skill matrix with company param', async t => {
         }
     })
 
-    const userSkillMatrix = response.json<SkillMatrixMineResponseType>()
+    const userSkillMatrix = response.json<SkillMatrixResponseType>()
 
     t.equal(response.statusCode, 200)
     t.equal(userSkillMatrix.length, 2)
-
-    const expectedResult = [
+    const nicolasCrowExpected : SkillMatrixResponsePerUidType = {
+        "Nicholas Crow": 
         {
-            "George Python": {
-                "company": "it",
-                "crew": "sun",
-                "skills": {
-                    "PHP": 1,
-                    "Frontend (JS/TS)": 0,
-                    "NodeJS (JS/TS)": 0,
-                    "Native Android": 0,
-                    "Native iOS": 0,
-                    "Multiplatform Mobile (ionic, react-native, flutter)": 0,
-                    "UI Development (HTML/CSS/SCSS)": 0,
-                    "C#": 0,
-                    "Python": 3,
-                    "Java/Kotlin": 0,
-                    "Elixir": 0,
-                    "Ruby (Rails)": 0,
-                    "Rust": 0,
-                    'Serverless': 0,
-                    'Data': 0,
-                    'Networking': 0,
-                    'Container': 0,
-                    'Security': 0,
-                    'IaC': 0,
-                    'ML': 0
-                },
-            },
-        },
-        {
-            "Nicholas Crow": {
-                "company": "it",
-                "crew": "moon",
-                "skills": {
-                    "PHP": 3,
-                    "Frontend (JS/TS)": 0,
-                    "NodeJS (JS/TS)": 0,
-                    "Native Android": 0,
-                    "Native iOS": 0,
-                    "Multiplatform Mobile (ionic, react-native, flutter)": 0,
-                    "UI Development (HTML/CSS/SCSS)": 0,
-                    "C#": 0,
-                    "Python": 0,
-                    "Java/Kotlin": 3,
-                    "Elixir": 0,
-                    "Ruby (Rails)": 0,
-                    "Rust": 0,
-                    'Serverless': 0,
-                    'Data': 0,
-                    'Networking': 0,
-                    'Container': 0,
-                    'Security': 0,
-                    'IaC': 0,
-                    'ML': 0
-                }
-            }
+            company: "it",
+            crew: "moon",
+            skills: {  
+             "PHP": 3,
+             "Frontend (JS/TS)": 0,
+             "NodeJS (JS/TS)": 0,
+             "Native Android": 0,
+             "Native iOS": 0,
+             "Multiplatform Mobile (ionic, react-native, flutter)": 0,
+             "UI Development (HTML/CSS/SCSS)": 0,
+             "C#": 0,
+             "Python": 0,
+             "Java/Kotlin": 3,
+             "Elixir": 0,
+             "Ruby (Rails)": 0,
+             "Rust": 0,
+             'Serverless': 0,
+             'Data': 0,
+             'Networking': 0,
+             'Container': 0,
+             'Security': 0,
+             'IaC': 0,
+             'ML': 0}
         }
-    ]
-    t.same(userSkillMatrix, expectedResult)
+    }
+    const georgePythonExpected : SkillMatrixResponsePerUidType = {
+        "George Python": 
+        {
+            company: "it",
+            crew: "sun",
+            skills: {
+                "PHP": 1,
+                "Frontend (JS/TS)": 0,
+                "NodeJS (JS/TS)": 0,
+                "Native Android": 0,
+                "Native iOS": 0,
+                "Multiplatform Mobile (ionic, react-native, flutter)": 0,
+                "UI Development (HTML/CSS/SCSS)": 0,
+                "C#": 0,
+                "Python": 3,
+                "Java/Kotlin": 0,
+                "Elixir": 0,
+                "Ruby (Rails)": 0,
+                "Rust": 0,
+                'Serverless': 0,
+                'Data': 0,
+                'Networking': 0,
+                'Container': 0,
+                'Security': 0,
+                'IaC': 0,
+                'ML': 0      
+            } 
+        }
+    }
+    t.same(userSkillMatrix.find((res) => Object.keys(res)[0] ===  "Nicholas Crow"), nicolasCrowExpected);
+    t.same(userSkillMatrix.find((res) => Object.keys(res)[0] ===  "George Python"), georgePythonExpected);
 })
