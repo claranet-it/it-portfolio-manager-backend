@@ -11,6 +11,7 @@ import { SkillMatrixService } from '../SkillMatrix/service/SkillMatrixService'
 import { UserService } from '../User/service/UserService'
 import { EffortRepository } from '@src/infrastructure/Effort/repository/EffortRepository'
 import { EffortService } from '../Effort/service/EffortService'
+import { OpenAIService } from '../OpenAI/service/OpenAIService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -61,6 +62,9 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       effortService: asClass(EffortService),
+    })
+    container.register({
+      openAIService: asClass(OpenAIService)
     })
 
     return container
