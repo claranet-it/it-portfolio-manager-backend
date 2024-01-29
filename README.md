@@ -109,3 +109,8 @@ You can find the swagger documentation at the following url:
 ```bash
 https://<app-url>/api/documentation
 ```
+
+## Add OpenAI key for local development (optional)
+
+- Add `.env.dev` file in project root
+- Put `OPENAPI_KEY='{your api key}'` inside the file
