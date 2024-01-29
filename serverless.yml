@@ -30,7 +30,6 @@ provider:
     Destroy: 'false'
 
 plugins:
-  - serverless-dotenv-plugin
   - serverless-plugin-typescript
   - serverless-tscpaths
   - serverless-offline-ssm
