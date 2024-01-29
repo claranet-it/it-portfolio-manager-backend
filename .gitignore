@@ -7,3 +7,4 @@ node_modules
 .vscode
 .tap
 .serverless
+.env.dev

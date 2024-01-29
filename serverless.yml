@@ -30,6 +30,7 @@ provider:
     Destroy: 'false'
 
 plugins:
+  - serverless-dotenv-plugin
   - serverless-plugin-typescript
   - serverless-tscpaths
   - serverless-offline-ssm
@@ -61,6 +62,8 @@ custom:
   serverless-offline-ssm:
     stages:
       - dev
+    ssm:
+      it-portfolio-manager/dev/openai-api-key: ${env:OPENAPI_KEY}
 
 package:
   patterns:
