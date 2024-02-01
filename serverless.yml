@@ -26,6 +26,11 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ]
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ]
+        - Effect: "Allow"
+          Action:
+            - "ssm:GetParameter"
+          Resource:
+            - arn:aws:ssm:${self:provider.region}:*:parameter/${opt:stage, 'dev'}/*
   stackTags:
     Owner: 'Massimo Biagioli'
     Destroy: 'false'
