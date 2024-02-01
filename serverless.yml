@@ -7,6 +7,7 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: eu-south-1
+  timeout: 60
   iam:
     role:
       statements:
@@ -30,9 +31,9 @@ provider:
     Destroy: 'false'
 
 plugins:
+  - serverless-offline-ssm
   - serverless-plugin-typescript
   - serverless-tscpaths
-  - serverless-offline-ssm
   - serverless-dynamodb
   - serverless-offline
 
@@ -74,7 +75,7 @@ functions:
     handler: src/handlers/app.handler
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
-      OPENAI_API_KEY: ${ssm:it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key}
+      OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
     events:
       - http:
           path: /
