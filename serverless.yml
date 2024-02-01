@@ -31,7 +31,6 @@ provider:
     Destroy: 'false'
 
 plugins:
-  - serverless-offline-ssm
   - serverless-plugin-typescript
   - serverless-tscpaths
   - serverless-dynamodb
@@ -59,11 +58,6 @@ custom:
             sources: [ ./seed/user-profile.json ]
           - table: ItPortfolioManager-Effort-${opt:stage, 'dev'}
             sources: [ ./seed/effort.json ]
-  serverless-offline-ssm:
-    stages:
-      - dev
-    ssm:
-      it-portfolio-manager/dev/openai-api-key: ${env:OPENAPI_KEY}
 
 package:
   patterns:
