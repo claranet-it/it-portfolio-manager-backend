@@ -7,6 +7,7 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: eu-south-1
+  timeout: 60
   iam:
     role:
       statements:
@@ -29,7 +30,7 @@ provider:
           Action:
             - "ssm:GetParameter"
           Resource:
-            - arn:aws:ssm:${self:provider.region}:*:parameter/${opt:stage, 'dev'}/*
+            - arn:aws:ssm:${self:provider.region}:*:parameter/it-portfolio-manager/${opt:stage, 'dev'}/*
   stackTags:
     Owner: 'Massimo Biagioli'
     Destroy: 'false'
