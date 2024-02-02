@@ -23,14 +23,15 @@ declare module 'fastify' {
 async function dependencyInjectionContainerPlugin(
   fastify: FastifyInstance,
 ): Promise<void> {
-  const openAIClient = await OpenAiClient.getClient()
+  const isTest = process.env.STAGE_NAME === 'test';
+  const openAIClient = await OpenAiClient.getClient(isTest)
   const dependencyInjectionContainer = (): AwilixContainer => {
     const container = awilix.createContainer({
       injectionMode: awilix.InjectionMode.CLASSIC,
     })
 
     container.register({
-      isTest: awilix.asValue(process.env.STAGE_NAME === 'test'),
+      isTest: awilix.asValue(isTest),
     })
 
     container.register({

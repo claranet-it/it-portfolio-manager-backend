@@ -3,7 +3,10 @@ import OpenAI from 'openai'
 
 export class OpenAiClient {
 
-  static async getClient() {
+  static async getClient(isTest: boolean = false) {
+    if(isTest){
+      return null;
+    }
     const ssm = new SSM();
     const key = await ssm.getParameter({
       Name: process.env.OPENAI_API_KEY_ARN,
