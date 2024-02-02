@@ -351,7 +351,7 @@ function nextMonthsEmptyEffort(months: number) {
     for(let i = 0 ; i< months; i++){
       const month = new Date()
       month.setDate(1)
-      month.setMonth(i +1)
+      month.setMonth(month.getMonth() + i +1)
       result.push({
         month_year:
         ('0' + (month.getMonth() + 1)).slice(-2) +
