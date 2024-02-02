@@ -7,6 +7,7 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: eu-south-1
+  timeout: 60
   iam:
     role:
       statements:
@@ -25,6 +26,11 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ]
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ]
+        - Effect: "Allow"
+          Action:
+            - "ssm:GetParameter"
+          Resource:
+            - arn:aws:ssm:${self:provider.region}:*:parameter/${opt:stage, 'dev'}/*
   stackTags:
     Owner: 'Massimo Biagioli'
     Destroy: 'false'
@@ -68,6 +74,7 @@ functions:
     handler: src/handlers/app.handler
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
+      OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
     events:
       - http:
           path: /

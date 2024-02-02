@@ -11,6 +11,8 @@ import { SkillMatrixService } from '../SkillMatrix/service/SkillMatrixService'
 import { UserService } from '../User/service/UserService'
 import { EffortRepository } from '@src/infrastructure/Effort/repository/EffortRepository'
 import { EffortService } from '../Effort/service/EffortService'
+import { OpenAIService } from '../OpenAI/service/OpenAIService'
+import { OpenAiClient } from '@src/infrastructure/OpenAI/OpenAIClient'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -21,6 +23,7 @@ declare module 'fastify' {
 async function dependencyInjectionContainerPlugin(
   fastify: FastifyInstance,
 ): Promise<void> {
+  const openAIClient = await OpenAiClient.getClient()
   const dependencyInjectionContainer = (): AwilixContainer => {
     const container = awilix.createContainer({
       injectionMode: awilix.InjectionMode.CLASSIC,
@@ -61,6 +64,12 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       effortService: asClass(EffortService),
+    })
+    container.register({
+      openAI: awilix.asValue(openAIClient)
+    })
+    container.register({
+      openAIService: asClass(OpenAIService)
     })
 
     return container
