@@ -154,10 +154,19 @@ test('read all skill matrix with company param', async t => {
              'Serverless': 0,
              'Data': 0,
              'Networking': 0,
-             'Container': 0,
              'Security': 0,
-             'IaC': 0,
-             'ML': 0}
+             'ML': 0,
+             "AWS Cloudformation": 0,  
+             "AWS ECS": 0,             
+             "AWS EKS": 0,             
+             "AWS cloud governance": 0,
+             "AWS core": 0,            
+             "AWS finance": 0,         
+             "AWS migration": 0,       
+             "AWS monitoring": 0,      
+             "AWS streaming + IoT": 0, 
+             "Terraform": 0,     
+            }
         }
     }
     const georgePythonExpected : SkillMatrixResponsePerUidType = {
@@ -182,10 +191,18 @@ test('read all skill matrix with company param', async t => {
                 'Serverless': 0,
                 'Data': 0,
                 'Networking': 0,
-                'Container': 0,
                 'Security': 0,
-                'IaC': 0,
-                'ML': 0      
+                'ML': 0,
+                "AWS Cloudformation": 0,  
+                "AWS ECS": 0,             
+                "AWS EKS": 0,             
+                "AWS cloud governance": 0,
+                "AWS core": 0,            
+                "AWS finance": 0,         
+                "AWS migration": 0,       
+                "AWS monitoring": 0,      
+                "AWS streaming + IoT": 0, 
+                "Terraform": 0,           
             } 
         }
     }
