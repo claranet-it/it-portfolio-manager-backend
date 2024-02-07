@@ -13,17 +13,10 @@ export class OpenAIService {
   async answerQuestionWithSkillsAndEffort(question: string, company: string): Promise<openAiResponseType> {
     const skills = await this.skillMatrixService.getAllSkillMatrix({company});
     const effort = await this.effortService.getEffortNextFormattedResponse({company, months: 3})
-    const prompt = `
-        Dati i dati di SKILL:
-        '''
-        ${JSON.stringify(skills)}
-        '''    
-        e EFFORT 
-        '''
-        ${JSON.stringify(effort)}
-        ''''
-        se l'effort non è presente va considerato 0
-        prova a rispondere a questa domanda: ${question}`
+    const prompt = process.env.FIND_TEAM_OPENAI_PROMPT!
+      .replace('[[SKILL]]', JSON.stringify(skills))
+      .replace('[[EFFORT]]', JSON.stringify(effort))
+      .replace('[QUESTION]]', JSON.stringify(question))
         console.log(prompt)
     return await this.getResponse(prompt)
   }
