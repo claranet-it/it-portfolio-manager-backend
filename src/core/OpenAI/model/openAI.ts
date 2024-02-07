@@ -1,7 +1,8 @@
 import { Static, Type } from "@sinclair/typebox";
 
 export const openAIPrompt = Type.Object({
-    prompt: Type.String()
+    prompt: Type.String(),
+    company: Type.String(),
 })
 
 export type openAIPromptType = Static<typeof openAIPrompt>

@@ -75,6 +75,18 @@ functions:
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
+      FIND_TEAM_OPENAI_PROMPT: '   Dati i dati di SKILL:
+        """"
+        [[SKILL]]
+        """" 
+        considerando solo le skills con score pari o superiore a 2  
+        e EFFORT 
+        """"
+        [[EFFORT]]
+        """"
+        se effort non è presente va considerato 0
+        considerando solo le skills con score pari o superiore a 2
+        prova a rispondere a questa domanda: [[QUESTION]]'
     events:
       - http:
           path: /

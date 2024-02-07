@@ -30,7 +30,7 @@ export default async function name(fastify: FastifyInstance): Promise<void> {
           return await fastify
             .dependencyInjectionContainer()
             .resolve('openAIService')
-            .getResponse(request.body.prompt)
+            .answerQuestionWithSkillsAndEffort(request.body.prompt, request.body.company)
 
         }
         catch(error){
