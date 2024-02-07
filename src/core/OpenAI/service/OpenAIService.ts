@@ -17,7 +17,6 @@ export class OpenAIService {
       .replace('[[SKILL]]', JSON.stringify(skills))
       .replace('[[EFFORT]]', JSON.stringify(effort))
       .replace('[[QUESTION]]', JSON.stringify(question))
-        console.log(prompt)
     return await this.getResponse(prompt)
   }
 
