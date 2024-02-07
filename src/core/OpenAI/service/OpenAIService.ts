@@ -16,7 +16,7 @@ export class OpenAIService {
     const prompt = process.env.FIND_TEAM_OPENAI_PROMPT!
       .replace('[[SKILL]]', JSON.stringify(skills))
       .replace('[[EFFORT]]', JSON.stringify(effort))
-      .replace('[QUESTION]]', JSON.stringify(question))
+      .replace('[[QUESTION]]', JSON.stringify(question))
         console.log(prompt)
     return await this.getResponse(prompt)
   }
