@@ -69,6 +69,13 @@ export class EffortService {
     return efforts.toEffortReponse()
   }
 
+  async getEffortPeriod(company: string, from: string, to: string): Promise<EffortRowType[]>
+  {
+    const fromEffort = await this.effortRepository.getEffort({uid: undefined, months: 0, company: company, month_year: from})
+    const toEffort = await this.effortRepository.getEffort({uid: undefined, months: 0, company: company, month_year: to})
+    return [...fromEffort, ...toEffort]
+  }
+
   private async getUserProfiles(
     params: EffortReadParamsType,
   ): Promise<UserProfileWithUidType[]> {
