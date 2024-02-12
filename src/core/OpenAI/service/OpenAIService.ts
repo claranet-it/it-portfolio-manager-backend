@@ -4,6 +4,7 @@ import { SkillMatrixService } from '@src/core/SkillMatrix/service/SkillMatrixSer
 import { EffortService } from '@src/core/Effort/service/EffortService'
 import { skillsList } from '@src/core/Configuration/service/ConfigurationService';
 import { SkillMatrixList } from '@src/core/SkillMatrix/model/skillMatrixList.model';
+import { json } from 'stream/consumers';
 
 export class OpenAIService {
   constructor(
@@ -13,24 +14,16 @@ export class OpenAIService {
   ) {}
 
   private async getRequestedSkills(allSkills: string[], question: string): Promise<{skills: string[]}>{
-    const prompt = `il tuo compito è quello di estrarre le skills richieste nella frase selezionandole da SKILLS, rispondi soltanto con output_format 
-    
-    frase: ${question}
-    
-    SKILLS:${JSON.stringify(skillsList)}
-    
-    output_format: {"skills":[...]}` 
+    const prompt = process.env.FIND_SKILLS_OPENAI_PROMPT!
+      .replace('[[QUESTION]]', question)
+      .replace('[[SKILL_LIST]]', JSON.stringify(skillsList))
      return JSON.parse(await this.getResponse(prompt));
   }
 
   private async getEffortPeriod(question: string): Promise<{start: string, month_number: number}>{
-    const prompt = `il tuo compito è trovare il periodo descritto nella seguente frase, rispondi soltanto nel formato output_format: 
-
-    frase: ${question} 
-    
-    se l'anno non è specificato considera ${new Date().getFullYear().toString().slice(-2)} 
-    
-    output_format: {"start": mm_yy "mont_number": ...}`
+    const prompt = process.env.FIND_PERIOD_OPENAI_PROMPT!
+      .replace('[[QUESTION]]', question)
+      .replace('[[CURRENT_YEAR]]', new Date().getFullYear().toString().slice(-2))
     return JSON.parse(await this.getResponse(prompt));
   }
 

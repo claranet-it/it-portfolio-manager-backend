@@ -88,6 +88,26 @@ functions:
         prova a rispondere a questa domanda: [[QUESTION]]
         ordina i risulati prima per skill score decrescente poi per effort decrescente
         Fornisci la risposta senza generare codice"
+
+      FIND_SKILLS_OPENAI_PROMPT: '
+        il tuo compito è quello di estrarre le skills richieste nella frase selezionandole da SKILLS, rispondi soltanto con output_format 
+    
+        frase: [[QUESTION]]
+    
+        SKILLS:
+              [[SKILL_LIST]]
+    
+        output_format: {"skills":[...]}'
+
+      FIND_PERIOD_OPENAI_PROMPT: '
+        il tuo compito è trovare il periodo descritto nella seguente frase, rispondi soltanto nel formato output_format: 
+
+        frase: [[QUESTION]]
+    
+        se anno non è specificato considera [[CURRENT_YEAR]] 
+    
+        output_format: {"start": mm_yy "mont_number": ...}' 
+
     events:
       - http:
           path: /
