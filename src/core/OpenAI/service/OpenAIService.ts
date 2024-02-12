@@ -39,16 +39,16 @@ export class OpenAIService {
     const filterdSills = await this.getRequestedSkills(skillsList, question)
     const peopleWithSkills = this.filterPeopleWithSkills(skills, filterdSills.skills)
     const effortPeriod = await this.getEffortPeriod(question)
-    const effort = (await this.effortService.getEffortPeriod(company, effortPeriod.start, effortPeriod.end))
-      .map((e) => {
-        return {
-          uid: e.uid,
-          mont_year: e.month_year,
-          confrimedEffort: `${e.confirmedEffort}%`,
-          tentativeEffort: `${e.tentativeEffort}%`,
-           avaiableEffort: `${100 - e.confirmedEffort - e.tentativeEffort}%`
-          }
-        })
+    const effort = (await this.effortService.getEffortPeriod(peopleWithSkills.map(p => p.uid), company, effortPeriod.start, effortPeriod.end))
+    .map((e) => {
+      return {
+        uid: e.uid,
+        mont_year: e.month_year,
+        avaiableEffort: `${100 - e.confirmedEffort - e.tentativeEffort}%`,
+        possibleAvaiableEffort: `${100 -e.confirmedEffort}%`
+        }
+      })
+      
     
      const prompt = process.env.FIND_TEAM_OPENAI_PROMPT!
        .replace('[[SKILL]]', JSON.stringify(peopleWithSkills))
