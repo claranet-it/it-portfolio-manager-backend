@@ -5,8 +5,8 @@ import {
   ScanCommand,
 } from '@aws-sdk/client-dynamodb'
 import {
-  EffortReadParamsType,
   EffortRowType,
+  GetEffortParamsType,
 } from '@src/core/Effort/model/effort'
 import { EffortRepositoryInterface } from '@src/core/Effort/repository/EffortRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
@@ -17,7 +17,7 @@ export class EffortRepository implements EffortRepositoryInterface {
     private isTest: boolean,
   ) {}
 
-  async getEffort(params: EffortReadParamsType): Promise<EffortRowType[]> {
+  async getEffort(params: GetEffortParamsType): Promise<EffortRowType[]> {
     let command = null
     if (params.uid) {
       command = this.createQueryCommand(params)
@@ -61,7 +61,7 @@ export class EffortRepository implements EffortRepositoryInterface {
     }
   }
 
-  createQueryCommand(params: EffortReadParamsType): QueryCommand {
+  createQueryCommand(params: GetEffortParamsType): QueryCommand {
     const command = new QueryCommand({
       TableName: getTableName('Effort'),
     })
