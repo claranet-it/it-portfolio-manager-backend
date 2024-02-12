@@ -23,14 +23,14 @@ export class OpenAIService {
      return JSON.parse(await this.getResponse(prompt));
   }
 
-  private async getEffortPeriod(question: string): Promise<{start: string, end: string}>{
+  private async getEffortPeriod(question: string): Promise<{start: string, month_number: number}>{
     const prompt = `il tuo compito è trovare il periodo descritto nella seguente frase, rispondi soltanto nel formato output_format: 
 
     frase: ${question} 
     
     se l'anno non è specificato considera ${new Date().getFullYear().toString().slice(-2)} 
     
-    output_format: {"start": mm_yy "end": mm_yy}`
+    output_format: {"start": mm_yy "mont_number": ...}`
     return JSON.parse(await this.getResponse(prompt));
   }
 
@@ -39,7 +39,7 @@ export class OpenAIService {
     const filterdSills = await this.getRequestedSkills(skillsList, question)
     const peopleWithSkills = this.filterPeopleWithSkills(skills, filterdSills.skills)
     const effortPeriod = await this.getEffortPeriod(question)
-    const effort = (await this.effortService.getEffortPeriod(peopleWithSkills.map(p => p.uid), company, effortPeriod.start, effortPeriod.end))
+    const effort = (await this.effortService.getEffortPeriod(peopleWithSkills.map(p => p.uid), effortPeriod.start, effortPeriod.month_number))
     .map((e) => {
       return {
         uid: e.uid,
@@ -48,13 +48,11 @@ export class OpenAIService {
         possibleAvaiableEffort: `${100 -e.confirmedEffort}%`
         }
       })
-      
     
      const prompt = process.env.FIND_TEAM_OPENAI_PROMPT!
        .replace('[[SKILL]]', JSON.stringify(peopleWithSkills))
        .replace('[[EFFORT]]', JSON.stringify(effort))
        .replace('[[QUESTION]]', JSON.stringify(question))
-       console.log(prompt)
      return  { message: await this.getResponse(prompt)}
   }
 
