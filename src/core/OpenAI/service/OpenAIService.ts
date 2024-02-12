@@ -4,7 +4,6 @@ import { SkillMatrixService } from '@src/core/SkillMatrix/service/SkillMatrixSer
 import { EffortService } from '@src/core/Effort/service/EffortService'
 import { skillsList } from '@src/core/Configuration/service/ConfigurationService';
 import { SkillMatrixList } from '@src/core/SkillMatrix/model/skillMatrixList.model';
-import { json } from 'stream/consumers';
 
 export class OpenAIService {
   constructor(
