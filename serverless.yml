@@ -75,18 +75,39 @@ functions:
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
-      FIND_TEAM_OPENAI_PROMPT: '   Dati i dati di SKILL:
-        """"
+      FIND_TEAM_OPENAI_PROMPT: "   Dati i dati di SKILL:
+      
         [[SKILL]]
-        """" 
-        considerando solo le skills con score pari o superiore a 2  
+         
         e EFFORT 
-        """"
+        
         [[EFFORT]]
-        """"
-        se effort non è presente va considerato 0
-        considerando solo le skills con score pari o superiore a 2
-        prova a rispondere a questa domanda: [[QUESTION]]'
+        
+        mont_year si riferisce al mese e all'anno ed è espresso nel formato MM_yy
+        se effort per uno dei mesi richiesti non è presente va considerato avaiableEffort = 100%
+        prova a rispondere a questa domanda: [[QUESTION]]
+        ordina i risulati prima per skill score decrescente poi per effort decrescente
+        Fornisci la risposta senza generare codice"
+
+      FIND_SKILLS_OPENAI_PROMPT: '
+        il tuo compito è quello di estrarre le skills richieste nella frase selezionandole da SKILLS, rispondi soltanto con output_format 
+    
+        frase: [[QUESTION]]
+    
+        SKILLS:
+              [[SKILL_LIST]]
+    
+        output_format: {"skills":[...]}'
+
+      FIND_PERIOD_OPENAI_PROMPT: '
+        il tuo compito è trovare il periodo descritto nella seguente frase, rispondi soltanto nel formato output_format: 
+
+        frase: [[QUESTION]]
+    
+        se anno non è specificato considera [[CURRENT_YEAR]] 
+    
+        output_format: {"start": mm_yy "mont_number": ...}' 
+
     events:
       - http:
           path: /

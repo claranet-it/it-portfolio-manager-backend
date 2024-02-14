@@ -43,6 +43,13 @@ export const EffortReadParams = Type.Object({
 
 export type EffortReadParamsType = Static<typeof EffortReadParams>
 
+export const GetEffortParams = Type.Object({
+  uid: Type.Optional(Type.String()),
+  month_year: Type.Optional(Type.String())
+})
+
+export type GetEffortParamsType = Static<typeof GetEffortParams>
+
 export const EffortWithUserProfile = Type.Intersect([EffortRow, UserProfile])
 
 export type EffortWithUserProfileType = Static<typeof EffortWithUserProfile>
