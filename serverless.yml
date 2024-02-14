@@ -85,7 +85,9 @@ functions:
         
         mont_year si riferisce al mese e all'anno ed è espresso nel formato MM_yy
         se effort per uno dei mesi richiesti non è presente va considerato avaiableEffort = 100%
+        avaiableEffort si riferisce all'effort sicuramente disponibile, possible avaiable affort si riferisce all'effort potenzialmente disponibile
         prova a rispondere a questa domanda: [[QUESTION]]
+        Filtra solamente i risultati che soddisfano la condizione di effort
         ordina i risulati prima per skill score decrescente poi per effort decrescente
         Fornisci la risposta senza generare codice"
 
