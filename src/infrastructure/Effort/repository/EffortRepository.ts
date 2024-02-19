@@ -73,10 +73,12 @@ export class EffortRepository implements EffortRepositoryInterface {
         },
       })
     })
-    const requestItems: Record<string, WriteRequest[]> = {}
-    requestItems[getTableName('Effort')] = deleteRequests
-    const command = new BatchWriteItemCommand({ RequestItems: requestItems })
-    await this.dynamoDBClient.send(command)
+    if(deleteRequests.length){
+      const requestItems: Record<string, WriteRequest[]> = {}
+      requestItems[getTableName('Effort')] = deleteRequests
+      const command = new BatchWriteItemCommand({ RequestItems: requestItems })
+      await this.dynamoDBClient.send(command)
+    }
   }
 
   createQueryCommand(params: GetEffortParamsType): QueryCommand {

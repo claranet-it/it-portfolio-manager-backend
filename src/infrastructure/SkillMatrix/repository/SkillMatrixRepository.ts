@@ -1,9 +1,11 @@
 import {
+  BatchWriteItemCommand,
   DynamoDBClient,
   PutItemCommand,
   QueryCommand,
   TransactWriteItemsCommand,
   TransactWriteItemsCommandInput,
+  WriteRequest,
 } from '@aws-sdk/client-dynamodb'
 import { SkillMatrixRepositoryInterface } from '@src/core/SkillMatrix/repository/SkillMatrixRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
@@ -151,5 +153,23 @@ export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
     }
 
     return new SkillMatrixList([])
+  }
+
+  async delete(uid: string): Promise<void> {
+    const skillMatrixPerUid = await this.getSkillMatrix({ uid: uid })
+    const deleteRequests: WriteRequest[] = []
+    skillMatrixPerUid.getSkillMatrixList().forEach((skillMatrix) => {
+      deleteRequests.push({
+        DeleteRequest: {
+          Key: { uid: { S: skillMatrix.uid }, skill: { S: skillMatrix.skill } },
+        },
+      })
+    })
+    if (deleteRequests.length) {
+      const requestItems: Record<string, WriteRequest[]> = {}
+      requestItems[getTableName('SkillMatrix')] = deleteRequests
+      const command = new BatchWriteItemCommand({ RequestItems: requestItems })
+      await this.dynamoDBClient.send(command)
+    }
   }
 }
