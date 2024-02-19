@@ -26,4 +26,8 @@ export class UserProfileService {
   async getByCompany(company: string): Promise<UserProfileWithUidType[]> {
     return this.userProfileRepository.getByCompany(company)
   }
+
+  async delete(uid: string){
+    await this.userProfileRepository.delete(uid)
+  }
 }

@@ -1,8 +1,10 @@
 import {
+  BatchWriteItemCommand,
   DynamoDBClient,
   PutItemCommand,
   QueryCommand,
   ScanCommand,
+  WriteRequest,
 } from '@aws-sdk/client-dynamodb'
 import {
   EffortRowType,
@@ -59,6 +61,22 @@ export class EffortRepository implements EffortRepositoryInterface {
     if (!this.isTest) {
       await this.dynamoDBClient.send(command)
     }
+  }
+
+  async delete(uid: string): Promise<void> {
+    const effortsPerUid = await this.getEffort({ uid: uid })
+    const deleteRequests: WriteRequest[] = []
+    effortsPerUid.forEach((effort) => {
+      deleteRequests.push({
+        DeleteRequest: {
+          Key: { uid: { S: effort.uid }, month_year: { S: effort.month_year } },
+        },
+      })
+    })
+    const requestItems: Record<string, WriteRequest[]> = {}
+    requestItems[getTableName('Effort')] = deleteRequests
+    const command = new BatchWriteItemCommand({ RequestItems: requestItems })
+    await this.dynamoDBClient.send(command)
   }
 
   createQueryCommand(params: GetEffortParamsType): QueryCommand {
