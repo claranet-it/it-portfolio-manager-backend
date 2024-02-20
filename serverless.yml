@@ -125,6 +125,7 @@ functions:
       - schedule: rate(1 minute)
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
+      SLACK_TOKEN_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/slack-token
 
 resources:
   Resources:

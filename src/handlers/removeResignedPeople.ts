@@ -1,4 +1,4 @@
-import { WebClient } from '@slack/web-api'
+import { SSM } from '@aws-sdk/client-ssm'
 import { EffortService } from '@src/core/Effort/service/EffortService'
 import { SkillMatrixService } from '@src/core/SkillMatrix/service/SkillMatrixService'
 import { ResignedPeopleService } from '@src/core/User/service/ResignedPeopleService'
@@ -18,32 +18,39 @@ const resignedPeopleService = new ResignedPeopleService(
 )
 
 export async function handler() {
-  const slackClient = await SlackClient.getclient()!
+  const slackClient = new SlackClient(await getSlackToken())
+  const slackUsersStatus = await slackClient.getAccountStatuses()
   const users = await userService.getAllUserProfiles()
   users.forEach(async (user) => {
-    const slackUser = await getSlackUser(slackClient, user.uid, user.company)
-    if (slackUser?.deleted) {
-      console.log(`removing ${user.uid} data`)
-      await resignedPeopleService.removeResigned(user.uid)
+    const userEmails = [
+      user.uid.toLowerCase(),
+      user.uid
+        .replace('claranet.com', `${user.company}.clara.net`)
+        .toLowerCase(),
+    ]
+    const slackUser = slackUsersStatus.find((u) =>
+      userEmails.includes(u.email.toLowerCase()),
+    )
+    if (slackUser) {
+      if (!slackUser.active) {
+        console.log(`removing ${user.uid}`)
+        //await resignedPeopleService.removeResigned(user.uid)
+      }
+    } else {
+      console.warn(`User ${user.uid} not found in slack`)
     }
   })
   return { message: 'done' }
 }
 
-async function getSlackUser(
-  slackClient: WebClient,
-  email: string,
-  company: string,
-) {
-  let slackUser = await slackClient.users.lookupByEmail({ email: email })
-  if (!slackUser.user) {
-    slackUser = await slackClient.users.lookupByEmail({
-      email: email.replace('claranet.com', `${company}.clara.net`),
-    })
-    if (!slackUser.user) {
-      console.log(`${email} not found in slack`)
-      return null
-    }
-  }
-  return slackUser.user
+async function getSlackToken(): Promise<string> {
+    const ssm = new SSM()
+    const key = await ssm.getParameter({
+        Name: process.env.SLACK_TOKEN_ARN,
+        WithDecryption: true,
+      })
+      if(!key.Parameter){
+          throw new Error('Slack token not found')
+      }
+      return key.Parameter.Value!
 }
