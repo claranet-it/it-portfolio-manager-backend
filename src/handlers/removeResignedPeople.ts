@@ -34,7 +34,7 @@ export async function handler() {
     if (slackUser) {
       if (!slackUser.active) {
         console.log(`removing ${user.uid}`)
-        //await resignedPeopleService.removeResigned(user.uid)
+        await resignedPeopleService.removeResigned(user.uid)
       }
     } else {
       console.warn(`User ${user.uid} not found in slack`)
