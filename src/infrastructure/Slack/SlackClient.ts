@@ -10,11 +10,11 @@ export class SlackClient {
 
   async getAccountStatuses(): Promise<accountstatusType[]> {
     const result: accountstatusType[] = []
-    let nextcursor = ''
+    let nextCursor = ''
     do {
       const slackUsers = await this.client.users.list({
         limit: 200,
-        cursor: nextcursor,
+        cursor: nextCursor,
       })
       if (slackUsers.members) {
         result.push(
@@ -28,8 +28,8 @@ export class SlackClient {
             }),
         )
       }
-      nextcursor = slackUsers.response_metadata?.next_cursor || ''
-    } while (nextcursor !== '')
+      nextCursor = slackUsers.response_metadata?.next_cursor || ''
+    } while (nextCursor !== '')
     return result
   }
 }
