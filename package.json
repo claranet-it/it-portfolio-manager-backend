@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "offline": "STAGE_NAME=stage sls offline --stage=stage start",
+    "offline": "STAGE_NAME=dev sls offline --stage=dev start",
     "dynamodb:install": "sls dynamodb install",
     "dynamodb:start:dev": "nohup sls dynamodb start --stage=dev --seed >/dev/null &",
     "dynamodb:start:test": "nohup sls dynamodb start --stage=test --seed >/dev/null &",
