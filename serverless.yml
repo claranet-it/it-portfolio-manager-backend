@@ -122,7 +122,7 @@ functions:
   removeResignedPeople:
     handler: src/handlers/removeResignedPeople.handler
     events:
-      - schedule: rate(1 minute)
+      - schedule: cron(0 4 * * ? *)
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       SLACK_TOKEN_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/slack-token
