@@ -1,20 +1,8 @@
-import { SSM } from '@aws-sdk/client-ssm'
 import OpenAI from 'openai'
 
 export class OpenAiClient {
 
-  static async getClient(isTest: boolean = false) {
-    if(isTest){
-      return null;
-    }
-    const ssm = new SSM();
-    const key = await ssm.getParameter({
-      Name: process.env.OPENAI_API_KEY_ARN,
-      WithDecryption: true,
-    })
-    if(!key.Parameter){
-        throw new Error('OpenAI key not found')
-    }
-    return new OpenAI({apiKey: key.Parameter.Value})
+  static getClient(key: string) {
+    return new OpenAI({apiKey: key})
   }
 }

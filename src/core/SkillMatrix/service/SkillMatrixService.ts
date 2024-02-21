@@ -65,4 +65,8 @@ export class SkillMatrixService {
       skillMatrixUpdateOfUserParams,
     )
   }
+
+  async delete(uid: string){
+    await this.skillMatrixRepository.delete(uid)
+  }
 }

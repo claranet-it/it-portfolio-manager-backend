@@ -27,4 +27,5 @@ export interface SkillMatrixRepositoryInterface {
   updateSkillMatrixOfUser(
     skillMatrixUpdateOfUserParams: SkillMatrixUpdateOfUserParamsType,
   ): Promise<void>
+  delete(uid: string): Promise<void>
 }

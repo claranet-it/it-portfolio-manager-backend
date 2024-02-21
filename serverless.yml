@@ -20,6 +20,7 @@ provider:
             - "dynamodb:PutItem"
             - "dynamodb:UpdateItem"
             - "dynamodb:DeleteItem"
+            - "dynamodb:BatchWriteItem"
           Resource:
             - "Fn::GetAtt": [ ItPortfolioManagerSkillMatrix, Arn ]
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerSkillMatrix, Arn ], 'index', 'companyIndex' ] ]
@@ -117,6 +118,14 @@ functions:
       - http:
           path: /{any+}
           method: ANY
+
+  removeResignedPeople:
+    handler: src/handlers/removeResignedPeople.handler
+    events:
+      - schedule: cron(0 4 * * ? *)
+    environment:
+      STAGE_NAME: ${opt:stage, 'dev'}
+      SLACK_TOKEN_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/slack-token
 
 resources:
   Resources:

@@ -120,4 +120,8 @@ export class EffortService {
 
     await this.effortRepository.saveEffort(params)
   }
+
+  async delete(uid: string){
+    await this.effortRepository.delete(uid)
+  }
 }

@@ -1,5 +1,6 @@
 import {
   AttributeValue,
+  DeleteItemCommand,
   DynamoDBClient,
   PutItemCommand,
   QueryCommand,
@@ -76,6 +77,14 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     }
 
     return []
+  }
+
+  async delete(uid: string): Promise<void> {
+    const command = new DeleteItemCommand({
+      TableName: getTableName('UserProfile'),
+      Key: {uid:{S: uid}}
+    })
+    await this.dynamoDBClient.send(command)
   }
 
   private getUserProfileFromDynamoItem(
