@@ -13,6 +13,9 @@ import { EffortRepository } from '@src/infrastructure/Effort/repository/EffortRe
 import { EffortService } from '../Effort/service/EffortService'
 import { OpenAIService } from '../OpenAI/service/OpenAIService'
 import { OpenAiClient } from '@src/infrastructure/OpenAI/OpenAIClient'
+import { SSMClient } from '@src/infrastructure/SSM/SSMClient'
+import { DummySSMClient } from '@src/infrastructure/SSM/DummySSMClient'
+import { SSMClientInterface } from '../SSM/SSMClientInterface'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -24,7 +27,8 @@ async function dependencyInjectionContainerPlugin(
   fastify: FastifyInstance,
 ): Promise<void> {
   const isTest = process.env.STAGE_NAME === 'test';
-  const openAIClient = await OpenAiClient.getClient(isTest)
+  const ssmClient: SSMClientInterface = isTest ? new DummySSMClient(): new SSMClient()
+  const openAIClient = OpenAiClient.getClient(await ssmClient.getOpenAIkey())
   const dependencyInjectionContainer = (): AwilixContainer => {
     const container = awilix.createContainer({
       injectionMode: awilix.InjectionMode.CLASSIC,

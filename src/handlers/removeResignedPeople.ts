@@ -1,16 +1,17 @@
-import { SSM } from '@aws-sdk/client-ssm'
 import { EffortService } from '@src/core/Effort/service/EffortService'
 import { SkillMatrixService } from '@src/core/SkillMatrix/service/SkillMatrixService'
 import { removeResignedPeople } from '@src/core/User/runner/removeResignedPeopleRunner'
 import { ResignedPeopleService } from '@src/core/User/service/ResignedPeopleService'
 import { UserProfileService } from '@src/core/User/service/UserProfileService'
 import { EffortRepository } from '@src/infrastructure/Effort/repository/EffortRepository'
+import { SSMClient } from '@src/infrastructure/SSM/SSMClient'
 import { SkillMatrixRepository } from '@src/infrastructure/SkillMatrix/repository/SkillMatrixRepository'
 import { SlackClient } from '@src/infrastructure/Slack/SlackClient'
 import { UserProfileRepository } from '@src/infrastructure/User/repository/UserProfileRepository'
 import { DynamoDBConnection } from '@src/infrastructure/db/DynamoDBConnection'
 
 const dynamo = DynamoDBConnection.getClient()
+const ssmClient = new SSMClient()
 const userService = new UserProfileService(new UserProfileRepository(dynamo))
 const resignedPeopleService = new ResignedPeopleService(
   userService,
@@ -19,23 +20,10 @@ const resignedPeopleService = new ResignedPeopleService(
 )
 
 export async function handler() {
-  const slackClient = new SlackClient(await getSlackToken())
+  const slackClient = new SlackClient(await ssmClient.getSlackToken())
   await removeResignedPeople(
     userService.getAllUserProfiles.bind(userService),
     slackClient.getAccountStatuses.bind(slackClient),
     resignedPeopleService.removeResigned.bind(resignedPeopleService),
   )
-  return { message: 'done' }
-}
-
-async function getSlackToken(): Promise<string> {
-  const ssm = new SSM()
-  const key = await ssm.getParameter({
-    Name: process.env.SLACK_TOKEN_ARN,
-    WithDecryption: true,
-  })
-  if (!key.Parameter) {
-    throw new Error('Slack token not found')
-  }
-  return key.Parameter.Value!
 }
