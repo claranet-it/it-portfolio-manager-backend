@@ -1,7 +1,8 @@
 import { WebClient } from '@slack/web-api'
 import { accountstatusType } from '@src/core/Slack/model/slack.model'
+import { SlackRepositoryInterface } from '@src/core/Slack/repository/SlackRepositoryInterface'
 
-export class SlackClient {
+export class SlackClient implements SlackRepositoryInterface {
   client: WebClient
 
   constructor(token: string) {
