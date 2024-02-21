@@ -21,7 +21,7 @@ export async function removeResignedPeople(
         if (slackUser) {
           if (!slackUser.active) {
             console.info(`removing ${user.uid}`)
-            //await removeResigned(user.uid)
+            await removeResigned(user.uid)
           }
         } else {
           console.warn(`User ${user.uid} not found in slack`)
