@@ -69,25 +69,29 @@ export class EffortService {
     return efforts.toEffortReponse()
   }
 
-  async getEffortPeriod(uuids: string[], from: string, month_number: number): Promise<EffortRowType[]>
-  {
-    const result: EffortRowType[] = [];
+  async getEffortPeriod(
+    uuids: string[],
+    from: string,
+    month_number: number,
+  ): Promise<EffortRowType[]> {
+    const result: EffortRowType[] = []
     const startMonth = parseInt(from.split('_')[0])
     const startYear = parseInt(from.split('_')[1])
-    for await (const uuid of uuids){
-     for (let i = 0; i< month_number; i++){
-      const date = new Date(startYear ,startMonth, 1)
-      date.setMonth(date.getMonth() + i)
-      const month_year =
-        ('0' + (date.getMonth() + 1)).slice(-2) +
-        '_' +
-        date.getFullYear().toString().slice(-2)
-        const effort = (await this.effortRepository.getEffort({uid: uuid, month_year}))[0]
-        if(effort){
+    for await (const uuid of uuids) {
+      for (let i = 0; i < month_number; i++) {
+        const date = new Date(startYear, startMonth, 1)
+        date.setMonth(date.getMonth() + i)
+        const month_year =
+          ('0' + (date.getMonth() + 1)).slice(-2) +
+          '_' +
+          date.getFullYear().toString().slice(-2)
+        const effort = (
+          await this.effortRepository.getEffort({ uid: uuid, month_year })
+        )[0]
+        if (effort) {
           result.push(effort)
         }
-
-     }
+      }
     }
     return result
   }
@@ -121,7 +125,7 @@ export class EffortService {
     await this.effortRepository.saveEffort(params)
   }
 
-  async delete(uid: string){
+  async delete(uid: string) {
     await this.effortRepository.delete(uid)
   }
 }

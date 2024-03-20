@@ -1,4 +1,5 @@
 import {
+  UpdateUserProfileType,
   UserProfileType,
   UserProfileWithUidType,
 } from '@src/core/User/model/user.model'
@@ -8,7 +9,8 @@ export interface UserProfileRepositoryInterface {
 
   saveUserProfile(
     uid: string,
-    { name, crew, company }: UserProfileType,
+    name: string,
+    userProfile: UpdateUserProfileType,
   ): Promise<void>
 
   getAllUserProfiles(): Promise<UserProfileWithUidType[]>

@@ -28,10 +28,14 @@ beforeEach(() => {
 })
 
 test('remove user profile', async (t) => {
-  await userProfileRepository.saveUserProfile(email, {
-    name: 'resigned',
+  await userProfileRepository.saveUserProfile(email, 'resigned',{
     crew: 'moon',
     company: 'it',
+    crewLeader: true,
+    place: 'Jesi',
+    workingExperience: '',
+    education: 'University',
+    certifications: '',
   })
   await service.removeResigned(email)
   const profile = await userProfileRepository.getUserProfile(email)
@@ -41,7 +45,7 @@ test('remove user profile', async (t) => {
 test('remove skill matrix', async (t) => {
   await skillMatrixRepository.saveMineSkillMatrix(
     email,
-    { name: 'resigned', crew: 'moon', company: 'it' },
+    { name: 'resigned', crew: 'moon', company: 'it', crewLeader: true, place: '', education: '', certifications: '', workingExperience: '' },
     { skill: 'php', score: 3, skillCategory: 'dev' },
   )
   await service.removeResigned(email)

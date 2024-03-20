@@ -3,7 +3,12 @@
     "uid": "nicholas.crow@email.com",
     "crew": "moon",
     "company": "us",
-    "name": "Nicholas Crow"
+    "name": "Nicholas Crow",
+    "crewLeader": true,
+    "place": "Jesi",
+    "workingExperience": "APRA",
+    "education": "Bachelor Degree in Computer Science",
+    "certifications": "AWS Certified Developer - Associate"
   },
   {
     "uid": "george.python@email.com",

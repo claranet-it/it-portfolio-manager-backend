@@ -39,7 +39,7 @@ const skills = {
     'AWS finance',
     'AWS streaming + IoT',
     'AWS ECS',
-    'AWS EKS', 
+    'AWS EKS',
     'AWS Cloudformation',
     'Terraform',
     'Data',

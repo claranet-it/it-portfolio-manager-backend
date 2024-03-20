@@ -9,6 +9,7 @@ import {
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
 import {
+  UpdateUserProfileType,
   UserProfileType,
   UserProfileWithUidType,
 } from '@src/core/User/model/user.model'
@@ -37,13 +38,19 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
 
   async saveUserProfile(
     uid: string,
-    { name, crew, company }: UserProfileType,
+    name: string,
+    userProfile: UpdateUserProfileType,
   ): Promise<void> {
     const item = {
       uid: { S: uid },
       name: { S: name },
-      crew: { S: crew },
-      company: { S: company },
+      crew: { S: userProfile.crew },
+      company: { S: userProfile.company },
+      crewLeader: { BOOL: userProfile.crewLeader || false },
+      place: { S: userProfile.place || '' },
+      workingExperience: { S: userProfile.workingExperience || '' },
+      education: { S: userProfile.education || '' },
+      certifications: { S: userProfile.certifications || '' },
     }
     const putItemCommand = new PutItemCommand({
       TableName: getTableName('UserProfile'),
@@ -82,7 +89,7 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
   async delete(uid: string): Promise<void> {
     const command = new DeleteItemCommand({
       TableName: getTableName('UserProfile'),
-      Key: {uid:{S: uid}}
+      Key: { uid: { S: uid } },
     })
     await this.dynamoDBClient.send(command)
   }
@@ -95,6 +102,11 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
       crew: item.crew?.S ?? '',
       company: item.company?.S ?? '',
       name: item.name?.S ?? '',
+      crewLeader: item.crewLeader?.BOOL ?? false,
+      place: item.place?.S ?? '',
+      workingExperience: item.workingExperience?.S ?? '',
+      education: item.education?.S ?? '',
+      certifications: item.certifications?.S ?? '',
     }
   }
 }

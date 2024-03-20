@@ -36,7 +36,12 @@ test('save user profile', async t => {
         },
         payload: {
             crew: 'moon',
-            company: 'us'
+            company: 'us',
+            crewLeader: true,
+            place: 'Jesi',
+            workingExperience: null,
+            education: 'University',
+            certifications: 'AWS Certified Developer'
         }
     })
 
