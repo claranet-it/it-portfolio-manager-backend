@@ -24,8 +24,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             type: 'null',
             description: 'Effort saved successfully',
           },
-          400: Type.Object({message: Type.String()}),
-          
+          400: Type.Object({ message: Type.String() }),
+
           401: {
             type: 'null',
             description: 'Unauthorized',
@@ -56,7 +56,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         if (error instanceof EffortExcedsMaxError) {
           errorCode = 400
           errorMessage = error.message
-          return reply.code(errorCode).send({message : errorMessage})
+          return reply.code(errorCode).send({ message: errorMessage })
         }
         return reply.code(errorCode).send(errorMessage)
       }

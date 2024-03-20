@@ -73,7 +73,7 @@ export class EffortRepository implements EffortRepositoryInterface {
         },
       })
     })
-    if(deleteRequests.length){
+    if (deleteRequests.length) {
       const requestItems: Record<string, WriteRequest[]> = {}
       requestItems[getTableName('Effort')] = deleteRequests
       const command = new BatchWriteItemCommand({ RequestItems: requestItems })

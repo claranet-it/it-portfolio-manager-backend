@@ -1,4 +1,4 @@
-import {EffortRowType, GetEffortParamsType } from '../model/effort'
+import { EffortRowType, GetEffortParamsType } from '../model/effort'
 
 export interface EffortRepositoryInterface {
   getEffort(params: GetEffortParamsType): Promise<EffortRowType[]>

@@ -1,14 +1,14 @@
-import { Static, Type } from "@sinclair/typebox";
+import { Static, Type } from '@sinclair/typebox'
 
 export const openAIPrompt = Type.Object({
-    prompt: Type.String(),
-    company: Type.String(),
+  prompt: Type.String(),
+  company: Type.String(),
 })
 
 export type openAIPromptType = Static<typeof openAIPrompt>
 
 export const openAIResponse = Type.Object({
-    message: Type.String()
+  message: Type.String(),
 })
 
 export type openAiResponseType = Static<typeof openAIResponse>

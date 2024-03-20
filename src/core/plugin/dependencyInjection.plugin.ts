@@ -26,8 +26,10 @@ declare module 'fastify' {
 async function dependencyInjectionContainerPlugin(
   fastify: FastifyInstance,
 ): Promise<void> {
-  const isTest = process.env.STAGE_NAME === 'test';
-  const ssmClient: SSMClientInterface = isTest ? new DummySSMClient(): new SSMClient()
+  const isTest = process.env.STAGE_NAME === 'test'
+  const ssmClient: SSMClientInterface = isTest
+    ? new DummySSMClient()
+    : new SSMClient()
   const openAIClient = OpenAiClient.getClient(await ssmClient.getOpenAIkey())
   const dependencyInjectionContainer = (): AwilixContainer => {
     const container = awilix.createContainer({
@@ -71,10 +73,10 @@ async function dependencyInjectionContainerPlugin(
       effortService: asClass(EffortService),
     })
     container.register({
-      openAI: awilix.asValue(openAIClient)
+      openAI: awilix.asValue(openAIClient),
     })
     container.register({
-      openAIService: asClass(OpenAIService)
+      openAIService: asClass(OpenAIService),
     })
 
     return container

@@ -18,6 +18,11 @@ export class UserService {
       ...jwtToken,
       crew: userProfile.crew,
       company: userProfile.company,
+      crewLeader: userProfile.crewLeader,
+      place: userProfile.place,
+      workingExperience: userProfile.workingExperience,
+      education: userProfile.education,
+      certifications: userProfile.certifications,
     }
   }
 }

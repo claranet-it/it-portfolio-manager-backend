@@ -35,6 +35,11 @@ test('get user info without user profile', async t => {
     t.equal(user.picture, 'https://test.com/test.jpg')
     t.notOk(user.crew)
     t.notOk(user.company)
+    t.notOk(user.crewLeader)
+    t.notOk(user.place)
+    t.notOk(user.workingExperience)
+    t.notOk(user.education)
+    t.notOk(user.certifications)
 })
 
 test('get user info with user profile', async t => {
@@ -70,6 +75,11 @@ test('get user info with user profile', async t => {
     t.equal(user.picture, 'https://test.com/nicholas.crow.jpg')
     t.equal(user.crew, 'moon')
     t.equal(user.company, 'us')
+    t.equal(user.crewLeader, true)
+    t.equal(user.place, 'Jesi')
+    t.equal(user.workingExperience, 'APRA')
+    t.equal(user.education, 'Bachelor Degree in Computer Science')
+    t.equal(user.certifications, 'AWS Certified Developer - Associate')
 })
 
 test('get user info without authentication', async t => {

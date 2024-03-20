@@ -12,20 +12,20 @@ export class SSMClient implements SSMClientInterface {
       Name: process.env.OPENAI_API_KEY_ARN,
       WithDecryption: true,
     })
-    if(!key.Parameter || !key.Parameter.Value){
-        throw new Error('OpenAI key not found')
+    if (!key.Parameter || !key.Parameter.Value) {
+      throw new Error('OpenAI key not found')
     }
     return key.Parameter.Value
   }
 
   async getSlackToken(): Promise<string> {
-  const key = await this.ssm.getParameter({
-    Name: process.env.SLACK_TOKEN_ARN,
-    WithDecryption: true,
-  })
-  if (!key.Parameter || !key.Parameter.Value) {
-    throw new Error('Slack token not found')
-  }
-  return key.Parameter.Value
+    const key = await this.ssm.getParameter({
+      Name: process.env.SLACK_TOKEN_ARN,
+      WithDecryption: true,
+    })
+    if (!key.Parameter || !key.Parameter.Value) {
+      throw new Error('Slack token not found')
+    }
+    return key.Parameter.Value
   }
 }

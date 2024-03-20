@@ -10,6 +10,11 @@ test('remove resigned people if account is deactivated', async (t) => {
         crew: 'moon',
         company: 'it',
         name: 'resigned',
+        crewLeader: true,
+        place: 'Jesi',
+        workingExperience: '',
+        education: 'University',
+        certifications: '',
       },
     ])
   const getSlackAccountStatuses = () =>
@@ -44,6 +49,11 @@ test('not remove user if Slack account is active', async (t) => {
           crew: 'moon',
           company: 'it',
           name: 'active',
+          crewLeader: true,
+          place: 'Jesi',
+          workingExperience: '',
+          education: 'University',
+          certifications: '',
         },
       ])
     const getSlackAccountStatuses = () =>
@@ -58,13 +68,13 @@ test('not remove user if Slack account is active', async (t) => {
       removedPeople.push(uid)
       return Promise.resolve()
     }
-  
+
     await removeResignedPeople(
       getAllUserProfiles,
       getSlackAccountStatuses,
       removeResigned,
     )
-  
+
     t.equal(removedPeople.length,0)
 })
 
@@ -77,6 +87,11 @@ test('not remove user if account not found in Slack', async (t) => {
           crew: 'moon',
           company: 'it',
           name: 'active',
+          crewLeader: true,
+          place: 'Jesi',
+          workingExperience: '',
+          education: 'University',
+          certifications: '',
         },
       ])
     const getSlackAccountStatuses = () =>
@@ -91,13 +106,13 @@ test('not remove user if account not found in Slack', async (t) => {
       removedPeople.push(uid)
       return Promise.resolve()
     }
-  
+
     await removeResignedPeople(
       getAllUserProfiles,
       getSlackAccountStatuses,
       removeResigned,
     )
-  
+
     t.equal(removedPeople.length,0)
 })
 
@@ -110,6 +125,11 @@ test('remove account with it.clara.net in slack', async (t) => {
           crew: 'moon',
           company: 'it',
           name: 'resigned',
+          crewLeader: true,
+          place: 'Jesi',
+          workingExperience: '',
+          education: 'University',
+          certifications: '',
         },
       ])
     const getSlackAccountStatuses = () =>
@@ -124,13 +144,13 @@ test('remove account with it.clara.net in slack', async (t) => {
       removedPeople.push(uid)
       return Promise.resolve()
     }
-  
+
     await removeResignedPeople(
       getAllUserProfiles,
       getSlackAccountStatuses,
       removeResigned,
     )
-  
+
     t.equal(removedPeople.length,1)
     t.equal(removedPeople[0], email)
 })
