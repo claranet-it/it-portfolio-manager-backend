@@ -76,40 +76,38 @@ functions:
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
-      FIND_TEAM_OPENAI_PROMPT: "   Dati i dati di SKILL:
-      
-        [[SKILL]]
-         
-        e EFFORT 
-        
-        [[EFFORT]]
-        
-        mont_year si riferisce al mese e all'anno ed è espresso nel formato MM_yy
-        se effort per uno dei mesi richiesti non è presente va considerato avaiableEffort = 100%
-        avaiableEffort si riferisce all'effort sicuramente disponibile, possible avaiable affort si riferisce all'effort potenzialmente disponibile
-        prova a rispondere a questa domanda: [[QUESTION]]
-        Filtra solamente i risultati che soddisfano la condizione di effort
-        ordina i risulati prima per skill score decrescente poi per effort decrescente
-        Fornisci la risposta senza generare codice"
+      FIND_TEAM_OPENAI_PROMPT: "  Given the SKILL data:
 
-      FIND_SKILLS_OPENAI_PROMPT: '
-        il tuo compito è quello di estrarre le skills richieste nella frase selezionandole da SKILLS, rispondi soltanto con output_format 
-    
-        frase: [[QUESTION]]
-    
-        SKILLS:
-              [[SKILL_LIST]]
-    
-        output_format: {"skills":[...]}'
+      [[SKILL]]
+      
+      and EFFORT 
+      
+      [[EFFORT]]
+
+      mont_year refers to the month and year, expressed in the format MM_yy
+      if effort for one of the requested months is not present, consider avaiableEffort = 100%
+      avaiableEffort refers to the effort definitely available, possible avaiable effort refers to the effort potentially available
+      try to answer this question: [[QUESTION]]
+      Filter only the results that satisfy the effort condition
+      Sort the results first by skill score in descending order, then by effort in descending order
+      Provide the answer without generating code."
+
+      FIND_SKILLS_OPENAI_PROMPT: '       Your task is to extract the required skills from the sentence by selecting them from SKILLS, respond only with output_format
+          sentence: [[QUESTION]]
+
+          SKILLS:
+            [[SKILL_LIST]]
+
+          output_format: {"skills":[...]}" '
 
       FIND_PERIOD_OPENAI_PROMPT: '
-        il tuo compito è trovare il periodo descritto nella seguente frase, rispondi soltanto nel formato output_format: 
+        Your task is to find the time period described in the following sentence, respond only in the output_format format:
 
-        frase: [[QUESTION]]
-    
-        se anno non è specificato considera [[CURRENT_YEAR]] 
-    
-        output_format: {"start": mm_yy "mont_number": ...}' 
+        sentence: [[QUESTION]]
+
+        if year is not specified consider [[CURRENT_YEAR]]
+
+        output_format: {"start": mm_yy "month_number": ...}"' 
 
     events:
       - http:
