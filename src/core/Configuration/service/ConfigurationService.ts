@@ -13,6 +13,7 @@ const crews = [
   { name: 'Polaris', service_line: serviceLines[0] },
   { name: 'Rohan', service_line: serviceLines[0] },
   { name: 'Hydra', service_line: serviceLines[1] },
+  { name: 'France - Beta Test', service_line: serviceLines[0] },
 ]
 
 const skills = {
