@@ -27,6 +27,7 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ]
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerProjects, Arn ]
         - Effect: "Allow"
           Action:
             - "ssm:GetParameter"
@@ -64,6 +65,8 @@ custom:
             sources: [ ./seed/user-profile.json ]
           - table: ItPortfolioManager-Effort-${opt:stage, 'dev'}
             sources: [ ./seed/effort.json ]
+          - table: "ItPortfolioManager-Projects-${opt:stage, 'dev'}"
+            sources: [./seed/project.json]
 
 package:
   patterns:
@@ -196,3 +199,28 @@ resources:
           - AttributeName: month_year
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+    ItPortfolioManagerProjects:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "ItPortfolioManager-Projects-${opt:stage, 'dev'}"
+        AttributeDefinitions:
+          - AttributeName: uid
+            AttributeType: S
+          - AttributeName: company
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uid
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: companyIndex
+            KeySchema:
+              - AttributeName: company
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1

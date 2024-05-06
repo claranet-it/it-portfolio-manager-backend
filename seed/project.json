@@ -1,0 +1,20 @@
+[
+    {
+      "uid": "018f4e82-4952-790c-8cb5-0b604bd8eb8d",
+      "name": "Formazione",
+      "category": "Slack time",
+      "company": "it"
+    },
+    {
+        "uid": "018f4e82-7272-7bbb-ba0d-6ef78743cde2",
+        "name": "Festività",
+        "category": "Time off",
+        "company": "it"
+    },
+    {
+        "uid": "018f4e84-0dd6-73fd-b100-de1747834e11",
+        "name": "Progetto cliente 1",
+        "category": "Cliente",
+        "company": "it"
+    }
+  ]
