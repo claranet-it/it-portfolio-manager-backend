@@ -1,5 +1,9 @@
-import { ProjectRowType } from "../model/project.model";
+import {
+  ProjectReadParamsType,
+  ProjectRowType,
+} from '@src/core/Project/model/project'
 
 export interface ProjectRepositoryInterface {
-    getByCompany(company :string): Promise<ProjectRowType[]>
+  get(params: ProjectReadParamsType): Promise<ProjectRowType[]>
+  getByUid(uid: string): Promise<ProjectRowType | null>
 }

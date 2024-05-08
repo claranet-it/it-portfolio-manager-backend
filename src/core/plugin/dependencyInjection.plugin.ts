@@ -16,6 +16,8 @@ import { OpenAiClient } from '@src/infrastructure/OpenAI/OpenAIClient'
 import { SSMClient } from '@src/infrastructure/SSM/SSMClient'
 import { DummySSMClient } from '@src/infrastructure/SSM/DummySSMClient'
 import { SSMClientInterface } from '../SSM/SSMClientInterface'
+import { ProjectRepository } from '@src/infrastructure/Project/repository/ProjectRepository'
+import { ProjectService } from '@src/core/Project/service/ProjectService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -72,11 +74,19 @@ async function dependencyInjectionContainerPlugin(
     container.register({
       effortService: asClass(EffortService),
     })
+
     container.register({
       openAI: awilix.asValue(openAIClient),
     })
     container.register({
       openAIService: asClass(OpenAIService),
+    })
+
+    container.register({
+      projectRepository: asClass(ProjectRepository),
+    })
+    container.register({
+      projectService: asClass(ProjectService),
     })
 
     return container
