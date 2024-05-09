@@ -1,0 +1,14 @@
+[
+  {
+    "customer": { "S": "Claranet" },
+    "project": { "S": "Slack time" },
+    "tasks": { "SS": ["formazione"] },
+    "company": { "S": "it" }
+  },
+  {
+    "customer": { "S": "test customer" },
+    "project": { "S": "SOR Sviluppo" },
+    "tasks": { "SS": ["Iterazione 1", "Iterazione 2"] },
+    "company": { "S": "it" }
+  }
+]

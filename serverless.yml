@@ -27,7 +27,7 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ]
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ]
-            - "Fn::GetAtt": [ ItPortfolioManagerProjects, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
         - Effect: "Allow"
           Action:
             - "ssm:GetParameter"
@@ -65,8 +65,8 @@ custom:
             sources: [ ./seed/user-profile.json ]
           - table: ItPortfolioManager-Effort-${opt:stage, 'dev'}
             sources: [ ./seed/effort.json ]
-          - table: "ItPortfolioManager-Projects-${opt:stage, 'dev'}"
-            sources: [./seed/project.json]
+          - table: "ItPortfolioManager-Task-${opt:stage, 'dev'}"
+            rawsources: [./seed/task.json]
 
 package:
   patterns:
@@ -199,21 +199,26 @@ resources:
           - AttributeName: month_year
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-    ItPortfolioManagerProjects:
+    ItPortfolioManagerTasks:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: "ItPortfolioManager-Projects-${opt:stage, 'dev'}"
+        TableName: "ItPortfolioManager-Task-${opt:stage, 'dev'}"
         AttributeDefinitions:
-          - AttributeName: uid
+          - AttributeName: customer
+            AttributeType: S
+          - AttributeName: project
             AttributeType: S
           - AttributeName: company
             AttributeType: S
         KeySchema:
-          - AttributeName: uid
+          - AttributeName: customer
             KeyType: HASH
+          - AttributeName: project
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          WriteCapacityUnits: 1      
+                                   
         GlobalSecondaryIndexes:
           - IndexName: companyIndex
             KeySchema:
