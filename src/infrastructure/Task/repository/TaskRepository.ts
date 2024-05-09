@@ -3,12 +3,12 @@ import {
   DynamoDBClient,
   QueryCommand,
 } from '@aws-sdk/client-dynamodb'
-import { ProjectRepositoryInterface } from '@src/core/Project/repository/ProjectRepositoryInterface'
+import { ProjectRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
 import {
   ProjectReadParamsType,
   ProjectRowType,
-} from '@src/core/Project/model/project'
+} from '@src/core/Task/model/task.model'
 
 export class ProjectRepository implements ProjectRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}

@@ -6,7 +6,7 @@ import {
   ProjectRowType,
   Projects,
   ProjectsType,
-} from '@src/core/Project/model/project'
+} from '@src/core/Task/model/task.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{

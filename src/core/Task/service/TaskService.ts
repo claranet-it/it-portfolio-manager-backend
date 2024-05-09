@@ -1,8 +1,8 @@
-import { ProjectRepositoryInterface } from '@src/core/Project/repository/ProjectRepositoryInterface'
+import { ProjectRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import {
   ProjectReadParamsType,
   ProjectRowType,
-} from '@src/core/Project/model/project'
+} from '@src/core/Task/model/task.model'
 
 export class ProjectService {
   constructor(private projectRepository: ProjectRepositoryInterface) {}

@@ -1,7 +1,7 @@
 import {
   ProjectReadParamsType,
   ProjectRowType,
-} from '@src/core/Project/model/project'
+} from '@src/core/Task/model/task.model'
 
 export interface ProjectRepositoryInterface {
   get(params: ProjectReadParamsType): Promise<ProjectRowType[]>

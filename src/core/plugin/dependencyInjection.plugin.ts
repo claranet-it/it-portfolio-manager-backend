@@ -16,8 +16,8 @@ import { OpenAiClient } from '@src/infrastructure/OpenAI/OpenAIClient'
 import { SSMClient } from '@src/infrastructure/SSM/SSMClient'
 import { DummySSMClient } from '@src/infrastructure/SSM/DummySSMClient'
 import { SSMClientInterface } from '../SSM/SSMClientInterface'
-import { ProjectRepository } from '@src/infrastructure/Project/repository/ProjectRepository'
-import { ProjectService } from '@src/core/Project/service/ProjectService'
+import { ProjectRepository } from '@src/infrastructure/Task/repository/TaskRepository'
+import { ProjectService } from '@src/core/Task/service/TaskService'
 
 declare module 'fastify' {
   interface FastifyInstance {
