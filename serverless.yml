@@ -224,6 +224,8 @@ resources:
             KeySchema:
               - AttributeName: company
                 KeyType: HASH
+              - AttributeName: customer
+                KeyType: RANGE
             Projection:
               ProjectionType: ALL
             ProvisionedThroughput:
