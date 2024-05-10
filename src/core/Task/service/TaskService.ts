@@ -1,5 +1,5 @@
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
-import { ProjectReadParamsType } from '../model/task.model'
+import { ProjectReadParamsType, TaskReadParamType } from '../model/task.model'
 
 export class TaskService {
   constructor(private taskRepository: TaskRepositoryInterface) {}
@@ -11,5 +11,9 @@ export class TaskService {
 
   async getProjects(params: ProjectReadParamsType): Promise<string[]>{
     return this.taskRepository.getProjects(params)
+  }
+
+  async getTasks(params: TaskReadParamType): Promise<string[]>{
+    return this.taskRepository.getTasks(params)
   }
 }

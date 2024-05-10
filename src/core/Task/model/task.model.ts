@@ -13,6 +13,14 @@ export const ProjectReadParams = Type.Object({
 
 export type ProjectReadParamsType = Static<typeof ProjectReadParams>
 
+export const TaskReadParams = Type.Object({
+  company: Type.String(),
+  customer: Type.String(),
+  project: Type.String()
+})
+
+export type TaskReadParamType = Static<typeof TaskReadParams>
+
 export const CustomerList = Type.Array(Type.String())
 
 export type CustomerListType = Static<typeof CustomerList>
@@ -20,6 +28,10 @@ export type CustomerListType = Static<typeof CustomerList>
 export const ProjectList = Type.Array(Type.String())
 
 export type ProjectListType = Static<typeof ProjectList>
+
+export const TaskList = Type.Array(Type.String())
+
+export type TaskListType = Static<typeof TaskList>
 
 
 
