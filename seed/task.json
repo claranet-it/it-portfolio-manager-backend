@@ -6,9 +6,21 @@
     "company": { "S": "it" }
   },
   {
+    "customer": { "S": "Claranet" },
+    "project": { "S": "Funzionale" },
+    "tasks": { "SS": ["Attività di portfolio", "Management"] },
+    "company": { "S": "it" }
+  },
+  {
     "customer": { "S": "test customer" },
     "project": { "S": "SOR Sviluppo" },
     "tasks": { "SS": ["Iterazione 1", "Iterazione 2"] },
     "company": { "S": "it" }
+  },
+  {
+    "customer": { "S": "test customer us" },
+    "project": { "S": "test project us" },
+    "tasks": { "SS": ["test task 1 us", "test task 2 us"] },
+    "company": { "S": "us" }
   }
 ]
