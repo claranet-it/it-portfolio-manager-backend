@@ -1,4 +1,4 @@
-export type TableName = 'SkillMatrix' | 'UserProfile' | 'Effort' | 'Projects'
+export type TableName = 'SkillMatrix' | 'UserProfile' | 'Effort' | 'Task'
 
 export function getTableName(tableName: TableName) {
   const stage = process.env.STAGE_NAME || 'dev'

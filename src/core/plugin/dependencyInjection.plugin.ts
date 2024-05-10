@@ -83,10 +83,10 @@ async function dependencyInjectionContainerPlugin(
     })
 
     container.register({
-      projectRepository: asClass(TaskRepository),
+      taskRepository: asClass(TaskRepository),
     })
     container.register({
-      projectService: asClass(TaskService),
+      taskService: asClass(TaskService),
     })
 
     return container

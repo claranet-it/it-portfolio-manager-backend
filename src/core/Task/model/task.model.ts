@@ -17,4 +17,6 @@ export const ProjectReadParams = Type.Object({
   company: Type.String(),
 })
 
+export const CustomerList = Type.Array(Type.String())
+
 export type ProjectReadParamsType = Static<typeof ProjectReadParams>

@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import {
-  ProjectRow,
+  CustomerList,
   ProjectRowType,
 } from '@src/core/Task/model/task.model'
 
@@ -9,7 +9,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     Params: { company: string }
     Reply: ProjectRowType
   }>(
-    '/customer/:uid',
+    '/customer/:company',
     {
       onRequest: [fastify.authenticate],
       schema: {
@@ -29,7 +29,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: ProjectRow,
+          200: CustomerList,
           400: {
             type: 'null',
             description: 'Bad request',
@@ -50,7 +50,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .getByUid(request.params.company)
+          .getCustomers(request.params.company)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

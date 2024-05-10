@@ -15,18 +15,18 @@ export class TaskRepository implements TaskRepositoryInterface {
   
   async getCustomers(company: string): Promise<string[]> {
     const command = new QueryCommand({
-      TableName: getTableName('Projects'),
+      TableName: getTableName('Task'),
       IndexName: 'companyIndex',
       KeyConditionExpression: 'company = :company',
       ExpressionAttributeValues: { ':company': { S: company} },
     })
     const result = await this.dynamoDBClient.send(command)
-    return result.Items?.map((item) => item.customer?.S ?? '') ?? []
+    return Array.from(new Set(result.Items?.map((item) => item.customer?.S ?? '') ?? []))
   }
 
   async get(params: ProjectReadParamsType): Promise<ProjectRowType[]> {
     const command = new QueryCommand({
-      TableName: getTableName('Projects'),
+      TableName: getTableName('Task'),
       IndexName: 'companyIndex',
       KeyConditionExpression: 'company = :company',
       ExpressionAttributeValues: { ':company': { S: params.company } },
@@ -41,7 +41,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
   async getByUid(uid: string): Promise<ProjectRowType | null> {
     const command = new QueryCommand({
-      TableName: getTableName('Projects'),
+      TableName: getTableName('Task'),
       KeyConditionExpression: 'uid = :uid',
       ExpressionAttributeValues: { ':uid': { S: uid } },
     })
