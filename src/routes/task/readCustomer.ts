@@ -1,28 +1,22 @@
 import { FastifyInstance } from 'fastify'
 import {
   CustomerList,
-  ProjectRowType,
+  CustomerListType,
+  CustomerReadParams,
+  CustomerReadParamsType,
 } from '@src/core/Task/model/task.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> { 
   fastify.get<{
-    Params: { company: string }
-    Reply: ProjectRowType
+    Querystring: CustomerReadParamsType
+    Reply: CustomerListType
   }>(
-    '/customer/:company',
+    '/customer',
     {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Customer'],
-        params: {
-          type: 'object',
-          properties: {
-            company: {
-              type: 'string',
-            },
-          },
-          required: ['company'],
-        },
+        querystring: CustomerReadParams,
         security: [
           {
             apiKey: [],
@@ -50,7 +44,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .getCustomers(request.params.company)
+          .getCustomers(request.query.company)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

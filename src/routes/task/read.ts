@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import {
-  ProjectReadParams,
-  ProjectReadParamsType,
+  CustomerReadParams,
+  CustomerReadParamsType,
   ProjectRow,
   ProjectRowType,
   Projects,
@@ -10,7 +10,7 @@ import {
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Querystring: ProjectReadParamsType
+    Querystring: CustomerReadParamsType
     Reply: ProjectsType
   }>(
     '/',
@@ -18,7 +18,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Project'],
-        querystring: ProjectReadParams,
+        querystring: CustomerReadParams,
         security: [
           {
             apiKey: [],
