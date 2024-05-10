@@ -1,17 +1,21 @@
-import { ProjectRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
+import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import {
   ProjectReadParamsType,
   ProjectRowType,
 } from '@src/core/Task/model/task.model'
 
-export class ProjectService {
-  constructor(private projectRepository: ProjectRepositoryInterface) {}
+export class TaskService {
+  constructor(private taskRepository: TaskRepositoryInterface) {}
 
   async getByUid(uid: string): Promise<ProjectRowType | null> {
-    return await this.projectRepository.getByUid(uid)
+    return await this.taskRepository.getByUid(uid)
   }
 
   async get(params: ProjectReadParamsType): Promise<ProjectRowType[]> {
-    return this.projectRepository.get(params)
+    return this.taskRepository.get(params)
+  }
+
+  async getCustomers(company: string): Promise<string[]>{
+    return this.taskRepository.getCustomers(company)
   }
 }
