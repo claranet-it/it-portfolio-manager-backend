@@ -65,8 +65,8 @@ custom:
             sources: [ ./seed/user-profile.json ]
           - table: ItPortfolioManager-Effort-${opt:stage, 'dev'}
             sources: [ ./seed/effort.json ]
-          - table: "ItPortfolioManager-Task-${opt:stage, 'dev'}"
-            rawsources: [./seed/task.json]
+          - table: ItPortfolioManager-Task-${opt:stage, 'dev'}
+            rawsources: [ ./seed/task.json ]
 
 package:
   patterns:
@@ -210,8 +210,10 @@ resources:
             AttributeType: S
           - AttributeName: company
             AttributeType: S
+          - AttributeName: customerCompany
+            AttributeType: S
         KeySchema:
-          - AttributeName: customer
+          - AttributeName: customerCompany
             KeyType: HASH
           - AttributeName: project
             KeyType: RANGE

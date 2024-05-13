@@ -1,29 +1,29 @@
 import { FastifyInstance } from 'fastify'
 import {
-  TaskList,
-  TaskListType,
-  TaskReadParamType,
-  TaskReadParams,
+  TaskCreateParams,
+  TaskCreateParamType,
 } from '@src/core/Task/model/task.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.get<{
-    Querystring: TaskReadParamType
-    Reply: TaskListType
+  fastify.post<{
+    Body: TaskCreateParamType
   }>(
     '/task',
     {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Task'],
-        querystring: TaskReadParams,
+        body: TaskCreateParams,
         security: [
           {
             apiKey: [],
           },
         ],
         response: {
-          200: TaskList,
+          204: {
+            type: 'null',
+            description: 'Task saved successfully',
+          },
           400: {
             type: 'null',
             description: 'Bad request',
@@ -44,7 +44,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .getTasks(request.query)
+          .createTask(request.body)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

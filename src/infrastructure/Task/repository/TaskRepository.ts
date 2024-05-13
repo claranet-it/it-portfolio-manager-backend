@@ -1,6 +1,11 @@
-import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb'
+import {
+  DynamoDBClient,
+  QueryCommand,
+  UpdateItemCommand,
+} from '@aws-sdk/client-dynamodb'
 import {
   ProjectReadParamsType,
+  TaskCreateParamType,
   TaskReadParamType,
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
@@ -48,8 +53,58 @@ export class TaskRepository implements TaskRepositoryInterface {
     })
     const result = await this.dynamoDBClient.send(command)
     return (
-      result.Items?.find((item) => item.project?.S === params.project)?.tasks
-        ?.SS?.sort() ?? []
+      result.Items?.find(
+        (item) => item.project?.S === params.project,
+      )?.tasks?.SS?.sort() ?? []
     )
+  }
+
+  async createTask(params: TaskCreateParamType): Promise<void> {
+    const company = params.company
+    const project = params.project
+    const customer = params.customer
+    const task = params.task
+
+    try {
+      await this.insertItem(customer, project, company, task)
+    } catch (error) {
+      console.error('Error while searching/updating item: ', error)
+    }
+  }
+
+  private async insertItem(
+    customer: string,
+    project: string,
+    company: string,
+    task: string,
+  ) {
+    const customerCompany = customer + '-' + company
+    const updateParams = {
+      TableName: getTableName('Task'),
+      //IndexName: 'companyIndex',
+      Key: {
+        customerCompany: { S: customerCompany },
+        project: { S: project },
+      },
+      UpdateExpression:
+        'SET customer = :customer, company = :company ADD tasks :task',
+      ExpressionAttributeValues: {
+        ':task': {
+          SS: [task],
+        },
+        ':company': { S: company },
+        ':customer': { S: customer },
+      },
+      //ReturnValues: "ALL_NEW"
+    }
+
+    try {
+      const data = await this.dynamoDBClient.send(
+        new UpdateItemCommand(updateParams),
+      )
+      console.log('Item successfully updated: ', data)
+    } catch (error) {
+      console.error('Error while updating item: ', error)
+    }
   }
 }

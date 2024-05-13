@@ -6,7 +6,7 @@ import {
   ProjectReadParamsType,
 } from '@src/core/Task/model/task.model'
 
-export default async function (fastify: FastifyInstance): Promise<void> { 
+export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: ProjectReadParamsType
     Reply: ProjectListType

@@ -6,7 +6,7 @@ import {
   CustomerReadParamsType,
 } from '@src/core/Task/model/task.model'
 
-export default async function (fastify: FastifyInstance): Promise<void> { 
+export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: CustomerReadParamsType
     Reply: CustomerListType
@@ -41,7 +41,6 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        console.log('aaaa')
         return await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')

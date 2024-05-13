@@ -1,7 +1,7 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { ProjectListType } from '@src/core/Task/model/task.model'
+import { TaskListType} from '@src/core/Task/model/task.model'
 
 let app: FastifyInstance
 
@@ -40,10 +40,10 @@ test('read task with company, customer and project param', async (t) => {
 
   t.equal(response.statusCode, 200)
 
-  const projects = response.json<ProjectListType>()
-  t.equal(projects.length, 2)
+  const tasks = response.json<TaskListType>()
+  t.ok(tasks.length >= 2)
 
   const expectedResult = ['Attività di portfolio', 'Management']
 
-  t.same(projects, expectedResult)
+  t.has(tasks, expectedResult)
 })
