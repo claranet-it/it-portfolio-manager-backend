@@ -41,9 +41,9 @@ test('read task with company, customer and project param', async (t) => {
   t.equal(response.statusCode, 200)
 
   const tasks = response.json<TaskListType>()
-  t.ok(tasks.length >= 2)
+  t.equal(tasks.length, 2)
 
   const expectedResult = ['Attività di portfolio', 'Management']
 
-  t.has(tasks, expectedResult)
+  t.same(tasks, expectedResult)
 })
