@@ -29,7 +29,7 @@ async function dependencyInjectionContainerPlugin(
   fastify: FastifyInstance,
 ): Promise<void> {
   const isTest = process.env.STAGE_NAME === 'test'
-  const ssmClient: SSMClientInterface = isTest
+  const ssmClient: SSMClientInterface = (isTest || process.env.IS_OFFLINE)
     ? new DummySSMClient()
     : new SSMClient()
   const openAIClient = OpenAiClient.getClient(await ssmClient.getOpenAIkey())
