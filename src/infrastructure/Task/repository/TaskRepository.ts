@@ -23,34 +23,48 @@ export class TaskRepository implements TaskRepositoryInterface {
     })
     const result = await this.dynamoDBClient.send(command)
     return Array.from(
-      new Set(result.Items?.map((item) => item.customerProject?.S?.split('#')[0] ?? '') ?? []),
+      new Set(
+        result.Items?.map(
+          (item) => item.customerProject?.S?.split('#')[0] ?? '',
+        ) ?? [],
+      ),
     ).sort()
   }
 
   async getProjects(params: ProjectReadParamsType): Promise<string[]> {
     const command = new QueryCommand({
       TableName: getTableName('Task'),
-      KeyConditionExpression: 'company = :company and begins_with(customerProject, :customer)',
+      KeyConditionExpression:
+        'company = :company and begins_with(customerProject, :customer)',
       ExpressionAttributeValues: {
         ':company': { S: params.company },
         ':customer': { S: params.customer },
       },
     })
     const result = await this.dynamoDBClient.send(command)
-    return result.Items?.map((item) => item.customerProject?.S?.split('#')[1] ?? '').sort() ?? []
+    return (
+      result.Items?.map(
+        (item) => item.customerProject?.S?.split('#')[1] ?? '',
+      ).sort() ?? []
+    )
   }
 
   async getTasks(params: TaskReadParamType): Promise<string[]> {
     const command = new QueryCommand({
       TableName: getTableName('Task'),
-      KeyConditionExpression: 'company = :company and customerProject = :customerProject',
+      KeyConditionExpression:
+        'company = :company and customerProject = :customerProject',
       ExpressionAttributeValues: {
         ':company': { S: params.company },
         ':customerProject': { S: `${params.customer}#${params.project}` },
       },
     })
     const result = await this.dynamoDBClient.send(command)
-    return result.Items?.map((item) => item.tasks?.SS ?? []).flat().sort() ?? []
+    return (
+      result.Items?.map((item) => item.tasks?.SS ?? [])
+        .flat()
+        .sort() ?? []
+    )
   }
 
   async createTask(params: TaskCreateParamType): Promise<void> {
@@ -58,31 +72,25 @@ export class TaskRepository implements TaskRepositoryInterface {
     const project = params.project
     const customer = params.customer
     const task = params.task
-    if(customer.includes('#') || project.includes('#')){
-      throw new InvalidCharacterError('# is not a valid character for customer or project')
-    }
-    try {
-      const customerProject = `${customer}#${project}`
-      const updateParams = {
-        TableName: getTableName('Task'),
-        Key: {
-          customerProject: { S: customerProject },
-          company: { S: company },
-        },
-        UpdateExpression:
-          'ADD tasks :task',
-        ExpressionAttributeValues: {
-          ':task': {
-            SS: [task],
-          }
-        },
-      }
-      const data = await this.dynamoDBClient.send(
-        new UpdateItemCommand(updateParams),
+    if (customer.includes('#') || project.includes('#')) {
+      throw new InvalidCharacterError(
+        '# is not a valid character for customer or project',
       )
-      console.log('Item successfully updated: ', data)
-    } catch (error) {
-      console.error('Error while saving item: ', error)
     }
+    const customerProject = `${customer}#${project}`
+    const updateParams = {
+      TableName: getTableName('Task'),
+      Key: {
+        customerProject: { S: customerProject },
+        company: { S: company },
+      },
+      UpdateExpression: 'ADD tasks :task',
+      ExpressionAttributeValues: {
+        ':task': {
+          SS: [task],
+        },
+      },
+    }
+    await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
   }
 }
