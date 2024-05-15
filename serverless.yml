@@ -204,32 +204,15 @@ resources:
       Properties:
         TableName: "ItPortfolioManager-Task-${opt:stage, 'dev'}"
         AttributeDefinitions:
-          - AttributeName: customer
-            AttributeType: S
-          - AttributeName: project
-            AttributeType: S
+          - AttributeName: customerProject
+            AttributeType: S                      
           - AttributeName: company
             AttributeType: S
-          - AttributeName: customerCompany
-            AttributeType: S
         KeySchema:
-          - AttributeName: customerCompany
+          - AttributeName: company
             KeyType: HASH
-          - AttributeName: project
+          - AttributeName: customerProject
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
-          WriteCapacityUnits: 1      
-                                   
-        GlobalSecondaryIndexes:
-          - IndexName: companyIndex
-            KeySchema:
-              - AttributeName: company
-                KeyType: HASH
-              - AttributeName: customer
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
+          WriteCapacityUnits: 1                                          

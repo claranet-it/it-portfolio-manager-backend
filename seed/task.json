@@ -1,30 +1,22 @@
 [
   {
-    "customer": { "S": "Claranet" },
-    "project": { "S": "Slack time" },
-    "tasks": { "SS": ["formazione"] },
     "company": { "S": "it" },
-    "customerCompany": {"S":  "Claranet:it"}
+    "customerProject": { "S": "Claranet#Slack time" },    
+    "tasks": { "SS": ["formazione"] }
   },
   {
-    "customer": { "S": "Claranet" },
-    "project": { "S": "Funzionale" },
-    "tasks": { "SS": ["Attività di portfolio", "Management"] },
-    "company": { "S": "it" },
-    "customerCompany": {"S":  "Claranet:it"}
+    "company": { "S": "it" },    
+    "customerProject": {"S": "Claranet#Funzionale"},
+    "tasks": { "SS": ["Attività di portfolio", "Management"] }
   },
   {
-    "customer": { "S": "test customer" },
-    "project": { "S": "SOR Sviluppo" },
-    "tasks": { "SS": ["Iterazione 1", "Iterazione 2"] },
     "company": { "S": "it" },
-    "customerCompany": {"S":  "test customer:it"}
+    "customerProject": {"S": "test customer#SOR Sviluppo"},
+    "tasks": { "SS": ["Iterazione 1", "Iterazione 2"] }
   },
   {
-    "customer": { "S": "test customer us" },
-    "project": { "S": "test project us" },
-    "tasks": { "SS": ["test task 1 us", "test task 2 us"] },
     "company": { "S": "us" },
-    "customerCompany": {"S":  "test customer:us"}
+    "customerProject": {"S": "test customer us#test project us"},
+    "tasks": { "SS": ["test task 1 us", "test task 2 us"] }
   }
 ]

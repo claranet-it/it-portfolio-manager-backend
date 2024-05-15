@@ -17,46 +17,39 @@ export class TaskRepository implements TaskRepositoryInterface {
   async getCustomers(company: string): Promise<string[]> {
     const command = new QueryCommand({
       TableName: getTableName('Task'),
-      IndexName: 'companyIndex',
       KeyConditionExpression: 'company = :company',
       ExpressionAttributeValues: { ':company': { S: company } },
     })
     const result = await this.dynamoDBClient.send(command)
     return Array.from(
-      new Set(result.Items?.map((item) => item.customer?.S ?? '') ?? []),
+      new Set(result.Items?.map((item) => item.customerProject?.S?.split('#')[0] ?? '') ?? []),
     ).sort()
   }
 
   async getProjects(params: ProjectReadParamsType): Promise<string[]> {
     const command = new QueryCommand({
       TableName: getTableName('Task'),
-      IndexName: 'companyIndex',
-      KeyConditionExpression: 'company = :company and customer = :customer',
+      KeyConditionExpression: 'company = :company and begins_with(customerProject, :customer)',
       ExpressionAttributeValues: {
         ':company': { S: params.company },
         ':customer': { S: params.customer },
       },
     })
     const result = await this.dynamoDBClient.send(command)
-    return result.Items?.map((item) => item.project?.S ?? '').sort() ?? []
+    return result.Items?.map((item) => item.customerProject?.S?.split('#')[1] ?? '').sort() ?? []
   }
 
   async getTasks(params: TaskReadParamType): Promise<string[]> {
     const command = new QueryCommand({
       TableName: getTableName('Task'),
-      IndexName: 'companyIndex',
-      KeyConditionExpression: 'company = :company and customer = :customer',
+      KeyConditionExpression: 'company = :company and customerProject = :customerProject',
       ExpressionAttributeValues: {
         ':company': { S: params.company },
-        ':customer': { S: params.customer },
+        ':customerProject': { S: `${params.customer}#${params.project}` },
       },
     })
     const result = await this.dynamoDBClient.send(command)
-    return (
-      result.Items?.find(
-        (item) => item.project?.S === params.project,
-      )?.tasks?.SS?.sort() ?? []
-    )
+    return result.Items?.map((item) => item.tasks?.SS ?? []).flat().sort() ?? []
   }
 
   async createTask(params: TaskCreateParamType): Promise<void> {
@@ -66,21 +59,19 @@ export class TaskRepository implements TaskRepositoryInterface {
     const task = params.task
 
     try {
-      const customerCompany = `${customer}:${company}`
+      const customerProject = `${customer}#${project}`
       const updateParams = {
         TableName: getTableName('Task'),
         Key: {
-          customerCompany: { S: customerCompany },
-          project: { S: project },
+          customerProject: { S: customerProject },
+          company: { S: company },
         },
         UpdateExpression:
-          'SET customer = :customer, company = :company ADD tasks :task',
+          'ADD tasks :task',
         ExpressionAttributeValues: {
           ':task': {
             SS: [task],
-          },
-          ':company': { S: company },
-          ':customer': { S: customer },
+          }
         },
       }
       const data = await this.dynamoDBClient.send(
