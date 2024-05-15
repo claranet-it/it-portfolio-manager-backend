@@ -9,6 +9,7 @@ import {
   TaskReadParamType,
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
+import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
 import { getTableName } from '@src/core/db/TableName'
 
 export class TaskRepository implements TaskRepositoryInterface {
@@ -57,7 +58,9 @@ export class TaskRepository implements TaskRepositoryInterface {
     const project = params.project
     const customer = params.customer
     const task = params.task
-
+    if(customer.includes('#') || project.includes('#')){
+      throw new InvalidCharacterError('# is not a valid character for customer or project')
+    }
     try {
       const customerProject = `${customer}#${project}`
       const updateParams = {

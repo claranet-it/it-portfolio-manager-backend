@@ -191,6 +191,26 @@ test('create task with existing customer and project but different company - new
   t.same(tasks, [ 'Test' ])
  })
 
+ test('throw error if # in customer', async(t) => {
+  const customer = 'test#test'
+  const project = 'test project'
+  const task = 'test task'
+  const company = 'it'
+  const response = await postTask(customer, company, project, task)
+  t.equal(response.statusCode, 400)
+  t.equal(response.payload, '# is not a valid character for customer or project')
+ })
+
+ test('throw error if # in project', async(t) => {
+  const customer = 'test'
+  const project = 'test#project'
+  const task = 'test task'
+  const company = 'it'
+  const response = await postTask(customer, company, project, task)
+  t.equal(response.statusCode, 400)
+  t.equal(response.payload, '# is not a valid character for customer or project')
+ })
+
 async function postTask(customer: string, company: string, project: string, task: string) {
   return await app.inject({
     method: 'POST',

@@ -3,6 +3,7 @@ import {
   TaskCreateParams,
   TaskCreateParamType,
 } from '@src/core/Task/model/task.model'
+import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post<{
@@ -47,7 +48,13 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .createTask(request.body)
       } catch (error) {
         request.log.error(error)
-        return reply.code(500).send()
+        let errorCode = 500
+        let errorMessage = ''
+        if (error instanceof InvalidCharacterError) {
+          errorCode = 400
+          errorMessage = error.message
+        }
+        return reply.code(errorCode).send(errorMessage)
       }
     },
   )
