@@ -1,0 +1,22 @@
+[
+  {
+    "company": { "S": "it" },
+    "customerProject": { "S": "Claranet#Slack time" },    
+    "tasks": { "SS": ["formazione"] }
+  },
+  {
+    "company": { "S": "it" },    
+    "customerProject": {"S": "Claranet#Funzionale"},
+    "tasks": { "SS": ["Attività di portfolio", "Management"] }
+  },
+  {
+    "company": { "S": "it" },
+    "customerProject": {"S": "test customer#SOR Sviluppo"},
+    "tasks": { "SS": ["Iterazione 1", "Iterazione 2"] }
+  },
+  {
+    "company": { "S": "us" },
+    "customerProject": {"S": "test customer us#test project us"},
+    "tasks": { "SS": ["test task 1 us", "test task 2 us"] }
+  }
+]

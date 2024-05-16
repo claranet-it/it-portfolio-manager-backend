@@ -16,6 +16,8 @@ import { OpenAiClient } from '@src/infrastructure/OpenAI/OpenAIClient'
 import { SSMClient } from '@src/infrastructure/SSM/SSMClient'
 import { DummySSMClient } from '@src/infrastructure/SSM/DummySSMClient'
 import { SSMClientInterface } from '../SSM/SSMClientInterface'
+import { TaskRepository } from '@src/infrastructure/Task/repository/TaskRepository'
+import { TaskService } from '@src/core/Task/service/TaskService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -27,9 +29,8 @@ async function dependencyInjectionContainerPlugin(
   fastify: FastifyInstance,
 ): Promise<void> {
   const isTest = process.env.STAGE_NAME === 'test'
-  const ssmClient: SSMClientInterface = isTest
-    ? new DummySSMClient()
-    : new SSMClient()
+  const ssmClient: SSMClientInterface =
+    isTest || process.env.IS_OFFLINE ? new DummySSMClient() : new SSMClient()
   const openAIClient = OpenAiClient.getClient(await ssmClient.getOpenAIkey())
   const dependencyInjectionContainer = (): AwilixContainer => {
     const container = awilix.createContainer({
@@ -72,11 +73,19 @@ async function dependencyInjectionContainerPlugin(
     container.register({
       effortService: asClass(EffortService),
     })
+
     container.register({
       openAI: awilix.asValue(openAIClient),
     })
     container.register({
       openAIService: asClass(OpenAIService),
+    })
+
+    container.register({
+      taskRepository: asClass(TaskRepository),
+    })
+    container.register({
+      taskService: asClass(TaskService),
     })
 
     return container
