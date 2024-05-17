@@ -1,0 +1,26 @@
+[
+  {
+    "user": { "S": "nicholas.crow@email.com" },
+    "date": { "S": "01-01-2024" },
+    "tasks": {
+      "L": [
+        {
+          "M": {
+            "customer": { "S": "test customer" },
+            "project": { "S": "test project" },
+            "task": { "S": "test task" },
+            "hours": { "N": 3 }
+          }
+        },
+        {
+          "M": {
+            "customer": { "S": "test customer 2" },
+            "project": { "S": "test project 2" },
+            "task": { "S": "test task 2" },
+            "hours": { "N": 5 }
+          }
+        }
+      ]
+    }
+  }
+]
