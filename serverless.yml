@@ -224,14 +224,14 @@ resources:
       Properties:
         TableName: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
         AttributeDefinitions:
-          - AttributeName: user
+          - AttributeName: uid
             AttributeType: S                      
-          - AttributeName: date
+          - AttributeName: timeEntryDate
             AttributeType: S
         KeySchema:
-          - AttributeName: user
+          - AttributeName: uid
             KeyType: HASH
-          - AttributeName: date
+          - AttributeName: timeEntryDate
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1

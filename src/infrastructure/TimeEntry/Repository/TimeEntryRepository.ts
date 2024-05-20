@@ -12,9 +12,9 @@ export class TimeEntryRepostiroy implements TimeEntryRepositoryInterface {
   async find(params: TimeEntryReadParamWithUserType): Promise<TimeEntryRowType[]> {
     const command = new QueryCommand({
       TableName: getTableName('TimeEntry'),
-      KeyConditionExpression: 'user = :user and date >= :from and date <= :to',
+      KeyConditionExpression: 'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
       ExpressionAttributeValues: {
-        ':user': { S: params.user },
+        ':uid': { S: params.user },
         ':from': { S: params.from },
         ':to': { S: params.to },
       },
@@ -25,8 +25,8 @@ export class TimeEntryRepostiroy implements TimeEntryRepositoryInterface {
         const resultForUser: TimeEntryRowType[] = []
         item.tasks?.L?.forEach((task) => {
           resultForUser.push({
-            user: item.user?.S ?? '',
-            date: new Date(item.date?.S ?? ''),
+            user: item.uid?.S ?? '',
+            date: new Date(item.timeEntryDate?.S ?? ''),
             cutomer: task.M?.customer?.S ?? '',
             project: task.M?.project?.S ?? '',
             task: task.M?.task?.S ?? '',
