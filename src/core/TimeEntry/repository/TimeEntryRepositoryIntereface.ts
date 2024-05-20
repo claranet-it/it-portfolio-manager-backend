@@ -2,5 +2,5 @@ import { TimeEntryReadParamWithUserType, TimeEntryRowType } from "../model/timeE
 
 export interface TimeEntryRepositoryInterface{
     find(params: TimeEntryReadParamWithUserType): Promise<TimeEntryRowType[]>
-
+    saveMine(params: TimeEntryRowType): Promise<void>
 }

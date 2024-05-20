@@ -21,7 +21,7 @@ export type TimeEntryReadParamWithUserType = Static<
 export const TimeEntryRow = Type.Object({
   user: Type.String(),
   date: Type.String(),
-  cutomer: Type.String(),
+  customer: Type.String(),
   project: Type.String(),
   task: Type.String(),
   hours: Type.Number(),
@@ -32,3 +32,13 @@ export const TimeEntryRowList = Type.Array(TimeEntryRow)
 export type TimeEntryRowType = Static<typeof TimeEntryRow>
 
 export type TimeEntryRowListType = Static<typeof TimeEntryRowList>
+
+export const InsertTimeEntryRow = Type.Object({
+  date: Type.RegExp(dateFormat),
+  customer: Type.String(),
+  project: Type.String(),
+  task: Type.String(),
+  hours: Type.Number()
+})
+
+export type InsertTimeEntryRowType = Static<typeof InsertTimeEntryRow>

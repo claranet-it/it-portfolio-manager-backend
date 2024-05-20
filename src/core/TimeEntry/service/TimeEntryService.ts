@@ -7,4 +7,7 @@ export class TimeEntryService{
     find(params: TimeEntryReadParamWithUserType): Promise<TimeEntryRowType[]>{
         return this.timeEntryRepostiroy.find(params)
     }
+    saveMine(params: TimeEntryRowType): Promise<void>{
+        return this.timeEntryRepostiroy.saveMine(params)
+    }
 }
