@@ -3,7 +3,7 @@ import {
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
-import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimesheetRepositoryIntereface'
+import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryIntereface'
 import { getTableName } from '@src/core/db/TableName'
 
 export class TimeEntryRepostiroy implements TimeEntryRepositoryInterface {

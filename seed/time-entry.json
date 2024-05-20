@@ -1,7 +1,7 @@
 [
   {
     "uid": { "S": "nicholas.crow@email.com" },
-    "timeEntryDate": { "S": "01-01-2024" },
+    "timeEntryDate": { "S": "2024-01-01" },
     "tasks": {
       "L": [
         {

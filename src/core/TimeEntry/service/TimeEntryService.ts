@@ -1,5 +1,5 @@
 import { TimeEntryReadParamWithUserType, TimeEntryRowType } from "../model/timeEntry.model";
-import { TimeEntryRepositoryInterface } from "../repository/TimesheetRepositoryIntereface";
+import { TimeEntryRepositoryInterface } from "../repository/TimeEntryRepositoryIntereface";
 
 export class TimeEntryService{
     constructor(private timeEntryRepostiroy: TimeEntryRepositoryInterface){}
