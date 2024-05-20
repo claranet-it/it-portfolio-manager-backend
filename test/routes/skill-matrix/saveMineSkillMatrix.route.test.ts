@@ -16,6 +16,7 @@ test('update skill matrix for the logged user with only skill', async t => {
         "email": "nicholas.crow@email.com",
         "name": "Nicholas Crow",
         "picture": "https://test.com/nicholas.crow.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -47,6 +48,7 @@ test('update skill matrix for the logged user with only score', async t => {
         "email": "nicholas.crow@email.com",
         "name": "Nicholas Crow",
         "picture": "https://test.com/nicholas.crow.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -78,6 +80,7 @@ test('update skill matrix for the logged user without skill category', async t =
         "email": "george.python",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -127,6 +130,7 @@ test('update skill matrix for the logged user without UserProfile', async t => {
         "email": "max.power@email.com",
         "name": "Max Power",
         "picture": "https://test.com/max.power.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -160,6 +164,7 @@ test('update skill matrix for the logged user with no skill on DB', async t => {
         "email": "george.python@email.com",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -193,6 +198,7 @@ test('update skill matrix for the logged user with skill on DB', async t => {
         "email": "george.python@email.com",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -226,6 +232,7 @@ test('update skill matrix for the logged user with score 0', async t => {
         "email": "george.python@email.com",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -259,6 +266,7 @@ test('update skill matrix for the logged user with score outside max range', asy
         "email": "george.python@email.com",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -292,6 +300,7 @@ test('update skill matrix for the logged user with score outside min range', asy
         "email": "george.python@email.com",
         "name": "George Python",
         "picture": "https://test.com/george.python.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({

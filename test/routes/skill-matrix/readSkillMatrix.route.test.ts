@@ -34,6 +34,7 @@ test('read all skill matrix without params', async t => {
         "email": "nicholas.crow@email.com",
         "name": "Nicholas Crow",
         "picture": "https://test.com/nicholas.crow.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -62,6 +63,7 @@ test('read all skill matrix with invalid params', async t => {
         "email": "nicholas.crow@email.com",
         "name": "Nicholas Crow",
         "picture": "https://test.com/nicholas.crow.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -90,6 +92,7 @@ test('read all skill matrix with empty param', async t => {
         "email": "nicholas.crow@email.com",
         "name": "Nicholas Crow",
         "picture": "https://test.com/nicholas.crow.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -118,6 +121,7 @@ test('read all skill matrix with company param', async t => {
         "email": "nicholas.crow@email.com",
         "name": "Nicholas Crow",
         "picture": "https://test.com/nicholas.crow.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({

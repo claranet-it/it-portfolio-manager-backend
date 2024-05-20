@@ -17,6 +17,7 @@ test('get all configuration', async t => {
         "email": "tester@claranet",
         "name": "Tester",
         "picture": "https://test.com/test.jpg",
+        company: 'it'
     })
 
     const response = await app.inject({

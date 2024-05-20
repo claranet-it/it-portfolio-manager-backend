@@ -30,6 +30,7 @@ test('read customers with company param', async (t) => {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
   })
 
   const response = await app.inject({

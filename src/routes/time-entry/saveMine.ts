@@ -45,10 +45,13 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         await fastify
           .dependencyInjectionContainer()
           .resolve('timeEntryService')
-          .saveMine({
-            user: request.user.email,
-            ...request.body,
-          })
+          .saveMine(
+            {
+              user: request.user.email,
+              ...request.body,
+            },
+            request.user.company,
+          )
         reply.code(204).send()
       } catch (error) {
         request.log.error(error)
