@@ -39,13 +39,14 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return await fastify
+        await fastify
           .dependencyInjectionContainer()
           .resolve('timeEntryService')
           .saveMine({
             user: request.user.email,
             ...request.body,
           })
+        reply.code(204).send()
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
