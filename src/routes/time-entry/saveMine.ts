@@ -1,14 +1,13 @@
 import { FastifyInstance } from 'fastify'
 import {
-  TimeEntryRowListType,
   InsertTimeEntryRowType,
   InsertTimeEntryRow,
 } from '@src/core/TimeEntry/model/timeEntry.model'
+import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post<{
     Body: InsertTimeEntryRowType
-    Reply: TimeEntryRowListType
   }>(
     '/mine',
     {
@@ -25,6 +24,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           204: {
             type: 'null',
             description: 'Time entry inserted successfully',
+          },
+          400: {
+            type: 'null',
+            description: 'bad request',
           },
           401: {
             type: 'null',
@@ -49,7 +52,14 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         reply.code(204).send()
       } catch (error) {
         request.log.error(error)
-        return reply.code(500).send()
+        let errorCode = 500
+        let errorMessage = ''
+        if (error instanceof TaskNotExistsError) {
+          errorCode = 400
+          errorMessage = error.message
+        }
+
+        return reply.code(errorCode).send(errorMessage)
       }
     },
   )

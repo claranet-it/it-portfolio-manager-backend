@@ -32,9 +32,9 @@ test('save time entry without authentication', async (t) => {
 
 test('insert time entry in new day', async (t) => {
   const date = '2024-01-02'
-  const customer = 'test add'
-  const project = 'test add'
-  const task = 'test add'
+  const customer = 'Claranet'
+  const project = 'Slack time'
+  const task = 'formazione'
   const hours = 2
   const addTimeentryResponse = await addTimeEntry(
     date,
@@ -67,9 +67,9 @@ test('insert time entry in new day', async (t) => {
 
 test('insert time entry in an existing day', async (t) => {
   const date = '2024-01-03'
-  const firstCustomer = 'test add'
-  const firstProject = 'test add'
-  const firstTask = 'test add'
+  const firstCustomer = 'Claranet'
+  const firstProject = 'Funzionale'
+  const firstTask = 'Attività di portfolio'
   const firstHours = 2
   const firstResponse = await addTimeEntry(
     date,
@@ -80,9 +80,9 @@ test('insert time entry in an existing day', async (t) => {
   )
   t.equal(firstResponse.statusCode, 204)
 
-  const secondCustomer = 'test add 2'
-  const secondProject = 'test add 2'
-  const secondTask = 'test add 2'
+  const secondCustomer = 'Claranet'
+  const secondProject = 'Slack time'
+  const secondTask = 'formazione'
   const secondHours = 5
 
   const secondResponse = await addTimeEntry(
@@ -123,6 +123,58 @@ test('insert time entry in an existing day', async (t) => {
     },
   ])
 })
+
+test('throws error on not existing customer', async(t) => {
+  const date = '2024-01-02'
+  const customer = 'unexisting customer'
+  const project = 'test'
+  const task = 'test'
+  const hours = 2
+  const addTimeentryResponse = await addTimeEntry(
+    date,
+    customer,
+    project,
+    task,
+    hours,
+  )
+  t.equal(addTimeentryResponse.statusCode, 400)
+  t.equal(addTimeentryResponse.payload, 'Customer, project or tasks not existing')
+})
+
+test('throws error on not existing project', async(t) => {
+  const date = '2024-01-02'
+  const customer = 'Claranet'
+  const project = 'not existing'
+  const task = 'test'
+  const hours = 2
+  const addTimeentryResponse = await addTimeEntry(
+    date,
+    customer,
+    project,
+    task,
+    hours,
+  )
+  t.equal(addTimeentryResponse.statusCode, 400)
+  t.equal(addTimeentryResponse.payload, 'Customer, project or tasks not existing')
+})
+
+test('throws error on not existing task', async(t) => {
+  const date = '2024-01-02'
+  const customer = 'Claranet'
+  const project = 'Funzionale'
+  const task = 'not existing'
+  const hours = 2
+  const addTimeentryResponse = await addTimeEntry(
+    date,
+    customer,
+    project,
+    task,
+    hours,
+  )
+  t.equal(addTimeentryResponse.statusCode, 400)
+  t.equal(addTimeentryResponse.payload, 'Customer, project or tasks not existing')
+})
+
 async function addTimeEntry(
   date: string,
   customer: string,
