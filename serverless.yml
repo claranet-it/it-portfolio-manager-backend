@@ -28,7 +28,7 @@ provider:
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
-            - "Fn::GetAtt": [ ItPortfolioManagerTimesheet, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
         - Effect: "Allow"
           Action:
             - "ssm:GetParameter"
@@ -68,8 +68,8 @@ custom:
             sources: [ ./seed/effort.json ]
           - table: ItPortfolioManager-Task-${opt:stage, 'dev'}
             rawsources: [ ./seed/task.json ]
-          - table: "ItPortfolioManager-Timesheet-${opt:stage, 'dev'}"
-            rawsources: [ ./seed/timesheet.json ]
+          - table: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
+            rawsources: [ ./seed/time-entry.json ]
 
 package:
   patterns:
@@ -219,10 +219,10 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    ItPortfolioManagerTimesheet:
+    ItPortfolioManagerTimeEntry:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: "ItPortfolioManager-Timesheet-${opt:stage, 'dev'}"
+        TableName: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
         AttributeDefinitions:
           - AttributeName: user
             AttributeType: S                      
