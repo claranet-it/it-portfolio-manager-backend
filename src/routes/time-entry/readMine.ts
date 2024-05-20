@@ -3,6 +3,7 @@ import {
   TimeEntryRowListType,
   TimeEntryRowList,
   TimeEntryReadParamType,
+  TimeEntryReadParam,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
@@ -15,6 +16,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Time entry'],
+        querystring: TimeEntryReadParam,
         security: [
           {
             apiKey: [],

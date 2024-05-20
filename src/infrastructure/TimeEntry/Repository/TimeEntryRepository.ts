@@ -26,7 +26,7 @@ export class TimeEntryRepostiroy implements TimeEntryRepositoryInterface {
         item.tasks?.L?.forEach((task) => {
           resultForUser.push({
             user: item.uid?.S ?? '',
-            date: new Date(item.timeEntryDate?.S ?? ''),
+            date: item.timeEntryDate?.S ?? '',
             cutomer: task.M?.customer?.S ?? '',
             project: task.M?.project?.S ?? '',
             task: task.M?.task?.S ?? '',
