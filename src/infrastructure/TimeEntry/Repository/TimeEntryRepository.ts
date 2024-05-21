@@ -8,6 +8,7 @@ import {
 import {
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
+  deleteTimeEntryWithUserType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryIntereface'
 import { getTableName } from '@src/core/db/TableName'
@@ -37,40 +38,43 @@ export class TimeEntryRepostiroy implements TimeEntryRepositoryInterface {
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
-    this.removeDuplicate(params)
+    this.delete(params)
     const command = new UpdateItemCommand({
-      TableName : getTableName('TimeEntry'),
+      TableName: getTableName('TimeEntry'),
       Key: {
-        uid: {S: params.user},
-        timeEntryDate: {S: params.date}
+        uid: { S: params.user },
+        timeEntryDate: { S: params.date },
       },
       UpdateExpression: 'ADD tasks :task',
       ExpressionAttributeValues: {
         ':task': {
-          SS: [`${params.customer}#${params.project}#${params.task}#${params.hours}`],
+          SS: [
+            `${params.customer}#${params.project}#${params.task}#${params.hours}`,
+          ],
         },
       },
     })
     await this.dynamoDBClient.send(command)
   }
 
-  private async removeDuplicate(params: TimeEntryRowType): Promise<void>
-  {
+  async delete(params: deleteTimeEntryWithUserType): Promise<void> {
     const getItemCommand = new GetItemCommand({
       TableName: getTableName('TimeEntry'),
       Key: {
-        uid: {S: params.user},
-        timeEntryDate: {S: params.date}
-      },      
+        uid: { S: params.user },
+        timeEntryDate: { S: params.date },
+      },
     })
     const timeEntry = await this.dynamoDBClient.send(getItemCommand)
-    const task = timeEntry.Item?.tasks?.SS?.find((task) => task.startsWith(`${params.customer}#${params.project}#${params.task}`))
-    if(task){
+    const task = timeEntry.Item?.tasks?.SS?.find((task) =>
+      task.startsWith(`${params.customer}#${params.project}#${params.task}`),
+    )
+    if (task) {
       const updateCommand = new UpdateItemCommand({
-        TableName : getTableName('TimeEntry'),
+        TableName: getTableName('TimeEntry'),
         Key: {
-          uid: {S: params.user},
-          timeEntryDate: {S: params.date}
+          uid: { S: params.user },
+          timeEntryDate: { S: params.date },
         },
         UpdateExpression: 'DELETE tasks :task',
         ExpressionAttributeValues: {
@@ -78,13 +82,12 @@ export class TimeEntryRepostiroy implements TimeEntryRepositoryInterface {
             SS: [task],
           },
         },
-        ReturnValues: 'UPDATED_NEW'
+        ReturnValues: 'UPDATED_NEW',
       })
       const tt = await this.dynamoDBClient.send(updateCommand)
       console.log(tt.Attributes?.tasks.SS)
-      }
-    
     }
+  }
 
   private getTimeEntryFromDynamoDb(
     item: Record<string, AttributeValue>,

@@ -2,6 +2,7 @@ import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositor
 import {
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
+  deleteTimeEntryWithUserType,
 } from '../model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '../repository/TimeEntryRepositoryIntereface'
 import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
@@ -12,7 +13,9 @@ export class TimeEntryService {
     private taskRepository: TaskRepositoryInterface,
   ) {}
 
-  find(params: TimeEntryReadParamWithUserType): Promise<TimeEntryRowType[]> {
+  async find(
+    params: TimeEntryReadParamWithUserType,
+  ): Promise<TimeEntryRowType[]> {
     return this.timeEntryRepostiroy.find(params)
   }
   async saveMine(params: TimeEntryRowType, company: string): Promise<void> {
@@ -25,5 +28,9 @@ export class TimeEntryService {
       throw new TaskNotExistsError()
     }
     return this.timeEntryRepostiroy.saveMine(params)
+  }
+
+  async delete(params: deleteTimeEntryWithUserType): Promise<void> {
+    this.timeEntryRepostiroy.delete(params)
   }
 }
