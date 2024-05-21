@@ -1,7 +1,7 @@
 import {
   AttributeValue,
   DynamoDBClient,
-  PutItemCommand,
+  GetItemCommand,
   QueryCommand,
   UpdateItemCommand,
 } from '@aws-sdk/client-dynamodb'
@@ -37,94 +37,68 @@ export class TimeEntryRepostiroy implements TimeEntryRepositoryInterface {
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
-    const exisingItem = await this.findByUserAndDate(params.user, params.date)
-    if (exisingItem.length > 0) {
-      this.insertTaskInExistingDay(params)
-    } else {
-      this.createNewDay(params)
-    }
-  }
-
-  private async findByUserAndDate(
-    user: string,
-    date: string,
-  ): Promise<TimeEntryRowType[]> {
-    const command = new QueryCommand({
-      TableName: getTableName('TimeEntry'),
-      KeyConditionExpression: 'uid =  :user AND timeEntryDate = :date',
-      ExpressionAttributeValues: {
-        ':user': { S: user },
-        ':date': { S: date },
-      },
-    })
-    const result = await this.dynamoDBClient.send(command)
-    return (
-      result.Items?.map((item) => this.getTimeEntryFromDynamoDb(item)).flat() ??
-      []
-    )
-  }
-
-  private async insertTaskInExistingDay(params: TimeEntryRowType) {
+    this.removeDuplicate(params)
     const command = new UpdateItemCommand({
-      TableName: getTableName('TimeEntry'),
+      TableName : getTableName('TimeEntry'),
       Key: {
-        uid: { S: params.user },
-        timeEntryDate: { S: params.date },
+        uid: {S: params.user},
+        timeEntryDate: {S: params.date}
       },
-      UpdateExpression: 'SET tasks = list_append(tasks, :task)',
+      UpdateExpression: 'ADD tasks :task',
       ExpressionAttributeValues: {
         ':task': {
-          L: [
-            {
-              M: {
-                customer: { S: params.customer },
-                project: { S: params.project },
-                task: { S: params.task },
-                hours: { N: params.hours.toString() },
-              },
-            },
-          ],
+          SS: [`${params.customer}#${params.project}#${params.task}#${params.hours}`],
         },
       },
     })
     await this.dynamoDBClient.send(command)
   }
 
-  private async createNewDay(params: TimeEntryRowType) {
-    const command = new PutItemCommand({
+  private async removeDuplicate(params: TimeEntryRowType): Promise<void>
+  {
+    const getItemCommand = new GetItemCommand({
       TableName: getTableName('TimeEntry'),
-      Item: {
-        uid: { S: params.user },
-        timeEntryDate: { S: params.date },
-        tasks: {
-          L: [
-            {
-              M: {
-                customer: { S: params.customer },
-                project: { S: params.project },
-                task: { S: params.task },
-                hours: { N: params.hours.toString() },
-              },
-            },
-          ],
-        },
-      },
+      Key: {
+        uid: {S: params.user},
+        timeEntryDate: {S: params.date}
+      },      
     })
-    await this.dynamoDBClient.send(command)
-  }
+    const timeEntry = await this.dynamoDBClient.send(getItemCommand)
+    const task = timeEntry.Item?.tasks?.SS?.find((task) => task.startsWith(`${params.customer}#${params.project}#${params.task}`))
+    if(task){
+      const updateCommand = new UpdateItemCommand({
+        TableName : getTableName('TimeEntry'),
+        Key: {
+          uid: {S: params.user},
+          timeEntryDate: {S: params.date}
+        },
+        UpdateExpression: 'DELETE tasks :task',
+        ExpressionAttributeValues: {
+          ':task': {
+            SS: [task],
+          },
+        },
+        ReturnValues: 'UPDATED_NEW'
+      })
+      const tt = await this.dynamoDBClient.send(updateCommand)
+      console.log(tt.Attributes?.tasks.SS)
+      }
+    
+    }
 
   private getTimeEntryFromDynamoDb(
     item: Record<string, AttributeValue>,
   ): TimeEntryRowType[] {
     const resultForUser: TimeEntryRowType[] = []
-    item.tasks?.L?.forEach((task) => {
+    item.tasks?.SS?.forEach((taskItem) => {
+      const [customer, project, task, hours] = taskItem.split('#')
       resultForUser.push({
         user: item.uid?.S ?? '',
         date: item.timeEntryDate?.S ?? '',
-        customer: task.M?.customer?.S ?? '',
-        project: task.M?.project?.S ?? '',
-        task: task.M?.task?.S ?? '',
-        hours: parseFloat(task.M?.hours?.N ?? '0'),
+        customer: customer,
+        project: project,
+        task: task,
+        hours: parseFloat(hours),
       })
     })
     return resultForUser

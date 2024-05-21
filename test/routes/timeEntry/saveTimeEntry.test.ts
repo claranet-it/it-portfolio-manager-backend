@@ -125,6 +125,53 @@ test('insert time entry in an existing day', async (t) => {
   ])
 })
 
+test('update hours on existing task', async(t) => {
+  const date = '2024-01-04'
+  const customer = 'Claranet'
+  const project = 'Slack time'
+  const task = 'formazione'
+  const hours = 2
+  const addTimeentryResponse = await addTimeEntry(
+    date,
+    customer,
+    project,
+    task,
+    hours,
+  )
+  t.equal(addTimeentryResponse.statusCode, 204)
+
+  const newHours = 5
+  const updateTimeEntryResponse = await addTimeEntry(
+    date,
+    customer,
+    project,
+    task,
+    newHours,
+  )
+  t.equal(updateTimeEntryResponse.statusCode, 204)
+  const getTimeEntryResponse = await app.inject({
+    method: 'GET',
+    url: '/api/time-entry/mine?from=2024-01-04&to=2024-01-04',
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+  })
+  t.equal(getTimeEntryResponse.statusCode, 200)
+  const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
+  t.equal(timeEntry.length, 1)
+  t.same(timeEntry, [
+    {
+      user: 'nicholas.crow@email.com',
+      date: date,
+      customer: customer,
+      task: task,
+      project: project,
+      hours: newHours,
+    }    
+  ])
+
+})
+
 test('throws error on not existing customer', async(t) => {
   const date = '2024-01-02'
   const customer = 'unexisting customer'
