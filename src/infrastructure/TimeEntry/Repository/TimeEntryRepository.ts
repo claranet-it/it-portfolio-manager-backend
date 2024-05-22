@@ -38,7 +38,7 @@ export class TimeEntryRepostiroy implements TimeEntryRepositoryInterface {
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
-    this.delete(params)
+    await this.delete(params)
     const command = new UpdateItemCommand({
       TableName: getTableName('TimeEntry'),
       Key: {
@@ -82,10 +82,8 @@ export class TimeEntryRepostiroy implements TimeEntryRepositoryInterface {
             SS: [task],
           },
         },
-        ReturnValues: 'UPDATED_NEW',
       })
-      const tt = await this.dynamoDBClient.send(updateCommand)
-      console.log(tt.Attributes?.tasks.SS)
+      await this.dynamoDBClient.send(updateCommand)
     }
   }
 

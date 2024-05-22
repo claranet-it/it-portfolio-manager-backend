@@ -31,6 +31,6 @@ export class TimeEntryService {
   }
 
   async delete(params: deleteTimeEntryWithUserType): Promise<void> {
-    this.timeEntryRepostiroy.delete(params)
+    await this.timeEntryRepostiroy.delete(params)
   }
 }
