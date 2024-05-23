@@ -29,10 +29,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       },
     },
     async (request, reply) => {
-      fastify.dependencyInjectionContainer()
+     const jwt =  await fastify.dependencyInjectionContainer()
       .resolve('authService')
-      .verifyJwt(request.body)
-      reply.code(200).send()
+      .signIn(request.body)
+      reply.send({token: jwt})
     },
   )
 }

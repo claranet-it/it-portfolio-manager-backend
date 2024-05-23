@@ -26,7 +26,7 @@ const TEST_JWT_SECRET = Symbol('TEST-JWT-SECRET')
 
 async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
   const getFastifyJwtOptions = () => {
-    if (process.env.STAGE_NAME === 'test') {
+    if (process.env.STAGE_NAME === 'test' || process.env.STAGE_NAME === 'dev') {
       return {
         secret: TEST_JWT_SECRET.toString(),
       }
