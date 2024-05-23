@@ -18,6 +18,7 @@ import { DummySSMClient } from '@src/infrastructure/SSM/DummySSMClient'
 import { SSMClientInterface } from '../SSM/SSMClientInterface'
 import { TaskRepository } from '@src/infrastructure/Task/repository/TaskRepository'
 import { TaskService } from '@src/core/Task/service/TaskService'
+import { AuthService } from '../Auth/service/AuthService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -86,6 +87,12 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       taskService: asClass(TaskService),
+    })
+    container.register({
+      jwt: awilix.asValue(fastify.jwt)
+    })
+    container.register({
+      authService: asClass(AuthService)
     })
 
     return container
