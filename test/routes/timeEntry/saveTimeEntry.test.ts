@@ -58,6 +58,7 @@ test('insert time entry in new day', async (t) => {
   t.equal(timeEntry.length, 1)
   t.same(timeEntry[0], {
     user: 'nicholas.crow@email.com',
+    company: 'it',
     date: date,
     customer: customer,
     task: task,
@@ -109,6 +110,7 @@ test('insert time entry in an existing day', async (t) => {
     {
       user: 'nicholas.crow@email.com',
       date: date,
+      company: 'it',
       customer: firstCustomer,
       task: firstTask,
       project: firstProject,
@@ -117,6 +119,7 @@ test('insert time entry in an existing day', async (t) => {
     {
       user: 'nicholas.crow@email.com',
       date: date,
+      company: 'it',
       customer: secondCustomer,
       task: secondTask,
       project: secondProject,
@@ -163,6 +166,7 @@ test('update hours on existing task', async(t) => {
     {
       user: 'nicholas.crow@email.com',
       date: date,
+      company: 'it',
       customer: customer,
       task: task,
       project: project,

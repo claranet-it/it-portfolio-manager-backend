@@ -20,6 +20,7 @@ export type TimeEntryReadParamWithUserType = Static<
 export const TimeEntryRow = Type.Object({
   user: Type.String(),
   date: Type.String(),
+  company: Type.String(),
   customer: Type.String(),
   project: Type.String(),
   task: Type.String(),

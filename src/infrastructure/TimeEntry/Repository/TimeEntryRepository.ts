@@ -45,8 +45,9 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         uid: { S: params.user },
         timeEntryDate: { S: params.date },
       },
-      UpdateExpression: 'ADD tasks :task',
+      UpdateExpression: 'SET company = :company ADD tasks :task',
       ExpressionAttributeValues: {
+        ':company': { S: params.company },
         ':task': {
           SS: [
             `${params.customer}#${params.project}#${params.task}#${params.hours}`,
@@ -96,6 +97,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       resultForUser.push({
         user: item.uid?.S ?? '',
         date: item.timeEntryDate?.S ?? '',
+        company: item.company?.S ?? '',
         customer: customer,
         project: project,
         task: task,

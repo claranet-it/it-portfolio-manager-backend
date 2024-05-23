@@ -18,9 +18,9 @@ export class TimeEntryService {
   ): Promise<TimeEntryRowType[]> {
     return this.timeEntryRepository.find(params)
   }
-  async saveMine(params: TimeEntryRowType, company: string): Promise<void> {
+  async saveMine(params: TimeEntryRowType): Promise<void> {
     const tasks = await this.taskRepository.getTasks({
-      company: company,
+      company: params.company,
       customer: params.customer,
       project: params.project,
     })
