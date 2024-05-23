@@ -1,26 +1,14 @@
-import { JWT, JwtHeader, TokenOrHeader } from '@fastify/jwt'
-import buildGetJwks from 'get-jwks'
-import { verifyJwtParamsType } from '../model/Auth.model'
-import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
+import { JWT} from '@fastify/jwt'
+import { Provider, verifyJwtParamsType } from '../model/Auth.model'
+import { ProviderResolver } from '../providers/providerResolver'
 
 export class AuthService {
-  constructor(private jwt: JWT) {}
+  constructor(private jwt: JWT, private providerResolver: ProviderResolver) {}
 
   async signIn(params: verifyJwtParamsType): Promise<string> {
-    const decodedToken = this.jwt.decode<TokenOrHeader>(params.token, {
-      complete: true,
-    })
-    if (!decodedToken) {
-      throw new Error('aaaa')
-    }
-    const getJwks = buildGetJwks()
-    const jwtHeader: JwtHeader =
-      'header' in decodedToken ? decodedToken.header : decodedToken
-    const { kid, alg } = jwtHeader
-    const iss = 'payload' in decodedToken ? decodedToken.payload.iss : ''
-    const key = await getJwks.getPublicKey({ kid, alg, domain: iss })
-    const result = this.jwt.verify<JwtTokenType>(params.token, { key: key })
-    const newToken = this.jwt.sign({email: result.email, name: result.name, picture: result.picture})
-    return newToken
+    console.log(params.provider as Provider)
+    const provider = this.providerResolver.resolve(Provider[params.provider as keyof typeof Provider])
+    const user = await provider.getUser(params.token)
+    return this.jwt.sign({email: user.email, name: user.name, picture: user.picture})    
   }
 }

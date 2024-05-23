@@ -19,6 +19,8 @@ import { SSMClientInterface } from '../SSM/SSMClientInterface'
 import { TaskRepository } from '@src/infrastructure/Task/repository/TaskRepository'
 import { TaskService } from '@src/core/Task/service/TaskService'
 import { AuthService } from '../Auth/service/AuthService'
+import { ClaranetProvider } from '../Auth/providers/ClaranetProvider'
+import { ProviderResolver } from '../Auth/providers/providerResolver'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -93,6 +95,14 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       authService: asClass(AuthService)
+    })
+
+    container.register({
+      claranetProvider: asClass(ClaranetProvider)
+    })
+
+    container.register({
+      providerResolver: asClass(ProviderResolver).inject(() => ({container: container}))
     })
 
     return container
