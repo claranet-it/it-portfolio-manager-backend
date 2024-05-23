@@ -18,7 +18,7 @@ import { DummySSMClient } from '@src/infrastructure/SSM/DummySSMClient'
 import { SSMClientInterface } from '../SSM/SSMClientInterface'
 import { TaskRepository } from '@src/infrastructure/Task/repository/TaskRepository'
 import { TaskService } from '@src/core/Task/service/TaskService'
-import { TimeEntryRepostiroy } from '@src/infrastructure/TimeEntry/Repository/TimeEntryRepository'
+import { TimeEntryRepository } from '@src/infrastructure/TimeEntry/Repository/TimeEntryRepository'
 import { TimeEntryService } from '../TimeEntry/service/TimeEntryService'
 
 declare module 'fastify' {
@@ -90,7 +90,7 @@ async function dependencyInjectionContainerPlugin(
       taskService: asClass(TaskService),
     })    
     container.register({
-      timeEntryRepostiroy: asClass(TimeEntryRepostiroy)
+      timeEntryRepository: asClass(TimeEntryRepository)
     })
 
     container.register({

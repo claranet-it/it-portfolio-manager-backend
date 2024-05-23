@@ -13,7 +13,7 @@ import {
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryIntereface'
 import { getTableName } from '@src/core/db/TableName'
 
-export class TimeEntryRepostiroy implements TimeEntryRepositoryInterface {
+export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
 
   async find(

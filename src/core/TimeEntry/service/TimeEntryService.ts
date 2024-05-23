@@ -9,14 +9,14 @@ import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsErro
 
 export class TimeEntryService {
   constructor(
-    private timeEntryRepostiroy: TimeEntryRepositoryInterface,
+    private timeEntryRepository: TimeEntryRepositoryInterface,
     private taskRepository: TaskRepositoryInterface,
   ) {}
 
   async find(
     params: TimeEntryReadParamWithUserType,
   ): Promise<TimeEntryRowType[]> {
-    return this.timeEntryRepostiroy.find(params)
+    return this.timeEntryRepository.find(params)
   }
   async saveMine(params: TimeEntryRowType, company: string): Promise<void> {
     const tasks = await this.taskRepository.getTasks({
@@ -27,10 +27,10 @@ export class TimeEntryService {
     if (!tasks.includes(params.task)) {
       throw new TaskNotExistsError()
     }
-    return this.timeEntryRepostiroy.saveMine(params)
+    return this.timeEntryRepository.saveMine(params)
   }
 
   async delete(params: deleteTimeEntryWithUserType): Promise<void> {
-    await this.timeEntryRepostiroy.delete(params)
+    await this.timeEntryRepository.delete(params)
   }
 }
