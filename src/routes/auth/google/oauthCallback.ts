@@ -1,7 +1,10 @@
+import { OauthCallbackQueryParamType } from '@src/core/Auth/model/google.auth.model'
 import { FastifyInstance } from 'fastify'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.get(
+  fastify.get<{
+    Querystring: OauthCallbackQueryParamType
+  }>(
     '/oauthCallback',
     {
       schema: {
@@ -24,17 +27,17 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       },
     },
     async (request, reply) => {
-     const query = request.query;
-     if(query.error){
+      const query = request.query
+      if (query.error) {
         console.error(query.error)
         reply.code(500).send()
-     }
-     const token = await fastify.dependencyInjectionContainer()
-     .resolve('gooleAuthClient')
-     .getToken(query.code)
+      }
+      const token = await fastify
+        .dependencyInjectionContainer()
+        .resolve('gooleAuthClient')
+        .getToken(query.code)
 
-     reply.send({token: token})
-
+      reply.redirect(`http://localhost:5173?token=${token}`)
     },
   )
 }

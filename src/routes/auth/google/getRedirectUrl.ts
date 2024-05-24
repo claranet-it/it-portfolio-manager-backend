@@ -24,7 +24,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         },
       },
     },
-    async (_request, reply) => {      
+    async (_request, reply) => {            
      const redirectUrl =  await fastify.dependencyInjectionContainer()
       .resolve('gooleAuthClient')
       .generateAuthUrl({        
