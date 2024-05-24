@@ -21,6 +21,8 @@ import { TaskService } from '@src/core/Task/service/TaskService'
 import { AuthService } from '../Auth/service/AuthService'
 import { ClaranetProvider } from '../Auth/providers/ClaranetProvider'
 import { ProviderResolver } from '../Auth/providers/providerResolver'
+import { OAuth2Client } from 'google-auth-library'
+import { GoogleProvider } from '../Auth/providers/GoogleProvider'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -35,6 +37,8 @@ async function dependencyInjectionContainerPlugin(
   const ssmClient: SSMClientInterface =
     isTest || process.env.IS_OFFLINE ? new DummySSMClient() : new SSMClient()
   const openAIClient = OpenAiClient.getClient(await ssmClient.getOpenAIkey())
+  const googleClientId = await ssmClient.getGoogleClientId()
+  const googleClientSecret = await ssmClient.getGoogleSecret()
   const dependencyInjectionContainer = (): AwilixContainer => {
     const container = awilix.createContainer({
       injectionMode: awilix.InjectionMode.CLASSIC,
@@ -91,18 +95,33 @@ async function dependencyInjectionContainerPlugin(
       taskService: asClass(TaskService),
     })
     container.register({
-      jwt: awilix.asValue(fastify.jwt)
+      jwt: awilix.asValue(fastify.jwt),
     })
     container.register({
-      authService: asClass(AuthService)
-    })
-
-    container.register({
-      claranetProvider: asClass(ClaranetProvider)
+      authService: asClass(AuthService),
     })
 
     container.register({
-      providerResolver: asClass(ProviderResolver).inject(() => ({container: container}))
+      claranetProvider: asClass(ClaranetProvider),
+    })
+
+    container.register({
+      gooleAuthClient: awilix.asValue(
+        new OAuth2Client(
+          googleClientId,
+          googleClientSecret,
+          'http://localhost:3000',
+        ),
+      ),
+    })
+
+    container.register({
+      providerResolver: asClass(ProviderResolver).inject(() => ({
+        container: container,
+      })),
+    })
+    container.register({
+      googleProvider: asClass(GoogleProvider),
     })
 
     return container

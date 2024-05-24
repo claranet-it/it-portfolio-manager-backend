@@ -43,7 +43,7 @@ plugins:
   - serverless-dynamodb
   - serverless-offline
 
-custom:
+custom:  
   serverless-dynamodb:
     stages:
       - dev
@@ -79,6 +79,8 @@ functions:
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
+      GOOGLE_CLIENT_ID_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
+      GOOGLE_CLIENT_SECRET_ARN:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
       FIND_TEAM_OPENAI_PROMPT: "  Given the SKILL data:
 
       [[SKILL]]

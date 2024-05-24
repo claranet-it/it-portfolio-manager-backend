@@ -9,6 +9,8 @@ export class ProviderResolver {
     switch (provider) {
       case Provider.Claranet:
         return this.container.resolve('claranetProvider')
+      case Provider.Google:
+        return this.container.resolve('googleProvider')
       default:
         throw new Error('unknown provider')
     }
