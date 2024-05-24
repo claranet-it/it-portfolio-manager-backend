@@ -2,6 +2,7 @@ import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { ProviderInterface } from './providerInterface'
 import { JWT, JwtHeader, TokenOrHeader } from '@fastify/jwt'
 import buildGetJwks from 'get-jwks'
+import { UnauthorizedError } from '@src/core/customExceptions/unauthorizedError'
 
 export class ClaranetProvider implements ProviderInterface {
   constructor(private jwt: JWT) {}
@@ -11,7 +12,7 @@ export class ClaranetProvider implements ProviderInterface {
       complete: true,
     })
     if (!decodedToken) {
-      throw new Error('aaaa')
+      throw new UnauthorizedError()
     }
     const getJwks = buildGetJwks()
     const jwtHeader: JwtHeader =

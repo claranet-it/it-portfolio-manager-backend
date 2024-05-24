@@ -1,6 +1,7 @@
 import { AwilixContainer } from 'awilix'
-import { Provider } from '../model/auth.model'
+
 import { ProviderInterface } from './providerInterface'
+import { Provider } from '../model/Auth.model'
 
 export class ProviderResolver {
   constructor(private container: AwilixContainer) {}
