@@ -24,9 +24,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         },
       },
     },
-    async (request, reply) => {
+    async (request, reply) => {      
       const state = randomBytes(32).toString('hex')
       request.session.state = state
+      request.session.referer = request.headers.referer ?? ''
       const redirectUrl = await fastify
         .dependencyInjectionContainer()
         .resolve('gooleAuthClient')
@@ -37,9 +38,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             'https://www.googleapis.com/auth/userinfo.profile',
           ],
           include_granted_scopes: true,
-          state: state,
-          redirect_uri:
-            'http://localhost:3000/dev/api/auth/google/oauthCallback',
+          state: state         
         })
       reply.redirect(redirectUrl)
     },

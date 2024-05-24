@@ -1,5 +1,6 @@
 import { OauthCallbackQueryParamType } from '@src/core/Auth/model/google.auth.model'
 import { FastifyInstance } from 'fastify'
+import { OAuth2Client } from 'google-auth-library'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
@@ -30,18 +31,18 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       const query = request.query
       if (query.error) {
         console.error(query.error)
-       return  reply.code(500).send()
+        return reply.redirect(request.session.referer)
       }
-      console.log(request.session.state)
-      if(request.session.state !== query.state){
+      if (request.session.state !== query.state) {
         throw new Error('invalid state')
       }
-      const token = await fastify
+      const oauthClient = fastify
         .dependencyInjectionContainer()
-        .resolve('gooleAuthClient')
-        .getToken(query.code)
-
-      reply.redirect(`http://localhost:5173?token=${token}`)
+        .resolve('gooleAuthClient') as OAuth2Client
+      const token = await oauthClient.getToken(request.query.code ?? '')
+      reply.redirect(
+        `${request.session.referer}?token=${token.tokens.id_token}`,
+      )
     },
   )
 }

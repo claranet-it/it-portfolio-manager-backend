@@ -20,6 +20,7 @@ declare module 'fastify' {
   }
   interface Session {
     state: string
+    referer: string
   }
 }
 
