@@ -1,5 +1,5 @@
 import { AwilixContainer } from 'awilix'
-import { Provider } from '../model/Auth.model'
+import { Provider } from '../model/auth.model'
 import { ProviderInterface } from './providerInterface'
 
 export class ProviderResolver {

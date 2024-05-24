@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import {} from '@src/core/User/model/user.model'
-import { verifyJwtParams, verifyJwtParamsType } from '@src/core/Auth/model/Auth.model'
+import { verifyJwtParams, verifyJwtParamsType } from '@src/core/Auth/model/auth.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post<{

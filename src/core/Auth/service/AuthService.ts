@@ -1,5 +1,5 @@
 import { JWT} from '@fastify/jwt'
-import { Provider, verifyJwtParamsType } from '../model/Auth.model'
+import { Provider, verifyJwtParamsType } from '../model/auth.model'
 import { ProviderResolver } from '../providers/providerResolver'
 
 export class AuthService {
