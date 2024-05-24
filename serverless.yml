@@ -43,7 +43,17 @@ plugins:
   - serverless-dynamodb
   - serverless-offline
 
-custom:  
+custom:
+  variables:
+    stages:
+      - dev      
+      - prod
+    googleClientId:
+      dev: ${env:GOOLE_CLIENT_ID}      
+      prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
+    googleClientSecret:
+      dev: ${env:GOOLE_CLIENT_SECRET}      
+      prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-sec
   serverless-dynamodb:
     stages:
       - dev
@@ -79,8 +89,8 @@ functions:
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
-      GOOGLE_CLIENT_ID_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
-      GOOGLE_CLIENT_SECRET_ARN:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
+      GOOGLE_CLIENT_ID_ARN: ${self:custom.variables.googleClientId.${opt:stage, 'dev'}}
+      GOOGLE_CLIENT_SECRET_ARN: ${self:custom.variables.googleClientSecret.${opt:stage, 'dev'}}
       FIND_TEAM_OPENAI_PROMPT: "  Given the SKILL data:
 
       [[SKILL]]
