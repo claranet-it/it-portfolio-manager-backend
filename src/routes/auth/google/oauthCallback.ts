@@ -30,7 +30,11 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       const query = request.query
       if (query.error) {
         console.error(query.error)
-        reply.code(500).send()
+       return  reply.code(500).send()
+      }
+      console.log(request.session.state)
+      if(request.session.state !== query.state){
+        throw new Error('invalid state')
       }
       const token = await fastify
         .dependencyInjectionContainer()

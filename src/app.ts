@@ -10,10 +10,16 @@ import {
   JwtTokenType,
 } from '@src/core/JwtToken/model/jwtToken.model'
 import { fastifyAwilixPlugin } from '@fastify/awilix'
+import fastifySession from '@fastify/session'
+import { randomBytes } from 'crypto'
+import fastifyCookie from '@fastify/cookie'
 
 declare module 'fastify' {
   interface FastifyInstance {
     createTestJwt: (jwtToken: JwtTokenType | JwtInvalidTokenType) => string
+  }
+  interface Session {
+    state: string
   }
 }
 
@@ -51,6 +57,12 @@ export default function createApp(
   })
 
   app.register(swaggerUI)
+
+  app.register(fastifyCookie)
+  app.register(fastifySession, {
+    secret: randomBytes(32).toString('hex'),
+    cookie: { secure: process.env.STAGE_NAME !== 'dev' },
+  })
 
   app.register(cors, {})
 
