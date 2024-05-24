@@ -24,14 +24,15 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         },
       },
     },
-    async (request, reply) => {
+    async (_request, reply) => {      
      const redirectUrl =  await fastify.dependencyInjectionContainer()
       .resolve('gooleAuthClient')
       .generateAuthUrl({        
         access_type: 'offline',       
-        scope: ['https://www.googleapis.com/auth/drive.metadata.readonly'],    
+        scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],    
         include_granted_scopes: true,        
-        state: randomBytes(32).toString('hex')
+        state: randomBytes(32).toString('hex'),
+        redirect_uri: 'http://localhost:3000/dev/api/auth/google/oauthCallback'
       })
       reply.redirect(redirectUrl)
     },
