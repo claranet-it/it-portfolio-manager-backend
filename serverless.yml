@@ -48,11 +48,14 @@ custom:
     stages:
       - dev      
       - prod
+      - test
     googleClientId:
-      dev: ${env:GOOLE_CLIENT_ID}      
+      dev: ${env:GOOLE_CLIENT_ID}     
+      test: ${env:GOOLE_CLIENT_ID}
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
     googleClientSecret:
-      dev: ${env:GOOLE_CLIENT_SECRET}      
+      dev: ${env:GOOLE_CLIENT_SECRET}   
+      test: ${env:GOOLE_CLIENT_SECRET}       
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-sec
   serverless-dynamodb:
     stages:
