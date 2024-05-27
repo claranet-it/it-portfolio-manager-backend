@@ -1,7 +1,7 @@
 import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { ProviderInterface } from './providerInterface'
 import { OAuth2Client } from 'google-auth-library'
-import { UnauthorizedError } from '@src/core/customExceptions/unauthorizedError'
+import { UnauthorizedError } from '@src/core/customExceptions/UnauthorizedError'
 
 export class GoogleProvider implements ProviderInterface {
   constructor(private gooleAuthClient: OAuth2Client) {}
@@ -18,6 +18,7 @@ export class GoogleProvider implements ProviderInterface {
         email: payload.email,
         name: payload.name,
         picture: payload.picture ?? '',
+        company: payload.hd
       }
   }
 }

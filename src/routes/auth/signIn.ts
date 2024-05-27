@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { UnauthorizedError } from '@src/core/customExceptions/unauthorizedError'
+import { UnauthorizedError } from '@src/core/customExceptions/UnauthorizedError'
 import { verifyJwtParams, verifyJwtParamsType } from '@src/core/Auth/model/Auth.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {

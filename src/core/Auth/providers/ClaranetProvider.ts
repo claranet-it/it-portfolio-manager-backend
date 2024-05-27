@@ -2,7 +2,7 @@ import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { ProviderInterface } from './providerInterface'
 import { JWT, JwtHeader, TokenOrHeader } from '@fastify/jwt'
 import buildGetJwks from 'get-jwks'
-import { UnauthorizedError } from '@src/core/customExceptions/unauthorizedError'
+import { UnauthorizedError } from '@src/core/customExceptions/UnauthorizedError'
 
 export class ClaranetProvider implements ProviderInterface {
   constructor(private jwt: JWT) {}
