@@ -28,6 +28,7 @@ test('read all efforts without params', async (t) => {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
   })
 
   const response = await app.inject({
@@ -96,6 +97,7 @@ test('read all efforts with uid param', async (t) => {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
   })
 
   const response = await app.inject({
@@ -144,6 +146,7 @@ test('read next efforts without params', async (t) => {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
   })
 
   const response = await app.inject({
@@ -194,6 +197,7 @@ test('read next efforts with uid param', async (t) => {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
   })
 
   const response = await app.inject({
@@ -228,6 +232,7 @@ test('read effort with months param', async (t) =>{
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
   })
 
   const response = await app.inject({
@@ -306,6 +311,7 @@ inputs.forEach((input) => {
       email: 'nicholas.crow@email.com',
       name: 'Nicholas Crow',
       picture: 'https://test.com/nicholas.crow.jpg',
+      company: 'it'
     })
   
     const response = await app.inject({

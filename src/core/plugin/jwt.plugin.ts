@@ -64,6 +64,7 @@ async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
           reply.code(401).send('Invalid Token')
         }
         request.user.email = request.user.email.toLowerCase()
+        request.user.company = 'it'
       } catch (err) {
         reply.send(err)
       }
