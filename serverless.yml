@@ -28,6 +28,7 @@ provider:
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
         - Effect: "Allow"
           Action:
             - "ssm:GetParameter"
@@ -80,6 +81,8 @@ custom:
             sources: [ ./seed/effort.json ]
           - table: ItPortfolioManager-Task-${opt:stage, 'dev'}
             rawsources: [ ./seed/task.json ]
+          - table: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
+            rawsources: [ ./seed/time-entry.json ]
 
 package:
   patterns:
@@ -230,4 +233,21 @@ resources:
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
-          WriteCapacityUnits: 1                                          
+          WriteCapacityUnits: 1
+    ItPortfolioManagerTimeEntry:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
+        AttributeDefinitions:
+          - AttributeName: uid
+            AttributeType: S                      
+          - AttributeName: timeEntryDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uid
+            KeyType: HASH
+          - AttributeName: timeEntryDate
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1          

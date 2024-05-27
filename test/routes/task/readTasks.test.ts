@@ -28,6 +28,7 @@ test('read task with company, customer and project param', async (t) => {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
   })
 
   const response = await app.inject({

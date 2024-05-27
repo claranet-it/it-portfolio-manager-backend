@@ -23,6 +23,8 @@ import { ClaranetProvider } from '../Auth/providers/ClaranetProvider'
 import { ProviderResolver } from '../Auth/providers/providerResolver'
 import { OAuth2Client } from 'google-auth-library'
 import { GoogleProvider } from '../Auth/providers/GoogleProvider'
+import { TimeEntryRepository } from '@src/infrastructure/TimeEntry/Repository/TimeEntryRepository'
+import { TimeEntryService } from '../TimeEntry/service/TimeEntryService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -93,6 +95,42 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       taskService: asClass(TaskService),
+    })    
+    container.register({
+      timeEntryRepository: asClass(TimeEntryRepository)
+    })
+
+    container.register({
+      timeEntryService: asClass(TimeEntryService)
+    })
+    container.register({
+      jwt: awilix.asValue(fastify.jwt),
+    })
+    container.register({
+      authService: asClass(AuthService),
+    })
+
+    container.register({
+      claranetProvider: asClass(ClaranetProvider),
+    })
+
+    container.register({
+      gooleAuthClient: awilix.asValue(
+        new OAuth2Client(
+          googleClientId,
+          googleClientSecret,
+          'http://localhost:3000/dev/api/auth/google/oauthCallback'
+        ),
+      ),
+    })
+
+    container.register({
+      providerResolver: asClass(ProviderResolver).inject(() => ({
+        container: container,
+      })),
+    })
+    container.register({
+      googleProvider: asClass(GoogleProvider),
     })
     container.register({
       jwt: awilix.asValue(fastify.jwt),

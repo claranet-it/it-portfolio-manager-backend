@@ -17,6 +17,7 @@ test('get user info without user profile', async t => {
         "email": "tester@claranet",
         "name": "Tester",
         "picture": "https://test.com/test.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
@@ -28,13 +29,12 @@ test('get user info without user profile', async t => {
     })
 
     const user = response.json<UserWithProfileType>()
-
     t.equal(response.statusCode, 200)
     t.equal(user.email, 'tester@claranet')
     t.equal(user.name, 'Tester')
     t.equal(user.picture, 'https://test.com/test.jpg')
+    t.equal(user.company, 'it')
     t.notOk(user.crew)
-    t.notOk(user.company)
     t.notOk(user.crewLeader)
     t.notOk(user.place)
     t.notOk(user.workingExperience)
@@ -57,6 +57,7 @@ test('get user info with user profile', async t => {
         "email": "nicholas.crow@email.com",
         "name": "Nicholas Crow",
         "picture": "https://test.com/nicholas.crow.jpg",
+        "company": "it"
     })
 
     const response = await app.inject({
