@@ -29,6 +29,7 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
         - Effect: "Allow"
           Action:
             - "ssm:GetParameter"
@@ -83,6 +84,8 @@ custom:
             rawsources: [ ./seed/task.json ]
           - table: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
             rawsources: [ ./seed/time-entry.json ]
+          - table: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
+            sources: ['./seed/company.json']
 
 package:
   patterns:
