@@ -1,5 +1,5 @@
-import { JwtTokenType } from "@src/core/JwtToken/model/jwtToken.model";
+import { AuthInfoType } from "../model/Auth.model";
 
 export interface ProviderInterface {
-    getUser(token: string): Promise<JwtTokenType>
+    gatAuthInfo(token: string): Promise<AuthInfoType>
 }

@@ -1,13 +1,13 @@
-import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { ProviderInterface } from './providerInterface'
 import { JWT, JwtHeader, TokenOrHeader } from '@fastify/jwt'
 import buildGetJwks from 'get-jwks'
 import { UnauthorizedError } from '@src/core/customExceptions/UnauthorizedError'
+import { AuthInfoType } from '../model/Auth.model'
 
 export class ClaranetProvider implements ProviderInterface {
   constructor(private jwt: JWT) {}
 
-  async getUser(token: string): Promise<JwtTokenType> {
+  async gatAuthInfo(token: string): Promise<AuthInfoType> {
     const decodedToken = this.jwt.decode<TokenOrHeader>(token, {
       complete: true,
     })
@@ -20,6 +20,19 @@ export class ClaranetProvider implements ProviderInterface {
     const { kid, alg } = jwtHeader
     const iss = 'payload' in decodedToken ? decodedToken.payload.iss : ''
     const key = await getJwks.getPublicKey({ kid, alg, domain: iss })
-    return this.jwt.verify<JwtTokenType>(token, { key: key })
+    const { email, name, picture } = this.jwt.verify<{
+      email: string
+      name: string
+      picture: string
+    }>(token, { key: key })
+    if (!email || !name || !picture) {
+      throw new UnauthorizedError()
+    }
+    return {
+      email,
+      name,
+      picture,
+      companyDomain: 'it.clara.net',
+    }
   }
 }

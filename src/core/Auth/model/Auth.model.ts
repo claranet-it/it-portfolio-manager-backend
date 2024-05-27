@@ -8,3 +8,12 @@ export const verifyJwtParams = Type.Object({
 })
 
 export type verifyJwtParamsType = Static<typeof verifyJwtParams>
+
+export const AuthInfo = Type.Object({
+  email: Type.String(),
+  name: Type.String(),
+  picture: Type.String(),
+  companyDomain: Type.String()
+})
+
+export type AuthInfoType = Static<typeof AuthInfo>

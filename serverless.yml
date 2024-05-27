@@ -251,3 +251,19 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1          
+      
+    ItPortfolioManagerCompanies:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
+        AttributeDefinitions:
+          - AttributeName: domain
+            AttributeType: S
+        KeySchema:
+          - AttributeName: domain
+            KeyType: HASH          
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1 
+
+                
