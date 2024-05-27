@@ -10,7 +10,7 @@ export class AuthService {
     const provider = this.providerResolver.resolve(Provider[params.provider as keyof typeof Provider])
     try{
     const user = await provider.getUser(params.token)
-    return this.jwt.sign({user})    
+    return this.jwt.sign(user)    
     }
     catch{
       throw new UnauthorizedError()
