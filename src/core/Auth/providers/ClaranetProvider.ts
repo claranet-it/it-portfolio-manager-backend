@@ -23,13 +23,16 @@ export class ClaranetProvider implements ProviderInterface {
     const { email, name, picture } = this.jwt.verify<{
       email: string
       name: string
-      picture: string
-    }>(token, { key: key })
+      picture: string    
+    }>(token, { key: key })    
     if (!email || !name || !picture) {
       throw new UnauthorizedError()
     }
+    if(email.includes('it.clara.net')){
+      email.replace('it.clara.net', 'claranet.com')
+    }    
     return {
-      email,
+      email: email.toLowerCase(),
       name,
       picture,
       companyDomain: 'it.clara.net',

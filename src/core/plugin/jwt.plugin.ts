@@ -49,13 +49,6 @@ async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
     async function (request: FastifyRequest, reply: FastifyReply) {
       try {
         await request.jwtVerify()
-
-        if (request.user.email && request.user.email.includes('it.clara.net')) {
-          request.user.email = request.user.email.replace(
-            'it.clara.net',
-            'claranet.com',
-          )
-        }
         if (
           !request.user.email ||
           !request.user.name ||
@@ -63,8 +56,6 @@ async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
         ) {
           reply.code(401).send('Invalid Token')
         }
-        request.user.email = request.user.email.toLowerCase()
-        request.user.company = 'it'
       } catch (err) {
         reply.send(err)
       }
