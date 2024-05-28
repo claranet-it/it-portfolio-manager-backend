@@ -120,7 +120,7 @@ async function dependencyInjectionContainerPlugin(
         new OAuth2Client(
           googleClientId,
           googleClientSecret,
-          'http://localhost:3000/dev/api/auth/google/oauthCallback'
+          process.env.GOOGLE_CALLBACK_URL
         ),
       ),
     })

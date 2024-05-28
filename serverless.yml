@@ -51,14 +51,36 @@ custom:
       - dev      
       - prod
       - test
+      - stage
     googleClientId:
       dev: ${env:GOOLE_CLIENT_ID}     
       test: ${env:GOOLE_CLIENT_ID}
+      stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
     googleClientSecret:
       dev: ${env:GOOLE_CLIENT_SECRET}   
       test: ${env:GOOLE_CLIENT_SECRET}       
+      stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-sec
+    apiBaseUrl: 
+      dev: http://localhost:3000
+      test: http://localhost:3000
+      stage: 
+        Fn::Join:
+        - "https://"        
+        - Ref: "HttpApi"
+        - ".execute-api."
+        - Ref: "AWS::Region"
+        - "."
+        - Ref: "AWS::URLSuffix"
+      prod: 
+        Fn::Join:
+        - "https://"        
+        - Ref: "HttpApi"
+        - ".execute-api."
+        - Ref: "AWS::Region"
+        - "."
+        - Ref: "AWS::URLSuffix"
   serverless-dynamodb:
     stages:
       - dev
@@ -100,6 +122,7 @@ functions:
       OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
       GOOGLE_CLIENT_ID_ARN: ${self:custom.variables.googleClientId.${opt:stage, 'dev'}}
       GOOGLE_CLIENT_SECRET_ARN: ${self:custom.variables.googleClientSecret.${opt:stage, 'dev'}}
+      GOOGLE_CALLBACK_URL: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}/${opt:stage, 'dev'}}/api/auth/google/oauthCallback
       FIND_TEAM_OPENAI_PROMPT: "  Given the SKILL data:
 
       [[SKILL]]
