@@ -1,14 +1,14 @@
 import { FastifyInstance } from 'fastify'
 import {
+  EffortQueryParamsType,
   EffortReadParams,
-  EffortReadParamsType,
   EffortResponse,
   EffortResponseType,
 } from '@src/core/Effort/model/effort'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Querystring: EffortReadParamsType
+    Querystring: EffortQueryParamsType
     Reply: EffortResponseType
   }>(
     '/',
@@ -44,7 +44,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('effortService')
-          .getEffortFormattedResponse(request.query)
+          .getEffortFormattedResponse({...request.query, company: request.user.company})
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
