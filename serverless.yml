@@ -29,7 +29,7 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
-            - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerCompanies, Arn ]
         - Effect: "Allow"
           Action:
             - "ssm:GetParameter"
