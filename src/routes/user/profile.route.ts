@@ -42,7 +42,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         await fastify
           .dependencyInjectionContainer()
           .resolve('userProfileService')
-          .saveUserProfile(request.user.email, request.user.name, {
+          .saveUserProfile(request.user.email, request.user.name, request.user.company, {
             ...request.body,
           })
 
@@ -53,7 +53,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             uid: request.user.email,
             name: request.user.name,
             crew: request.body.crew,
-            company: request.body.company,
+            company: request.user.company,
           })
 
         reply.code(201).send()
