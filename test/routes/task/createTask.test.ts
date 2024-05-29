@@ -5,12 +5,12 @@ import { TaskListType } from '@src/core/Task/model/task.model'
 
 let app: FastifyInstance
 
-function getToken(): string {
+function getToken(company: string): string {
   return app.createTestJwt({
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it'
+    company: company
   })
 }
 
@@ -217,11 +217,10 @@ async function postTask(customer: string, company: string, project: string, task
     method: 'POST',
     url: '/api/task/task/',
     headers: {
-      authorization: `Bearer ${getToken()}`,
+      authorization: `Bearer ${getToken(company)}`,
     },
     payload: {
       customer: customer,
-      company: company,
       project: project,
       task: task
     }
@@ -233,7 +232,7 @@ async function getTask(customer: string, project: string, company: string) {
     method: 'GET',
     url: `/api/task/task/?company=${company}&customer=${customer}&project=${project}`,
     headers: {
-      authorization: `Bearer ${getToken()}`,
+      authorization: `Bearer ${getToken(company)}`,
     },
   })
 }

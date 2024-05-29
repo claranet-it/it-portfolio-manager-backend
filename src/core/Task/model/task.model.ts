@@ -21,12 +21,18 @@ export const TaskReadParams = Type.Object({
 
 export type TaskReadParamType = Static<typeof TaskReadParams>
 
-export const TaskCreateParams = Type.Object({
-  company: Type.String(),
+export const TaskQueryParam = Type.Object({
   customer: Type.String(),
   project: Type.String(),
   task: Type.String(),
 })
+
+export type TaskQueryParamType = Static<typeof TaskQueryParam>
+
+export const TaskCreateParams = Type.Intersect([
+  TaskQueryParam,
+  Type.Object({ company: Type.String() }),
+])
 
 export type TaskCreateParamType = Static<typeof TaskCreateParams>
 

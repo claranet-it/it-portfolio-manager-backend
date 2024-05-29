@@ -1,20 +1,20 @@
 import { FastifyInstance } from 'fastify'
 import {
-  TaskCreateParams,
-  TaskCreateParamType,
+  TaskQueryParam,
+  TaskQueryParamType,
 } from '@src/core/Task/model/task.model'
 import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post<{
-    Body: TaskCreateParamType
+    Body: TaskQueryParamType
   }>(
     '/task',
     {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Task'],
-        body: TaskCreateParams,
+        body: TaskQueryParam,
         security: [
           {
             apiKey: [],
@@ -45,7 +45,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .createTask(request.body)
+          .createTask({ ...request.body, company: request.user.company })
       } catch (error) {
         request.log.error(error)
         let errorCode = 500
