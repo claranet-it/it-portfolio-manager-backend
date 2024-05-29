@@ -1,9 +1,7 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import {
-  CustomerListType,
-} from '@src/core/Task/model/task.model'
+import { CustomerListType } from '@src/core/Task/model/task.model'
 
 let app: FastifyInstance
 
@@ -25,29 +23,39 @@ test('read customers without authentication', async (t) => {
   t.equal(response.statusCode, 401)
 })
 
-test('read customers with company param', async (t) => {
-  const token = app.createTestJwt({
-    email: 'nicholas.crow@email.com',
-    name: 'Nicholas Crow',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it'
+const inputs = [
+  {
+    company: 'it',
+    expectedCustomers: ['Claranet', 'test customer'],
+  },
+  {
+    company: 'us',
+    expectedCustomers: ['test customer us'],
+  },
+]
+
+inputs.forEach((input) => {
+  test(`read customers with company ${input.company} param`, async (t) => {
+    const token = app.createTestJwt({
+      email: 'nicholas.crow@email.com',
+      name: 'Nicholas Crow',
+      picture: 'https://test.com/nicholas.crow.jpg',
+      company: input.company,
+    })
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/task/customer',
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    })
+
+    t.equal(response.statusCode, 200)
+
+    const customers = response.json<CustomerListType>()
+    t.equal(customers.length, input.expectedCustomers.length)
+
+    t.same(customers, input.expectedCustomers)
   })
-
-  const response = await app.inject({
-    method: 'GET',
-    url: '/api/task/customer?company=it',
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  })
-
-  t.equal(response.statusCode, 200)
-
-  const customers = response.json<CustomerListType>()
-  t.equal(customers.length, 2)
-
-  const expectedResult = ['Claranet', 'test customer']
-
-  t.same(customers, expectedResult)
 })
-
