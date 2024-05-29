@@ -1,11 +1,13 @@
 import { Static, Type } from '@sinclair/typebox'
 
-const ConfigurationCrews = Type.Array(
+export const ConfigurationCrews = Type.Array(
   Type.Object({
     name: Type.String(),
     service_line: Type.String(),
   }),
 )
+
+export type ConfigurationCrewsType = Static<typeof ConfigurationCrews>
 
 const ConfigurationSkills = Type.Record(
   Type.String(),

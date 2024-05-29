@@ -30,6 +30,7 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerCompanies, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerCrews, Arn ]
         - Effect: "Allow"
           Action:
             - "ssm:GetParameter"
@@ -108,6 +109,8 @@ custom:
             rawsources: [ ./seed/time-entry.json ]
           - table: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
             sources: ['./seed/company.json']
+          - table: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
+            sources: ['./seed/crew.json']
 
 package:
   patterns:
@@ -290,6 +293,24 @@ resources:
             KeyType: HASH          
         ProvisionedThroughput:
           ReadCapacityUnits: 1
-          WriteCapacityUnits: 1 
+          WriteCapacityUnits: 1
+    
+    ItPortfolioManagerCrews:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
+        AttributeDefinitions:
+          - AttributeName: company
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S            
+        KeySchema:
+          - AttributeName: company
+            KeyType: HASH     
+          - AttributeName: name
+            KeyType: RANGE    
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 
                 
