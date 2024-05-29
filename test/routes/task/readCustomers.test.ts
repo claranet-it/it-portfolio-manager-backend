@@ -29,8 +29,8 @@ const inputs = [
     expectedCustomers: ['Claranet', 'test customer'],
   },
   {
-    company: 'us',
-    expectedCustomers: ['test customer us'],
+    company: "other company",
+    expectedCustomers: ['test customer of other company'],
   },
 ]
 

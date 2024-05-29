@@ -1,9 +1,7 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import {
-  ProjectListType,
-} from '@src/core/Task/model/task.model'
+import { ProjectListType } from '@src/core/Task/model/task.model'
 
 let app: FastifyInstance
 
@@ -25,28 +23,47 @@ test('read projects without authentication', async (t) => {
   t.equal(response.statusCode, 401)
 })
 
-test('read projects with company and customer param', async (t) => {
-  const token = app.createTestJwt({
-    email: 'nicholas.crow@email.com',
-    name: 'Nicholas Crow',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it'
+const inputs = [
+  {
+    company: 'it',
+    customer: 'Claranet',
+    expectProjects: ['Funzionale', 'Slack time'],
+  },
+  {
+    company: 'it',
+    customer: 'test customer',
+    expectProjects: ['SOR Sviluppo'],
+  },
+  {
+    company: "other company",
+    customer: 'test customer of other company',
+    expectProjects: ['test project of other company'],
+  },
+]
+
+inputs.forEach((input) => {
+  test(`read projects with company ${input.company} and customer ${input.customer} param`, async (t) => {
+    const token = app.createTestJwt({
+      email: 'nicholas.crow@email.com',
+      name: 'Nicholas Crow',
+      picture: 'https://test.com/nicholas.crow.jpg',
+      company: input.company,
+    })
+
+    const response = await app.inject({
+      method: 'GET',
+      url: `/api/task/project/?customer=${input.customer}`,
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    })
+
+    t.equal(response.statusCode, 200)
+
+    const projects = response.json<ProjectListType>()
+    t.equal(projects.length, input.expectProjects.length)
+
+
+    t.same(projects, input.expectProjects)
   })
-
-  const response = await app.inject({
-    method: 'GET',
-    url: '/api/task/project/?company=it&customer=Claranet',
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  })
-
-  t.equal(response.statusCode, 200)
-
-  const projects = response.json<ProjectListType>()
-  t.equal(projects.length, 2)
-
-  const expectedResult = ['Funzionale', 'Slack time']
-
-  t.same(projects, expectedResult)
 })
