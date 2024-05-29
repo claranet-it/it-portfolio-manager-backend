@@ -58,7 +58,7 @@ test('remove skill matrix', async (t) => {
   )
   await service.removeResigned(email)
   const skillMatrix =
-    await skillMatrixRepository.getMineSkillMatrixFormattedReponse(email)
+    await skillMatrixRepository.getMineSkillMatrixFormattedResponse(email)
   t.same(skillMatrix, [])
 })
 

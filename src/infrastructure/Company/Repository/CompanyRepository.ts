@@ -3,7 +3,7 @@ import { CompanyRepositoryInterface } from '@src/core/Company/repository/Company
 import { CompanyType } from '@src/core/Company/repository/model/Company'
 import { getTableName } from '@src/core/db/TableName'
 
-export class companyRepository implements CompanyRepositoryInterface {
+export class CompanyRepository implements CompanyRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
 
   async findByDomain(domain: string): Promise<CompanyType | null> {

@@ -22,7 +22,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         response: {
           200: {
             type: 'null',
-            description: 'succesfully deleted',
+            description: 'successfully deleted',
           },
           401: {
             type: 'null',
