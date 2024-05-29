@@ -5,8 +5,8 @@ import {
 } from '@aws-sdk/client-dynamodb'
 import {
   ProjectReadParamsType,
-  TaskCreateParamType,
-  TaskReadParamType,
+  TaskCreateReadParamsType,
+  TaskReadParamsType,
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
@@ -49,7 +49,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     )
   }
 
-  async getTasks(params: TaskReadParamType): Promise<string[]> {
+  async getTasks(params: TaskReadParamsType): Promise<string[]> {
     const command = new QueryCommand({
       TableName: getTableName('Task'),
       KeyConditionExpression:
@@ -67,7 +67,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     )
   }
 
-  async createTask(params: TaskCreateParamType): Promise<void> {
+  async createTask(params: TaskCreateReadParamsType): Promise<void> {
     const company = params.company
     const project = params.project
     const customer = params.customer

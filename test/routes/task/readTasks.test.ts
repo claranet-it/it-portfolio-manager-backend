@@ -23,28 +23,48 @@ test('read tasks without authentication', async (t) => {
   t.equal(response.statusCode, 401)
 })
 
-test('read task with company, customer and project param', async (t) => {
-  const token = app.createTestJwt({
-    email: 'nicholas.crow@email.com',
-    name: 'Nicholas Crow',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it'
+const inputs = [
+  {
+    company: 'it',
+    customer: 'Claranet',
+    project: 'Funzionale',
+    expectedTasks: ['Attività di portfolio', "Management"],
+  },
+  {
+    company: 'it',
+    customer: 'Claranet',
+    project: 'Slack time',
+    expectedTasks: ['formazione'],
+  },
+  {
+    company: 'it',
+    customer: 'test customer',
+    project: 'SOR Sviluppo',
+    expectedTasks: ['Iterazione 1', 'Iterazione 2'],
+  }
+]
+
+inputs.forEach((input) => {
+  test('read task with company, customer and project param', async (t) => {
+    const token = app.createTestJwt({
+      email: 'nicholas.crow@email.com',
+      name: 'Nicholas Crow',
+      picture: 'https://test.com/nicholas.crow.jpg',
+      company: input.company
+    })
+
+    const response = await app.inject({
+      method: 'GET',
+      url: `/api/task/task?customer=${input.customer}&project=${input.project}`,
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    })
+
+    t.equal(response.statusCode, 200)
+
+    const tasks = response.json<TaskListType>()
+    t.equal(tasks.length, input.expectedTasks.length)
+    t.same(tasks, input.expectedTasks)
   })
-
-  const response = await app.inject({
-    method: 'GET',
-    url: '/api/task/task/?company=it&customer=Claranet&project=Funzionale',
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  })
-
-  t.equal(response.statusCode, 200)
-
-  const tasks = response.json<TaskListType>()
-  t.equal(tasks.length, 2)
-
-  const expectedResult = ['Attività di portfolio', 'Management']
-
-  t.same(tasks, expectedResult)
 })
