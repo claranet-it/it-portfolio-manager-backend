@@ -24,10 +24,10 @@ export class SkillMatrixService {
     return await this.skillMatrixRepository.getAllSkillMatrix(params)
   }
 
-  async getMineSkillMatrixFormattedReponse(
+  async getMineSkillMatrixFormattedResponse(
     jwtToken: JwtTokenType,
   ): Promise<SkillMatrixMineResponseType> {
-    return await this.skillMatrixRepository.getMineSkillMatrixFormattedReponse(
+    return await this.skillMatrixRepository.getMineSkillMatrixFormattedResponse(
       jwtToken.email,
     )
   }
