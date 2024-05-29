@@ -1,11 +1,5 @@
 import { Static, Type } from '@sinclair/typebox'
 
-export const CustomerReadParams = Type.Object({
-  company: Type.String(),
-})
-
-export type CustomerReadParamsType = Static<typeof CustomerReadParams>
-
 export const ProjectQueryParam = Type.Object({
   customer: Type.String(),
 })
