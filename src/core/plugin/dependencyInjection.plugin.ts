@@ -25,7 +25,7 @@ import { OAuth2Client } from 'google-auth-library'
 import { GoogleProvider } from '../Auth/providers/GoogleProvider'
 import { TimeEntryRepository } from '@src/infrastructure/TimeEntry/Repository/TimeEntryRepository'
 import { TimeEntryService } from '../TimeEntry/service/TimeEntryService'
-import { companyRepository } from '@src/infrastructure/Company/Repository/CompanyRepository'
+import { CompanyRepository } from '@src/infrastructure/Company/Repository/CompanyRepository'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -163,7 +163,7 @@ async function dependencyInjectionContainerPlugin(
       googleProvider: asClass(GoogleProvider),
     })
     container.register({
-      companyRepository: asClass(companyRepository)
+      companyRepository: asClass(CompanyRepository)
     })
 
     return container
