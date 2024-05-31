@@ -27,6 +27,8 @@ import { TimeEntryRepository } from '@src/infrastructure/TimeEntry/Repository/Ti
 import { TimeEntryService } from '../TimeEntry/service/TimeEntryService'
 import { CrewRepository } from '@src/infrastructure/Configuration/Repository/CrewRepository'
 import { CompanyRepository } from '@src/infrastructure/Company/Repository/CompanyRepository'
+import { NetworkingSkillsService } from '@src/core/SkillMatrix/service/NetworkingSkillsService'
+import { NetworkingSkillsRepository } from '@src/infrastructure/SkillMatrix/repository/NetworkingSkillsRepository'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -65,6 +67,14 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       skillMatrixService: asClass(SkillMatrixService),
+    })
+
+    container.register({
+      networkingSkillsService: asClass(NetworkingSkillsService),
+    })
+
+    container.register({
+      networkingSkillsRepository: asClass(NetworkingSkillsRepository),
     })
 
     container.register({
