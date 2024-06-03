@@ -37,10 +37,10 @@ export type CompanySkillWithUidType = Static<typeof CompanySkillWithUid>
 
 export const EffortPeriod = Type.Object({
     month: Type.String(),
+    people: Type.Number(),
     averageConfirmed: Type.Number(),
     averageTentative: Type.Number(),
-    total: Type.Number(),
-    people: Type.Number(),
+    averageTotal: Type.Number(),
 })
 
 export const Effort = Type.Object({

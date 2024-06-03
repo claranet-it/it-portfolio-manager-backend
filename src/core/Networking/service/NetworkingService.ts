@@ -75,8 +75,8 @@ export class NetworkingService {
 
             const averageConfirmed = this.average(effort.map(e => e.confirmedEffort))
             const averageTentative = this.average(effort.map(e => e.tentativeEffort))
-            const total = this.average(effort.map(e => e.confirmedEffort + e.tentativeEffort))
-            return { month: period, people, averageConfirmed, averageTentative, averageTotal: total }
+            const averageTotal = this.average(effort.map(e => e.confirmedEffort + e.tentativeEffort))
+            return { month: period, people, averageConfirmed, averageTentative, averageTotal }
         })
     }
 
@@ -125,13 +125,13 @@ export class NetworkingService {
                 })
             })
             const effortsBySkill = this.groupEffortsBySkillAndPeriod(effortsWithSkills);
-            return { company: company[0].company,  effort: effortsBySkill }
+            return { company: company[0].company, effort: effortsBySkill }
         })
 
         //const groupedEfforts = this.groupByCompany(efforts);
         console.log(JSON.stringify(groupedEfforts, null, 2))
 
-        return [{company: '', effort: []}]
+        return groupedEfforts;
     }
 
     private average(numbers: number[]) {
