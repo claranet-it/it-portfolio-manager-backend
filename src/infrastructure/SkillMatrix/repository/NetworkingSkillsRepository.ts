@@ -56,7 +56,7 @@ export class NetworkingSkillsRepository
 
   private getNetworkingOf(company: string): string[] {
     console.log(company) // TODO remove
-    return ['it', 'us']
+    return ['it']
   }
   private groupBySkill(array: CompanySkillType[]) {
     const groups: { skill: string; companySkill: CompanySkillType[] }[] = []

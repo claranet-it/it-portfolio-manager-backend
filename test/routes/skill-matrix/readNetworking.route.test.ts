@@ -1,8 +1,5 @@
 import { afterEach, beforeEach, test } from 'tap'
 import createApp from '@src/app'
-import {
-  SkillMatrixResponseType,
-} from '@src/core/SkillMatrix/model/skillMatrix.model'
 import { FastifyInstance } from 'fastify'
 
 let app: FastifyInstance
@@ -46,6 +43,7 @@ test('read company networking skills', async (t) => {
   })
 
   t.equal(response.statusCode, 200)
-  console.log(response);
 
+  const expected =  "[{\"company\":\"it\",\"skills\":[{\"skill\":\"PHP\",\"averageScore\":2,\"people\":2},{\"skill\":\"Java/Kotlin\",\"averageScore\":3,\"people\":1},{\"skill\":\"Python\",\"averageScore\":3,\"people\":1}]}]"
+  t.same(response.payload, expected)
 })
