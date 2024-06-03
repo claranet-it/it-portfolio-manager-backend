@@ -25,7 +25,7 @@ afterEach(async () => {
 test('read networking skills without authentication', async (t) => {
   const response = await app.inject({
     method: 'GET',
-    url: '/api/skill-matrix/networking',
+    url: '/api/networking/skills',
   })
 
   t.equal(response.statusCode, 401)
@@ -36,7 +36,7 @@ test('read company networking skills', async (t) => {
   const token = getToken(company)
   const response = await app.inject({
     method: 'GET',
-    url: '/api/skill-matrix/networking',
+    url: '/api/networking/skills',
     headers: {
       authorization: `Bearer ${token}`,
     },

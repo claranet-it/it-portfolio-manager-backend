@@ -1,5 +1,6 @@
-import { NetworkingSkillsResponseType } from '@src/core/SkillMatrix/model/skillMatrix.model'
-import { NetworkingSkillsRepositoryInterface } from '@src/core/SkillMatrix/repository/NetworkingSkillsRepositoryInterface'
+
+import { NetworkingSkillsRepositoryInterface } from '@src/core/Networking/repository/NetworkingSkillsRepositoryInterface'
+import {NetworkingSkillsResponseType} from "@src/core/Networking/model/networking.model";
 
 export class NetworkingSkillsService {
   constructor(

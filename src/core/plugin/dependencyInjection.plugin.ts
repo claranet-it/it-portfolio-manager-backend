@@ -27,8 +27,8 @@ import { TimeEntryRepository } from '@src/infrastructure/TimeEntry/Repository/Ti
 import { TimeEntryService } from '../TimeEntry/service/TimeEntryService'
 import { CrewRepository } from '@src/infrastructure/Configuration/Repository/CrewRepository'
 import { CompanyRepository } from '@src/infrastructure/Company/Repository/CompanyRepository'
-import { NetworkingSkillsService } from '@src/core/SkillMatrix/service/NetworkingSkillsService'
-import { NetworkingSkillsRepository } from '@src/infrastructure/SkillMatrix/repository/NetworkingSkillsRepository'
+import { NetworkingSkillsService } from '@src/core/Networking/service/NetworkingSkillsService'
+import { NetworkingSkillsRepository } from '@src/infrastructure/Networking/repository/NetworkingSkillsRepository'
 
 declare module 'fastify' {
   interface FastifyInstance {
