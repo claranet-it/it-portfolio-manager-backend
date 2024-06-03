@@ -1,9 +1,11 @@
 import {NetworkingRepositoryInterface} from '@src/core/Networking/repository/NetworkingRepositoryInterface'
 import {
     CompanyEffortWithSkillRowType,
-    CompanySkillType, CompanySkillWithUidType,
+    CompanySkillType,
+    CompanySkillWithUidType,
     NetworkingEffortResponseType,
-    NetworkingSkillsResponseType, SkillType
+    NetworkingSkillsResponseType,
+    SkillType
 } from "@src/core/Networking/model/networking.model";
 
 export class NetworkingService {
@@ -105,12 +107,11 @@ export class NetworkingService {
 
 
     private async calculateAverageEffort(networking: CompanySkillWithUidType[][]): Promise<NetworkingEffortResponseType> {
-        console.log(JSON.stringify(networking, null, 2))
-
         const uids = Array.from(new Set(networking.flatMap(n => n.map(x => x.uid))))
         const efforts = await this.networkingRepository.getNetworkingEffortOf(uids)
         const flatEfforts = efforts.flat(2);
-        const groupedEfforts = networking.map(company => {
+
+        return networking.map(company => {
             const effortsWithSkills = company.flatMap(c => {
                 const uidEfforts = flatEfforts.filter(e => e.uid === c.uid)
                 return uidEfforts.map(u => {
@@ -125,13 +126,8 @@ export class NetworkingService {
                 })
             })
             const effortsBySkill = this.groupEffortsBySkillAndPeriod(effortsWithSkills);
-            return { company: company[0].company, effort: effortsBySkill }
-        })
-
-        //const groupedEfforts = this.groupByCompany(efforts);
-        console.log(JSON.stringify(groupedEfforts, null, 2))
-
-        return groupedEfforts;
+            return {company: company[0].company, effort: effortsBySkill}
+        });
     }
 
     private average(numbers: number[]) {
