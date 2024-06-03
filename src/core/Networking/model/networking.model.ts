@@ -26,3 +26,9 @@ export const CompanySkill = Type.Object({
 })
 
 export type CompanySkillType = Static<typeof CompanySkill>
+
+export const NetworkingEffortResponse = Type.Array(CompanySkills)
+
+export type NetworkingEffortResponseType = Static<
+    typeof NetworkingEffortResponse
+>

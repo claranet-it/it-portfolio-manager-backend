@@ -36,7 +36,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       try {
         return await fastify
           .dependencyInjectionContainer()
-          .resolve('networkingSkillsService')
+          .resolve('networkingService')
           .getNetworkingAverageSkillsOf(request.user.company)
       } catch (error) {
         request.log.error(error)
