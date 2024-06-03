@@ -1,6 +1,9 @@
-import {NetworkingEffortResponseType, NetworkingSkillsResponseType} from "@src/core/Networking/model/networking.model";
+import {
+  CompanySkillType,
+  NetworkingEffortResponseType,
+} from "@src/core/Networking/model/networking.model";
 
 export interface NetworkingRepositoryInterface {
-  getNetworkingAverageSkillsOf(company: string): Promise<NetworkingSkillsResponseType>
+  getNetworkingAverageSkillsOf(company: string): Promise<CompanySkillType[][]>
   getNetworkingAverageEffortOf(company: string): Promise<NetworkingEffortResponseType>
 }
