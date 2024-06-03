@@ -9,7 +9,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         {
             onRequest: [fastify.authenticate],
             schema: {
-                tags: ['Other Companies Skills'],
+                tags: ['Other Companies Effort'],
                 security: [
                     {
                         apiKey: [],
@@ -37,7 +37,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
                 return await fastify
                     .dependencyInjectionContainer()
                     .resolve('networkingService')
-                    .getNetworkingAverageSkillsOf(request.user.company)
+                    .getNetworkingAverageEffortOf(request.user.company)
             } catch (error) {
                 request.log.error(error)
                 return reply.code(500).send()

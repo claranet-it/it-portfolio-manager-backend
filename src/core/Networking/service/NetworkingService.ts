@@ -1,6 +1,5 @@
-
 import { NetworkingRepositoryInterface } from '@src/core/Networking/repository/NetworkingRepositoryInterface'
-import {NetworkingSkillsResponseType} from "@src/core/Networking/model/networking.model";
+import {NetworkingEffortResponseType, NetworkingSkillsResponseType} from "@src/core/Networking/model/networking.model";
 
 export class NetworkingService {
   constructor(
@@ -10,6 +9,12 @@ export class NetworkingService {
   async getNetworkingAverageSkillsOf(company: string): Promise<NetworkingSkillsResponseType> {
     return await this.networkingRepository.getNetworkingAverageSkillsOf(
       company,
+    )
+  }
+
+  async getNetworkingAverageEffortOf(company: string): Promise<NetworkingEffortResponseType> {
+    return await this.networkingRepository.getNetworkingAverageEffortOf(
+        company,
     )
   }
 }

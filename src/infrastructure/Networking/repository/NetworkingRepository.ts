@@ -1,7 +1,12 @@
 import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb'
 import { getTableName } from '@src/core/db/TableName'
 import { NetworkingRepositoryInterface } from '@src/core/Networking/repository/NetworkingRepositoryInterface'
-import {CompanySkillType, NetworkingSkillsResponseType, SkillType} from "@src/core/Networking/model/networking.model";
+import {
+  CompanySkillType,
+  NetworkingEffortResponseType,
+  NetworkingSkillsResponseType,
+  SkillType
+} from "@src/core/Networking/model/networking.model";
 
 
 export class NetworkingRepository
@@ -12,6 +17,10 @@ export class NetworkingRepository
     const skills: CompanySkillType[][] = await this.getSkills(company)
     const groupedSkills = skills.map((s) => this.groupBySkill(s))
     return await this.calculateAverageScore(groupedSkills)
+  }
+
+  async getNetworkingAverageEffortOf(company: string): Promise<NetworkingEffortResponseType> {
+    return [{ company, effort: [] }];
   }
 
   private async getSkills(company: string): Promise<CompanySkillType[][]> {
