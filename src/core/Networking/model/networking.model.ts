@@ -27,6 +27,14 @@ export const CompanySkill = Type.Object({
 
 export type CompanySkillType = Static<typeof CompanySkill>
 
+export const CompanySkillWithUid = Type.Object({
+    company: Type.String(),
+    uid: Type.String(),
+    skill: Type.String(),
+})
+
+export type CompanySkillWithUidType = Static<typeof CompanySkillWithUid>
+
 export const EffortPeriod = Type.Object({
     month: Type.String(),
     averageConfirmed: Type.Number(),
@@ -44,6 +52,29 @@ export const CompanyEffort = Type.Object({
     company: Type.String(),
     effort: Type.Array(Effort),
 })
+
+export type CompanyEffortType = Static<typeof CompanyEffort>
+
+export const CompanyEffortRow = Type.Object({
+    company: Type.String(),
+    uid: Type.String(),
+    month_year: Type.RegExp(/(0[1-9]|1[012])_([0-9][0-9])$/),
+    confirmedEffort: Type.Number(),
+    tentativeEffort: Type.Number(),
+})
+
+export type CompanyEffortRowType = Static<typeof CompanyEffortRow>
+
+export const CompanyEffortRowWithSkill = Type.Object({
+    company: Type.String(),
+    uid: Type.String(),
+    month_year: Type.RegExp(/(0[1-9]|1[012])_([0-9][0-9])$/),
+    confirmedEffort: Type.Number(),
+    tentativeEffort: Type.Number(),
+    skill: Type.String(),
+})
+
+export type CompanyEffortWithSkillRowType = Static<typeof CompanyEffortRowWithSkill>
 
 export const NetworkingEffortResponse = Type.Array(CompanyEffort)
 

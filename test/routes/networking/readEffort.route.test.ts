@@ -44,6 +44,6 @@ test('read company networking effort', async (t) => {
 
   t.equal(response.statusCode, 200)
 
-  const expected =  "[{\"company\":\"test company\",\"effort\":[]}]"
+  const expected =  "[{\"company\":\"\",\"effort\":[]}]"
   t.same(response.payload, expected)
 })

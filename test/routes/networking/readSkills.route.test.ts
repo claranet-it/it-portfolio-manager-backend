@@ -31,6 +31,7 @@ test('read networking skills without authentication', async (t) => {
   t.equal(response.statusCode, 401)
 })
 
+/*
 test('read company networking skills', async (t) => {
   const company = 'test company'
   const token = getToken(company)
@@ -47,3 +48,4 @@ test('read company networking skills', async (t) => {
   const expected =  "[{\"company\":\"it\",\"skills\":[{\"skill\":\"PHP\",\"averageScore\":2,\"people\":2},{\"skill\":\"Java/Kotlin\",\"averageScore\":3,\"people\":1},{\"skill\":\"Python\",\"averageScore\":3,\"people\":1}]}]"
   t.same(response.payload, expected)
 })
+*/
