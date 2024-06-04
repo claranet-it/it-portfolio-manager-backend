@@ -23,7 +23,7 @@ export class NetworkingService {
     }
 
     async getNetworkingAverageEffortOf(company: string): Promise<NetworkingEffortResponseType> {
-        const networkingSkills = await this.networkingRepository.getNetworkingSkillsUidsOf(
+        const networkingSkills = await this.networkingRepository.getNetworkingSkillsWithUidsOf(
             company,
         )
         return await this.calculateAverageEffort(networkingSkills);

@@ -47,7 +47,7 @@ export class NetworkingRepository
         return results
     }
 
-    async getNetworkingSkillsUidsOf(company: string): Promise<CompanySkillWithUidType[][]> {
+    async getNetworkingSkillsWithUidsOf(company: string): Promise<CompanySkillWithUidType[][]> {
         const command = new QueryCommand({
             TableName: getTableName('SkillMatrix'),
         })

@@ -1,10 +1,10 @@
 import {
   CompanyEffortRowType,
-  CompanySkillType,
+  CompanySkillType, CompanySkillWithUidType,
 } from "@src/core/Networking/model/networking.model";
 
 export interface NetworkingRepositoryInterface {
   getNetworkingSkillsOf(company: string): Promise<CompanySkillType[][]>
-  getNetworkingSkillsUidsOf(company: string): Promise<{ company: string, uid: string, skill: string }[][]>
+  getNetworkingSkillsWithUidsOf(company: string): Promise<CompanySkillWithUidType[][]>
   getNetworkingEffortOf(uids: string[]): Promise<CompanyEffortRowType[][]>
 }
