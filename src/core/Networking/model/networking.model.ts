@@ -20,20 +20,13 @@ export type NetworkingSkillsResponseType = Static<
 >
 
 export const CompanySkill = Type.Object({
+    company: Type.String(),
     skill: Type.String(),
     score: Type.Number(),
-    company: Type.String(),
+    uid: Type.String(),
 })
 
 export type CompanySkillType = Static<typeof CompanySkill>
-
-export const CompanySkillWithUid = Type.Object({
-    company: Type.String(),
-    uid: Type.String(),
-    skill: Type.String(),
-})
-
-export type CompanySkillWithUidType = Static<typeof CompanySkillWithUid>
 
 export const EffortPeriod = Type.Object({
     month: Type.String(),
@@ -52,8 +45,6 @@ export const CompanyEffort = Type.Object({
     company: Type.String(),
     effort: Type.Array(Effort),
 })
-
-export type CompanyEffortType = Static<typeof CompanyEffort>
 
 export const CompanyEffortRow = Type.Object({
     company: Type.String(),

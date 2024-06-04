@@ -2,7 +2,6 @@ import {NetworkingRepositoryInterface} from '@src/core/Networking/repository/Net
 import {
     CompanyEffortWithSkillRowType,
     CompanySkillType,
-    CompanySkillWithUidType,
     NetworkingEffortResponseType,
     NetworkingSkillsResponseType,
     SkillType
@@ -23,7 +22,7 @@ export class NetworkingService {
     }
 
     async getNetworkingAverageEffortOf(company: string): Promise<NetworkingEffortResponseType> {
-        const networkingSkills = await this.networkingRepository.getNetworkingSkillsWithUidsOf(
+        const networkingSkills = await this.networkingRepository.getNetworkingSkillsOf(
             company,
         )
         return await this.calculateAverageEffort(networkingSkills);
@@ -58,7 +57,7 @@ export class NetworkingService {
     }
 
 
-    private async calculateAverageEffort(networking: CompanySkillWithUidType[][]): Promise<NetworkingEffortResponseType> {
+    private async calculateAverageEffort(networking: CompanySkillType[][]): Promise<NetworkingEffortResponseType> {
         const uids = Array.from(new Set(networking.flatMap(n => n.map(x => x.uid))))
         const efforts = await this.networkingRepository.getNetworkingEffortOf(uids)
         const flatEfforts = efforts.flat(2);

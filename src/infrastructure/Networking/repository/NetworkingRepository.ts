@@ -3,7 +3,7 @@ import {getTableName} from '@src/core/db/TableName'
 import {NetworkingRepositoryInterface} from '@src/core/Networking/repository/NetworkingRepositoryInterface'
 import {
     CompanyEffortRowType,
-    CompanySkillType, CompanySkillWithUidType,
+    CompanySkillType,
 } from "@src/core/Networking/model/networking.model";
 
 
@@ -31,7 +31,7 @@ export class NetworkingRepository
             command.input.ExpressionAttributeNames = {
                 '#score': 'score',
             }
-            command.input.ProjectionExpression = 'company, skill, score'
+            command.input.ProjectionExpression = 'company, skill, score, uid'
 
             const result = await this.dynamoDBClient.send(command)
             if (result?.Items) {
@@ -40,41 +40,7 @@ export class NetworkingRepository
                         company: item.company?.S ?? '',
                         skill: item.skill?.S ?? '',
                         score: parseInt(item.score?.N ?? '0'),
-                    })),
-                )
-            }
-        }
-        return results
-    }
-
-    async getNetworkingSkillsWithUidsOf(company: string): Promise<CompanySkillWithUidType[][]> {
-        const command = new QueryCommand({
-            TableName: getTableName('SkillMatrix'),
-        })
-        // TODO
-        const networking = this.getNetworkingOf(company)
-
-        const results = []
-        for (const company of networking) {
-            command.input.IndexName = 'companyIndex'
-            command.input.FilterExpression = '#score >= :score'
-            command.input.KeyConditionExpression = 'company = :company'
-            command.input.ExpressionAttributeValues = {
-                ':company': {S: company},
-                ':score': {N: '1'},
-            }
-            command.input.ExpressionAttributeNames = {
-                '#score': 'score',
-            }
-            command.input.ProjectionExpression = 'company, uid, skill'
-
-            const result = await this.dynamoDBClient.send(command)
-            if (result?.Items) {
-                results.push(
-                    result.Items.map((item) => ({
-                        company: item.company?.S ?? '',
                         uid: item.uid?.S ?? '',
-                        skill: item.skill?.S ?? '',
                     })),
                 )
             }
