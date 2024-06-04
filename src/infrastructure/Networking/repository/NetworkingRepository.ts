@@ -48,15 +48,21 @@ export class NetworkingRepository
         return results
     }
 
-    async getNetworkingEffortOf(uids: string[]): Promise<CompanyEffortRowType[][]> {
+    async getNetworkingEffortOf(company: string): Promise<CompanyEffortRowType[][]> {
         const command = new QueryCommand({
             TableName: getTableName('Effort'),
         })
 
+        // TODO
+        const networking = this.getNetworkingOf(company)
+
         const results = []
-        for (const uid of uids) {
-            command.input.KeyConditionExpression = 'uid = :uid'
-            command.input.ExpressionAttributeValues = {':uid': {S: uid}}
+        for (const company of networking) {
+            command.input.IndexName = 'companyIndex'
+            command.input.KeyConditionExpression = 'company = :company'
+            command.input.ExpressionAttributeValues = {
+                ':company': {S: company},
+            }
             command.input.ProjectionExpression = 'company, uid, month_year, confirmedEffort, tentativeEffort'
 
             const result = await this.dynamoDBClient.send(command)

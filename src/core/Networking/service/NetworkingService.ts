@@ -25,7 +25,7 @@ export class NetworkingService {
         const networkingSkills = await this.networkingRepository.getNetworkingSkillsOf(
             company,
         )
-        return await this.calculateAverageEffort(networkingSkills);
+        return await this.calculateAverageEffort(networkingSkills, company);
     }
 
     private groupBySkill(array: CompanySkillType[]) {
@@ -57,9 +57,8 @@ export class NetworkingService {
     }
 
 
-    private async calculateAverageEffort(networking: CompanySkillType[][]): Promise<NetworkingEffortResponseType> {
-        const uids = Array.from(new Set(networking.flatMap(n => n.map(x => x.uid))))
-        const efforts = await this.networkingRepository.getNetworkingEffortOf(uids)
+    private async calculateAverageEffort(networking: CompanySkillType[][], company: string): Promise<NetworkingEffortResponseType> {
+        const efforts = await this.networkingRepository.getNetworkingEffortOf(company)
         const flatEfforts = efforts.flat(2);
 
         return networking.map(company => {
