@@ -64,16 +64,16 @@ export class NetworkingService {
         const flatEfforts = efforts.flat(2);
 
         return networking.map(company => {
-            const effortsWithSkills = company.flatMap(c => {
-                const uidEfforts = flatEfforts.filter(e => e.uid === c.uid)
-                return uidEfforts.map(u => {
+            const effortsWithSkills = company.flatMap(companySkill => {
+                const uidEfforts = flatEfforts.filter(companyEffort => companyEffort.uid === companySkill.uid)
+                return uidEfforts.map(effort => {
                     return {
-                        company: u.company,
-                        uid: u.uid,
-                        month_year: u.month_year,
-                        confirmedEffort: u.confirmedEffort,
-                        tentativeEffort: u.tentativeEffort,
-                        skill: c.skill,
+                        company: effort.company,
+                        uid: effort.uid,
+                        month_year: effort.month_year,
+                        confirmedEffort: effort.confirmedEffort,
+                        tentativeEffort: effort.tentativeEffort,
+                        skill: companySkill.skill,
                     }
                 })
             })
