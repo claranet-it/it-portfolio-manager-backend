@@ -30,56 +30,8 @@ export class NetworkingService {
     }
 
     private groupBySkill(array: CompanySkillType[]) {
-        const groups: { skill: string; companySkill: CompanySkillType[] }[] = []
-        array.forEach(function (groupBy: CompanySkillType) {
-            const groupKey = groupBy.skill
-            const group = groups.find((g) => g.skill == groupKey)
-            if (!group) {
-                groups.push({skill: groupKey, companySkill: [groupBy]})
-            } else {
-                group.companySkill.push(groupBy)
-            }
-        })
-        return groups
-    }
-
-    private groupEffortsBySkillAndPeriod(array: CompanyEffortWithSkillRowType[]) {
-        const groups: { skill: string; period: CompanyEffortWithSkillRowType[] }[] = []
-        array.forEach(function (groupBy: CompanyEffortWithSkillRowType) {
-            const groupKey = groupBy.skill
-            const group = groups.find((g) => g.skill == groupKey)
-            if (!group) {
-                groups.push({ skill: groupKey, period: [groupBy] })
-            } else {
-                group.period.push(groupBy)
-            }
-        })
-        return groups.map(g => {
-            return { skill: g.skill, period: this.groupEffortsByPeriod(g.period) }
-        })
-    }
-
-    private groupEffortsByPeriod(array: CompanyEffortWithSkillRowType[]) {
-        const groups: { period: string; effort: CompanyEffortWithSkillRowType[] }[] = []
-        array.forEach(function (groupBy: CompanyEffortWithSkillRowType) {
-            const groupKey = groupBy.month_year
-            const group = groups.find((g) => g.period == groupKey)
-            if (!group) {
-                groups.push({ period: groupKey, effort: [groupBy] })
-            } else {
-                group.effort.push(groupBy)
-            }
-        })
-        return groups.map(g => {
-            const period = g.period
-            const effort = g.effort
-            const people= effort.length
-
-            const averageConfirmed = this.average(effort.map(e => e.confirmedEffort))
-            const averageTentative = this.average(effort.map(e => e.tentativeEffort))
-            const averageTotal = this.average(effort.map(e => e.confirmedEffort + e.tentativeEffort))
-            return { month: period, people, averageConfirmed, averageTentative, averageTotal }
-        })
+        const groupedSkills = this.groupByKey(array, i => i.skill)
+        return Object.entries(groupedSkills).map(([skill, group]) => ({skill: skill, companySkill: group}))
     }
 
     private async calculateAverageScore(
@@ -130,11 +82,36 @@ export class NetworkingService {
         });
     }
 
+    private groupEffortsBySkillAndPeriod(array: CompanyEffortWithSkillRowType[]) {
+        const groupedSkills = this.groupByKey(array, i => i.skill)
+        return Object.entries(groupedSkills).map(([skill, group]) => ({
+            skill, period: this.groupEffortsByPeriod(group)
+        }))
+    }
+
+    private groupEffortsByPeriod(array: CompanyEffortWithSkillRowType[]) {
+        const groupedPeriods = this.groupByKey(array, i => i.month_year)
+        return Object.entries(groupedPeriods).map(([period, effort]) => ({
+            month: period,
+            people: effort.length,
+            averageConfirmed: this.average(effort.map(e => e.confirmedEffort)),
+            averageTentative: this.average(effort.map(e => e.tentativeEffort)),
+            averageTotal: this.average(effort.map(e => e.confirmedEffort + e.tentativeEffort)),
+        }))
+    }
+
     private average(numbers: number[]) {
         let sum = 0
         for (const n of numbers) {
             sum = sum + n
         }
         return numbers.length > 0 ? sum / numbers.length : 0
+    }
+
+    private groupByKey<T>(arr: T[], key: (i: T) => string): Record<string, T[]> {
+        return arr.reduce((groups, item) => {
+            (groups[key(item)] ||= []).push(item);
+            return groups;
+        }, {} as Record<string, T[]>);
     }
 }
