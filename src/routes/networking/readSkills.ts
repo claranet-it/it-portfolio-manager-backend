@@ -1,5 +1,8 @@
 import { FastifyInstance } from 'fastify'
-import {NetworkingSkillsResponse, NetworkingSkillsResponseType} from "@src/core/Networking/model/networking.model";
+import {
+  NetworkingSkillsResponse,
+  NetworkingSkillsResponseType,
+} from '@src/core/Networking/model/networking.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
