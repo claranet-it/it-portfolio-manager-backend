@@ -16,7 +16,7 @@ export class SSMClient implements SSMClientInterface {
     }
     return key.Parameter.Value
   }
-  async getJWTPulicKey(): Promise<string> {
+  async getJWTPublicKey(): Promise<string> {
     const key = await this.ssm.getParameter({
       Name: process.env.JWT_PUBLIC_KEY_ARN,
       WithDecryption: true,

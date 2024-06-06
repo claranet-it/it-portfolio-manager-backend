@@ -4,7 +4,7 @@ export class DummySSMClient implements SSMClientInterface {
   getJwtPrivateKey(): Promise<string> {
     throw new Error('Method not implemented.')
   }
-  getJWTPulicKey(): Promise<string> {
+  getJWTPublicKey(): Promise<string> {
     throw new Error('Method not implemented.')
   }
   getGoogleClientId(): Promise<string> {
