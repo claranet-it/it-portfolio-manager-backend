@@ -3,6 +3,7 @@ import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import { DeleteItemCommand } from '@aws-sdk/client-dynamodb'
 import { getTableName } from '@src/core/db/TableName'
+import { UserWithProfileType } from '@src/core/User/model/user.model'
 
 let app: FastifyInstance
 
@@ -26,11 +27,12 @@ afterEach(async () => {
 })
 
 test('save user profile', async (t) => {
+  const company = 'it'
   const token = app.createTestJwt({
     email: email,
     name: 'User Without Profile',
     picture: 'https://test.com/user.without.profile.jpg',
-    company: 'it',
+    company: company,
   })
 
   const response = await app.inject({
@@ -41,7 +43,6 @@ test('save user profile', async (t) => {
     },
     payload: {
       crew: 'moon',
-      company: 'us',
       crewLeader: true,
       place: 'Jesi',
       workingExperience: null,
@@ -51,50 +52,25 @@ test('save user profile', async (t) => {
   })
 
   t.equal(response.statusCode, 201)
-})
 
-test('save user profile with only crew', async (t) => {
-  const token = app.createTestJwt({
+  const getUserResponse = await app.inject({
+    method: 'GET',
+    url: 'api/user/me',
+    headers: {authorization: `Bearer ${token}`}
+  })
+  const result = getUserResponse.json<UserWithProfileType>()
+  t.same(result, {
     email: email,
     name: 'User Without Profile',
     picture: 'https://test.com/user.without.profile.jpg',
-    company: 'it',
+    crew: 'moon',
+    company: company,
+    crewLeader: true,
+    place: 'Jesi',
+    workingExperience: '',
+    education:  'University',
+    certifications: 'AWS Certified Developer',
   })
-
-  const response = await app.inject({
-    method: 'POST',
-    url: '/api/user/profile',
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-    payload: {
-      crew: 'moon',
-    },
-  })
-
-  t.equal(response.statusCode, 400)
-})
-
-test('save user profile with only company', async (t) => {
-  const token = app.createTestJwt({
-    email: email,
-    name: 'User Without Profile',
-    picture: 'https://test.com/user.without.profile.jpg',
-    company: 'it',
-  })
-
-  const response = await app.inject({
-    method: 'POST',
-    url: '/api/user/profile',
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-    payload: {
-      company: 'us',
-    },
-  })
-
-  t.equal(response.statusCode, 400)
 })
 
 test('save user profile without authentication', async (t) => {

@@ -1,14 +1,11 @@
 import { FastifyInstance } from 'fastify'
 import {
-  SkillMatrixReadParams,
-  SkillMatrixReadParamsType,
   SkillMatrixResponse,
   SkillMatrixResponseType,
 } from '@src/core/SkillMatrix/model/skillMatrix.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Querystring: SkillMatrixReadParamsType
     Reply: SkillMatrixResponseType
   }>(
     '/',
@@ -16,7 +13,6 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Skill Matrix'],
-        querystring: SkillMatrixReadParams,
         security: [
           {
             apiKey: [],
@@ -44,7 +40,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('skillMatrixService')
-          .getAllSkillMatrixFormattedResponse(request.query)
+          .getAllSkillMatrixFormattedResponse({ company: request.user.company })
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

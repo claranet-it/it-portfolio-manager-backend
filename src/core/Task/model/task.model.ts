@@ -1,34 +1,46 @@
 import { Static, Type } from '@sinclair/typebox'
 
-export const CustomerReadParams = Type.Object({
-  company: Type.String(),
-})
-
-export type CustomerReadParamsType = Static<typeof CustomerReadParams>
-
-export const ProjectReadParams = Type.Object({
-  company: Type.String(),
+export const ProjectQueryParam = Type.Object({
   customer: Type.String(),
 })
 
+export type ProjectQueryParamType = Static<typeof ProjectQueryParam>
+
+export const ProjectReadParams = Type.Intersect([
+  ProjectQueryParam,
+  Type.Object({ company: Type.String() }),
+])
+
 export type ProjectReadParamsType = Static<typeof ProjectReadParams>
 
-export const TaskReadParams = Type.Object({
-  company: Type.String(),
+export const TaskReadQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
 })
 
-export type TaskReadParamType = Static<typeof TaskReadParams>
+export type TaskReadQueryParamsType = Static<typeof TaskReadQueryParams>
 
-export const TaskCreateParams = Type.Object({
-  company: Type.String(),
+export const TaskReadParams = Type.Intersect([
+  TaskReadQueryParams,
+  Type.Object({ company: Type.String() }),
+])
+
+export type TaskReadParamsType = Static<typeof TaskReadParams>
+
+export const TaskCreateQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
   task: Type.String(),
 })
 
-export type TaskCreateParamType = Static<typeof TaskCreateParams>
+export type TaskCreateQueryParamsType = Static<typeof TaskCreateQueryParams>
+
+export const TaskCreateReadParams = Type.Intersect([
+  TaskCreateQueryParams,
+  Type.Object({ company: Type.String() }),
+])
+
+export type TaskCreateReadParamsType = Static<typeof TaskCreateReadParams>
 
 export const CustomerList = Type.Array(Type.String())
 

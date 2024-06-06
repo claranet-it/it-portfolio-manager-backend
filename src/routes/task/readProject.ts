@@ -2,13 +2,13 @@ import { FastifyInstance } from 'fastify'
 import {
   ProjectList,
   ProjectListType,
-  ProjectReadParams,
-  ProjectReadParamsType,
+  ProjectQueryParam,
+  ProjectQueryParamType,
 } from '@src/core/Task/model/task.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Querystring: ProjectReadParamsType
+    Querystring: ProjectQueryParamType
     Reply: ProjectListType
   }>(
     '/project',
@@ -16,7 +16,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Task', 'Project'],
-        querystring: ProjectReadParams,
+        querystring: ProjectQueryParam,
         security: [
           {
             apiKey: [],
@@ -44,7 +44,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .getProjects(request.query)
+          .getProjects({ ...request.query, company: request.user.company })
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

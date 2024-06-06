@@ -33,12 +33,19 @@ export const EffortResponse = Type.Array(EffortResponsePerUid)
 
 export type EffortResponseType = Static<typeof EffortResponse>
 
-export const EffortReadParams = Type.Object({
+export const EffortQueryParams = Type.Object({
   uid: Type.Optional(Type.String()),
   month_year: Type.Optional(Type.RegExp(/(0[1-9]|1[012])_([0-9][0-9])$/)),
   company: Type.Optional(Type.String()),
   months: Type.Number({ default: 3 }),
 })
+
+export type EffortQueryParamsType = Static<typeof EffortQueryParams>
+
+export const EffortReadParams = Type.Intersect([
+  EffortQueryParams,
+  Type.Object({ company: Type.Optional(Type.String()) }),
+])
 
 export type EffortReadParamsType = Static<typeof EffortReadParams>
 

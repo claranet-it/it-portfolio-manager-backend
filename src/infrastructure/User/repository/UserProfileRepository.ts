@@ -39,13 +39,14 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
   async saveUserProfile(
     uid: string,
     name: string,
+    company: string,
     userProfile: UpdateUserProfileType,
   ): Promise<void> {
     const item = {
       uid: { S: uid },
       name: { S: name },
       crew: { S: userProfile.crew },
-      company: { S: userProfile.company },
+      company: { S: company },
       crewLeader: { BOOL: userProfile.crewLeader || false },
       place: { S: userProfile.place || '' },
       workingExperience: { S: userProfile.workingExperience || '' },

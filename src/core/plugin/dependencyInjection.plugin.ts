@@ -18,8 +18,15 @@ import { DummySSMClient } from '@src/infrastructure/SSM/DummySSMClient'
 import { SSMClientInterface } from '../SSM/SSMClientInterface'
 import { TaskRepository } from '@src/infrastructure/Task/repository/TaskRepository'
 import { TaskService } from '@src/core/Task/service/TaskService'
+import { AuthService } from '../Auth/service/AuthService'
+import { ClaranetProvider } from '../Auth/providers/ClaranetProvider'
+import { ProviderResolver } from '../Auth/providers/providerResolver'
+import { OAuth2Client } from 'google-auth-library'
+import { GoogleProvider } from '../Auth/providers/GoogleProvider'
 import { TimeEntryRepository } from '@src/infrastructure/TimeEntry/Repository/TimeEntryRepository'
 import { TimeEntryService } from '../TimeEntry/service/TimeEntryService'
+import { CrewRepository } from '@src/infrastructure/Configuration/Repository/CrewRepository'
+import { CompanyRepository } from '@src/infrastructure/Company/Repository/CompanyRepository'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -34,6 +41,8 @@ async function dependencyInjectionContainerPlugin(
   const ssmClient: SSMClientInterface =
     isTest || process.env.IS_OFFLINE ? new DummySSMClient() : new SSMClient()
   const openAIClient = OpenAiClient.getClient(await ssmClient.getOpenAIkey())
+  const googleClientId = await ssmClient.getGoogleClientId()
+  const googleClientSecret = await ssmClient.getGoogleSecret()
   const dependencyInjectionContainer = (): AwilixContainer => {
     const container = awilix.createContainer({
       injectionMode: awilix.InjectionMode.CLASSIC,
@@ -88,13 +97,67 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       taskService: asClass(TaskService),
-    })    
+    })
     container.register({
-      timeEntryRepository: asClass(TimeEntryRepository)
+      timeEntryRepository: asClass(TimeEntryRepository),
     })
 
     container.register({
-      timeEntryService: asClass(TimeEntryService)
+      timeEntryService: asClass(TimeEntryService),
+    })
+    container.register({
+      jwt: awilix.asValue(fastify.jwt),
+    })
+    container.register({
+      authService: asClass(AuthService),
+    })
+
+    container.register({
+      claranetProvider: asClass(ClaranetProvider),
+    })
+
+    container.register({
+      gooleAuthClient: awilix.asValue(
+        new OAuth2Client(
+          googleClientId,
+          googleClientSecret,
+          process.env.GOOGLE_CALLBACK_URL,
+        ),
+      ),
+    })
+
+    container.register({
+      providerResolver: asClass(ProviderResolver).inject(() => ({
+        container: container,
+      })),
+    })
+    container.register({
+      googleProvider: asClass(GoogleProvider),
+    })
+    container.register({
+      jwt: awilix.asValue(fastify.jwt),
+    })
+    container.register({
+      authService: asClass(AuthService),
+    })
+
+    container.register({
+      claranetProvider: asClass(ClaranetProvider),
+    })
+
+    container.register({
+      providerResolver: asClass(ProviderResolver).inject(() => ({
+        container: container,
+      })),
+    })
+    container.register({
+      googleProvider: asClass(GoogleProvider),
+    })
+    container.register({
+      companyRepository: asClass(CompanyRepository),
+    })
+    container.register({
+      crewRepository: asClass(CrewRepository),
     })
 
     return container

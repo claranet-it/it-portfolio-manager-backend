@@ -1,8 +1,8 @@
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import {
   ProjectReadParamsType,
-  TaskCreateParamType,
-  TaskReadParamType,
+  TaskCreateReadParamsType,
+  TaskReadParamsType,
 } from '../model/task.model'
 
 export class TaskService {
@@ -16,11 +16,11 @@ export class TaskService {
     return this.taskRepository.getProjects(params)
   }
 
-  async getTasks(params: TaskReadParamType): Promise<string[]> {
+  async getTasks(params: TaskReadParamsType): Promise<string[]> {
     return this.taskRepository.getTasks(params)
   }
 
-  async createTask(params: TaskCreateParamType): Promise<void> {
+  async createTask(params: TaskCreateReadParamsType): Promise<void> {
     return this.taskRepository.createTask(params)
   }
 }

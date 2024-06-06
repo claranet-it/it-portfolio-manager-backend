@@ -36,7 +36,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('skillMatrixService')
-          .getMineSkillMatrixFormattedReponse(request.user)
+          .getMineSkillMatrixFormattedResponse(request.user)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

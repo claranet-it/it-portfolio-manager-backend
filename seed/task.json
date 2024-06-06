@@ -15,8 +15,8 @@
     "tasks": { "SS": ["Iterazione 1", "Iterazione 2"] }
   },
   {
-    "company": { "S": "us" },
-    "customerProject": {"S": "test customer us#test project us"},
-    "tasks": { "SS": ["test task 1 us", "test task 2 us"] }
+    "company": { "S": "other company" },
+    "customerProject": {"S": "test customer of other company#test project of other company"},
+    "tasks": { "SS": ["test task 1 of other company", "test task 2 of other company"] }
   }
 ]

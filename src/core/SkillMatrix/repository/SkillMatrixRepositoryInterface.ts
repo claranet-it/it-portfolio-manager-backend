@@ -13,7 +13,7 @@ export interface SkillMatrixRepositoryInterface {
   getAllSkillMatrix(
     params: SkillMatrixQueryParamsType,
   ): Promise<SkillMatrixList>
-  getMineSkillMatrixFormattedReponse(
+  getMineSkillMatrixFormattedResponse(
     uid: string,
   ): Promise<SkillMatrixMineResponseType>
   getAllSkillMatrixFormattedResponse(
