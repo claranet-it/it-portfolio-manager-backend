@@ -120,7 +120,7 @@ export class NetworkingService {
   private groupByKey<T>(arr: T[], key: (i: T) => string): Record<string, T[]> {
     return arr.reduce(
       (groups, item) => {
-        ;(groups[key(item)] ||= []).push(item)
+        (groups[key(item)] ||= []).push(item)
         return groups
       },
       {} as Record<string, T[]>,
