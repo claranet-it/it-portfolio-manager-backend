@@ -45,7 +45,6 @@ async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
     'authenticate',
     async function (request: FastifyRequest, reply: FastifyReply) {
       try {
-        console.log(request.headers)
         await request.jwtVerify()
         if (
           !request.user.email ||
