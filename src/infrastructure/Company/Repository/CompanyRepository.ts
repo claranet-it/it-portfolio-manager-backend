@@ -8,7 +8,7 @@ export class CompanyRepository implements CompanyRepositoryInterface {
 
   async findByDomain(domain: string): Promise<CompanyType | null> {
     const command = new GetItemCommand({
-      TableName: getTableName('Company'),    
+      TableName: getTableName('Company'),
       Key: {
         domain: { S: domain },
       },

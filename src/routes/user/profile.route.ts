@@ -42,9 +42,14 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         await fastify
           .dependencyInjectionContainer()
           .resolve('userProfileService')
-          .saveUserProfile(request.user.email, request.user.name, request.user.company, {
-            ...request.body,
-          })
+          .saveUserProfile(
+            request.user.email,
+            request.user.name,
+            request.user.company,
+            {
+              ...request.body,
+            },
+          )
 
         await fastify
           .dependencyInjectionContainer()

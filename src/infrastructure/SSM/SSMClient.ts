@@ -36,7 +36,7 @@ export class SSMClient implements SSMClientInterface {
     }
     return key.Parameter.Value
   }
-  
+
   async getGoogleSecret(): Promise<string> {
     const key = await this.ssm.getParameter({
       Name: process.env.GOOGLE_CLIENT_SECRET_ARN,

@@ -1,5 +1,5 @@
-import { AuthInfoType } from "../model/Auth.model";
+import { AuthInfoType } from '../model/Auth.model'
 
 export interface ProviderInterface {
-    gatAuthInfo(token: string): Promise<AuthInfoType>
+  gatAuthInfo(token: string): Promise<AuthInfoType>
 }

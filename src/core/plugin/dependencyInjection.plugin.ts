@@ -97,13 +97,13 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       taskService: asClass(TaskService),
-    })    
+    })
     container.register({
-      timeEntryRepository: asClass(TimeEntryRepository)
+      timeEntryRepository: asClass(TimeEntryRepository),
     })
 
     container.register({
-      timeEntryService: asClass(TimeEntryService)
+      timeEntryService: asClass(TimeEntryService),
     })
     container.register({
       jwt: awilix.asValue(fastify.jwt),
@@ -121,7 +121,7 @@ async function dependencyInjectionContainerPlugin(
         new OAuth2Client(
           googleClientId,
           googleClientSecret,
-          process.env.GOOGLE_CALLBACK_URL
+          process.env.GOOGLE_CALLBACK_URL,
         ),
       ),
     })
@@ -150,7 +150,7 @@ async function dependencyInjectionContainerPlugin(
         new OAuth2Client(
           googleClientId,
           googleClientSecret,
-          'http://localhost:3000/dev/api/auth/google/oauthCallback'
+          'http://localhost:3000/dev/api/auth/google/oauthCallback',
         ),
       ),
     })
@@ -164,10 +164,10 @@ async function dependencyInjectionContainerPlugin(
       googleProvider: asClass(GoogleProvider),
     })
     container.register({
-      companyRepository: asClass(CompanyRepository)
+      companyRepository: asClass(CompanyRepository),
     })
     container.register({
-      crewRepository: asClass(CrewRepository)
+      crewRepository: asClass(CrewRepository),
     })
 
     return container
