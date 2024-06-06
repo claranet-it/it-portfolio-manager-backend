@@ -146,16 +146,6 @@ async function dependencyInjectionContainerPlugin(
     })
 
     container.register({
-      gooleAuthClient: awilix.asValue(
-        new OAuth2Client(
-          googleClientId,
-          googleClientSecret,
-          'http://localhost:3000/dev/api/auth/google/oauthCallback',
-        ),
-      ),
-    })
-
-    container.register({
       providerResolver: asClass(ProviderResolver).inject(() => ({
         container: container,
       })),
