@@ -54,13 +54,13 @@ custom:
       - test
       - stage
     googleClientId:
-      dev: ${env:GOOLE_CLIENT_ID}     
-      test: ${env:GOOLE_CLIENT_ID}
+      dev: ${env:GOOGLE_CLIENT_ID}
+      test: ${env:GOOGLE_CLIENT_ID}
       stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
     googleClientSecret:
-      dev: ${env:GOOLE_CLIENT_SECRET}   
-      test: ${env:GOOLE_CLIENT_SECRET}       
+      dev: ${env:GOOGLE_CLIENT_SECRET}
+      test: ${env:GOOGLE_CLIENT_SECRET}
       stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
 
