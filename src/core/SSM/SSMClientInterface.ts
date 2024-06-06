@@ -4,5 +4,5 @@ export interface SSMClientInterface {
   getGoogleClientId(): Promise<string>
   getGoogleSecret(): Promise<string>
   getJwtPrivateKey(): Promise<string>
-  getJWTPulicKey(): Promise<string>
+  getJWTPublicKey(): Promise<string>
 }

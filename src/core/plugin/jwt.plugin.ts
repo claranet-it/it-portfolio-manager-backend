@@ -34,7 +34,7 @@ async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
       decode: { complete: true },
       secret: {
         private: await ssmClient.getJwtPrivateKey(),
-        public: await ssmClient.getJWTPulicKey(),
+        public: await ssmClient.getJWTPublicKey(),
       },
     }
   }
