@@ -62,7 +62,8 @@ custom:
       dev: ${env:GOOLE_CLIENT_SECRET}   
       test: ${env:GOOLE_CLIENT_SECRET}       
       stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
-      prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-sec
+      prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
+
     apiBaseUrl: 
       dev: http://localhost:3000
       test: http://localhost:3000
