@@ -22,7 +22,7 @@ export class AuthService {
     )
     let authInfo: AuthInfoType
     try {
-      authInfo = await provider.gatAuthInfo(params.token)
+      authInfo = await provider.getAuthInfo(params.token)
     } catch (error) {
       console.log(error)
       throw new UnauthorizedError()

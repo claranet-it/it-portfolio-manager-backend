@@ -6,7 +6,7 @@ import { AuthInfoType } from '../model/Auth.model'
 export class GoogleProvider implements ProviderInterface {
   constructor(private gooleAuthClient: OAuth2Client) {}
 
-  async gatAuthInfo(token: string): Promise<AuthInfoType> {
+  async getAuthInfo(token: string): Promise<AuthInfoType> {
     const ticket = await this.gooleAuthClient.verifyIdToken({
       idToken: token,
     })

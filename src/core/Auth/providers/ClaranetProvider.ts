@@ -7,7 +7,7 @@ import { AuthInfoType } from '../model/Auth.model'
 export class ClaranetProvider implements ProviderInterface {
   constructor(private jwt: JWT) {}
 
-  async gatAuthInfo(token: string): Promise<AuthInfoType> {
+  async getAuthInfo(token: string): Promise<AuthInfoType> {
     const decodedToken = this.jwt.decode<TokenOrHeader>(token, {
       complete: true,
     })
