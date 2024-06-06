@@ -1,9 +1,9 @@
 import fp from 'fastify-plugin'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import fastifyJwt, { JwtHeader, TokenOrHeader } from '@fastify/jwt'
-import buildGetJwks from 'get-jwks'
+import fastifyJwt from '@fastify/jwt'
 import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import * as process from 'process'
+import { SSMClient } from '@src/infrastructure/SSM/SSMClient'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -20,29 +20,26 @@ declare module '@fastify/jwt' {
   }
 }
 
-const getJwks = buildGetJwks()
-
 const TEST_JWT_SECRET = Symbol('TEST-JWT-SECRET')
 
 async function jwtPlugin(fastify: FastifyInstance): Promise<void> {
-  const getFastifyJwtOptions = () => {
+  const getFastifyJwtOptions = async () => {
     if (process.env.STAGE_NAME === 'test' || process.env.STAGE_NAME === 'dev') {
       return {
         secret: TEST_JWT_SECRET.toString(),
       }
     }
+    const ssmClient = new SSMClient()
     return {
       decode: { complete: true },
-      secret: (_request: FastifyRequest, token: TokenOrHeader) => {
-        const jwtHeader: JwtHeader = 'header' in token ? token.header : token
-        const { kid, alg } = jwtHeader
-        const iss = 'payload' in token ? token.payload.iss : ''
-        return getJwks.getPublicKey({ kid, domain: iss, alg })
+      secret: {
+        private: await ssmClient.getJwtPrivateKey(),
+        public: await ssmClient.getJWTPulicKey(),
       },
     }
   }
 
-  fastify.register(fastifyJwt, getFastifyJwtOptions())
+  fastify.register(fastifyJwt, await getFastifyJwtOptions())
 
   fastify.decorate(
     'authenticate',

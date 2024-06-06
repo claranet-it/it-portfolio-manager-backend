@@ -7,7 +7,7 @@ import { AuthInfoType } from '../model/Auth.model'
 export class ClaranetProvider implements ProviderInterface {
   constructor(private jwt: JWT) {}
 
-  async gatAuthInfo(token: string): Promise<AuthInfoType> {
+  async getAuthInfo(token: string): Promise<AuthInfoType> {
     const decodedToken = this.jwt.decode<TokenOrHeader>(token, {
       complete: true,
     })
@@ -23,14 +23,14 @@ export class ClaranetProvider implements ProviderInterface {
     const { email, name, picture } = this.jwt.verify<{
       email: string
       name: string
-      picture: string    
-    }>(token, { key: key })    
+      picture: string
+    }>(token, { key: key })
     if (!email || !name || !picture) {
       throw new UnauthorizedError()
     }
-    if(email.includes('it.clara.net')){
+    if (email.includes('it.clara.net')) {
       email.replace('it.clara.net', 'claranet.com')
-    }    
+    }
     return {
       email: email.toLowerCase(),
       name,

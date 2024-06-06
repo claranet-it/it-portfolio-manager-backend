@@ -3,4 +3,6 @@ export interface SSMClientInterface {
   getSlackToken(): Promise<string>
   getGoogleClientId(): Promise<string>
   getGoogleSecret(): Promise<string>
+  getJwtPrivateKey(): Promise<string>
+  getJWTPulicKey(): Promise<string>
 }

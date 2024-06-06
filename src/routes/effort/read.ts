@@ -44,7 +44,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('effortService')
-          .getEffortFormattedResponse({...request.query, company: request.user.company})
+          .getEffortFormattedResponse({
+            ...request.query,
+            company: request.user.company,
+          })
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

@@ -24,7 +24,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         },
       },
     },
-    async (request, reply) => {      
+    async (request, reply) => {
       const state = randomBytes(32).toString('hex')
       request.session.state = state
       request.session.referer = request.headers.referer ?? ''
@@ -38,7 +38,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             'https://www.googleapis.com/auth/userinfo.profile',
           ],
           include_granted_scopes: true,
-          state: state         
+          state: state,
         })
       reply.redirect(redirectUrl)
     },

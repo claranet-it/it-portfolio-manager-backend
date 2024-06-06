@@ -1,8 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import {
-  CustomerList,
-  CustomerListType,
-} from '@src/core/Task/model/task.model'
+import { CustomerList, CustomerListType } from '@src/core/Task/model/task.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{

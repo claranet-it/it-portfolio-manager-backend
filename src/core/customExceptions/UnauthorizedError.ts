@@ -1,6 +1,6 @@
-export class UnauthorizedError extends Error{
-    constructor(){
-        super('unauthorized')
-        Object.setPrototypeOf(this, UnauthorizedError.prototype)
-    }
+export class UnauthorizedError extends Error {
+  constructor() {
+    super('unauthorized')
+    Object.setPrototypeOf(this, UnauthorizedError.prototype)
+  }
 }
