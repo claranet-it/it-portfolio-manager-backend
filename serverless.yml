@@ -67,8 +67,8 @@ custom:
     apiBaseUrl: 
       dev: http://localhost:3000
       test: http://localhost:3000
-      stage: 'https://6w09n1v47j.execute-api.eu-south-1.amazonaws.com/stage/'
-      prod: 'https://8sl94yg50l.execute-api.eu-south-1.amazonaws.com/prod'
+      stage: 'https://6w09n1v47j.execute-api.eu-south-1.amazonaws.com'
+      prod: 'https://8sl94yg50l.execute-api.eu-south-1.amazonaws.com'
   serverless-dynamodb:
     stages:
       - dev
