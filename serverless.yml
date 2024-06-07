@@ -67,22 +67,8 @@ custom:
     apiBaseUrl: 
       dev: http://localhost:3000
       test: http://localhost:3000
-      stage: 
-        Fn::Join:
-        - "https://"        
-        - Ref: "HttpApi"
-        - ".execute-api."
-        - Ref: "AWS::Region"
-        - "."
-        - Ref: "AWS::URLSuffix"
-      prod: 
-        Fn::Join:
-        - "https://"        
-        - Ref: "HttpApi"
-        - ".execute-api."
-        - Ref: "AWS::Region"
-        - "."
-        - Ref: "AWS::URLSuffix"
+      stage: 'https://6w09n1v47j.execute-api.eu-south-1.amazonaws.com/stage/'
+      prod: 'https://8sl94yg50l.execute-api.eu-south-1.amazonaws.com/prod'
   serverless-dynamodb:
     stages:
       - dev
