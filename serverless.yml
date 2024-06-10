@@ -57,11 +57,11 @@ custom:
       dev: ${env:GOOGLE_CLIENT_ID, ''}
       test: ${env:GOOGLE_CLIENT_ID, ''}
       stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
-      prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
+      prod: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
     googleClientSecret:
       dev: ${env:GOOGLE_CLIENT_SECRET, ''}
       test: ${env:GOOGLE_CLIENT_SECRET, ''}
-      stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
+      stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
 
     apiBaseUrl: 
