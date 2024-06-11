@@ -66,26 +66,28 @@ export class NetworkingService {
       await this.networkingRepository.getNetworkingEffortOf(company)
     const flatEfforts = efforts.flat(2)
 
-    return networking.map((company) => {
-      const effortsWithSkills = company.flatMap((companySkill) => {
-        const uidEfforts = flatEfforts.filter(
-          (companyEffort) => companyEffort.uid === companySkill.uid,
-        )
-        return uidEfforts.map((effort) => {
-          return {
-            company: effort.company,
-            uid: effort.uid,
-            month_year: effort.month_year,
-            confirmedEffort: effort.confirmedEffort,
-            tentativeEffort: effort.tentativeEffort,
-            skill: companySkill.skill,
-          }
+    return networking
+      .map((company) => {
+        const effortsWithSkills = company.flatMap((companySkill) => {
+          const uidEfforts = flatEfforts.filter(
+            (companyEffort) => companyEffort.uid === companySkill.uid,
+          )
+          return uidEfforts.map((effort) => {
+            return {
+              company: effort.company,
+              uid: effort.uid,
+              month_year: effort.month_year,
+              confirmedEffort: effort.confirmedEffort,
+              tentativeEffort: effort.tentativeEffort,
+              skill: companySkill.skill,
+            }
+          })
         })
+        const effortsBySkill =
+          this.groupEffortsBySkillAndPeriod(effortsWithSkills)
+        return { company: company[0].company, effort: effortsBySkill }
       })
-      const effortsBySkill =
-        this.groupEffortsBySkillAndPeriod(effortsWithSkills)
-      return { company: company[0].company, effort: effortsBySkill }
-    }).filter(n => n.effort.length > 0)
+      .filter((n) => n.effort.length > 0)
   }
 
   private groupEffortsBySkillAndPeriod(array: CompanyEffortWithSkillRowType[]) {
@@ -120,7 +122,7 @@ export class NetworkingService {
   private groupByKey<T>(arr: T[], key: (i: T) => string): Record<string, T[]> {
     return arr.reduce(
       (groups, item) => {
-        (groups[key(item)] ||= []).push(item)
+        ;(groups[key(item)] ||= []).push(item)
         return groups
       },
       {} as Record<string, T[]>,
