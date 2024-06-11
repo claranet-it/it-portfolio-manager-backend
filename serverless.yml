@@ -54,35 +54,21 @@ custom:
       - test
       - stage
     googleClientId:
-      dev: ${env:GOOLE_CLIENT_ID}     
-      test: ${env:GOOLE_CLIENT_ID}
+      dev: ${env:GOOGLE_CLIENT_ID, ''}
+      test: ${env:GOOGLE_CLIENT_ID, ''}
       stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
-      prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
+      prod: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
     googleClientSecret:
-      dev: ${env:GOOLE_CLIENT_SECRET}   
-      test: ${env:GOOLE_CLIENT_SECRET}       
-      stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
+      dev: ${env:GOOGLE_CLIENT_SECRET, ''}
+      test: ${env:GOOGLE_CLIENT_SECRET, ''}
+      stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
 
     apiBaseUrl: 
       dev: http://localhost:3000
       test: http://localhost:3000
-      stage: 
-        Fn::Join:
-        - "https://"        
-        - Ref: "HttpApi"
-        - ".execute-api."
-        - Ref: "AWS::Region"
-        - "."
-        - Ref: "AWS::URLSuffix"
-      prod: 
-        Fn::Join:
-        - "https://"        
-        - Ref: "HttpApi"
-        - ".execute-api."
-        - Ref: "AWS::Region"
-        - "."
-        - Ref: "AWS::URLSuffix"
+      stage: 'https://6w09n1v47j.execute-api.eu-south-1.amazonaws.com'
+      prod: 'https://8sl94yg50l.execute-api.eu-south-1.amazonaws.com'
   serverless-dynamodb:
     stages:
       - dev
