@@ -85,7 +85,7 @@ export class NetworkingService {
       const effortsBySkill =
         this.groupEffortsBySkillAndPeriod(effortsWithSkills)
       return { company: company[0].company, effort: effortsBySkill }
-    })
+    }).filter(n => n.effort.length > 0)
   }
 
   private groupEffortsBySkillAndPeriod(array: CompanyEffortWithSkillRowType[]) {
