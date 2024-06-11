@@ -31,7 +31,23 @@ test('read networking skills without authentication', async (t) => {
     t.equal(response.statusCode, 401)
 })
 
-test('read company networking skills', async (t) => {
+test('read company networking skills of it', async (t) => {
+    const company = 'it'
+    const token = getToken(company)
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/networking/skills',
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
+    })
+
+    t.equal(response.statusCode, 200)
+    const expected = "[{\"company\":\"us\",\"skills\":[{\"skill\":\"PHP\",\"averageScore\":2,\"people\":1},{\"skill\":\"Python\",\"averageScore\":1,\"people\":1},{\"skill\":\"C# - Backend\",\"averageScore\":2,\"people\":1}]},{\"company\":\"it\",\"skills\":[{\"skill\":\"PHP\",\"averageScore\":2,\"people\":2},{\"skill\":\"Java/Kotlin\",\"averageScore\":3,\"people\":1},{\"skill\":\"Python\",\"averageScore\":3,\"people\":1}]}]"
+    t.same(response.payload, expected)
+})
+
+test('read company networking skills of other', async (t) => {
     const company = 'test company'
     const token = getToken(company)
     const response = await app.inject({
@@ -43,8 +59,5 @@ test('read company networking skills', async (t) => {
     })
 
     t.equal(response.statusCode, 200)
-
-    const expected = "[{\"company\":\"it\",\"skills\":[{\"skill\":\"PHP\",\"averageScore\":2,\"people\":2},{\"skill\":\"Java/Kotlin\",\"averageScore\":3,\"people\":1},{\"skill\":\"Python\",\"averageScore\":3,\"people\":1}]},{\"company\":\"us\",\"skills\":[{\"skill\":\"PHP\",\"averageScore\":2,\"people\":1},{\"skill\":\"Python\",\"averageScore\":1,\"people\":1}]}]"
-
-    t.same(response.payload, expected)
+    t.same(response.payload, "[]")
 })

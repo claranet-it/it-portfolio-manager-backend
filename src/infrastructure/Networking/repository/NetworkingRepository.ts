@@ -17,7 +17,7 @@ export class NetworkingRepository implements NetworkingRepositoryInterface {
     const command = new QueryCommand({
       TableName: getTableName('SkillMatrix'),
     })
-    // TODO
+
     const networking = await this.getNetworkingOf(company)
 
     const results = []
@@ -56,7 +56,6 @@ export class NetworkingRepository implements NetworkingRepositoryInterface {
       TableName: getTableName('Effort'),
     })
 
-    // TODO
     const networking = await this.getNetworkingOf(company)
 
     const results = []
@@ -94,8 +93,6 @@ export class NetworkingRepository implements NetworkingRepositoryInterface {
       const command = new ScanCommand({
         TableName: getTableName('Company'),
       })
-
-      command.input.ProjectionExpression = 'name'
 
       const result = await this.dynamoDBClient.send(command)
       if (result?.Items) {
