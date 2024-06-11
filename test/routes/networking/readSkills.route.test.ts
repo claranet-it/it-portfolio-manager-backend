@@ -43,7 +43,7 @@ test('read company networking skills of it', async (t) => {
     })
 
    t.equal(response.statusCode, 200)
-   const expected = "[{\"company\":\"us\",\"skills\":[{\"skill\":\"PHP\",\"averageScore\":2,\"people\":1},{\"skill\":\"Python\",\"averageScore\":1,\"people\":1},{\"skill\":\"C# - Backend\",\"averageScore\":2,\"people\":1}]},{\"company\":\"it\",\"skills\":[{\"skill\":\"PHP\",\"averageScore\":2,\"people\":2},{\"skill\":\"Java/Kotlin\",\"averageScore\":3,\"people\":1},{\"skill\":\"Python\",\"averageScore\":3,\"people\":1}]}]"
+   const expected = "[{\"company\":\"test company\",\"skills\":[{\"skill\":\"C#\",\"averageScore\":2,\"people\":1}]},{\"company\":\"us\",\"skills\":[{\"skill\":\"PHP\",\"averageScore\":2,\"people\":1},{\"skill\":\"Python\",\"averageScore\":1,\"people\":1}]},{\"company\":\"it\",\"skills\":[{\"skill\":\"PHP\",\"averageScore\":2,\"people\":2},{\"skill\":\"Java/Kotlin\",\"averageScore\":3,\"people\":1},{\"skill\":\"Python\",\"averageScore\":3,\"people\":1}]}]"
    t.same(response.payload, expected)
 })
 
