@@ -29,7 +29,7 @@ export const CompanySkill = Type.Object({
 export type CompanySkillType = Static<typeof CompanySkill>
 
 export const EffortPeriod = Type.Object({
-  month: Type.String(),
+  month: Type.RegExp(/(0[1-9]|1[012])_([0-9][0-9])$/),
   people: Type.Number(),
   averageConfirmed: Type.Number(),
   averageTentative: Type.Number(),
