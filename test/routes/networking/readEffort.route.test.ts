@@ -1,6 +1,7 @@
 import {afterEach, beforeEach, test} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
+import {NetworkingEffortResponseType} from "@src/core/Networking/model/networking.model";
 
 let app: FastifyInstance
 
@@ -44,8 +45,115 @@ test('read company networking effort of it', async (t) => {
 
     t.equal(response.statusCode, 200)
 
-    const expected = "[{\"company\":\"us\",\"effort\":[{\"skill\":\"PHP\",\"period\":[{\"month\":\"01_23\",\"people\":1,\"averageConfirmed\":50,\"averageTentative\":10,\"averageTotal\":60},{\"month\":\"02_23\",\"people\":1,\"averageConfirmed\":25,\"averageTentative\":75,\"averageTotal\":100}]},{\"skill\":\"Python\",\"period\":[{\"month\":\"01_23\",\"people\":1,\"averageConfirmed\":50,\"averageTentative\":10,\"averageTotal\":60},{\"month\":\"02_23\",\"people\":1,\"averageConfirmed\":25,\"averageTentative\":75,\"averageTotal\":100}]}]},{\"company\":\"it\",\"effort\":[{\"skill\":\"PHP\",\"period\":[{\"month\":\"01_23\",\"people\":2,\"averageConfirmed\":65,\"averageTentative\":0,\"averageTotal\":65},{\"month\":\"02_23\",\"people\":2,\"averageConfirmed\":50,\"averageTentative\":15,\"averageTotal\":65}]},{\"skill\":\"Java/Kotlin\",\"period\":[{\"month\":\"01_23\",\"people\":1,\"averageConfirmed\":50,\"averageTentative\":0,\"averageTotal\":50},{\"month\":\"02_23\",\"people\":1,\"averageConfirmed\":50,\"averageTentative\":30,\"averageTotal\":80}]},{\"skill\":\"Python\",\"period\":[{\"month\":\"01_23\",\"people\":1,\"averageConfirmed\":80,\"averageTentative\":0,\"averageTotal\":80},{\"month\":\"02_23\",\"people\":1,\"averageConfirmed\":50,\"averageTentative\":0,\"averageTotal\":50}]}]}]"
-    t.same(response.payload, expected)
+    const result = response.json<NetworkingEffortResponseType>();
+    const expected = [
+        {
+            company:"us",
+            effort:[
+                {
+                    skill:"PHP",
+                    period:[
+                        {
+                            month:"01_23",
+                            people:1,
+                            averageConfirmed:50,
+                            averageTentative:10,
+                            averageTotal:60
+                        },
+                        {
+                            month:"02_23",
+                            people:1,
+                            averageConfirmed:25,
+                            averageTentative:75,
+                            averageTotal:100
+                        }
+                    ]
+                },
+                {
+                    skill:"Python",
+                    period:[
+                        {
+                            month:"01_23",
+                            people:1,
+                            averageConfirmed:50,
+                            averageTentative:10,
+                            averageTotal:60
+                        },
+                        {
+                            month:"02_23",
+                            people:1,
+                            averageConfirmed:25,
+                            averageTentative:75,
+                            averageTotal:100
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "company":"it",
+            "effort":[
+                {
+                    skill:"PHP",
+                    period:[
+                        {
+                            month:"01_23",
+                            people:2,
+                            averageConfirmed:65,
+                            averageTentative:0,
+                            averageTotal:65
+                        },
+                        {
+                            month:"02_23",
+                            people:2,
+                            averageConfirmed:50,
+                            averageTentative:15,
+                            averageTotal:65
+                        }
+                    ]
+                },
+                {
+                    skill:"Java/Kotlin",
+                    period:[
+                        {
+                            month:"01_23",
+                            people:1,
+                            averageConfirmed:50,
+                            averageTentative:0,
+                            averageTotal:50
+                        },
+                        {
+                            month:"02_23",
+                            people:1,
+                            averageConfirmed:50,
+                            averageTentative:30,
+                            averageTotal:80
+                        }
+                    ]
+                },
+                {
+                    skill:"Python",
+                    period:[
+                        {
+                            month:"01_23",
+                            people:1,
+                            averageConfirmed:80,
+                            averageTentative:0,
+                            averageTotal:80
+                        },
+                        {
+                            month:"02_23",
+                            people:1,
+                            averageConfirmed:50,
+                            averageTentative:0,
+                            averageTotal:50
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+    t.same(result, expected)
 })
 
 test('read company networking effort of other', async (t) => {
