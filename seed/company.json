@@ -1,0 +1,14 @@
+[
+    {
+        "domain": "it.clara.net",
+        "name": "it"
+    },
+    {
+        "domain": "us.clara.net",
+        "name": "us"
+    },
+    {
+        "domain": "test.com",
+        "name": "test company"
+    }
+]

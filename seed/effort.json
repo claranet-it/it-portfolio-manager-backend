@@ -38,5 +38,25 @@
     "name": "Nicholas Crow",
     "company": "it",
     "crew": "sun"
+  },
+  {
+    "uid": "micol.ts@email.com",
+    "month_year": "01_23",
+    "confirmedEffort": 50,
+    "tentativeEffort": 10,
+    "notes": "Moovtech",
+    "name": "Micol Ts",
+    "company": "us",
+    "crew": "sun"
+  },
+  {
+    "uid": "micol.ts@email.com",
+    "month_year": "02_23",
+    "confirmedEffort": 25,
+    "tentativeEffort": 75,
+    "notes": "Brickly",
+    "name": "Micol Ts",
+    "company": "us",
+    "crew": "sun"
   }
 ]

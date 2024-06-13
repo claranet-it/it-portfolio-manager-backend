@@ -28,6 +28,7 @@ test('read all efforts without params', async (t) => {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
   })
 
   const response = await app.inject({
@@ -96,6 +97,7 @@ test('read all efforts with uid param', async (t) => {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
   })
 
   const response = await app.inject({
@@ -144,6 +146,7 @@ test('read next efforts without params', async (t) => {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'us'
   })
 
   const response = await app.inject({
@@ -157,7 +160,7 @@ test('read next efforts without params', async (t) => {
   t.equal(response.statusCode, 200)
 
   const efforts = response.json<EffortResponseType>()
-  t.equal(efforts.length, 3)
+  t.equal(efforts.length, 2)
 
   const expectedResult = [
     {
@@ -176,14 +179,6 @@ test('read next efforts without params', async (t) => {
         effort: nextMonthsEmptyEffort(3),
       },
     },
-    {
-    'testIt@test.com': {
-      crew: 'bees',
-      company: 'it',
-      name: 'test italian',
-      effort: nextMonthsEmptyEffort(3),
-    },
-  },
   ]
   t.same(efforts, expectedResult)
 })
@@ -194,6 +189,7 @@ test('read next efforts with uid param', async (t) => {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
   })
 
   const response = await app.inject({
@@ -228,6 +224,7 @@ test('read effort with months param', async (t) =>{
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'us'
   })
 
   const response = await app.inject({
@@ -255,15 +252,7 @@ test('read effort with months param', async (t) =>{
         name: 'Nicholas Crow',
         effort: nextMonthsEmptyEffort(2),
       },
-    },
-    {
-    'testIt@test.com': {
-      crew: 'bees',
-      company: 'it',
-      name: 'test italian',
-      effort: nextMonthsEmptyEffort(2),
-    },
-  },
+    },  
   ]
   const efforts = response.json<EffortResponseType>()
   t.same(efforts, expectedResult)
@@ -306,6 +295,7 @@ inputs.forEach((input) => {
       email: 'nicholas.crow@email.com',
       name: 'Nicholas Crow',
       picture: 'https://test.com/nicholas.crow.jpg',
+      company: input.company
     })
   
     const response = await app.inject({

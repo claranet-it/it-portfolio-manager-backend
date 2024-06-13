@@ -10,6 +10,7 @@ export interface UserProfileRepositoryInterface {
   saveUserProfile(
     uid: string,
     name: string,
+    company: string,
     userProfile: UpdateUserProfileType,
   ): Promise<void>
 

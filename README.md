@@ -13,6 +13,9 @@ Stack:
 
 ### Install DynamoDB local
 
+### Requsities
+- Java
+
 ```bash
 npm run dynamodb:install
 ```
@@ -109,3 +112,13 @@ You can find the swagger documentation at the following url:
 ```bash
 https://<app-url>/api/documentation
 ```
+
+## Set up Google authentication in local environment
+
+- Create  `.env` file in project root folder
+- Add to `.env` file
+  ```
+  GOOLE_CLIENT_ID=XXX
+  GOOLE_CLIENT_SECRET=XXX
+  ```
+- Replace XXX with your google client id and secret

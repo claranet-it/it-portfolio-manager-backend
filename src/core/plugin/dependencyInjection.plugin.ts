@@ -16,6 +16,19 @@ import { OpenAiClient } from '@src/infrastructure/OpenAI/OpenAIClient'
 import { SSMClient } from '@src/infrastructure/SSM/SSMClient'
 import { DummySSMClient } from '@src/infrastructure/SSM/DummySSMClient'
 import { SSMClientInterface } from '../SSM/SSMClientInterface'
+import { TaskRepository } from '@src/infrastructure/Task/repository/TaskRepository'
+import { TaskService } from '@src/core/Task/service/TaskService'
+import { AuthService } from '../Auth/service/AuthService'
+import { ClaranetProvider } from '../Auth/providers/ClaranetProvider'
+import { ProviderResolver } from '../Auth/providers/providerResolver'
+import { OAuth2Client } from 'google-auth-library'
+import { GoogleProvider } from '../Auth/providers/GoogleProvider'
+import { TimeEntryRepository } from '@src/infrastructure/TimeEntry/Repository/TimeEntryRepository'
+import { TimeEntryService } from '../TimeEntry/service/TimeEntryService'
+import { CrewRepository } from '@src/infrastructure/Configuration/Repository/CrewRepository'
+import { CompanyRepository } from '@src/infrastructure/Company/Repository/CompanyRepository'
+import { NetworkingService } from '@src/core/Networking/service/NetworkingService'
+import { NetworkingRepository } from '@src/infrastructure/Networking/repository/NetworkingRepository'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -27,10 +40,11 @@ async function dependencyInjectionContainerPlugin(
   fastify: FastifyInstance,
 ): Promise<void> {
   const isTest = process.env.STAGE_NAME === 'test'
-  const ssmClient: SSMClientInterface = isTest
-    ? new DummySSMClient()
-    : new SSMClient()
+  const ssmClient: SSMClientInterface =
+    isTest || process.env.IS_OFFLINE ? new DummySSMClient() : new SSMClient()
   const openAIClient = OpenAiClient.getClient(await ssmClient.getOpenAIkey())
+  const googleClientId = await ssmClient.getGoogleClientId()
+  const googleClientSecret = await ssmClient.getGoogleSecret()
   const dependencyInjectionContainer = (): AwilixContainer => {
     const container = awilix.createContainer({
       injectionMode: awilix.InjectionMode.CLASSIC,
@@ -56,6 +70,14 @@ async function dependencyInjectionContainerPlugin(
     })
 
     container.register({
+      networkingService: asClass(NetworkingService),
+    })
+
+    container.register({
+      networkingRepository: asClass(NetworkingRepository),
+    })
+
+    container.register({
       userProfileRepository: asClass(UserProfileRepository),
     })
     container.register({
@@ -72,11 +94,80 @@ async function dependencyInjectionContainerPlugin(
     container.register({
       effortService: asClass(EffortService),
     })
+
     container.register({
       openAI: awilix.asValue(openAIClient),
     })
     container.register({
       openAIService: asClass(OpenAIService),
+    })
+
+    container.register({
+      taskRepository: asClass(TaskRepository),
+    })
+    container.register({
+      taskService: asClass(TaskService),
+    })
+    container.register({
+      timeEntryRepository: asClass(TimeEntryRepository),
+    })
+
+    container.register({
+      timeEntryService: asClass(TimeEntryService),
+    })
+    container.register({
+      jwt: awilix.asValue(fastify.jwt),
+    })
+    container.register({
+      authService: asClass(AuthService),
+    })
+
+    container.register({
+      claranetProvider: asClass(ClaranetProvider),
+    })
+
+    container.register({
+      gooleAuthClient: awilix.asValue(
+        new OAuth2Client(
+          googleClientId,
+          googleClientSecret,
+          process.env.GOOGLE_CALLBACK_URL,
+        ),
+      ),
+    })
+
+    container.register({
+      providerResolver: asClass(ProviderResolver).inject(() => ({
+        container: container,
+      })),
+    })
+    container.register({
+      googleProvider: asClass(GoogleProvider),
+    })
+    container.register({
+      jwt: awilix.asValue(fastify.jwt),
+    })
+    container.register({
+      authService: asClass(AuthService),
+    })
+
+    container.register({
+      claranetProvider: asClass(ClaranetProvider),
+    })
+
+    container.register({
+      providerResolver: asClass(ProviderResolver).inject(() => ({
+        container: container,
+      })),
+    })
+    container.register({
+      googleProvider: asClass(GoogleProvider),
+    })
+    container.register({
+      companyRepository: asClass(CompanyRepository),
+    })
+    container.register({
+      crewRepository: asClass(CrewRepository),
     })
 
     return container

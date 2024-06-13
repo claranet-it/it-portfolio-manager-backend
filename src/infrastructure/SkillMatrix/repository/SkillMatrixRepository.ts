@@ -29,7 +29,7 @@ export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
     return await this.getSkillMatrix(params)
   }
 
-  async getMineSkillMatrixFormattedReponse(
+  async getMineSkillMatrixFormattedResponse(
     uid: string,
   ): Promise<SkillMatrixMineResponseType> {
     const skillMatrixList = await this.getSkillMatrix({ uid: uid })

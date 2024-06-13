@@ -27,6 +27,10 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ]
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerCompanies, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerCrews, Arn ]
         - Effect: "Allow"
           Action:
             - "ssm:GetParameter"
@@ -43,6 +47,28 @@ plugins:
   - serverless-offline
 
 custom:
+  variables:
+    stages:
+      - dev      
+      - prod
+      - test
+      - stage
+    googleClientId:
+      dev: ${env:GOOGLE_CLIENT_ID, ''}
+      test: ${env:GOOGLE_CLIENT_ID, ''}
+      stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
+      prod: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-id
+    googleClientSecret:
+      dev: ${env:GOOGLE_CLIENT_SECRET, ''}
+      test: ${env:GOOGLE_CLIENT_SECRET, ''}
+      stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
+      prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
+
+    apiBaseUrl: 
+      dev: http://localhost:3000
+      test: http://localhost:3000
+      stage: 'https://6w09n1v47j.execute-api.eu-south-1.amazonaws.com'
+      prod: 'https://8sl94yg50l.execute-api.eu-south-1.amazonaws.com'
   serverless-dynamodb:
     stages:
       - dev
@@ -64,6 +90,14 @@ custom:
             sources: [ ./seed/user-profile.json ]
           - table: ItPortfolioManager-Effort-${opt:stage, 'dev'}
             sources: [ ./seed/effort.json ]
+          - table: ItPortfolioManager-Task-${opt:stage, 'dev'}
+            rawsources: [ ./seed/task.json ]
+          - table: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
+            rawsources: [ ./seed/time-entry.json ]
+          - table: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
+            sources: ['./seed/company.json']
+          - table: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
+            sources: ['./seed/crew.json']
 
 package:
   patterns:
@@ -76,6 +110,11 @@ functions:
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
+      GOOGLE_CLIENT_ID_ARN: ${self:custom.variables.googleClientId.${opt:stage, 'dev'}}
+      GOOGLE_CLIENT_SECRET_ARN: ${self:custom.variables.googleClientSecret.${opt:stage, 'dev'}}
+      GOOGLE_CALLBACK_URL: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}/${opt:stage, 'dev'}/api/auth/google/oauthCallback
+      JWT_PRIVATE_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-private-key
+      JWT_PUBLIC_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-public-key
       FIND_TEAM_OPENAI_PROMPT: "  Given the SKILL data:
 
       [[SKILL]]
@@ -190,9 +229,93 @@ resources:
             AttributeType: S
           - AttributeName: month_year
             AttributeType: S
+          - AttributeName: company
+            AttributeType: S
         KeySchema:
           - AttributeName: uid
             KeyType: HASH
           - AttributeName: month_year
             KeyType: RANGE
-        BillingMode: PAY_PER_REQUEST
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: companyIndex
+            KeySchema:
+              - AttributeName: company
+                KeyType: HASH
+              - AttributeName: month_year
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+    ItPortfolioManagerTasks:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "ItPortfolioManager-Task-${opt:stage, 'dev'}"
+        AttributeDefinitions:
+          - AttributeName: customerProject
+            AttributeType: S                      
+          - AttributeName: company
+            AttributeType: S
+        KeySchema:
+          - AttributeName: company
+            KeyType: HASH
+          - AttributeName: customerProject
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    ItPortfolioManagerTimeEntry:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
+        AttributeDefinitions:
+          - AttributeName: uid
+            AttributeType: S                      
+          - AttributeName: timeEntryDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uid
+            KeyType: HASH
+          - AttributeName: timeEntryDate
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1          
+      
+    ItPortfolioManagerCompanies:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
+        AttributeDefinitions:
+          - AttributeName: domain
+            AttributeType: S
+        KeySchema:
+          - AttributeName: domain
+            KeyType: HASH          
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    
+    ItPortfolioManagerCrews:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
+        AttributeDefinitions:
+          - AttributeName: company
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S            
+        KeySchema:
+          - AttributeName: company
+            KeyType: HASH     
+          - AttributeName: name
+            KeyType: RANGE    
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+                
