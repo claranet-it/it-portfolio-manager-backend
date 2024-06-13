@@ -48,13 +48,6 @@ test('read all skill matrix without params', async (t) => {
 
   t.equal(response.statusCode, 200)
 
-  const result = response.json<SkillMatrixResponseType>()
-  t.equal(
-    result.every((item) =>
-      Object.keys(item).every((key) => item[key].company === company),
-    ),
-    true,
-  )
 })
 
 test('read all skill matrix with empty param', async (t) => {

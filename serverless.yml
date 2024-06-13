@@ -229,11 +229,28 @@ resources:
             AttributeType: S
           - AttributeName: month_year
             AttributeType: S
+          - AttributeName: company
+            AttributeType: S
         KeySchema:
           - AttributeName: uid
             KeyType: HASH
           - AttributeName: month_year
             KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: companyIndex
+            KeySchema:
+              - AttributeName: company
+                KeyType: HASH
+              - AttributeName: month_year
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         BillingMode: PAY_PER_REQUEST
     ItPortfolioManagerTasks:
       Type: AWS::DynamoDB::Table
