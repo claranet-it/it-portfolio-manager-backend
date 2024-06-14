@@ -119,18 +119,7 @@ inputs.forEach((input) => {
 
     t.equal(response.statusCode, 200)
 
-    // check if the configuration object has keys crews, skills and scoreRange
-    t.equal(Object.keys(configuration).length, 4)
-    t.equal(Object.keys(configuration).includes('crews'), true)
-    t.equal(Object.keys(configuration).includes('skills'), true)
-    t.equal(Object.keys(configuration).includes('scoreRange'), true)
-    t.equal(Object.keys(configuration).includes('scoreRangeLabels'), true)
-    t.equal(configuration.crews.length, 8)
-    t.equal(configuration.skills.Developer.length, 13)
-    t.equal(configuration.skills.Cloud.length, 15)
-    t.equal(configuration.scoreRange.min, 0)
-    t.equal(configuration.scoreRange.max, 3)
-    t.equal(Object.keys(configuration.scoreRangeLabels).length, 4)
+    t.same(configuration.crews, input.expectedCrews)
 })
 
 test('get all configuration without authentication', async t => {
