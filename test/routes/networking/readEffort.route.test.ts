@@ -153,7 +153,7 @@ test('read company networking effort of it', async (t) => {
             ]
         }
     ]
-   // t.same(result, expected)
+    t.same(result, expected)
 })
 
 test('read company networking effort of other', async (t) => {
