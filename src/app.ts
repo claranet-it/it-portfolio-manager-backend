@@ -62,7 +62,7 @@ export default function createApp(
   app.register(fastifyCookie)
   app.register(fastifySession, {
     secret: randomBytes(32).toString('hex'),
-    cookie: { secure: process.env.STAGE_NAME !== 'dev' },
+    cookie: { secure: false },
   })
 
   app.register(cors, {})
