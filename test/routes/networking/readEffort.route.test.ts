@@ -46,107 +46,108 @@ test('read company networking effort of it', async (t) => {
     t.equal(response.statusCode, 200)
 
     const result = response.json<NetworkingEffortResponseType>();
+
     const expected = [
         {
-            company:"us",
-            effort:[
+            us: [
                 {
-                    skill:"PHP",
-                    period:[
+                    skill: "PHP",
+                    effort: [
                         {
-                            month:"01_23",
-                            people:1,
-                            averageConfirmed:50,
-                            averageTentative:10,
-                            averageTotal:60
+                            month_year: "01_23",
+                            people: 1,
+                            confirmedEffort: 50,
+                            tentativeEffort: 10,
+                            totalEffort: 60
                         },
                         {
-                            month:"02_23",
-                            people:1,
-                            averageConfirmed:25,
-                            averageTentative:75,
-                            averageTotal:100
+                            month_year: "02_23",
+                            people: 1,
+                            confirmedEffort: 25,
+                            tentativeEffort: 75,
+                            totalEffort: 100
                         }
+
                     ]
+
                 },
                 {
-                    skill:"Python",
-                    period:[
+                    skill: "Python",
+                    effort: [
                         {
-                            month:"01_23",
-                            people:1,
-                            averageConfirmed:50,
-                            averageTentative:10,
-                            averageTotal:60
+                            month_year: "01_23",
+                            people: 1,
+                            confirmedEffort: 50,
+                            tentativeEffort: 10,
+                            totalEffort: 60
                         },
                         {
-                            month:"02_23",
-                            people:1,
-                            averageConfirmed:25,
-                            averageTentative:75,
-                            averageTotal:100
+                            month_year: "02_23",
+                            people: 1,
+                            confirmedEffort: 25,
+                            tentativeEffort: 75,
+                            totalEffort: 100
                         }
                     ]
-                }
-            ]
+                }],
         },
+
         {
-            "company":"it",
-            "effort":[
+            it: [
                 {
-                    skill:"PHP",
-                    period:[
+                    skill: "PHP",
+                    effort: [
                         {
-                            month:"01_23",
-                            people:2,
-                            averageConfirmed:65,
-                            averageTentative:0,
-                            averageTotal:65
+                            month_year: "01_23",
+                            people: 2,
+                            confirmedEffort: 65,
+                            tentativeEffort: 0,
+                            totalEffort: 65
                         },
                         {
-                            month:"02_23",
-                            people:2,
-                            averageConfirmed:50,
-                            averageTentative:15,
-                            averageTotal:65
+                            month_year: "02_23",
+                            people: 2,
+                            confirmedEffort: 50,
+                            tentativeEffort: 15,
+                            totalEffort: 65
                         }
                     ]
                 },
                 {
-                    skill:"Java/Kotlin",
-                    period:[
+                    skill: "Java/Kotlin",
+                    effort: [
                         {
-                            month:"01_23",
-                            people:1,
-                            averageConfirmed:50,
-                            averageTentative:0,
-                            averageTotal:50
+                            month_year: "01_23",
+                            people: 1,
+                            confirmedEffort: 50,
+                            tentativeEffort: 0,
+                            totalEffort: 50
                         },
                         {
-                            month:"02_23",
-                            people:1,
-                            averageConfirmed:50,
-                            averageTentative:30,
-                            averageTotal:80
+                            month_year: "02_23",
+                            people: 1,
+                            confirmedEffort: 50,
+                            tentativeEffort: 30,
+                            totalEffort: 80
                         }
                     ]
                 },
                 {
-                    skill:"Python",
-                    period:[
+                    skill: "Python",
+                    effort: [
                         {
-                            month:"01_23",
-                            people:1,
-                            averageConfirmed:80,
-                            averageTentative:0,
-                            averageTotal:80
+                            month_year: "01_23",
+                            people: 1,
+                            confirmedEffort: 80,
+                            tentativeEffort: 0,
+                            totalEffort: 80
                         },
                         {
-                            month:"02_23",
-                            people:1,
-                            averageConfirmed:50,
-                            averageTentative:0,
-                            averageTotal:50
+                            month_year: "02_23",
+                            people: 1,
+                            confirmedEffort: 50,
+                            tentativeEffort: 0,
+                            totalEffort: 50
                         }
                     ]
                 }

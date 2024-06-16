@@ -1,6 +1,6 @@
 import { NetworkingRepositoryInterface } from '@src/core/Networking/repository/NetworkingRepositoryInterface'
 import {
-  CompanyEffortWithSkillRowType,
+  NetworkingCompanyEffortRowWithSkill,
   CompanySkillType,
   NetworkingEffortResponseType,
   NetworkingSkillsResponseType,
@@ -85,27 +85,27 @@ export class NetworkingService {
         })
         const effortsBySkill =
           this.groupEffortsBySkillAndPeriod(effortsWithSkills)
-        return { company: company[0].company, effort: effortsBySkill }
+        return effortsBySkill.length > 0 ? { [ company[0].company ]: effortsBySkill } : null
       })
-      .filter((n) => n.effort.length > 0)
+      .filter((n) => n !== null)
   }
 
-  private groupEffortsBySkillAndPeriod(array: CompanyEffortWithSkillRowType[]) {
+  private groupEffortsBySkillAndPeriod(array: NetworkingCompanyEffortRowWithSkill[]) {
     const groupedSkills = this.groupByKey(array, (i) => i.skill)
     return Object.entries(groupedSkills).map(([skill, group]) => ({
       skill,
-      period: this.groupEffortsByPeriod(group),
+      effort: this.groupEffortsByPeriod(group),
     }))
   }
 
-  private groupEffortsByPeriod(array: CompanyEffortWithSkillRowType[]) {
+  private groupEffortsByPeriod(array: NetworkingCompanyEffortRowWithSkill[]) {
     const groupedPeriods = this.groupByKey(array, (i) => i.month_year)
     return Object.entries(groupedPeriods).map(([period, effort]) => ({
-      month: period,
+      month_year: period,
       people: effort.length,
-      averageConfirmed: this.average(effort.map((e) => e.confirmedEffort)),
-      averageTentative: this.average(effort.map((e) => e.tentativeEffort)),
-      averageTotal: this.average(
+      confirmedEffort: this.average(effort.map((e) => e.confirmedEffort)),
+      tentativeEffort: this.average(effort.map((e) => e.tentativeEffort)),
+      totalEffort: this.average(
         effort.map((e) => e.confirmedEffort + e.tentativeEffort),
       ),
     }))
