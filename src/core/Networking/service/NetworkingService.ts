@@ -48,12 +48,13 @@ export class NetworkingService {
           sum = sum + skill.score
         }
         return {
-          skill: c.companySkill[0].skill,
-          averageScore: people !== 0 ? Math.round(sum / people) : 0,
-          people: people,
+           [ c.companySkill[0].skill ]: {
+             averageScore: people !== 0 ? Math.round(sum / people) : 0,
+             people: people,
+           }
         }
       })
-      results.push({ company, skills: averageSkills })
+      results.push({ [ company ]: {company: company, skills: averageSkills}})
     }
     return results
   }
@@ -66,6 +67,7 @@ export class NetworkingService {
       await this.networkingRepository.getNetworkingEffortOf(company)
     const flatEfforts = efforts.flat(2)
 
+    // @ts-ignore
     return networking
       .map((company) => {
         const effortsWithSkills = company.flatMap((companySkill) => {
@@ -85,12 +87,16 @@ export class NetworkingService {
         })
         const effortsBySkill =
           this.groupEffortsBySkillAndPeriod(effortsWithSkills)
-        return effortsBySkill.length > 0 ? { [ company[0].company ]: effortsBySkill } : null
+        return effortsBySkill.length > 0
+          ? { [company[0].company]: effortsBySkill }
+          : null
       })
       .filter((n) => n !== null)
   }
 
-  private groupEffortsBySkillAndPeriod(array: NetworkingCompanyEffortRowWithSkill[]) {
+  private groupEffortsBySkillAndPeriod(
+    array: NetworkingCompanyEffortRowWithSkill[],
+  ) {
     const groupedSkills = this.groupByKey(array, (i) => i.skill)
     return Object.entries(groupedSkills).map(([skill, group]) => ({
       skill,

@@ -43,56 +43,70 @@ test('read company networking skills of it', async (t) => {
         },
     })
 
-   t.equal(response.statusCode, 200)
-   const result = response.json<NetworkingSkillsResponseType>();
-   const expected = [
-       {
-           company:"test company",
-           skills:[
-               {
-                   skill:"C#",
-                   averageScore:2,
-                   people:1
-               }
-           ]
-       },
-       {
-           company:"us",
-           skills:[
-               {
-                   skill:"PHP",
-                   averageScore:2,
-                   people:1
-               },
-               {
-                   skill:"Python",
-                   averageScore:1,
-                   people:1
-               }
-           ]
-       },
-       {
-           company:"it",
-           skills:[
-               {
-                   skill:"PHP",
-                   averageScore:2,
-                   people:2
-               },
-               {
-                   skill:"Java/Kotlin",
-                   averageScore:3,
-                   people:1
-               },
-               {
-                   skill:"Python",
-                   averageScore:3,
-                   people:1
-               }
-           ]
-       }
-   ]
-   t.same(result, expected)
+    t.equal(response.statusCode, 200)
+    const result = response.json<NetworkingSkillsResponseType>();
+    const expected = [
+        {
+            "test company": {
+                company: "test company",
+                skills: [
+                    {
+                        "C#": {
+                            averageScore: 2,
+                            people: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "us":
+                {
+                    company: "us",
+                    skills: [
+                        {
+                            "PHP": {
+                                averageScore: 2,
+                                people: 1
+                            }
+                        },
+                        {
+                            "Python": {
+                                averageScore: 1,
+                                people: 1
+                            }
+                        }
+                    ]
+                }
+        },
+        {
+            it:
+                {
+                    company: "it",
+                    skills: [
+                        {
+                            PHP: {
+                                averageScore: 2,
+                                people: 2
+                            },
+                        },
+                        {
+                            "Java/Kotlin": {
+                                averageScore: 3,
+                                people: 1
+                            }
+                        },
+                        {
+                            "Python": {
+                                averageScore: 3,
+                                people: 1
+                            }
+                        }
+                    ]
+                }
+        }
+    ]
+    t.same(result, expected)
 })
 
 test('read company networking skills of other', async (t) => {
