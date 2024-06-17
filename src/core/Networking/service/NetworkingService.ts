@@ -48,13 +48,12 @@ export class NetworkingService {
           sum = sum + skill.score
         }
         return {
-           [ c.companySkill[0].skill ]: {
-             averageScore: people !== 0 ? Math.round(sum / people) : 0,
-             people: people,
-           }
+          skill: c.companySkill[0].skill,
+          averageScore: people !== 0 ? Math.round(sum / people) : 0,
+          people: people,
         }
       })
-      results.push({ [ company ]: {company: company, skills: averageSkills}})
+      results.push({ [company]: { company: company, skills: averageSkills } })
     }
     return results
   }
@@ -67,31 +66,26 @@ export class NetworkingService {
       await this.networkingRepository.getNetworkingEffortOf(company)
     const flatEfforts = efforts.flat(2)
 
-    // @ts-ignore
-    return networking
-      .map((company) => {
-        const effortsWithSkills = company.flatMap((companySkill) => {
-          const uidEfforts = flatEfforts.filter(
-            (companyEffort) => companyEffort.uid === companySkill.uid,
-          )
-          return uidEfforts.map((effort) => {
-            return {
-              company: effort.company,
-              uid: effort.uid,
-              month_year: effort.month_year,
-              confirmedEffort: effort.confirmedEffort,
-              tentativeEffort: effort.tentativeEffort,
-              skill: companySkill.skill,
-            }
-          })
+    return networking.map((company) => {
+      const effortsWithSkills = company.flatMap((companySkill) => {
+        const uidEfforts = flatEfforts.filter(
+          (companyEffort) => companyEffort.uid === companySkill.uid,
+        )
+        return uidEfforts.map((effort) => {
+          return {
+            company: effort.company,
+            uid: effort.uid,
+            month_year: effort.month_year,
+            confirmedEffort: effort.confirmedEffort,
+            tentativeEffort: effort.tentativeEffort,
+            skill: companySkill.skill,
+          }
         })
-        const effortsBySkill =
-          this.groupEffortsBySkillAndPeriod(effortsWithSkills)
-        return effortsBySkill.length > 0
-          ? { [company[0].company]: effortsBySkill }
-          : null
       })
-      .filter((n) => n !== null)
+      const effortsBySkill =
+        this.groupEffortsBySkillAndPeriod(effortsWithSkills)
+      return { [company[0].company]: effortsBySkill }
+    })
   }
 
   private groupEffortsBySkillAndPeriod(

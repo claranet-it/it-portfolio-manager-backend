@@ -1,12 +1,10 @@
 import { Static, Type } from '@sinclair/typebox'
 
-export const Skill =       Type.Record(
-        Type.String(),
-        Type.Object({
-            averageScore: Type.Number(),
-            people: Type.Number(),
-        }),
-    )
+export const Skill = Type.Object({
+  skill: Type.String(),
+  averageScore: Type.Number(),
+  people: Type.Number(),
+})
 
 export type SkillType = Static<typeof Skill>
 
@@ -14,9 +12,7 @@ export const CompanySkills = Type.Record(
   Type.String(),
   Type.Object({
     company: Type.String(),
-    skills: Type.Array(
-     Skill
-    )
+    skills: Type.Array(Skill),
   }),
 )
 

@@ -49,12 +49,11 @@ test('read company networking skills of it', async (t) => {
         {
             "test company": {
                 company: "test company",
-                skills: [
+                skills:[
                     {
-                        "C#": {
-                            averageScore: 2,
-                            people: 1
-                        }
+                        skill:"C#",
+                        averageScore:2,
+                        people:1
                     }
                 ]
             }
@@ -63,47 +62,41 @@ test('read company networking skills of it', async (t) => {
             "us":
                 {
                     company: "us",
-                    skills: [
+                    skills:[
                         {
-                            "PHP": {
-                                averageScore: 2,
-                                people: 1
-                            }
+                            skill:"PHP",
+                            averageScore:2,
+                            people:1
                         },
                         {
-                            "Python": {
-                                averageScore: 1,
-                                people: 1
-                            }
+                            skill:"Python",
+                            averageScore:1,
+                            people:1
                         }
                     ]
                 }
         },
         {
-            it:
-                {
-                    company: "it",
-                    skills: [
-                        {
-                            PHP: {
-                                averageScore: 2,
-                                people: 2
-                            },
-                        },
-                        {
-                            "Java/Kotlin": {
-                                averageScore: 3,
-                                people: 1
-                            }
-                        },
-                        {
-                            "Python": {
-                                averageScore: 3,
-                                people: 1
-                            }
-                        }
-                    ]
-                }
+            it: {
+                company: "it",
+                skills:[
+                    {
+                        skill:"PHP",
+                        averageScore:2,
+                        people:2
+                    },
+                    {
+                        skill:"Java/Kotlin",
+                        averageScore:3,
+                        people:1
+                    },
+                    {
+                        skill:"Python",
+                        averageScore:3,
+                        people:1
+                    }
+                ]
+            }
         }
     ]
     t.same(result, expected)
