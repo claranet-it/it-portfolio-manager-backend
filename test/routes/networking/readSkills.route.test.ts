@@ -3,7 +3,10 @@ import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
 import {NetworkingSkillsResponseType} from "@src/core/Networking/model/networking.model";
 
+import sinon from 'sinon';
+
 let app: FastifyInstance
+let clock: sinon.SinonFakeTimers;
 
 function getToken(company: string): string {
     return app.createTestJwt({
@@ -15,11 +18,17 @@ function getToken(company: string): string {
 }
 
 beforeEach(async () => {
+    const fixedDate = new Date('2023-01-01T00:00:00Z');
+    clock = sinon.useFakeTimers({
+        now: fixedDate,
+        toFake: ['Date'],
+    });
     app = createApp({logger: false})
     await app.ready()
 })
 
 afterEach(async () => {
+   clock.restore();
     await app.close()
 })
 
@@ -45,65 +54,7 @@ test("read company networking skills of it", async (t) => {
 
     t.equal(response.statusCode, 200)
     const result = response.json<NetworkingSkillsResponseType>();
-    const expected = [
-        {
-            "test company": {
-                company: "test company",
-                skills: [
-                    {
-                        "C#": {
-                            averageScore: 2,
-                            people: 1
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "us": {
-                company: "us",
-                skills: [
-                    {
-                        "PHP": {
-                            averageScore: 2,
-                            people: 1
-                        }
-                    },
-                    {
-                        "Python": {
-                            averageScore: 1,
-                            people: 1
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            it: {
-                company: "it",
-                skills: [
-                    {
-                        PHP: {
-                            averageScore: 2,
-                            people: 2
-                        },
-                    },
-                    {
-                        "Java/Kotlin": {
-                            averageScore: 3,
-                            people: 1
-                        }
-                    },
-                    {
-                        "Python": {
-                            averageScore: 3,
-                            people: 1
-                        }
-                    }
-                ]
-            }
-        }
-    ]
+    const expected = [{"test company":{"company":"test company","skills":[{"C#":{"averageScore":2,"people":1}},{"Elixir":{"averageScore":0,"people":0}},{"Frontend (JS/TS)":{"averageScore":0,"people":0}},{"Java/Kotlin":{"averageScore":0,"people":0}},{"Multiplatform Mobile (ionic, react-native, flutter)":{"averageScore":0,"people":0}},{"Native Android":{"averageScore":0,"people":0}},{"Native iOS":{"averageScore":0,"people":0}},{"NodeJS (JS/TS)":{"averageScore":0,"people":0}},{"PHP":{"averageScore":0,"people":0}},{"Python":{"averageScore":0,"people":0}},{"Ruby (Rails)":{"averageScore":0,"people":0}},{"Rust":{"averageScore":0,"people":0}},{"UI Development (HTML/CSS/SCSS)":{"averageScore":0,"people":0}},{"AWS Cloudformation":{"averageScore":0,"people":0}},{"AWS ECS":{"averageScore":0,"people":0}},{"AWS EKS":{"averageScore":0,"people":0}},{"AWS cloud governance":{"averageScore":0,"people":0}},{"AWS core":{"averageScore":0,"people":0}},{"AWS finance":{"averageScore":0,"people":0}},{"AWS migration":{"averageScore":0,"people":0}},{"AWS monitoring":{"averageScore":0,"people":0}},{"AWS streaming + IoT":{"averageScore":0,"people":0}},{"Data":{"averageScore":0,"people":0}},{"ML":{"averageScore":0,"people":0}},{"Networking":{"averageScore":0,"people":0}},{"Security":{"averageScore":0,"people":0}},{"Serverless":{"averageScore":0,"people":0}},{"Terraform":{"averageScore":0,"people":0}}]}},{"us":{"company":"us","skills":[{"C#":{"averageScore":0,"people":0}},{"Elixir":{"averageScore":0,"people":0}},{"Frontend (JS/TS)":{"averageScore":0,"people":0}},{"Java/Kotlin":{"averageScore":0,"people":0}},{"Multiplatform Mobile (ionic, react-native, flutter)":{"averageScore":0,"people":0}},{"Native Android":{"averageScore":0,"people":0}},{"Native iOS":{"averageScore":0,"people":0}},{"NodeJS (JS/TS)":{"averageScore":0,"people":0}},{"PHP":{"averageScore":2,"people":1}},{"Python":{"averageScore":1,"people":1}},{"Ruby (Rails)":{"averageScore":0,"people":0}},{"Rust":{"averageScore":0,"people":0}},{"UI Development (HTML/CSS/SCSS)":{"averageScore":0,"people":0}},{"AWS Cloudformation":{"averageScore":0,"people":0}},{"AWS ECS":{"averageScore":0,"people":0}},{"AWS EKS":{"averageScore":0,"people":0}},{"AWS cloud governance":{"averageScore":0,"people":0}},{"AWS core":{"averageScore":0,"people":0}},{"AWS finance":{"averageScore":0,"people":0}},{"AWS migration":{"averageScore":0,"people":0}},{"AWS monitoring":{"averageScore":0,"people":0}},{"AWS streaming + IoT":{"averageScore":0,"people":0}},{"Data":{"averageScore":0,"people":0}},{"ML":{"averageScore":0,"people":0}},{"Networking":{"averageScore":0,"people":0}},{"Security":{"averageScore":0,"people":0}},{"Serverless":{"averageScore":0,"people":0}},{"Terraform":{"averageScore":0,"people":0}}]}},{"it":{"company":"it","skills":[{"C#":{"averageScore":0,"people":0}},{"Elixir":{"averageScore":0,"people":0}},{"Frontend (JS/TS)":{"averageScore":0,"people":0}},{"Java/Kotlin":{"averageScore":3,"people":1}},{"Multiplatform Mobile (ionic, react-native, flutter)":{"averageScore":0,"people":0}},{"Native Android":{"averageScore":0,"people":0}},{"Native iOS":{"averageScore":0,"people":0}},{"NodeJS (JS/TS)":{"averageScore":0,"people":0}},{"PHP":{"averageScore":2,"people":2}},{"Python":{"averageScore":3,"people":1}},{"Ruby (Rails)":{"averageScore":0,"people":0}},{"Rust":{"averageScore":0,"people":0}},{"UI Development (HTML/CSS/SCSS)":{"averageScore":0,"people":0}},{"AWS Cloudformation":{"averageScore":0,"people":0}},{"AWS ECS":{"averageScore":0,"people":0}},{"AWS EKS":{"averageScore":0,"people":0}},{"AWS cloud governance":{"averageScore":0,"people":0}},{"AWS core":{"averageScore":0,"people":0}},{"AWS finance":{"averageScore":0,"people":0}},{"AWS migration":{"averageScore":0,"people":0}},{"AWS monitoring":{"averageScore":0,"people":0}},{"AWS streaming + IoT":{"averageScore":0,"people":0}},{"Data":{"averageScore":0,"people":0}},{"ML":{"averageScore":0,"people":0}},{"Networking":{"averageScore":0,"people":0}},{"Security":{"averageScore":0,"people":0}},{"Serverless":{"averageScore":0,"people":0}},{"Terraform":{"averageScore":0,"people":0}}]}}]
     t.same(result, expected)
 })
 
