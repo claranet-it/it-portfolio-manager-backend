@@ -1,11 +1,10 @@
 import { NetworkingRepositoryInterface } from '@src/core/Networking/repository/NetworkingRepositoryInterface'
 import {
-  NetworkingCompanyEffortRowWithSkill,
-  CompanySkillType,
   NetworkingEffortResponseType,
   NetworkingSkillsResponseType,
-  SkillType,
 } from '@src/core/Networking/model/networking.model'
+import { EffortReadParamsType } from '@src/core/Effort/model/effort'
+import { skillsList } from '@src/core/Configuration/service/ConfigurationService'
 
 export class NetworkingService {
   constructor(private networkingRepository: NetworkingRepositoryInterface) {}
@@ -13,103 +12,120 @@ export class NetworkingService {
   async getNetworkingAverageSkillsOf(
     company: string,
   ): Promise<NetworkingSkillsResponseType> {
-    const skills =
-      await this.networkingRepository.getNetworkingSkillsOf(company)
-    const groupedSkills = skills.map((s) => this.groupBySkill(s))
-    return await this.calculateAverageScore(groupedSkills)
+    const networkingCompanies =
+      await this.networkingRepository.getNetworkingOf(company)
+
+    return await Promise.all(
+      networkingCompanies.map(async (company) => {
+        const availableCompanyPeopleSkills =
+          await this.networkingRepository.getNetworkingSkillsOf(company)
+
+        const averageCompanySkills = skillsList.map((skill) => {
+          const peopleSkill = availableCompanyPeopleSkills.filter(
+            (peopleSkill) => peopleSkill.skill === skill,
+          )
+          const peopleCount = peopleSkill.length
+          const peopleScores = peopleSkill.map(
+            (personSkill) => personSkill.score,
+          )
+
+          if (peopleCount === 0) {
+            return {
+              [skill]: {
+                averageScore: 0,
+                people: 0,
+              },
+            }
+          } else {
+            return {
+              [skill]: {
+                averageScore: this.average(peopleScores),
+                people: peopleCount,
+              },
+            }
+          }
+        })
+
+        return {
+          [company]: {
+            company,
+            skills: averageCompanySkills,
+          },
+        }
+      }),
+    )
   }
 
   async getNetworkingAverageEffortOf(
+    params: EffortReadParamsType,
     company: string,
   ): Promise<NetworkingEffortResponseType> {
-    const networkingSkills =
-      await this.networkingRepository.getNetworkingSkillsOf(company)
-    return await this.calculateAverageEffort(networkingSkills, company)
-  }
+    const networkingCompanies =
+      await this.networkingRepository.getNetworkingOf(company)
 
-  private groupBySkill(array: CompanySkillType[]) {
-    const groupedSkills = this.groupByKey(array, (i) => i.skill)
-    return Object.entries(groupedSkills).map(([skill, group]) => ({
-      skill: skill,
-      companySkill: group,
-    }))
-  }
+    const requestedPeriods: string[] = []
+    for (let i = 0; i <= params.months; i++) {
+      const date = new Date()
+      date.setDate(1)
+      date.setMonth(date.getMonth() + i)
+      const month_year =
+        ('0' + (date.getMonth() + 1)).slice(-2) +
+        '_' +
+        date.getFullYear().toString().slice(-2)
 
-  private async calculateAverageScore(
-    groupedSkills: { skill: string; companySkill: CompanySkillType[] }[][],
-  ): Promise<NetworkingSkillsResponseType> {
-    const results: NetworkingSkillsResponseType = []
-    for (const companySkills of groupedSkills) {
-      const company = companySkills[0].companySkill[0].company
-      const averageSkills: SkillType[] = companySkills.map((c) => {
-        const people = c.companySkill.length
-        let sum = 0
-        for (const skill of c.companySkill) {
-          sum = sum + skill.score
-        }
-        return {
-          [c.companySkill[0].skill]: {
-            averageScore: people !== 0 ? Math.round(sum / people) : 0,
-            people: people,
-          },
-        }
-      })
-      results.push({ [company]: { company: company, skills: averageSkills } })
+      requestedPeriods.push(month_year)
     }
-    return results
-  }
 
-  private async calculateAverageEffort(
-    networking: CompanySkillType[][],
-    company: string,
-  ): Promise<NetworkingEffortResponseType> {
-    const efforts =
-      await this.networkingRepository.getNetworkingEffortOf(company)
-    const flatEfforts = efforts.flat(2)
+    return Promise.all(
+      networkingCompanies.map(async (company) => {
+        const availableCompanyPeopleSkills =
+          await this.networkingRepository.getNetworkingSkillsOf(company)
+        const availableCompanyPeopleEfforts =
+          await this.networkingRepository.getNetworkingEffortOf(company)
 
-    return networking.map((company) => {
-      const effortsWithSkills = company.flatMap((companySkill) => {
-        const uidEfforts = flatEfforts.filter(
-          (companyEffort) => companyEffort.uid === companySkill.uid,
-        )
-        return uidEfforts.map((effort) => {
-          return {
-            company: effort.company,
-            uid: effort.uid,
-            month_year: effort.month_year,
-            confirmedEffort: effort.confirmedEffort,
-            tentativeEffort: effort.tentativeEffort,
-            skill: companySkill.skill,
-          }
+        const companySkillEfforts = skillsList.map((skill) => {
+          const peopleSkill = availableCompanyPeopleSkills.filter(
+            (peopleSkill) => peopleSkill.skill === skill,
+          )
+          const peopleUids = peopleSkill.map((personSkill) => personSkill.uid)
+          const peopleEfforts = availableCompanyPeopleEfforts.filter(
+            (personEffort) =>
+              personEffort.uid in peopleUids &&
+              personEffort.month_year in requestedPeriods,
+          )
+
+          const companyEfforts = requestedPeriods.map((requestedPeriod) => {
+            const peoplePeriodEffort = peopleEfforts.filter(
+              (personEffort) => personEffort.month_year === requestedPeriod,
+            )
+
+            const peopleCount = peoplePeriodEffort.length
+            const peopleConfirmedEffort = peoplePeriodEffort.map(
+              (personPeriodEffort) => personPeriodEffort.confirmedEffort,
+            )
+            const peopleTentativeEffort = peoplePeriodEffort.map(
+              (personPeriodEffort) => personPeriodEffort.tentativeEffort,
+            )
+
+            const averageConfirmedEffort = this.average(peopleConfirmedEffort)
+            const averageTentativeEffort = this.average(peopleTentativeEffort)
+            const averageTotalEffort =
+              averageConfirmedEffort + averageTentativeEffort
+
+            return {
+              month_year: requestedPeriod,
+              people: peopleCount,
+              confirmedEffort: averageConfirmedEffort,
+              tentativeEffort: averageTentativeEffort,
+              totalEffort: averageTotalEffort,
+            }
+          })
+          return { skill, name: company, effort: companyEfforts }
         })
-      })
-      const effortsBySkill =
-        this.groupEffortsBySkillAndPeriod(effortsWithSkills)
-      return { [company[0].company]: effortsBySkill }
-    })
-  }
 
-  private groupEffortsBySkillAndPeriod(
-    array: NetworkingCompanyEffortRowWithSkill[],
-  ) {
-    const groupedSkills = this.groupByKey(array, (i) => i.skill)
-    return Object.entries(groupedSkills).map(([skill, group]) => ({
-      skill,
-      effort: this.groupEffortsByPeriod(group),
-    }))
-  }
-
-  private groupEffortsByPeriod(array: NetworkingCompanyEffortRowWithSkill[]) {
-    const groupedPeriods = this.groupByKey(array, (i) => i.month_year)
-    return Object.entries(groupedPeriods).map(([period, effort]) => ({
-      month_year: period,
-      people: effort.length,
-      confirmedEffort: this.average(effort.map((e) => e.confirmedEffort)),
-      tentativeEffort: this.average(effort.map((e) => e.tentativeEffort)),
-      totalEffort: this.average(
-        effort.map((e) => e.confirmedEffort + e.tentativeEffort),
-      ),
-    }))
+        return { [company]: companySkillEfforts }
+      }),
+    )
   }
 
   private average(numbers: number[]) {
@@ -118,15 +134,5 @@ export class NetworkingService {
       sum = sum + n
     }
     return numbers.length > 0 ? sum / numbers.length : 0
-  }
-
-  private groupByKey<T>(arr: T[], key: (i: T) => string): Record<string, T[]> {
-    return arr.reduce(
-      (groups, item) => {
-        (groups[key(item)] ||= []).push(item)
-        return groups
-      },
-      {} as Record<string, T[]>,
-    )
   }
 }

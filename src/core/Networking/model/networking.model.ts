@@ -8,8 +8,6 @@ export const Skill = Type.Record(
   }),
 )
 
-export type SkillType = Static<typeof Skill>
-
 export const CompanySkills = Type.Record(
   Type.String(),
   Type.Object({
@@ -46,11 +44,6 @@ export const Effort = Type.Object({
   period: Type.Array(EffortPeriod),
 })
 
-export const CompanyEffort = Type.Object({
-  company: Type.String(),
-  effort: Type.Array(Effort),
-})
-
 export const CompanyEffortRow = Type.Object({
   company: Type.String(),
   uid: Type.String(),
@@ -70,10 +63,6 @@ export const CompanyEffortRowWithSkill = Type.Object({
   skill: Type.String(),
 })
 
-export type NetworkingCompanyEffortRowWithSkill = Static<
-  typeof CompanyEffortRowWithSkill
->
-
 const EffortRowPerCompany = Type.Object({
   month_year: Type.RegExp(/(0[1-9]|1[012])_([0-9][0-9])$/),
   people: Type.Number(),
@@ -87,14 +76,11 @@ export const NetworkingEffortResponsePerCompany = Type.Record(
   Type.Array(
     Type.Object({
       skill: Type.String(),
+      name: Type.String(),
       effort: Type.Array(EffortRowPerCompany),
     }),
   ),
 )
-
-export type NetworkingEffortResponsePerCompanyType = Static<
-  typeof EffortRowPerCompany
->
 
 export const NetworkingEffortResponse = Type.Array(
   NetworkingEffortResponsePerCompany,

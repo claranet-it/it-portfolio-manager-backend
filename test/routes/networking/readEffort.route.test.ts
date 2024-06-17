@@ -26,7 +26,7 @@ afterEach(async () => {
 test('read networking effort without authentication', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/networking/effort',
+        url: '/api/networking/effort/next',
     })
 
     t.equal(response.statusCode, 401)
@@ -37,7 +37,7 @@ test('read company networking effort of it', async (t) => {
     const token = getToken(company)
     const response = await app.inject({
         method: 'GET',
-        url: '/api/networking/effort',
+        url: '/api/networking/effort/next',
         headers: {
             authorization: `Bearer ${token}`,
         },
@@ -55,6 +55,7 @@ test('read company networking effort of it', async (t) => {
             us: [
                 {
                     skill: "PHP",
+                    name: "us",
                     effort: [
                         {
                             month_year: "01_23",
@@ -76,6 +77,7 @@ test('read company networking effort of it', async (t) => {
                 },
                 {
                     skill: "Python",
+                    name: "us",
                     effort: [
                         {
                             month_year: "01_23",
@@ -99,6 +101,7 @@ test('read company networking effort of it', async (t) => {
             it: [
                 {
                     skill: "PHP",
+                    name: "it",
                     effort: [
                         {
                             month_year: "01_23",
@@ -118,6 +121,7 @@ test('read company networking effort of it', async (t) => {
                 },
                 {
                     skill: "Java/Kotlin",
+                    name: "it",
                     effort: [
                         {
                             month_year: "01_23",
@@ -137,6 +141,7 @@ test('read company networking effort of it', async (t) => {
                 },
                 {
                     skill: "Python",
+                    name: "it",
                     effort: [
                         {
                             month_year: "01_23",
@@ -165,7 +170,7 @@ test('read company networking effort of other', async (t) => {
     const token = getToken(company)
     const response = await app.inject({
         method: 'GET',
-        url: '/api/networking/effort',
+        url: '/api/networking/effort/next',
         headers: {
             authorization: `Bearer ${token}`,
         },

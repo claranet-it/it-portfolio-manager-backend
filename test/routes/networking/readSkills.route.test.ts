@@ -32,7 +32,7 @@ test('read networking skills without authentication', async (t) => {
     t.equal(response.statusCode, 401)
 })
 
-test('read company networking skills of it', async (t) => {
+test("read company networking skills of it", async (t) => {
     const company = 'it'
     const token = getToken(company)
     const response = await app.inject({
