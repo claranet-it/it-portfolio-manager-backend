@@ -3,19 +3,9 @@ import {
   getMinimumScore,
 } from '@src/core/SkillMatrix/model/skillMatrix.model'
 import { ConfigurationType } from '@src/core/Configuration/model/configuration.model'
+import { CrewRepositoryInterface } from '../repository/CrewRepositoryInterface'
 
 const serviceLines = ['Developer', 'Cloud']
-
-const crews = [
-  { name: 'Moon', service_line: serviceLines[0] },
-  { name: 'Cloud', service_line: serviceLines[1] },
-  { name: 'Bees', service_line: serviceLines[0] },
-  { name: 'Polaris', service_line: serviceLines[0] },
-  { name: 'Rohan', service_line: serviceLines[0] },
-  { name: 'Hydra', service_line: serviceLines[1] },
-  { name: 'France - Beta Test', service_line: serviceLines[0] },
-  { name: 'Hack and Teach - Beta Test', service_line: serviceLines[1] },
-]
 
 const skills = {
   [serviceLines[0]]: [
@@ -67,7 +57,9 @@ const scoreRangeLabels = {
 }
 
 export class ConfigurationService {
-  getAllConfiguration(): ConfigurationType {
+  constructor(private crewRepository: CrewRepositoryInterface) {}
+  async getAllConfiguration(company: string): Promise<ConfigurationType> {
+    const crews = await this.crewRepository.findByCompany(company)
     return {
       crews,
       skills,

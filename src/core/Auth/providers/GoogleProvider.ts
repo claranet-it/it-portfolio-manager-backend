@@ -11,14 +11,23 @@ export class GoogleProvider implements ProviderInterface {
       idToken: token,
     })
     const payload = ticket.getPayload()
-    if (!payload || !payload.email || !payload.name || !payload.hd) {
+    if (!payload || !payload.email || !payload.name) {
       throw new UnauthorizedError()
     }
-    return {
-      email: payload.email,
-      name: payload.name,
-      picture: payload.picture ?? '',
-      companyDomain: payload.hd,
+    if (payload.hd) {
+      return {
+        email: payload.email,
+        name: payload.name,
+        picture: payload.picture ?? '',
+        companyDomain: payload.hd,
+      }
+    } else {
+      return {
+        email: payload.email,
+        name: payload.name,
+        picture: payload.picture ?? '',
+        companyDomain: 'flowing.it', //demo purpose
+      }
     }
   }
 }
