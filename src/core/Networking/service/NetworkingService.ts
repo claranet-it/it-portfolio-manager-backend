@@ -1,6 +1,6 @@
 import { NetworkingRepositoryInterface } from '@src/core/Networking/repository/NetworkingRepositoryInterface'
 import {
-  CompanyEffortWithSkillRowType,
+  NetworkingCompanyEffortRowWithSkill,
   CompanySkillType,
   NetworkingEffortResponseType,
   NetworkingSkillsResponseType,
@@ -48,12 +48,13 @@ export class NetworkingService {
           sum = sum + skill.score
         }
         return {
-          skill: c.companySkill[0].skill,
-          averageScore: people !== 0 ? Math.round(sum / people) : 0,
-          people: people,
+          [c.companySkill[0].skill]: {
+            averageScore: people !== 0 ? Math.round(sum / people) : 0,
+            people: people,
+          },
         }
       })
-      results.push({ company, skills: averageSkills })
+      results.push({ [company]: { company: company, skills: averageSkills } })
     }
     return results
   }
@@ -66,46 +67,46 @@ export class NetworkingService {
       await this.networkingRepository.getNetworkingEffortOf(company)
     const flatEfforts = efforts.flat(2)
 
-    return networking
-      .map((company) => {
-        const effortsWithSkills = company.flatMap((companySkill) => {
-          const uidEfforts = flatEfforts.filter(
-            (companyEffort) => companyEffort.uid === companySkill.uid,
-          )
-          return uidEfforts.map((effort) => {
-            return {
-              company: effort.company,
-              uid: effort.uid,
-              month_year: effort.month_year,
-              confirmedEffort: effort.confirmedEffort,
-              tentativeEffort: effort.tentativeEffort,
-              skill: companySkill.skill,
-            }
-          })
+    return networking.map((company) => {
+      const effortsWithSkills = company.flatMap((companySkill) => {
+        const uidEfforts = flatEfforts.filter(
+          (companyEffort) => companyEffort.uid === companySkill.uid,
+        )
+        return uidEfforts.map((effort) => {
+          return {
+            company: effort.company,
+            uid: effort.uid,
+            month_year: effort.month_year,
+            confirmedEffort: effort.confirmedEffort,
+            tentativeEffort: effort.tentativeEffort,
+            skill: companySkill.skill,
+          }
         })
-        const effortsBySkill =
-          this.groupEffortsBySkillAndPeriod(effortsWithSkills)
-        return { company: company[0].company, effort: effortsBySkill }
       })
-      .filter((n) => n.effort.length > 0)
+      const effortsBySkill =
+        this.groupEffortsBySkillAndPeriod(effortsWithSkills)
+      return { [company[0].company]: effortsBySkill }
+    })
   }
 
-  private groupEffortsBySkillAndPeriod(array: CompanyEffortWithSkillRowType[]) {
+  private groupEffortsBySkillAndPeriod(
+    array: NetworkingCompanyEffortRowWithSkill[],
+  ) {
     const groupedSkills = this.groupByKey(array, (i) => i.skill)
     return Object.entries(groupedSkills).map(([skill, group]) => ({
       skill,
-      period: this.groupEffortsByPeriod(group),
+      effort: this.groupEffortsByPeriod(group),
     }))
   }
 
-  private groupEffortsByPeriod(array: CompanyEffortWithSkillRowType[]) {
+  private groupEffortsByPeriod(array: NetworkingCompanyEffortRowWithSkill[]) {
     const groupedPeriods = this.groupByKey(array, (i) => i.month_year)
     return Object.entries(groupedPeriods).map(([period, effort]) => ({
-      month: period,
+      month_year: period,
       people: effort.length,
-      averageConfirmed: this.average(effort.map((e) => e.confirmedEffort)),
-      averageTentative: this.average(effort.map((e) => e.tentativeEffort)),
-      averageTotal: this.average(
+      confirmedEffort: this.average(effort.map((e) => e.confirmedEffort)),
+      tentativeEffort: this.average(effort.map((e) => e.tentativeEffort)),
+      totalEffort: this.average(
         effort.map((e) => e.confirmedEffort + e.tentativeEffort),
       ),
     }))
