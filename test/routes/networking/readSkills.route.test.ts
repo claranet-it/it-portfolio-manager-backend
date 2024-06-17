@@ -49,51 +49,56 @@ test('read company networking skills of it', async (t) => {
         {
             "test company": {
                 company: "test company",
-                skills:[
+                skills: [
                     {
-                        skill:"C#",
-                        averageScore:2,
-                        people:1
+                        "C#": {
+                            averageScore: 2,
+                            people: 1
+                        }
                     }
                 ]
             }
         },
         {
-            "us":
-                {
-                    company: "us",
-                    skills:[
-                        {
-                            skill:"PHP",
-                            averageScore:2,
-                            people:1
-                        },
-                        {
-                            skill:"Python",
-                            averageScore:1,
-                            people:1
+            "us": {
+                company: "us",
+                skills: [
+                    {
+                        "PHP": {
+                            averageScore: 2,
+                            people: 1
                         }
-                    ]
-                }
+                    },
+                    {
+                        "Python": {
+                            averageScore: 1,
+                            people: 1
+                        }
+                    }
+                ]
+            }
         },
         {
             it: {
                 company: "it",
-                skills:[
+                skills: [
                     {
-                        skill:"PHP",
-                        averageScore:2,
-                        people:2
+                        PHP: {
+                            averageScore: 2,
+                            people: 2
+                        },
                     },
                     {
-                        skill:"Java/Kotlin",
-                        averageScore:3,
-                        people:1
+                        "Java/Kotlin": {
+                            averageScore: 3,
+                            people: 1
+                        }
                     },
                     {
-                        skill:"Python",
-                        averageScore:3,
-                        people:1
+                        "Python": {
+                            averageScore: 3,
+                            people: 1
+                        }
                     }
                 ]
             }

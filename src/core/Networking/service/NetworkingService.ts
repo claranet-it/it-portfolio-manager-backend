@@ -48,9 +48,10 @@ export class NetworkingService {
           sum = sum + skill.score
         }
         return {
-          skill: c.companySkill[0].skill,
-          averageScore: people !== 0 ? Math.round(sum / people) : 0,
-          people: people,
+          [c.companySkill[0].skill]: {
+            averageScore: people !== 0 ? Math.round(sum / people) : 0,
+            people: people,
+          },
         }
       })
       results.push({ [company]: { company: company, skills: averageSkills } })
