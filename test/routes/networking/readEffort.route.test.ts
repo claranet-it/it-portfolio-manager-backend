@@ -49,7 +49,9 @@ test('read company networking effort of it', async (t) => {
 
     const expected = [
         {
-            "test company" : [],
+            "test company" : []
+        },
+        {
             us: [
                 {
                     skill: "PHP",
