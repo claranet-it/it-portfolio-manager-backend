@@ -31,7 +31,7 @@ export class NetworkingRepository implements NetworkingRepositoryInterface {
     command.input.ProjectionExpression = 'company, skill, score, uid'
 
     const result = await this.dynamoDBClient.send(command)
-    if (result?.Items && result?.Items.length > 0) {
+    if (result?.Items) {
       return result.Items.map((item) => ({
         company: item.company?.S ?? '',
         skill: item.skill?.S ?? '',
@@ -58,7 +58,7 @@ export class NetworkingRepository implements NetworkingRepositoryInterface {
       'company, uid, month_year, confirmedEffort, tentativeEffort'
 
     const result = await this.dynamoDBClient.send(command)
-    if (result?.Items && result?.Items.length > 0) {
+    if (result?.Items) {
       return result.Items.map((item) => ({
         company: item.company?.S ?? '',
         uid: item.uid?.S ?? '',

@@ -58,25 +58,13 @@ export class NetworkingService {
 
   async getNetworkingAverageEffortOf(
     params: EffortReadParamsType,
-    company: string,
   ): Promise<NetworkingEffortResponseType> {
     const networkingCompanies =
-      await this.networkingRepository.getNetworkingOf(company)
+      await this.networkingRepository.getNetworkingOf(params.company ?? '')
 
-    const requestedPeriods: string[] = []
-    for (let i = 0; i <= params.months; i++) {
-      const date = new Date()
-      date.setDate(1)
-      date.setMonth(date.getMonth() + i)
-      const month_year =
-        ('0' + (date.getMonth() + 1)).slice(-2) +
-        '_' +
-        date.getFullYear().toString().slice(-2)
+    const requestedPeriods = this.getRequestedPeriods(params.months);
 
-      requestedPeriods.push(month_year)
-    }
-
-    return Promise.all(
+    return await Promise.all(
       networkingCompanies.map(async (company) => {
         const availableCompanyPeopleSkills =
           await this.networkingRepository.getNetworkingSkillsOf(company)
@@ -87,11 +75,12 @@ export class NetworkingService {
           const peopleSkill = availableCompanyPeopleSkills.filter(
             (peopleSkill) => peopleSkill.skill === skill,
           )
+
           const peopleUids = peopleSkill.map((personSkill) => personSkill.uid)
           const peopleEfforts = availableCompanyPeopleEfforts.filter(
             (personEffort) =>
-              personEffort.uid in peopleUids &&
-              personEffort.month_year in requestedPeriods,
+                peopleUids.includes(personEffort.uid) &&
+              requestedPeriods.includes(personEffort.month_year),
           )
 
           const companyEfforts = requestedPeriods.map((requestedPeriod) => {
@@ -122,10 +111,25 @@ export class NetworkingService {
           })
           return { skill, name: company, effort: companyEfforts }
         })
-
         return { [company]: companySkillEfforts }
       }),
     )
+  }
+
+  private getRequestedPeriods(months: number) {
+    const requestedPeriods: string[] = []
+    for (let i = 0; i <= months; i++) {
+      const date = new Date()
+      date.setDate(1)
+      date.setMonth(date.getMonth() + i)
+      const month_year =
+          ('0' + (date.getMonth() + 1)).slice(-2) +
+          '_' +
+          date.getFullYear().toString().slice(-2)
+
+      requestedPeriods.push(month_year)
+    }
+    return requestedPeriods;
   }
 
   private average(numbers: number[]) {

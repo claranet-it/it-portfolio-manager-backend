@@ -3,10 +3,7 @@ import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
 import {NetworkingSkillsResponseType} from "@src/core/Networking/model/networking.model";
 
-import sinon from 'sinon';
-
 let app: FastifyInstance
-let clock: sinon.SinonFakeTimers;
 
 function getToken(company: string): string {
     return app.createTestJwt({
@@ -18,17 +15,11 @@ function getToken(company: string): string {
 }
 
 beforeEach(async () => {
-    const fixedDate = new Date('2023-01-01T00:00:00Z');
-    clock = sinon.useFakeTimers({
-        now: fixedDate,
-        toFake: ['Date'],
-    });
     app = createApp({logger: false})
     await app.ready()
 })
 
 afterEach(async () => {
-   clock.restore();
     await app.close()
 })
 
