@@ -12,7 +12,7 @@ export const CompanySkills = Type.Record(
   Type.String(),
   Type.Object({
     company: Type.String(),
-    skills: Type.Array(Skill),
+    skills: Skill,
   }),
 )
 

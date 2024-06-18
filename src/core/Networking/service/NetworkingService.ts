@@ -20,7 +20,7 @@ export class NetworkingService {
         const availableCompanyPeopleSkills =
           await this.networkingRepository.getNetworkingSkillsOf(company)
 
-        const averageCompanySkills = skillsList.map((skill) => {
+        const averageCompanySkills = skillsList.reduce((acc, skill) => {
           const peopleSkill = availableCompanyPeopleSkills.filter(
             (peopleSkill) => peopleSkill.skill === skill,
           )
@@ -31,6 +31,7 @@ export class NetworkingService {
 
           if (peopleCount === 0) {
             return {
+              ...acc,
               [skill]: {
                 averageScore: 0,
                 people: 0,
@@ -38,13 +39,14 @@ export class NetworkingService {
             }
           } else {
             return {
+              ...acc,
               [skill]: {
                 averageScore: this.average(peopleScores),
                 people: peopleCount,
               },
             }
           }
-        })
+        }, {})
 
         return {
           [company]: {
