@@ -59,10 +59,11 @@ export class NetworkingService {
   async getNetworkingAverageEffortOf(
     params: EffortReadParamsType,
   ): Promise<NetworkingEffortResponseType> {
-    const networkingCompanies =
-      await this.networkingRepository.getNetworkingOf(params.company ?? '')
+    const networkingCompanies = await this.networkingRepository.getNetworkingOf(
+      params.company ?? '',
+    )
 
-    const requestedPeriods = this.getRequestedPeriods(params.months);
+    const requestedPeriods = this.getRequestedPeriods(params.months)
 
     return await Promise.all(
       networkingCompanies.map(async (company) => {
@@ -79,7 +80,7 @@ export class NetworkingService {
           const peopleUids = peopleSkill.map((personSkill) => personSkill.uid)
           const peopleEfforts = availableCompanyPeopleEfforts.filter(
             (personEffort) =>
-                peopleUids.includes(personEffort.uid) &&
+              peopleUids.includes(personEffort.uid) &&
               requestedPeriods.includes(personEffort.month_year),
           )
 
@@ -123,13 +124,13 @@ export class NetworkingService {
       date.setDate(1)
       date.setMonth(date.getMonth() + i)
       const month_year =
-          ('0' + (date.getMonth() + 1)).slice(-2) +
-          '_' +
-          date.getFullYear().toString().slice(-2)
+        ('0' + (date.getMonth() + 1)).slice(-2) +
+        '_' +
+        date.getFullYear().toString().slice(-2)
 
       requestedPeriods.push(month_year)
     }
-    return requestedPeriods;
+    return requestedPeriods
   }
 
   private average(numbers: number[]) {
