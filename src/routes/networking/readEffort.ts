@@ -3,16 +3,22 @@ import {
   NetworkingEffortResponse,
   NetworkingEffortResponseType,
 } from '@src/core/Networking/model/networking.model'
+import {
+  EffortQueryParamsType,
+  EffortReadParams,
+} from '@src/core/Effort/model/effort'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
+    Querystring: EffortQueryParamsType
     Reply: NetworkingEffortResponseType
   }>(
-    '/effort',
+    '/effort/next',
     {
       onRequest: [fastify.authenticate],
       schema: {
-        tags: ['Other Companies Effort'],
+        tags: ['Networking Effort'],
+        querystring: EffortReadParams,
         security: [
           {
             apiKey: [],
@@ -40,7 +46,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('networkingService')
-          .getNetworkingAverageEffortOf(request.user.company)
+          .getNetworkingAverageEffortOf({
+            ...request.query,
+            company: request.user.company,
+          })
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
