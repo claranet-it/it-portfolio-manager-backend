@@ -27,6 +27,7 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ]
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerUserProfile, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ]
+            - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerCompanies, Arn ]
@@ -280,7 +281,6 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1          
-      
     ItPortfolioManagerCompanies:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -294,7 +294,6 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    
     ItPortfolioManagerCrews:
       Type: AWS::DynamoDB::Table
       Properties:
