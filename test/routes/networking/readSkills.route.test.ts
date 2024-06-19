@@ -32,7 +32,7 @@ test('read networking skills without authentication', async (t) => {
     t.equal(response.statusCode, 401)
 })
 
-test('read company networking skills of it', async (t) => {
+test("read company networking skills of it", async (t) => {
     const company = 'it'
     const token = getToken(company)
     const response = await app.inject({
@@ -43,56 +43,10 @@ test('read company networking skills of it', async (t) => {
         },
     })
 
-   t.equal(response.statusCode, 200)
-   const result = response.json<NetworkingSkillsResponseType>();
-   const expected = [
-       {
-           company:"test company",
-           skills:[
-               {
-                   skill:"C#",
-                   averageScore:2,
-                   people:1
-               }
-           ]
-       },
-       {
-           company:"us",
-           skills:[
-               {
-                   skill:"PHP",
-                   averageScore:2,
-                   people:1
-               },
-               {
-                   skill:"Python",
-                   averageScore:1,
-                   people:1
-               }
-           ]
-       },
-       {
-           company:"it",
-           skills:[
-               {
-                   skill:"PHP",
-                   averageScore:2,
-                   people:2
-               },
-               {
-                   skill:"Java/Kotlin",
-                   averageScore:3,
-                   people:1
-               },
-               {
-                   skill:"Python",
-                   averageScore:3,
-                   people:1
-               }
-           ]
-       }
-   ]
-   t.same(result, expected)
+    t.equal(response.statusCode, 200)
+    const result = response.json<NetworkingSkillsResponseType>();
+    const expected = [{"test company":{"company":"test company","skills":{"C#":{"averageScore":2,"people":1},"Elixir":{"averageScore":0,"people":0},"Frontend (JS/TS)":{"averageScore":0,"people":0},"Java/Kotlin":{"averageScore":0,"people":0},"Multiplatform Mobile (ionic, react-native, flutter)":{"averageScore":0,"people":0},"Native Android":{"averageScore":0,"people":0},"Native iOS":{"averageScore":0,"people":0},"NodeJS (JS/TS)":{"averageScore":0,"people":0},"PHP":{"averageScore":0,"people":0},"Python":{"averageScore":0,"people":0},"Ruby (Rails)":{"averageScore":0,"people":0},"Rust":{"averageScore":0,"people":0},"UI Development (HTML/CSS/SCSS)":{"averageScore":0,"people":0},"AWS Cloudformation":{"averageScore":0,"people":0},"AWS ECS":{"averageScore":0,"people":0},"AWS EKS":{"averageScore":0,"people":0},"AWS cloud governance":{"averageScore":0,"people":0},"AWS core":{"averageScore":0,"people":0},"AWS finance":{"averageScore":0,"people":0},"AWS migration":{"averageScore":0,"people":0},"AWS monitoring":{"averageScore":0,"people":0},"AWS streaming + IoT":{"averageScore":0,"people":0},"Data":{"averageScore":0,"people":0},"ML":{"averageScore":0,"people":0},"Networking":{"averageScore":0,"people":0},"Security":{"averageScore":0,"people":0},"Serverless":{"averageScore":0,"people":0},"Terraform":{"averageScore":0,"people":0}}}},{"us":{"company":"us","skills":{"C#":{"averageScore":0,"people":0},"Elixir":{"averageScore":0,"people":0},"Frontend (JS/TS)":{"averageScore":0,"people":0},"Java/Kotlin":{"averageScore":0,"people":0},"Multiplatform Mobile (ionic, react-native, flutter)":{"averageScore":0,"people":0},"Native Android":{"averageScore":0,"people":0},"Native iOS":{"averageScore":0,"people":0},"NodeJS (JS/TS)":{"averageScore":0,"people":0},"PHP":{"averageScore":2,"people":1},"Python":{"averageScore":1,"people":1},"Ruby (Rails)":{"averageScore":0,"people":0},"Rust":{"averageScore":0,"people":0},"UI Development (HTML/CSS/SCSS)":{"averageScore":0,"people":0},"AWS Cloudformation":{"averageScore":0,"people":0},"AWS ECS":{"averageScore":0,"people":0},"AWS EKS":{"averageScore":0,"people":0},"AWS cloud governance":{"averageScore":0,"people":0},"AWS core":{"averageScore":0,"people":0},"AWS finance":{"averageScore":0,"people":0},"AWS migration":{"averageScore":0,"people":0},"AWS monitoring":{"averageScore":0,"people":0},"AWS streaming + IoT":{"averageScore":0,"people":0},"Data":{"averageScore":0,"people":0},"ML":{"averageScore":0,"people":0},"Networking":{"averageScore":0,"people":0},"Security":{"averageScore":0,"people":0},"Serverless":{"averageScore":0,"people":0},"Terraform":{"averageScore":0,"people":0}}}},{"it":{"company":"it","skills":{"C#":{"averageScore":0,"people":0},"Elixir":{"averageScore":0,"people":0},"Frontend (JS/TS)":{"averageScore":0,"people":0},"Java/Kotlin":{"averageScore":3,"people":1},"Multiplatform Mobile (ionic, react-native, flutter)":{"averageScore":0,"people":0},"Native Android":{"averageScore":0,"people":0},"Native iOS":{"averageScore":0,"people":0},"NodeJS (JS/TS)":{"averageScore":0,"people":0},"PHP":{"averageScore":2,"people":2},"Python":{"averageScore":3,"people":1},"Ruby (Rails)":{"averageScore":0,"people":0},"Rust":{"averageScore":0,"people":0},"UI Development (HTML/CSS/SCSS)":{"averageScore":0,"people":0},"AWS Cloudformation":{"averageScore":0,"people":0},"AWS ECS":{"averageScore":0,"people":0},"AWS EKS":{"averageScore":0,"people":0},"AWS cloud governance":{"averageScore":0,"people":0},"AWS core":{"averageScore":0,"people":0},"AWS finance":{"averageScore":0,"people":0},"AWS migration":{"averageScore":0,"people":0},"AWS monitoring":{"averageScore":0,"people":0},"AWS streaming + IoT":{"averageScore":0,"people":0},"Data":{"averageScore":0,"people":0},"ML":{"averageScore":0,"people":0},"Networking":{"averageScore":0,"people":0},"Security":{"averageScore":0,"people":0},"Serverless":{"averageScore":0,"people":0},"Terraform":{"averageScore":0,"people":0}}}}];
+    t.same(result, expected)
 })
 
 test('read company networking skills of other', async (t) => {

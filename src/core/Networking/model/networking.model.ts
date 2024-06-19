@@ -1,17 +1,20 @@
 import { Static, Type } from '@sinclair/typebox'
 
-export const Skill = Type.Object({
-  skill: Type.String(),
-  averageScore: Type.Number(),
-  people: Type.Number(),
-})
+export const Skill = Type.Record(
+  Type.String(),
+  Type.Object({
+    averageScore: Type.Number(),
+    people: Type.Number(),
+  }),
+)
 
-export type SkillType = Static<typeof Skill>
-
-export const CompanySkills = Type.Object({
-  company: Type.String(),
-  skills: Type.Array(Skill),
-})
+export const CompanySkills = Type.Record(
+  Type.String(),
+  Type.Object({
+    company: Type.String(),
+    skills: Skill,
+  }),
+)
 
 export const NetworkingSkillsResponse = Type.Array(CompanySkills)
 
@@ -41,11 +44,6 @@ export const Effort = Type.Object({
   period: Type.Array(EffortPeriod),
 })
 
-export const CompanyEffort = Type.Object({
-  company: Type.String(),
-  effort: Type.Array(Effort),
-})
-
 export const CompanyEffortRow = Type.Object({
   company: Type.String(),
   uid: Type.String(),
@@ -65,11 +63,28 @@ export const CompanyEffortRowWithSkill = Type.Object({
   skill: Type.String(),
 })
 
-export type CompanyEffortWithSkillRowType = Static<
-  typeof CompanyEffortRowWithSkill
->
+const EffortRowPerCompany = Type.Object({
+  month_year: Type.RegExp(/(0[1-9]|1[012])_([0-9][0-9])$/),
+  people: Type.Number(),
+  confirmedEffort: Type.Number(),
+  tentativeEffort: Type.Number(),
+  totalEffort: Type.Number(),
+})
 
-export const NetworkingEffortResponse = Type.Array(CompanyEffort)
+export const NetworkingEffortResponsePerCompany = Type.Record(
+  Type.String(),
+  Type.Array(
+    Type.Object({
+      skill: Type.String(),
+      name: Type.String(),
+      effort: Type.Array(EffortRowPerCompany),
+    }),
+  ),
+)
+
+export const NetworkingEffortResponse = Type.Array(
+  NetworkingEffortResponsePerCompany,
+)
 
 export type NetworkingEffortResponseType = Static<
   typeof NetworkingEffortResponse
