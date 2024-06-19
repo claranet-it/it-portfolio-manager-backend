@@ -64,7 +64,6 @@ export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
     })
 
     await this.dynamoDBClient.send(putItemCommand)
-    console.log("END SAVE MINE DEBUG")
   }
 
   async updateSkillMatrixOfUser(

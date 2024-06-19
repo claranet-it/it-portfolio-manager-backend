@@ -47,9 +47,6 @@ export class SkillMatrixService {
     const userProfile = await this.userProfileService.getUserProfile(
       jwtToken.email,
     )
-    console.log("SAVE MINE DEBUG")
-    console.log(jwtToken)
-    console.log(jwtToken.email)
     if (!userProfile) {
       throw new UserProfileNotInitializedError()
     }
