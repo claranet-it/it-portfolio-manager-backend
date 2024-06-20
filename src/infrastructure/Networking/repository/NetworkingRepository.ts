@@ -82,7 +82,9 @@ export class NetworkingRepository implements NetworkingRepositoryInterface {
 
       const result = await this.dynamoDBClient.send(command)
       if (result?.Items) {
-        return result.Items.map((item) => item.name?.S ?? '')
+        return result.Items.map((item) => item.name?.S ?? '').filter(
+          (c) => c !== company,
+        )
       }
     }
     return []
