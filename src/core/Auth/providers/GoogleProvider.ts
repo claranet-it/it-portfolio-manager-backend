@@ -16,14 +16,14 @@ export class GoogleProvider implements ProviderInterface {
     }
     if (payload.hd) {
       return {
-        email: payload.email,
+        email: payload.email.replace('it.clara.net', 'claranet.com').toLowerCase(),
         name: payload.name,
         picture: payload.picture ?? '',
         companyDomain: payload.hd,
       }
     } else {
       return {
-        email: payload.email,
+        email: payload.email.toLowerCase(),
         name: payload.name,
         picture: payload.picture ?? '',
         companyDomain: 'flowing.it', //demo purpose
