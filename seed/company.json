@@ -1,14 +1,14 @@
 [
     {
-        "domain": "it.clara.net",
+        "id": "claranet italia",
         "name": "it"
     },
     {
-        "domain": "us.clara.net",
+        "id": "claranet us",
         "name": "us"
     },
     {
-        "domain": "test.com",
+        "id": "test.com",
         "name": "test company"
     }
 ]
