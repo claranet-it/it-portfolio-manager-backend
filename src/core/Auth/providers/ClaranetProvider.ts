@@ -20,22 +20,39 @@ export class ClaranetProvider implements ProviderInterface {
     const { kid, alg } = jwtHeader
     const iss = 'payload' in decodedToken ? decodedToken.payload.iss : ''
     const key = await getJwks.getPublicKey({ kid, alg, domain: iss })
-    const { email, name, picture } = this.jwt.verify<{
+    const {
+      email,
+      name,
+      picture,
+      'https://claranet/company': company,
+    } = this.jwt.verify<{
       email: string
       name: string
       picture: string
+      'https://claranet/company': string
     }>(token, { key: key })
-    if (!email || !name || !picture) {
+    console.log(company)
+    if (!email || !name || !picture || !company) {
       throw new UnauthorizedError()
     }
-    if (email.includes('it.clara.net')) {
-      email.replace('it.clara.net', 'claranet.com')
-    }
+
     return {
-      email: email.toLowerCase(),
+      email: email.replace(/[a-z]+\.clara\.net/, 'claranet.com').toLowerCase(),
       name,
       picture,
-      companyDomain: 'it.clara.net',
+      companyId: company.toLowerCase(),
+    }
+  }
+
+  private getCompanydomain = (company: string) => {
+    switch (company.toLowerCase()) {
+      case 'claranet italia':
+        return 'it.clara.net'
+      case 'claranet france':
+        return 'fr.clara.net'
+      default:
+        console.log(`${company} is not a valid company for Claranet`)
+        throw new UnauthorizedError()
     }
   }
 }

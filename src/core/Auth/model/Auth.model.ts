@@ -18,7 +18,7 @@ export const AuthInfo = Type.Object({
   email: Type.String(),
   name: Type.String(),
   picture: Type.String(),
-  companyDomain: Type.String(),
+  companyId: Type.String(),
 })
 
 export type AuthInfoType = Static<typeof AuthInfo>

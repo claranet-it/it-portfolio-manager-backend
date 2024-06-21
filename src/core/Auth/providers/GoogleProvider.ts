@@ -21,14 +21,14 @@ export class GoogleProvider implements ProviderInterface {
           .toLowerCase(),
         name: payload.name,
         picture: payload.picture ?? '',
-        companyDomain: payload.hd,
+        companyId: payload.hd,
       }
     } else {
       return {
         email: payload.email.toLowerCase(),
         name: payload.name,
         picture: payload.picture ?? '',
-        companyDomain: 'flowing.it', //demo purpose
+        companyId: 'flowing.it', //demo purpose
       }
     }
   }
