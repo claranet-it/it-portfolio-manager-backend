@@ -31,7 +31,7 @@ export class AuthService {
       authInfo.companyId,
     )
     if (!company) {
-      console.warn(`${company} not found`)
+      console.warn(`Company with id ${authInfo.companyId} not found`)
       throw new UnauthorizedError()
     }
     const user: JwtTokenType = {
