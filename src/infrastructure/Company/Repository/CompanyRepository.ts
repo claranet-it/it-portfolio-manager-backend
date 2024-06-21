@@ -10,13 +10,13 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     const command = new GetItemCommand({
       TableName: getTableName('Company'),
       Key: {
-        id: { S: id },
+        domain: { S: id },
       },
     })
     const result = await this.dynamoDBClient.send(command)
     if (result.Item) {
       return {
-        id: result.Item.id.S ?? '',
+        id: result.Item.domain.S ?? '',
         name: result.Item.name.S ?? '',
       }
     }

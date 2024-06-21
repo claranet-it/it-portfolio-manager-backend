@@ -286,10 +286,10 @@ resources:
       Properties:
         TableName: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: domain
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: domain
             KeyType: HASH          
         ProvisionedThroughput:
           ReadCapacityUnits: 1
