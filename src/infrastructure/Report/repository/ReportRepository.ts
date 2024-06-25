@@ -1,18 +1,21 @@
-import {
-  DynamoDBClient,
-} from '@aws-sdk/client-dynamodb'
-import {ReportRepositoryInterface} from "@src/core/Report/repository/ReportRepositoryInterface";
-import {ProductivityReportResponseType} from "@src/core/Report/model/productivity";
-import {TimeEntryReadParamWithUserType} from "@src/core/TimeEntry/model/timeEntry.model";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { ReportRepositoryInterface } from '@src/core/Report/repository/ReportRepositoryInterface'
+import { ProductivityReportResponseType } from '@src/core/Report/model/productivity.model'
+import { TimeEntryReadParamWithUserType } from '@src/core/TimeEntry/model/timeEntry.model'
 
 export class ReportRepository implements ReportRepositoryInterface {
-  constructor(
-    private dynamoDBClient: DynamoDBClient,
-  ) {}
+  constructor(private dynamoDBClient: DynamoDBClient) {}
 
-  async getProductivityReport(params: TimeEntryReadParamWithUserType): Promise<ProductivityReportResponseType> {
-    return {
-      "micol.panetta@it.clara.net": {
+  async getProductivityReport(
+    params: TimeEntryReadParamWithUserType,
+  ): Promise<ProductivityReportResponseType> {
+    return [
+      {
+        user: {
+          email: 'micol.panetta@it.clara.net',
+          name: 'Micol Panetta',
+          picture: 'https://test.com/micol.pic.jpg',
+        },
         workedHours: 40,
         totalTracked: {
           billableProductivity: 60,
@@ -22,7 +25,12 @@ export class ReportRepository implements ReportRepositoryInterface {
         },
         totalProductivity: 70,
       },
-      "mauro.monteneri@it.clara.net": {
+      {
+        user: {
+          email: 'mauro.monteneri@it.clara.net',
+          name: 'Mauro Monteneri',
+          picture: 'https://test.com/mauro.pic.jpg',
+        },
         workedHours: 40,
         totalTracked: {
           billableProductivity: 70,
@@ -31,7 +39,7 @@ export class ReportRepository implements ReportRepositoryInterface {
           absence: 20,
         },
         totalProductivity: 70,
-      }
-    }
+      },
+    ]
   }
 }

@@ -29,8 +29,8 @@ import { CrewRepository } from '@src/infrastructure/Configuration/Repository/Cre
 import { CompanyRepository } from '@src/infrastructure/Company/Repository/CompanyRepository'
 import { NetworkingService } from '@src/core/Networking/service/NetworkingService'
 import { NetworkingRepository } from '@src/infrastructure/Networking/repository/NetworkingRepository'
-import {ReportRepository} from "@src/infrastructure/Report/repository/ReportRepository";
-import {ReportService} from "@src/core/Report/service/ReportService";
+import { ReportRepository } from '@src/infrastructure/Report/repository/ReportRepository'
+import { ReportService } from '@src/core/Report/service/ReportService'
 
 declare module 'fastify' {
   interface FastifyInstance {

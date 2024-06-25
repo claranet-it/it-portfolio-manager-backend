@@ -1,12 +1,9 @@
 import {afterEach, beforeEach, test} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
-import {NetworkingEffortResponseType} from "@src/core/Networking/model/networking.model";
-import sinon from "sinon";
-import {ProductivityReportResponseType} from "@src/core/Report/model/productivity";
+import {ProductivityReportResponseType} from "@src/core/Report/model/productivity.model";
 
 let app: FastifyInstance
-let clock: sinon.SinonFakeTimers;
 
 function getToken(company: string): string {
     return app.createTestJwt({
@@ -48,8 +45,13 @@ test('read productivity report', async (t) => {
 
     t.equal(response.statusCode, 200)
     const result = response.json<ProductivityReportResponseType>();
-    const expected = {
-        "micol.panetta@it.clara.net": {
+    const expected = [
+        {
+            user: {
+                email: "micol.panetta@it.clara.net",
+                name: "Micol Panetta",
+                picture: "https://test.com/micol.pic.jpg"
+            },
             workedHours: 40,
             totalTracked: {
                 billableProductivity: 60,
@@ -59,7 +61,12 @@ test('read productivity report', async (t) => {
             },
             totalProductivity: 70,
         },
-        "mauro.monteneri@it.clara.net": {
+        {
+            user: {
+                email: "mauro.monteneri@it.clara.net",
+                name: "Mauro Monteneri",
+                picture: "https://test.com/mauro.pic.jpg"
+            },
             workedHours: 40,
             totalTracked: {
                 billableProductivity: 70,
@@ -69,6 +76,6 @@ test('read productivity report', async (t) => {
             },
             totalProductivity: 70,
         }
-    }
+    ]
     t.same(result, expected)
 })

@@ -1,6 +1,12 @@
 import { FastifyInstance } from 'fastify'
-import {ProductivityReportResponse, ProductivityReportResponseType} from "@src/core/Report/model/productivity";
-import {TimeEntryReadParam, TimeEntryReadParamType} from "@src/core/TimeEntry/model/timeEntry.model";
+import {
+  ProductivityReportResponse,
+  ProductivityReportResponseType,
+} from '@src/core/Report/model/productivity.model'
+import {
+  TimeEntryReadParam,
+  TimeEntryReadParamType,
+} from '@src/core/TimeEntry/model/timeEntry.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
