@@ -3,17 +3,13 @@ import {
   ProductivityReportReadParam,
   ProductivityReportReadParamType,
   ProductivityReportResponse,
-  ProductivityReportResponseType,
 } from '@src/core/Report/model/productivity.model'
-import {
-  TimeEntryReadParam,
-  TimeEntryReadParamType,
-} from '@src/core/TimeEntry/model/timeEntry.model'
+import { DateRangeError } from '@src/core/customExceptions/DateRangeError'
+import { Type } from '@sinclair/typebox'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: ProductivityReportReadParamType
-    Reply: ProductivityReportResponseType
   }>(
     '/productivity',
     {
@@ -28,10 +24,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         ],
         response: {
           200: ProductivityReportResponse,
-          400: {
-            type: 'null',
-            description: 'Bad request',
-          },
+          400: Type.Object({ message: Type.String() }),
           401: {
             type: 'null',
             description: 'Unauthorized',
@@ -55,7 +48,14 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           })
       } catch (error) {
         request.log.error(error)
-        return reply.code(500).send()
+        let errorCode = 500
+        let errorMessage = ''
+        if (error instanceof DateRangeError) {
+          errorCode = 400
+          errorMessage = error.message
+          return reply.code(errorCode).send({ message: errorMessage })
+        }
+        return reply.code(errorCode).send()
       }
     },
   )

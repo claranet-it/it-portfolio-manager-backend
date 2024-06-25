@@ -26,7 +26,9 @@ export const ProductivityReportReadParam = Type.Object({
   to: Type.RegExp(dateFormat),
 })
 
-export type ProductivityReportReadParamType = Static<typeof ProductivityReportReadParam>
+export type ProductivityReportReadParamType = Static<
+  typeof ProductivityReportReadParam
+>
 
 export const ProductivityReportReadParamWithCompany = Type.Intersect([
   Type.Object({ company: Type.String() }),
@@ -34,7 +36,7 @@ export const ProductivityReportReadParamWithCompany = Type.Intersect([
 ])
 
 export type ProductivityReportReadParamWithCompanyType = Static<
-    typeof ProductivityReportReadParamWithCompany
+  typeof ProductivityReportReadParamWithCompany
 >
 
 export const ProductivityReportResponse = Type.Array(UserProductivity)

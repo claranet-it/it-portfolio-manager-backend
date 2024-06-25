@@ -32,6 +32,104 @@ test('read productivity report without authentication', async (t) => {
     t.equal(response.statusCode, 401)
 })
 
+test('read productivity report fail: startDate > endDate', async (t) => {
+    const company = 'it'
+    const token = getToken(company)
+
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/report/productivity?from=2024-02-01&to=2024-01-01',
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
+    })
+
+    t.equal(response.statusCode, 400)
+    t.equal(response.body, JSON.stringify({
+        message: 'End date 2024-02-01 must be greater than Start date 2024-01-01',
+    }));
+})
+
+test('read productivity report: no working day', async (t) => {
+    const company = 'it'
+    const token = getToken(company)
+
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/report/productivity?from=2024-01-06&to=2024-01-06',
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
+    })
+
+    t.equal(response.statusCode, 200)
+    const result = response.json<ProductivityReportResponseType>();
+    const expected = [
+        {
+            "user":{
+                "email":"micol.ts@email.com",
+                "name":"Micol Panetta",
+                "picture":"picture-url"
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billableProductivity":0,
+                "nonBillableProductivity":0,
+                "slackTime":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
+                "email":"george.python@email.com",
+                "name":"George Python",
+                "picture":""
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billableProductivity":0,
+                "nonBillableProductivity":0,
+                "slackTime":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
+                "email":"nicholas.crow@email.com",
+                "name":"Nicholas Crow",
+                "picture":"picture-url"
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billableProductivity":0,
+                "nonBillableProductivity":0,
+                "slackTime":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
+                "email":"testIt@test.com",
+                "name":"test italian",
+                "picture":""
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billableProductivity":0,
+                "nonBillableProductivity":0,
+                "slackTime":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        }
+    ]
+
+    t.same(result, expected)
+})
+
 test('read productivity report', async (t) => {
     const company = 'it'
     const token = getToken(company)

@@ -37,7 +37,9 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     return null
   }
 
-  async getCompleteUserProfile(uid: string): Promise<CompleteUserProfileType | null> {
+  async getCompleteUserProfile(
+    uid: string,
+  ): Promise<CompleteUserProfileType | null> {
     const command = new QueryCommand({
       TableName: getTableName('UserProfile'),
       KeyConditionExpression: 'uid = :uid',
@@ -46,8 +48,8 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
 
     const result = await this.dynamoDBClient.send(command)
     if (
-        result?.Items?.length === 1 &&
-        (result?.Items[0]?.crew?.S || result?.Items[0]?.company?.S)
+      result?.Items?.length === 1 &&
+      (result?.Items[0]?.crew?.S || result?.Items[0]?.company?.S)
     ) {
       // TODO: (crew || company) or (crew && company) ?
       return this.getCompleteUserProfileFromDynamoItem(result.Items[0])
@@ -134,7 +136,7 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
   }
 
   private getCompleteUserProfileFromDynamoItem(
-      item: Record<string, AttributeValue>,
+    item: Record<string, AttributeValue>,
   ): CompleteUserProfileType {
     return {
       uid: item.uid?.S ?? '',
