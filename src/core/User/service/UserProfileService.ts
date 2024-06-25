@@ -12,12 +12,14 @@ export class UserProfileService {
     uid: string,
     name: string,
     company: string,
+    picture: string,
     userProfile: UserProfileType,
   ): Promise<void> {
     return this.userProfileRepository.saveUserProfile(
       uid,
       name,
       company,
+      picture,
       userProfile,
     )
   }

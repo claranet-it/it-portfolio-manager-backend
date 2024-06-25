@@ -11,6 +11,7 @@ export interface UserProfileRepositoryInterface {
     uid: string,
     name: string,
     company: string,
+    picture: string,
     userProfile: UpdateUserProfileType,
   ): Promise<void>
 
