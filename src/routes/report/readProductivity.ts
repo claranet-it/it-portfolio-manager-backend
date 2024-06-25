@@ -9,7 +9,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
   }>(
     '/productivity',
     {
-      //onRequest: [fastify.authenticate],
+      onRequest: [fastify.authenticate],
       schema: {
         tags: ['Report'],
         querystring: TimeEntryReadParam,
@@ -41,7 +41,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .dependencyInjectionContainer()
           .resolve('reportService')
           .getProductivityReport({
-            company: 'it', //request.user.company,
+            company: request.user.company,
             from: request.query.from,
             to: request.query.to,
           })
