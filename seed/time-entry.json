@@ -9,5 +9,38 @@
         "Claranet#Funzionale#Attività di portfolio#2"
       ]
     }
+  },
+  {
+    "uid": { "S": "micol.ts@email.com" },
+    "company": {"S": "it"},
+    "timeEntryDate": { "S": "2024-01-31" },
+    "tasks": {
+      "SS": [
+        "Claranet#Slack time#formazione#2",
+        "Claranet#Funzionale#Attività di portfolio#2"
+      ]
+    }
+  },
+  {
+    "uid": { "S": "micol.ts@email.com" },
+    "company": {"S": "it"},
+    "timeEntryDate": { "S": "2024-01-01" },
+    "tasks": {
+      "SS": [
+        "Claranet#Slack time#formazione#2",
+        "Claranet#Funzionale#Attività di portfolio#2"
+      ]
+    }
+  },
+  {
+    "uid": { "S": "micol.us@email.com" },
+    "company": {"S": "us"},
+    "timeEntryDate": { "S": "2024-01-01" },
+    "tasks": {
+      "SS": [
+        "Claranet#Slack time#formazione#2",
+        "Claranet#Funzionale#Attività di portfolio#2"
+      ]
+    }
   }
 ]

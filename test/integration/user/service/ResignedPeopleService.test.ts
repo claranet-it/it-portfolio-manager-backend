@@ -28,7 +28,7 @@ beforeEach(() => {
 })
 
 test('remove user profile', async (t) => {
-  await userProfileRepository.saveUserProfile(email, 'resigned', 'it', {
+  await userProfileRepository.saveUserProfile(email, 'resigned', 'it', 'picture-url', {
     crew: 'moon',
     crewLeader: true,
     place: 'Jesi',

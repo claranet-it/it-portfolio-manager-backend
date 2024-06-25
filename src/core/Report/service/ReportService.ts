@@ -1,13 +1,108 @@
-import { ProductivityReportResponseType } from '@src/core/Report/model/productivity.model'
-import { ReportRepositoryInterface } from '@src/core/Report/repository/ReportRepositoryInterface'
-import { TimeEntryReadParamWithUserType } from '@src/core/TimeEntry/model/timeEntry.model'
+import {
+    ProductivityReportReadParamWithCompanyType,
+    ProductivityReportResponseType
+} from '@src/core/Report/model/productivity.model'
+import {ReportRepositoryInterface} from '@src/core/Report/repository/ReportRepositoryInterface'
+import {UserProfileRepository} from "@src/infrastructure/User/repository/UserProfileRepository";
 
 export class ReportService {
-  constructor(private reportRepository: ReportRepositoryInterface) {}
+    constructor(private reportRepository: ReportRepositoryInterface, private userProfileRepository: UserProfileRepository) {
+    }
 
-  async getProductivityReport(
-    params: TimeEntryReadParamWithUserType,
-  ): Promise<ProductivityReportResponseType> {
-    return this.reportRepository.getProductivityReport(params)
-  }
+    async getProductivityReport(
+        params: ProductivityReportReadParamWithCompanyType,
+    ): Promise<ProductivityReportResponseType> {
+        //TODO start > end throw exception
+        //const start = new Date(startDate);
+        //const end = new Date(endDate);
+        const companyTasks = await this.reportRepository.getProductivityReport(params)
+        const projectTypes = await this.reportRepository.getProjectTypes(params.company)
+        const totalWorkingDaysInPeriod = this.countWeekdays(params.from, params.to)
+        //TODO if 0 return
+        const allUsers = await this.userProfileRepository.getAllUserProfiles();
+
+        return await Promise.all(allUsers.map(async user => {
+
+            const userTasks = companyTasks.filter(task => task.user === user.uid)
+            const userInfo = await this.userProfileRepository.getCompleteUserProfile(user.uid)
+
+            let billableProductivityHours = 0
+            let nonBillableProductivityHours = 0
+            let slackTimeHours = 0
+            let absenceHours = 0
+            let workedHours = 0
+            for (const task of userTasks) {
+                const projectType: string = (projectTypes.find(projectType => projectType.project === task.project))?.projectType ?? 'slack-time'
+                console.log(projectType)
+                switch (projectType) {
+                    case 'absence':
+                        absenceHours = absenceHours + task.hours;
+                        break;
+                    case 'billable':
+                        billableProductivityHours = billableProductivityHours + task.hours;
+                        break;
+                    case 'non-billable':
+                        nonBillableProductivityHours += nonBillableProductivityHours + task.hours;
+                        break;
+                    case 'slack-time':
+                        slackTimeHours = slackTimeHours + task.hours;
+                        break;
+                    default:
+                        break;
+                }
+
+                workedHours += task.hours;
+            }
+
+            const totalWorkingHoursInPeriod = totalWorkingDaysInPeriod * 8
+            const totalHours = 100 / totalWorkingHoursInPeriod;
+
+            const billableProductivityPercentage = totalHours * billableProductivityHours
+            const nonBillableProductivityPercentage = totalHours * nonBillableProductivityHours
+            const slackTimePercentage = totalHours * slackTimeHours
+            const absencePercentage = totalHours * absenceHours
+            const totalProductivityPercentage = Math.round(billableProductivityPercentage) + Math.round(nonBillableProductivityPercentage)
+
+            const total = billableProductivityPercentage + nonBillableProductivityPercentage + slackTimePercentage + absencePercentage;
+            const roundedTotal = Math.round(billableProductivityPercentage) + Math.round(nonBillableProductivityPercentage) + Math.round(slackTimePercentage) + Math.round(absencePercentage)
+
+            return {
+                user: {
+                    email: userInfo?.uid ?? '',
+                    name: userInfo?.name ?? '',
+                    picture: userInfo?.picture ?? '',
+                },
+                workedHours,
+                totalTracked: {
+                    billableProductivity: Math.round(billableProductivityPercentage),
+                    nonBillableProductivity: Math.round(nonBillableProductivityPercentage),
+                    slackTime: Math.round(slackTimePercentage) + Math.round(total - roundedTotal),
+                    absence: Math.round(absencePercentage),
+                },
+                totalProductivity: totalProductivityPercentage
+            }
+        }))
+
+    }
+
+    countWeekdays(startDate: string, endDate: string): number {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        let weekdays = 0;
+
+        const current = new Date(start);
+
+        while (current <= end) {
+            const dayOfWeek = current.getDay();
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) { // 0 = Sunday, 6 = Saturday
+                weekdays++
+            }
+            current.setDate(current.getDate() + 1);
+        }
+
+        return weekdays;
+    }
+
 }
+

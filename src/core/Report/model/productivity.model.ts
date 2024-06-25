@@ -20,6 +20,23 @@ export const UserProductivity = Type.Object({
   totalProductivity: Type.Number(),
 })
 
+const dateFormat = /([0-9][0-9][0-9][0-9])-(0[1-9]|1[012])-([0-9][0-9])$/
+export const ProductivityReportReadParam = Type.Object({
+  from: Type.RegExp(dateFormat),
+  to: Type.RegExp(dateFormat),
+})
+
+export type ProductivityReportReadParamType = Static<typeof ProductivityReportReadParam>
+
+export const ProductivityReportReadParamWithCompany = Type.Intersect([
+  Type.Object({ company: Type.String() }),
+  ProductivityReportReadParam,
+])
+
+export type ProductivityReportReadParamWithCompanyType = Static<
+    typeof ProductivityReportReadParamWithCompany
+>
+
 export const ProductivityReportResponse = Type.Array(UserProductivity)
 
 export type ProductivityReportResponseType = Static<

@@ -1,5 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import {
+  ProductivityReportReadParam,
+  ProductivityReportReadParamType,
   ProductivityReportResponse,
   ProductivityReportResponseType,
 } from '@src/core/Report/model/productivity.model'
@@ -10,7 +12,7 @@ import {
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Querystring: TimeEntryReadParamType
+    Querystring: ProductivityReportReadParamType
     Reply: ProductivityReportResponseType
   }>(
     '/productivity',
@@ -18,7 +20,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Report'],
-        querystring: TimeEntryReadParam,
+        querystring: ProductivityReportReadParam,
         security: [
           {
             apiKey: [],

@@ -37,7 +37,7 @@ test('read productivity report', async (t) => {
     const token = getToken(company)
     const response = await app.inject({
         method: 'GET',
-        url: '/api/report/productivity?from=2024-01-01&to=2024-01-01',
+        url: '/api/report/productivity?from=2024-01-01&to=2024-02-01',
         headers: {
             authorization: `Bearer ${token}`,
         },
@@ -47,35 +47,66 @@ test('read productivity report', async (t) => {
     const result = response.json<ProductivityReportResponseType>();
     const expected = [
         {
-            user: {
-                email: "micol.panetta@it.clara.net",
-                name: "Micol Panetta",
-                picture: "https://test.com/micol.pic.jpg"
+            "user":{
+                "email":"micol.ts@email.com",
+                "name":"Micol Panetta",
+                "picture":"picture-url"
             },
-            workedHours: 40,
-            totalTracked: {
-                billableProductivity: 60,
-                nonBillableProductivity: 10,
-                slackTime: 20,
-                absence: 10,
+            "workedHours":8,
+            "totalTracked":{
+                "billableProductivity":2,
+                "nonBillableProductivity":0,
+                "slackTime":2,
+                "absence":0
             },
-            totalProductivity: 70,
+            "totalProductivity":2
         },
         {
-            user: {
-                email: "mauro.monteneri@it.clara.net",
-                name: "Mauro Monteneri",
-                picture: "https://test.com/mauro.pic.jpg"
+            "user":{
+                "email":"george.python@email.com",
+                "name":"George Python",
+                "picture":""
             },
-            workedHours: 40,
-            totalTracked: {
-                billableProductivity: 70,
-                nonBillableProductivity: 0,
-                slackTime: 10,
-                absence: 20,
+            "workedHours":0,
+            "totalTracked":{
+                "billableProductivity":0,
+                "nonBillableProductivity":0,
+                "slackTime":0,
+                "absence":0
             },
-            totalProductivity: 70,
+            "totalProductivity":0
+        },
+        {
+            "user":{
+                "email":"nicholas.crow@email.com",
+                "name":"Nicholas Crow",
+                "picture":"picture-url"
+            },
+            "workedHours":4,
+            "totalTracked":{
+                "billableProductivity":1,
+                "nonBillableProductivity":0,
+                "slackTime":1,
+                "absence":0
+            },
+            "totalProductivity":1
+        },
+        {
+            "user":{
+                "email":"testIt@test.com",
+                "name":"test italian",
+                "picture":""
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billableProductivity":0,
+                "nonBillableProductivity":0,
+                "slackTime":0,
+                "absence":0
+            },
+            "totalProductivity":0
         }
     ]
+
     t.same(result, expected)
 })
