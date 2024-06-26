@@ -50,7 +50,7 @@ plugins:
 custom:
   variables:
     stages:
-      - dev      
+      - dev
       - prod
       - test
       - stage
@@ -65,23 +65,11 @@ custom:
       stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
 
-    apiBaseUrl: 
+    apiBaseUrl:
       dev: http://localhost:3000
       test: http://localhost:3000
       stage: 'https://6w09n1v47j.execute-api.eu-south-1.amazonaws.com'
       prod: 'https://8sl94yg50l.execute-api.eu-south-1.amazonaws.com'
-
-  dynamodb:
-    stages:
-      - stage
-    start:
-      seed: true
-    seed:
-      domain:
-        sources:
-          - table: ItPortfolioManager-Task-${opt:stage, 'stage'}
-            rawsources: [ ./seed/task_bulk.json ]
-
   serverless-dynamodb:
     stages:
       - dev
@@ -323,3 +311,4 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
