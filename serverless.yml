@@ -74,6 +74,7 @@ custom:
     stages:
       - dev
       - test
+      - stage
     start:
       port: 8000
       inMemory: true
@@ -99,6 +100,8 @@ custom:
             sources: ['./seed/company.json']
           - table: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
             sources: ['./seed/crew.json']
+          - table: ItPortfolioManager-Task-${opt:stage, 'stage'}
+            rawsources: [ ./seed/task_bulk.json ]
 
 package:
   patterns:
