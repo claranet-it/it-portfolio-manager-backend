@@ -70,11 +70,22 @@ custom:
       test: http://localhost:3000
       stage: 'https://6w09n1v47j.execute-api.eu-south-1.amazonaws.com'
       prod: 'https://8sl94yg50l.execute-api.eu-south-1.amazonaws.com'
+
+  dynamodb:
+    stages:
+      - stage
+    start:
+      seed: true
+    seed:
+      domain:
+        sources:
+          - table: ItPortfolioManager-Task-${opt:stage, 'stage'}
+            rawsources: [ ./seed/task_bulk.json ]
+
   serverless-dynamodb:
     stages:
       - dev
       - test
-      - stage
     start:
       port: 8000
       inMemory: true
@@ -84,10 +95,6 @@ custom:
       seed: true
       convertEmptyValues: true
     seed:
-      domain:
-        sources:
-          - table: ItPortfolioManager-Task-${opt:stage, 'stage'}
-            rawsources: [ ./seed/task_bulk.json ]
       test:
         sources:
           - table: ItPortfolioManager-SkillMatrix-${opt:stage, 'dev'}
@@ -152,7 +159,7 @@ functions:
 
         if year is not specified consider [[CURRENT_YEAR]]
 
-        output_format: {"start": mm_yy "month_number": ...}"' 
+        output_format: {"start": mm_yy "month_number": ...}"'
 
     events:
       - http:
@@ -241,7 +248,7 @@ resources:
           - AttributeName: uid
             KeyType: HASH
           - AttributeName: month_year
-            KeyType: RANGE       
+            KeyType: RANGE
         GlobalSecondaryIndexes:
           - IndexName: companyIndex
             KeySchema:
@@ -258,7 +265,7 @@ resources:
         TableName: "ItPortfolioManager-Task-${opt:stage, 'dev'}"
         AttributeDefinitions:
           - AttributeName: customerProject
-            AttributeType: S                      
+            AttributeType: S
           - AttributeName: company
             AttributeType: S
         KeySchema:
@@ -275,7 +282,7 @@ resources:
         TableName: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
         AttributeDefinitions:
           - AttributeName: uid
-            AttributeType: S                      
+            AttributeType: S
           - AttributeName: timeEntryDate
             AttributeType: S
         KeySchema:
@@ -285,7 +292,7 @@ resources:
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
-          WriteCapacityUnits: 1          
+          WriteCapacityUnits: 1
     ItPortfolioManagerCompanies:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -295,7 +302,7 @@ resources:
             AttributeType: S
         KeySchema:
           - AttributeName: domain
-            KeyType: HASH          
+            KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -307,14 +314,12 @@ resources:
           - AttributeName: company
             AttributeType: S
           - AttributeName: name
-            AttributeType: S            
+            AttributeType: S
         KeySchema:
           - AttributeName: company
-            KeyType: HASH     
+            KeyType: HASH
           - AttributeName: name
-            KeyType: RANGE    
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-
-                
