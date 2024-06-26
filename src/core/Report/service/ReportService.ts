@@ -1,6 +1,7 @@
 import {
   ProductivityReportReadParamWithCompanyType,
   ProductivityReportResponseType,
+  ProjectType,
 } from '@src/core/Report/model/productivity.model'
 import { ReportRepositoryInterface } from '@src/core/Report/repository/ReportRepositoryInterface'
 import { UserProfileRepository } from '@src/infrastructure/User/repository/UserProfileRepository'
@@ -44,23 +45,23 @@ export class ReportService {
         let absenceHours = 0
         let workedHours = 0
         for (const task of userTasks) {
-          const projectType: string =
+          const projectType =
             projectTypes.find(
               (projectType) => projectType.project === task.project,
-            )?.projectType ?? 'slack-time'
-          console.log(projectType)
+            )?.projectType ?? ProjectType.slack_time
+
           switch (projectType) {
-            case 'absence':
+            case ProjectType.absence:
               absenceHours = absenceHours + task.hours
               break
-            case 'billable':
+            case ProjectType.billable:
               billableProductivityHours = billableProductivityHours + task.hours
               break
-            case 'non-billable':
+            case ProjectType.non_billable:
               nonBillableProductivityHours +=
                 nonBillableProductivityHours + task.hours
               break
-            case 'slack-time':
+            case ProjectType.slack_time:
               slackTimeHours = slackTimeHours + task.hours
               break
             default:

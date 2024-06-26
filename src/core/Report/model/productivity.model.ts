@@ -44,3 +44,10 @@ export const ProductivityReportResponse = Type.Array(UserProductivity)
 export type ProductivityReportResponseType = Static<
   typeof ProductivityReportResponse
 >
+
+export enum ProjectType {
+  absence = 'absence',
+  billable = 'billable',
+  non_billable = 'non_billable',
+  slack_time = 'slack_time',
+}
