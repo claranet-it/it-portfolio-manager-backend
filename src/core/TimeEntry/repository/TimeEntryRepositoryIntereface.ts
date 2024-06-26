@@ -1,11 +1,12 @@
 import {
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
-  deleteTimeEntryWithUserType,
+  deleteTimeEntryWithUserType, CnaReadParamType, TimeEntryRowWithProjectType,
 } from '../model/timeEntry.model'
 
 export interface TimeEntryRepositoryInterface {
   find(params: TimeEntryReadParamWithUserType): Promise<TimeEntryRowType[]>
+  findForCna(params: CnaReadParamType): Promise<TimeEntryRowWithProjectType[]>
   saveMine(params: TimeEntryRowType): Promise<void>
   delete(params: deleteTimeEntryWithUserType): Promise<void>
 }

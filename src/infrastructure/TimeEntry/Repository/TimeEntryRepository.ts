@@ -8,7 +8,7 @@ import {
 import {
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
-  deleteTimeEntryWithUserType,
+  deleteTimeEntryWithUserType, CnaReadParamType, TimeEntryRowWithProjectType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryIntereface'
 import { getTableName } from '@src/core/db/TableName'
@@ -35,6 +35,34 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         return this.getTimeEntryFromDynamoDb(item)
       }).flat() ?? []
     )
+  }
+
+  async findForCna(
+    params: CnaReadParamType,
+  ): Promise<TimeEntryRowWithProjectType[]> {
+
+    const {from, to} = this.getPeriodFromMonthAndYear(params.month, params.year);
+
+    const results = []
+    for(const user of params.users) {
+      const command = new QueryCommand({
+        TableName: getTableName('TimeEntry'),
+        KeyConditionExpression:
+            'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
+        ExpressionAttributeValues: {
+          ':uid': { S: user },
+          ':from': { S: from },
+          ':to': { S: to },
+        },
+      })
+      const result = await this.dynamoDBClient.send(command)
+      if(result.Items) {
+        results.push(result.Items)
+      }
+    }
+    return results.flat(2).map(result => {
+      return this.getTimeEntryForCna(result)
+    }).flat() ?? []
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
@@ -105,5 +133,43 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       })
     })
     return resultForUser
+  }
+
+  private getTimeEntryForCna(
+      item: Record<string, AttributeValue>,
+  ): TimeEntryRowWithProjectType[] {
+    const resultForUser: TimeEntryRowWithProjectType[] = []
+    item.tasks?.SS?.forEach((taskItem) => {
+      const [customer, project, task, hours] = taskItem.split('#')
+      resultForUser.push({
+        user: item.uid?.S ?? '',
+        date: item.timeEntryDate?.S ?? '',
+        company: item.company?.S ?? '',
+        customer: customer,
+        project: project,
+        projectType: project === 'Assenze' ? 'absence' : 'billable',
+        task: task,
+        hours: parseFloat(hours),
+      })
+    })
+
+    return resultForUser
+  }
+
+  private getPeriodFromMonthAndYear(month: number, year: number ) {
+    if (month < 1 || month > 12) {
+      throw new Error("Il mese deve essere compreso tra 1 e 12");
+    }
+
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0);
+
+    startDate.setDate(startDate.getDate() + 1);
+    endDate.setDate(endDate.getDate() + 1);
+
+    const from = startDate.toISOString().split('T')[0];
+    const to = endDate.toISOString().split('T')[0];
+
+    return { from, to };
   }
 }
