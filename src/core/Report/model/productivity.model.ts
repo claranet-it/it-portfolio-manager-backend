@@ -46,8 +46,8 @@ export type ProductivityReportResponseType = Static<
 >
 
 export enum ProjectType {
-  absence = 'absence',
-  billable = 'billable',
-  non_billable = 'non_billable',
-  slack_time = 'slack_time',
+  ABSENCE = 'absence',
+  BILLABLE = 'billable',
+  NON_BILLABLE = 'non-billable',
+  SLACK_TIME = 'slack-time',
 }

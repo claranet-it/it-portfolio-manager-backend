@@ -48,20 +48,20 @@ export class ReportService {
           const projectType =
             projectTypes.find(
               (projectType) => projectType.project === task.project,
-            )?.projectType ?? ProjectType.slack_time
+            )?.projectType ?? ProjectType.SLACK_TIME
 
           switch (projectType) {
-            case ProjectType.absence:
+            case ProjectType.ABSENCE:
               absenceHours = absenceHours + task.hours
               break
-            case ProjectType.billable:
+            case ProjectType.BILLABLE:
               billableProductivityHours = billableProductivityHours + task.hours
               break
-            case ProjectType.non_billable:
+            case ProjectType.NON_BILLABLE:
               nonBillableProductivityHours +=
                 nonBillableProductivityHours + task.hours
               break
-            case ProjectType.slack_time:
+            case ProjectType.SLACK_TIME:
               slackTimeHours = slackTimeHours + task.hours
               break
             default:

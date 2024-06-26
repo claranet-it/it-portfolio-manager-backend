@@ -1,7 +1,7 @@
 [
   {
     "company": { "S": "it" },
-    "projectType": {"S":  "slack_time"},
+    "projectType": {"S":  "slack-time"},
     "customerProject": { "S": "Claranet#Slack time" },    
     "tasks": { "SS": ["formazione"] }
   },
@@ -19,7 +19,7 @@
   },
   {
     "company": { "S": "other company" },
-    "projectType": {"S":  "non_billable"},
+    "projectType": {"S":  "non-billable"},
     "customerProject": {"S": "test customer of other company#test project of other company"},
     "tasks": { "SS": ["test task 1 of other company", "test task 2 of other company"] }
   },
