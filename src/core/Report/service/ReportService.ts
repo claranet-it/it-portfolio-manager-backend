@@ -71,7 +71,9 @@ export class ReportService {
           workedHours += task.hours
         }
 
-        const totalWorkingHoursInPeriod = totalWorkingDaysInPeriod * 8
+        const totalHoursInAWorkingDay = 8
+        const totalWorkingHoursInPeriod =
+          totalWorkingDaysInPeriod * totalHoursInAWorkingDay
         const totalHours = 100 / totalWorkingHoursInPeriod
 
         const billableProductivityPercentage =

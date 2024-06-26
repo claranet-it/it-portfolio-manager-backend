@@ -72,36 +72,3 @@ export class ReportRepository implements ReportRepositoryInterface {
     return resultForCompany
   }
 }
-
-/*[
-  {
-    user: {
-      email: 'micol.panetta@it.clara.net',
-      name: 'Micol Panetta',
-      picture: 'https://test.com/micol.pic.jpg',
-    },
-    workedHours: 40,
-    totalTracked: {
-      billableProductivity: 60,
-      nonBillableProductivity: 10,
-      slackTime: 20,
-      absence: 10,
-    },
-    totalProductivity: 70,
-  },
-  {
-    user: {
-      email: 'mauro.monteneri@it.clara.net',
-      name: 'Mauro Monteneri',
-      picture: 'https://test.com/mauro.pic.jpg',
-    },
-    workedHours: 40,
-    totalTracked: {
-      billableProductivity: 70,
-      nonBillableProductivity: 0,
-      slackTime: 10,
-      absence: 20,
-    },
-    totalProductivity: 70,
-  },
-]*/
