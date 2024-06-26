@@ -84,6 +84,10 @@ custom:
       seed: true
       convertEmptyValues: true
     seed:
+      domain:
+        sources:
+          - table: ItPortfolioManager-Task-${opt:stage, 'stage'}
+            rawsources: [ ./seed/task_bulk.json ]
       test:
         sources:
           - table: ItPortfolioManager-SkillMatrix-${opt:stage, 'dev'}
@@ -100,8 +104,6 @@ custom:
             sources: ['./seed/company.json']
           - table: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
             sources: ['./seed/crew.json']
-          - table: ItPortfolioManager-Task-${opt:stage, 'stage'}
-            rawsources: [ ./seed/task_bulk.json ]
 
 package:
   patterns:
