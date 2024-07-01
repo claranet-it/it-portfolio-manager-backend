@@ -7,6 +7,7 @@ import { ReportRepositoryInterface } from '@src/core/Report/repository/ReportRep
 import { UserProfileRepository } from '@src/infrastructure/User/repository/UserProfileRepository'
 import { DateRangeError } from '@src/core/customExceptions/DateRangeError'
 import { UserProfileWithUidType } from '@src/core/User/model/user.model'
+import { FieldsOrderError } from '@src/core/customExceptions/FieldsOrderError'
 
 export class ReportService {
   constructor(
@@ -21,8 +22,27 @@ export class ReportService {
       throw new DateRangeError(params.from, params.to)
     }
 
-    const companyTasks =
-      await this.reportRepository.getProductivityReport(params)
+    if (params.task && !(params.customer && params.project)) {
+      throw new FieldsOrderError()
+    }
+
+    if (params.project && !params.customer) {
+      throw new FieldsOrderError()
+    }
+
+    let uids: { email: string }[] = []
+    if (params.name) {
+      uids = await this.userProfileRepository.getByName(
+        params.name,
+        params.company,
+      )
+    }
+
+    const companyTasks = await this.reportRepository.getProductivityReport(
+      params,
+      uids,
+    )
+
     const projectTypes = await this.reportRepository.getProjectTypes(
       params.company,
     )

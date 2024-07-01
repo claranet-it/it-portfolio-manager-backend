@@ -24,6 +24,10 @@ const dateFormat = /([0-9][0-9][0-9][0-9])-(0[1-9]|1[012])-([0-9][0-9])$/
 export const ProductivityReportReadParam = Type.Object({
   from: Type.RegExp(dateFormat),
   to: Type.RegExp(dateFormat),
+  customer: Type.Optional(Type.String()),
+  project: Type.Optional(Type.String()),
+  task: Type.Optional(Type.String()),
+  name: Type.Optional(Type.String()),
 })
 
 export type ProductivityReportReadParamType = Static<

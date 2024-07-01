@@ -4,6 +4,7 @@ import { TimeEntryRowType } from '@src/core/TimeEntry/model/timeEntry.model'
 export interface ReportRepositoryInterface {
   getProductivityReport(
     params: ProductivityReportReadParamWithCompanyType,
+    uids: { email: string }[],
   ): Promise<TimeEntryRowType[]>
   getProjectTypes(
     company: string,

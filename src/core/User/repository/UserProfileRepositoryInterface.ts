@@ -17,6 +17,8 @@ export interface UserProfileRepositoryInterface {
 
   getAllUserProfiles(): Promise<UserProfileWithUidType[]>
 
+  getByName(name: string, company: string): Promise<{ email: string }[]>
+
   getByCompany(company: string): Promise<UserProfileWithUidType[]>
 
   delete(uid: string): Promise<void>

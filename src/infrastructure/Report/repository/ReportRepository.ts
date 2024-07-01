@@ -13,6 +13,7 @@ export class ReportRepository implements ReportRepositoryInterface {
 
   async getProductivityReport(
     params: ProductivityReportReadParamWithCompanyType,
+    uids: { email: string }[],
   ): Promise<TimeEntryRowType[]> {
     const command = new QueryCommand({
       TableName: getTableName('TimeEntry'),
@@ -28,7 +29,7 @@ export class ReportRepository implements ReportRepositoryInterface {
     const result = await this.dynamoDBClient.send(command)
     return (
       result.Items?.map((item) => {
-        return this.getTimeEntryFromDynamoDb(item)
+        return this.getFilteredTimeEntry(item, params, uids)
       }).flat() ?? []
     )
   }
@@ -52,8 +53,10 @@ export class ReportRepository implements ReportRepositoryInterface {
     )
   }
 
-  private getTimeEntryFromDynamoDb(
+  private getFilteredTimeEntry(
     item: Record<string, AttributeValue>,
+    params: ProductivityReportReadParamWithCompanyType,
+    uids: { email: string }[],
   ): TimeEntryRowType[] {
     const resultForCompany: TimeEntryRowType[] = []
 
@@ -69,6 +72,49 @@ export class ReportRepository implements ReportRepositoryInterface {
         hours: parseFloat(hours),
       })
     })
-    return resultForCompany
+    return resultForCompany.filter((result) => {
+      if (params.customer && params.project && params.task && params.name) {
+        return (
+          result.customer === params.customer &&
+          result.project === params.project &&
+          result.task === params.task &&
+          uids.some((uid) => uid.email === result.user)
+        )
+      }
+      if (params.customer && params.project && params.task) {
+        return (
+          result.customer === params.customer &&
+          result.project === params.project &&
+          result.task === params.task
+        )
+      }
+      if (params.customer && params.project && params.name) {
+        return (
+          result.customer === params.customer &&
+          result.project === params.project &&
+          uids.some((uid) => uid.email === result.user)
+        )
+      }
+      if (params.customer && params.name) {
+        return (
+          result.customer === params.customer &&
+          uids.some((uid) => uid.email === result.user)
+        )
+      }
+      if (params.customer && params.project) {
+        return (
+          result.customer === params.customer &&
+          result.project === params.project
+        )
+      }
+      if (params.customer) {
+        return result.customer === params.customer
+      }
+      if (params.name) {
+        return uids.some((uid) => uid.email === result.user)
+      }
+
+      return resultForCompany
+    })
   }
 }

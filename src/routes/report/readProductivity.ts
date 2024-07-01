@@ -6,6 +6,7 @@ import {
 } from '@src/core/Report/model/productivity.model'
 import { DateRangeError } from '@src/core/customExceptions/DateRangeError'
 import { Type } from '@sinclair/typebox'
+import { FieldsOrderError } from '@src/core/customExceptions/FieldsOrderError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
@@ -45,12 +46,19 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             company: request.user.company,
             from: request.query.from,
             to: request.query.to,
+            customer: request.query.customer,
+            project: request.query.project,
+            task: request.query.task,
+            name: request.query.name,
           })
       } catch (error) {
         request.log.error(error)
         let errorCode = 500
         let errorMessage = ''
-        if (error instanceof DateRangeError) {
+        if (
+          error instanceof DateRangeError ||
+          error instanceof FieldsOrderError
+        ) {
           errorCode = 400
           errorMessage = error.message
           return reply.code(errorCode).send({ message: errorMessage })

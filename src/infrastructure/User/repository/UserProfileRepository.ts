@@ -111,6 +111,29 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     return []
   }
 
+  async getByName(name: string, company: string): Promise<{ email: string }[]> {
+    const command = new QueryCommand({
+      TableName: getTableName('UserProfile'),
+      IndexName: 'companyIndex',
+      KeyConditionExpression: 'company = :company',
+      FilterExpression: 'contains(#name, :name)',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+      },
+      ExpressionAttributeValues: {
+        ':company': { S: company },
+        ':name': { S: name },
+      },
+    })
+    const result = await this.dynamoDBClient.send(command)
+    if (result?.Items) {
+      return result.Items.map((item) => {
+        return { email: item.uid?.S ?? '' }
+      })
+    }
+    return []
+  }
+
   async delete(uid: string): Promise<void> {
     const command = new DeleteItemCommand({
       TableName: getTableName('UserProfile'),
