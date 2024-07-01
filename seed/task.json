@@ -7,7 +7,7 @@
   },
   {
     "company": { "S": "it" },
-    "projectType": {"S":  "billable"},
+    "projectType": {"S":  "non-billable"},
     "customerProject": {"S": "Claranet#Funzionale"},
     "tasks": { "SS": ["Attività di portfolio", "Management"] }
   },
@@ -19,7 +19,7 @@
   },
   {
     "company": { "S": "other company" },
-    "projectType": {"S":  "non-billable"},
+    "projectType": {"S":  "billable"},
     "customerProject": {"S": "test customer of other company#test project of other company"},
     "tasks": { "SS": ["test task 1 of other company", "test task 2 of other company"] }
   },
