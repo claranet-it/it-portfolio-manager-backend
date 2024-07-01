@@ -30,7 +30,15 @@ export const UserProfileWithUid = Type.Intersect([
   Type.Object({ uid: Type.String() }),
 ])
 
+export const CompleteUserProfile = Type.Intersect([
+  UserProfile,
+  Type.Object({ uid: Type.String() }),
+  Type.Object({ picture: Type.String() }),
+])
+
 export type UserProfileWithUidType = Static<typeof UserProfileWithUid>
+
+export type CompleteUserProfileType = Static<typeof CompleteUserProfile>
 
 export const UpdateUserProfile = Type.Object({
   crew: Type.String(),

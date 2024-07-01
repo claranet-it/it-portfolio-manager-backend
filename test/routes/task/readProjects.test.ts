@@ -27,7 +27,7 @@ const inputs = [
   {
     company: 'it',
     customer: 'Claranet',
-    expectProjects: ['Funzionale', 'Slack time'],
+    expectProjects: ['Assenze', 'Funzionale', 'Slack time'],
   },
   {
     company: 'it',

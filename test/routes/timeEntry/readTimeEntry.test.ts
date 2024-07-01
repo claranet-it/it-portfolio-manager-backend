@@ -63,7 +63,7 @@ test('Return time entries', async (t) => {
       customer: 'Claranet',
       project: 'Funzionale',
       task: 'Attività di portfolio',
-      hours: 2,
+      hours: 4,
     },
     {
       user: 'nicholas.crow@email.com',
@@ -72,7 +72,7 @@ test('Return time entries', async (t) => {
       customer: 'Claranet',
       project: 'Slack time',
       task: 'formazione',
-      hours: 2,
+      hours: 4,
     },
   ])
 })
