@@ -41,27 +41,90 @@ test('Return time entries for cna', async (t) => {
   })
   t.equal(response.statusCode, 200)
   const result = response.json<TimeEntryRowListWithProjectType>()
-  t.equal(result.length, 2)
-  t.same(result, [
+  t.equal(result.length, 8)
+
+  const expected = [
     {
-      user: 'nicholas.crow@email.com',
-      date: '2024-01-01',
-      company: 'it',
-      customer: 'Claranet',
-      project: 'Funzionale',
-      projectType: 'billable',
-      task: 'Attività di portfolio',
-      hours: 2,
+      "user":"micol.ts@email.com",
+      "date":"2024-01-01",
+      "company":"it",
+      "customer":"Claranet",
+      "project":"Assenze",
+      "projectType":"absence",
+      "task":"Malattia",
+      "hours":2
     },
     {
-      user: 'nicholas.crow@email.com',
-      date: '2024-01-01',
-      company: 'it',
-      customer: 'Claranet',
-      project: 'Slack time',
-      projectType: 'billable',
-      task: 'formazione',
-      hours: 2,
+      "user":"micol.ts@email.com",
+      "date":"2024-01-01",
+      "company":"it",
+      "customer":"Claranet",
+      "project":"Funzionale",
+      "projectType":"billable",
+      "task":"Attività di portfolio",
+      "hours":2
     },
-  ])
+    {
+      "user":"micol.ts@email.com",
+      "date":"2024-01-01",
+      "company":"it",
+      "customer":"Claranet",
+      "project":"Slack time",
+      "projectType":"billable",
+      "task":"formazione",
+      "hours":2
+    },
+    {
+      "user":"micol.ts@email.com",
+      "date":"2024-01-01",
+      "company":"it",
+      "customer":"test customer",
+      "project":"SOR Sviluppo",
+      "projectType":"billable",
+      "task":"Iterazione 1",
+      "hours":2
+    },
+    {
+      "user":"micol.ts@email.com",
+      "date":"2024-01-31",
+      "company":"it",
+      "customer":"Claranet",
+      "project":"Funzionale",
+      "projectType":"billable",
+      "task":"Attività di portfolio",
+      "hours":2
+    },
+    {
+      "user":"micol.ts@email.com",
+      "date":"2024-01-31",
+      "company":"it",
+      "customer":"Claranet",
+      "project":"Slack time",
+      "projectType":"billable",
+      "task":"formazione",
+      "hours":2
+    },
+    {
+      "user":"nicholas.crow@email.com",
+      "date":"2024-01-01",
+      "company":"it",
+      "customer":"Claranet",
+      "project":"Funzionale",
+      "projectType":"billable",
+      "task":"Attività di portfolio",
+      "hours":4
+    },
+    {
+      "user":"nicholas.crow@email.com",
+      "date":"2024-01-01",
+      "company":"it",
+      "customer":"Claranet",
+      "project":"Slack time",
+      "projectType":"billable",
+      "task":"formazione",
+      "hours":4
+    }
+  ]
+
+  t.same(result, expected)
 })
