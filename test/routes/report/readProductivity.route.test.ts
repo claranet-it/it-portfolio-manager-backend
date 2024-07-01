@@ -301,7 +301,7 @@ test('read productivity report - only task filter => bad request', async (t) => 
 
     t.equal(response.statusCode, 400)
     t.equal(response.body, JSON.stringify({
-        message: 'You must select a Customer, then a Project, then a Task',
+        message: 'You must select a Customer first, then a Project and finally a Task.',
     }));
 })
 
@@ -318,7 +318,7 @@ test('read productivity report - only project filter => bad request', async (t) 
 
     t.equal(response.statusCode, 400)
     t.equal(response.body, JSON.stringify({
-        message: 'You must select a Customer, then a Project, then a Task',
+        message: 'You must select a Customer first, then a Project and finally a Task.',
     }));
 })
 
@@ -335,7 +335,58 @@ test('read productivity report - project and task filter => bad request', async 
 
     t.equal(response.statusCode, 400)
     t.equal(response.body, JSON.stringify({
-        message: 'You must select a Customer, then a Project, then a Task',
+        message: 'You must select a Customer first, then a Project and finally a Task.',
+    }));
+})
+
+test('read productivity report - project & name filter => bad request', async (t) => {
+    const company = 'it'
+    const token = getToken(company)
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/report/productivity?from=2024-01-01&to=2024-01-01&project=Funzionale&name=Micol',
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
+    })
+
+    t.equal(response.statusCode, 400)
+    t.equal(response.body, JSON.stringify({
+        message: 'You must select a Customer first, then a Project and finally a Task.',
+    }));
+})
+
+test('read productivity report - task & name filter => bad request', async (t) => {
+    const company = 'it'
+    const token = getToken(company)
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/report/productivity?from=2024-01-01&to=2024-01-01&task=Attività di portfolio&name=Micol',
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
+    })
+
+    t.equal(response.statusCode, 400)
+    t.equal(response.body, JSON.stringify({
+        message: 'You must select a Customer first, then a Project and finally a Task.',
+    }));
+})
+
+test('read productivity report - project & task & name filter => bad request', async (t) => {
+    const company = 'it'
+    const token = getToken(company)
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/report/productivity?from=2024-01-01&to=2024-01-01&project=Funzionale&task=Attività di portfolio&name=Micol',
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
+    })
+
+    t.equal(response.statusCode, 400)
+    t.equal(response.body, JSON.stringify({
+        message: 'You must select a Customer first, then a Project and finally a Task.',
     }));
 })
 

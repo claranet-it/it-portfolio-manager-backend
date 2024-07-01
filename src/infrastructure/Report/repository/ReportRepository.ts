@@ -73,43 +73,49 @@ export class ReportRepository implements ReportRepositoryInterface {
       })
     })
     return resultForCompany.filter((result) => {
-      if (params.customer && params.project && params.task && params.name) {
-        return (
-          result.customer === params.customer &&
-          result.project === params.project &&
-          result.task === params.task &&
-          uids.some((uid) => uid.email === result.user)
-        )
-      }
-      if (params.customer && params.project && params.task) {
-        return (
-          result.customer === params.customer &&
-          result.project === params.project &&
-          result.task === params.task
-        )
-      }
-      if (params.customer && params.project && params.name) {
-        return (
-          result.customer === params.customer &&
-          result.project === params.project &&
-          uids.some((uid) => uid.email === result.user)
-        )
-      }
-      if (params.customer && params.name) {
-        return (
-          result.customer === params.customer &&
-          uids.some((uid) => uid.email === result.user)
-        )
-      }
-      if (params.customer && params.project) {
-        return (
-          result.customer === params.customer &&
-          result.project === params.project
-        )
-      }
       if (params.customer) {
+        if (params.project) {
+          if (params.task && params.name) {
+            return (
+              result.customer === params.customer &&
+              result.project === params.project &&
+              result.task === params.task &&
+              uids.some((uid) => uid.email === result.user)
+            )
+          }
+
+          if (params.task) {
+            return (
+              result.customer === params.customer &&
+              result.project === params.project &&
+              result.task === params.task
+            )
+          }
+
+          if (params.name) {
+            return (
+              result.customer === params.customer &&
+              result.project === params.project &&
+              uids.some((uid) => uid.email === result.user)
+            )
+          }
+
+          return (
+            result.customer === params.customer &&
+            result.project === params.project
+          )
+        }
+
+        if (params.name) {
+          return (
+            result.customer === params.customer &&
+            uids.some((uid) => uid.email === result.user)
+          )
+        }
+
         return result.customer === params.customer
       }
+
       if (params.name) {
         return uids.some((uid) => uid.email === result.user)
       }
