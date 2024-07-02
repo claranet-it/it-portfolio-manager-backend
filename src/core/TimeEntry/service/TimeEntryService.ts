@@ -15,7 +15,7 @@ export class TimeEntryService {
   constructor(
     private timeEntryRepository: TimeEntryRepositoryInterface,
     private taskRepository: TaskRepositoryInterface,
-    private userRepository: UserProfileRepositoryInterface,
+    private userProfileRepository: UserProfileRepositoryInterface,
   ) {}
 
   async find(
@@ -31,7 +31,7 @@ export class TimeEntryService {
     return timeEntries.length > 0
       ? Promise.all(
           timeEntries.map(async (entry) => {
-            const user = await this.userRepository.getCompleteUserProfile(
+            const user = await this.userProfileRepository.getCompleteUserProfile(
               entry.user,
             )
             return {
