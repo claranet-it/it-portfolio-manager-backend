@@ -77,14 +77,14 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         results.push(result.Items)
       }
     }
-    return results.length > 0 ? (
-      results
-        .flat(2)
-        .map((result) => {
-          return this.getTimeOff(result)
-        })
-        .flat() ?? []
-    ) : []
+    return results.length > 0
+      ? results
+          .flat(2)
+          .map((result) => {
+            return this.getTimeOff(result)
+          })
+          .flat() ?? []
+      : []
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {

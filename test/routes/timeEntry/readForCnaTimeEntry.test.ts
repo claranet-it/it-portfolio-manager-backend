@@ -1,7 +1,7 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { TimeEntriesForCnaType } from '@src/core/TimeEntry/model/timeEntry.model'
+//import { TimeEntriesForCnaType } from '@src/core/TimeEntry/model/timeEntry.model'
 
 let app: FastifyInstance
 
