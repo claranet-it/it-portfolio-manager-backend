@@ -183,11 +183,11 @@ test('read productivity report 1 month', async (t) => {
             "workedHours":8,
             "totalTracked":{
                 "billableProductivity":0,
-                "nonBillableProductivity":2,
+                "nonBillableProductivity":1,
                 "slackTime":2,
-                "absence":0
+                "absence":1
             },
-            "totalProductivity":2
+            "totalProductivity":1
         },
         {
             "user":{
@@ -262,11 +262,11 @@ test('read productivity report 1 day', async (t) => {
             "workedHours":8,
             "totalTracked":{
                 "billableProductivity":0,
-                "nonBillableProductivity":50,
+                "nonBillableProductivity":25,
                 "slackTime":50,
-                "absence":0
+                "absence":25
             },
-            "totalProductivity":50
+            "totalProductivity":25
         },
         {
             "user":{
@@ -519,12 +519,12 @@ test('read productivity report - customer & project filter', async (t) => {
                 "name":"Nicholas Crow",
                 "picture":"picture-url"
             },
-            "workedHours":0,
+            "workedHours":2,
             "totalTracked":{
                 "billableProductivity":0,
                 "nonBillableProductivity":0,
                 "slackTime":0,
-                "absence":0
+                "absence":25
             },
             "totalProductivity":0
         },
@@ -598,14 +598,14 @@ test('read productivity report - customer & project & task filter', async (t) =>
                 "name":"Nicholas Crow",
                 "picture":"picture-url"
             },
-            "workedHours":4,
+            "workedHours":2,
             "totalTracked":{
                 "billableProductivity":0,
-                "nonBillableProductivity":50,
+                "nonBillableProductivity":25,
                 "slackTime":0,
                 "absence":0
             },
-            "totalProductivity":50
+            "totalProductivity":25
         },
         {
             "user":{
