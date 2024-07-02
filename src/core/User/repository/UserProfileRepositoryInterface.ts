@@ -1,4 +1,5 @@
 import {
+  CompleteUserProfileType,
   UpdateUserProfileType,
   UserProfileType,
   UserProfileWithUidType,
@@ -6,6 +7,8 @@ import {
 
 export interface UserProfileRepositoryInterface {
   getUserProfile(uid: string): Promise<UserProfileType | null>
+
+  getCompleteUserProfile(uid: string): Promise<CompleteUserProfileType | null>
 
   saveUserProfile(
     uid: string,
