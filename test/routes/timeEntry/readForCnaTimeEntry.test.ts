@@ -62,7 +62,7 @@ test('Return time entries for cna', async (t) => {
                 "clientName":"Assenze"
             },
             "timeInterval":{
-                "start":"",
+                "start":"2024-01-01",
                 "end":"",
                 "duration":"2"
             }
@@ -84,7 +84,7 @@ test('Return time entries for cna', async (t) => {
                 "clientName":"Assenze"
             },
             "timeInterval":{
-                "start":"",
+                "start":"2024-01-01",
                 "end":"",
                 "duration":"2"
             }

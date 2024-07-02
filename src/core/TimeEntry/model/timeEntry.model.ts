@@ -62,6 +62,7 @@ export const TimeEntryRowWithProject = Type.Object({
   projectType: Type.String(),
   task: Type.String(),
   hours: Type.Number(),
+  timeEntryDate: Type.String(),
 })
 
 export const TimeEntryRowList = Type.Array(TimeEntryRow)

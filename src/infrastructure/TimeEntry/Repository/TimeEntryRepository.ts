@@ -172,6 +172,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         projectType: ProjectType.NON_BILLABLE,
         task: task,
         hours: parseFloat(hours),
+        timeEntryDate: item.timeEntryDate?.S ?? '',
       })
     })
     return resultForUser.filter((result) => result.project === 'Assenze')

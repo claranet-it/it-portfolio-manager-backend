@@ -52,7 +52,7 @@ export class TimeEntryService {
                 clientName: entry.project,
               },
               timeInterval: {
-                start: '',
+                start: entry.timeEntryDate,
                 end: '',
                 duration: entry.hours.toString(),
               },
