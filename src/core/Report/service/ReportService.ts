@@ -4,7 +4,7 @@ import {
   ProjectType,
 } from '@src/core/Report/model/productivity.model'
 import { ReportRepositoryInterface } from '@src/core/Report/repository/ReportRepositoryInterface'
-import { UserProfileRepository } from '@src/infrastructure/User/repository/UserProfileRepository'
+import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { DateRangeError } from '@src/core/customExceptions/DateRangeError'
 import { UserProfileWithUidType } from '@src/core/User/model/user.model'
 import { FieldsOrderError } from '@src/core/customExceptions/FieldsOrderError'
@@ -12,7 +12,7 @@ import { FieldsOrderError } from '@src/core/customExceptions/FieldsOrderError'
 export class ReportService {
   constructor(
     private reportRepository: ReportRepositoryInterface,
-    private userProfileRepository: UserProfileRepository,
+    private userProfileRepository: UserProfileRepositoryInterface,
   ) {}
 
   async getProductivityReport(
