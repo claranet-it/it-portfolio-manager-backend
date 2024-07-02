@@ -8,10 +8,13 @@ import {
 import {
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
-  deleteTimeEntryWithUserType, CnaReadParamType, TimeEntryRowWithProjectType,
+  deleteTimeEntryWithUserType,
+  CnaReadParamType,
+  TimeEntryRowWithProjectType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryIntereface'
 import { getTableName } from '@src/core/db/TableName'
+import { ProjectType } from '@src/core/Report/model/productivity.model'
 
 export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
@@ -37,18 +40,32 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     )
   }
 
-  async findForCna(
+  async findTimeOffForCna(
     params: CnaReadParamType,
   ): Promise<TimeEntryRowWithProjectType[]> {
+    const { from, to } = this.getPeriodFromMonthAndYear(
+      params.month,
+      params.year,
+    )
 
-    const {from, to} = this.getPeriodFromMonthAndYear(params.month, params.year);
+    const users = []
+    if (params.company === 'flowing') {
+      users.push(
+        'stefania.ceccacci@claranet.com',
+        'manuel.gherardi@claranet.com',
+      )
+    } else if (params.company === 'claranet') {
+      users.push('micol.panetta@claranet.com', 'emanuele.laera@claranet.com')
+    } else if (params.company === 'test') {
+      users.push('micol.ts@email.com', 'nicholas.crow@email.com')
+    }
 
     const results = []
-    for(const user of params.users) {
+    for (const user of users) {
       const command = new QueryCommand({
         TableName: getTableName('TimeEntry'),
         KeyConditionExpression:
-            'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
+          'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
         ExpressionAttributeValues: {
           ':uid': { S: user },
           ':from': { S: from },
@@ -56,13 +73,18 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         },
       })
       const result = await this.dynamoDBClient.send(command)
-      if(result.Items) {
+      if (result.Items) {
         results.push(result.Items)
       }
     }
-    return results.flat(2).map(result => {
-      return this.getTimeEntryForCna(result)
-    }).flat() ?? []
+    return results.length > 0 ? (
+      results
+        .flat(2)
+        .map((result) => {
+          return this.getTimeOff(result)
+        })
+        .flat() ?? []
+    ) : []
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
@@ -135,8 +157,8 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     return resultForUser
   }
 
-  private getTimeEntryForCna(
-      item: Record<string, AttributeValue>,
+  private getTimeOff(
+    item: Record<string, AttributeValue>,
   ): TimeEntryRowWithProjectType[] {
     const resultForUser: TimeEntryRowWithProjectType[] = []
     item.tasks?.SS?.forEach((taskItem) => {
@@ -147,29 +169,28 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         company: item.company?.S ?? '',
         customer: customer,
         project: project,
-        projectType: project === 'Assenze' ? 'absence' : 'billable',
+        projectType: ProjectType.NON_BILLABLE,
         task: task,
         hours: parseFloat(hours),
       })
     })
-
-    return resultForUser
+    return resultForUser.filter((result) => result.project === 'Assenze')
   }
 
-  private getPeriodFromMonthAndYear(month: number, year: number ) {
+  private getPeriodFromMonthAndYear(month: number, year: number) {
     if (month < 1 || month > 12) {
-      throw new Error("Il mese deve essere compreso tra 1 e 12");
+      throw new Error('Month must be between 1 and 12')
     }
 
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 0);
+    const startDate = new Date(year, month - 1, 1)
+    const endDate = new Date(year, month, 0)
 
-    startDate.setDate(startDate.getDate() + 1);
-    endDate.setDate(endDate.getDate() + 1);
+    startDate.setDate(startDate.getDate() + 1)
+    endDate.setDate(endDate.getDate() + 1)
 
-    const from = startDate.toISOString().split('T')[0];
-    const to = endDate.toISOString().split('T')[0];
+    const from = startDate.toISOString().split('T')[0]
+    const to = endDate.toISOString().split('T')[0]
 
-    return { from, to };
+    return { from, to }
   }
 }

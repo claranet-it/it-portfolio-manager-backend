@@ -2,15 +2,20 @@ import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositor
 import {
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
-  deleteTimeEntryWithUserType, CnaReadParamType, TimeEntryRowWithProjectType,
+  deleteTimeEntryWithUserType,
+  CnaReadParamType,
+  TimeEntriesForCnaType,
 } from '../model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '../repository/TimeEntryRepositoryIntereface'
 import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
+import { ProjectType } from '@src/core/Report/model/productivity.model'
+import {UserProfileRepositoryInterface} from "@src/core/User/repository/UserProfileRepositoryInterface";
 
 export class TimeEntryService {
   constructor(
     private timeEntryRepository: TimeEntryRepositoryInterface,
     private taskRepository: TaskRepositoryInterface,
+    private userRepository: UserProfileRepositoryInterface,
   ) {}
 
   async find(
@@ -19,10 +24,40 @@ export class TimeEntryService {
     return await this.timeEntryRepository.find(params)
   }
 
-  async findForCna(
-      params: CnaReadParamType,
-  ): Promise<TimeEntryRowWithProjectType[]> {
-    return await this.timeEntryRepository.findForCna(params)
+  async findTimeOffForCna(
+    params: CnaReadParamType,
+  ): Promise<TimeEntriesForCnaType> {
+    const timeEntries = await this.timeEntryRepository.findTimeOffForCna(params)
+    return timeEntries.length > 0 ? Promise.all(
+      timeEntries.map(async (entry) => {
+        const user = await this.userRepository.getUserProfile(
+          entry.user,
+        )
+
+        return {
+          description: '',
+          user: {
+            email: user?.uid?? '',
+            name: user?.name ?? '',
+          },
+          userId: user?.uid ?? '',
+          billable: entry.projectType === ProjectType.BILLABLE,
+          task: {
+            name: entry.task,
+          },
+          project: {
+            name: entry.project,
+            billable: entry.projectType === ProjectType.BILLABLE,
+            clientName: entry.project,
+          },
+          timeInterval: {
+            start: '',
+            end: '',
+            duration: entry.hours.toString(),
+          },
+        }
+      }),
+    ) : []
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
