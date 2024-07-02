@@ -35,27 +35,23 @@ export const TimeEntryRow = Type.Object({
   hours: Type.Number(),
 })
 
-export const TimeEntriesForCna = Type.Array(
-  Type.Object({
-    description: Type.String(),
-    user: Type.Object({ email: Type.String(), name: Type.String() }),
-    userId: Type.String(),
+export const TimeEntriesForCna = Type.Object({
+  description: Type.String(),
+  user: Type.Object({ email: Type.String(), name: Type.String() }),
+  userId: Type.String(),
+  billable: Type.Boolean(),
+  task: Type.Object({ name: Type.String() }),
+  project: Type.Object({
+    name: Type.String(),
     billable: Type.Boolean(),
-    task: Type.Object({ name: Type.String() }),
-    project: Type.Object({
-      name: Type.String(),
-      billable: Type.Boolean(),
-      clientName: Type.String(),
-    }),
-    timeInterval: Type.Object({
-      start: Type.String(),
-      end: Type.String(),
-      duration: Type.String(),
-    }),
+    clientName: Type.String(),
   }),
-)
-
-export type TimeEntriesForCnaType = Static<typeof TimeEntriesForCna>
+  timeInterval: Type.Object({
+    start: Type.String(),
+    end: Type.String(),
+    duration: Type.String(),
+  }),
+})
 
 export const TimeEntryRowWithProject = Type.Object({
   user: Type.String(),
@@ -69,15 +65,14 @@ export const TimeEntryRowWithProject = Type.Object({
 })
 
 export const TimeEntryRowList = Type.Array(TimeEntryRow)
-export const TimeEntryRowWithProjectList = Type.Array(TimeEntryRowWithProject)
-
 export type TimeEntryRowType = Static<typeof TimeEntryRow>
+export type TimeEntryRowListType = Static<typeof TimeEntryRowList>
+
 export type TimeEntryRowWithProjectType = Static<typeof TimeEntryRowWithProject>
 
-export type TimeEntryRowListType = Static<typeof TimeEntryRowList>
-export type TimeEntryRowListWithProjectType = Static<
-  typeof TimeEntryRowWithProjectList
->
+export const TimeEntriesForCnaList = Type.Array(TimeEntriesForCna)
+export type TimeEntriesForCnaListType = Static<typeof TimeEntriesForCnaList>
+export type TimeEntriesForCnaType = Static<typeof TimeEntriesForCna>
 
 export const InsertTimeEntryRow = Type.Object({
   date: Type.RegExp(dateFormat),

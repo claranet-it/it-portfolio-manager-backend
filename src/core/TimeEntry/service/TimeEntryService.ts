@@ -26,14 +26,15 @@ export class TimeEntryService {
 
   async findTimeOffForCna(
     params: CnaReadParamType,
-  ): Promise<TimeEntriesForCnaType> {
+  ): Promise<TimeEntriesForCnaType[]> {
     const timeEntries = await this.timeEntryRepository.findTimeOffForCna(params)
     return timeEntries.length > 0
       ? Promise.all(
           timeEntries.map(async (entry) => {
-            const user = await this.userProfileRepository.getCompleteUserProfile(
-              entry.user,
-            )
+            const user =
+              await this.userProfileRepository.getCompleteUserProfile(
+                entry.user,
+              )
             return {
               description: '',
               user: {

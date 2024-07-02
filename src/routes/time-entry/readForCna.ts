@@ -2,14 +2,14 @@ import { FastifyInstance } from 'fastify'
 import {
   CnaReadParamType,
   CnaReadParam,
-  TimeEntriesForCnaType,
-  TimeEntriesForCna,
+  TimeEntriesForCnaList,
+  TimeEntriesForCnaListType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: CnaReadParamType
-    Reply: TimeEntriesForCnaType
+    Reply: TimeEntriesForCnaListType
   }>(
     '/time-off-for-cna',
     {
@@ -23,7 +23,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: TimeEntriesForCna,
+          200: TimeEntriesForCnaList,
           401: {
             type: 'null',
             description: 'Unauthorized',
