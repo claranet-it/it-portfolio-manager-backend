@@ -419,51 +419,6 @@ test('read productivity report - customer filter', async (t) => {
             },
             "totalProductivity":25
         },
-        {
-            "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
-                "email":"nicholas.crow@email.com",
-                "name":"Nicholas Crow",
-                "picture":"picture-url"
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
-                "email":"testIt@test.com",
-                "name":"test italian",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        }
     ]
 
     t.same(result, expected)
@@ -500,21 +455,6 @@ test('read productivity report - customer & project filter', async (t) => {
         },
         {
             "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
                 "picture":"picture-url"
@@ -528,21 +468,6 @@ test('read productivity report - customer & project filter', async (t) => {
             },
             "totalProductivity":0
         },
-        {
-            "user":{
-                "email":"testIt@test.com",
-                "name":"test italian",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        }
     ]
 
     t.same(result, expected)
@@ -579,21 +504,6 @@ test('read productivity report - customer & project & task filter', async (t) =>
         },
         {
             "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
                 "picture":"picture-url"
@@ -607,21 +517,6 @@ test('read productivity report - customer & project & task filter', async (t) =>
             },
             "totalProductivity":25
         },
-        {
-            "user":{
-                "email":"testIt@test.com",
-                "name":"test italian",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        }
     ]
 
     t.same(result, expected)
@@ -656,51 +551,6 @@ test('read productivity report - only name filter', async (t) => {
             },
             "totalProductivity":50
         },
-        {
-            "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
-                "email":"nicholas.crow@email.com",
-                "name":"Nicholas Crow",
-                "picture":"picture-url"
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
-                "email":"testIt@test.com",
-                "name":"test italian",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        }
     ]
 
     t.same(result, expected)
@@ -735,52 +585,7 @@ test('read productivity report - customer & project & task & name filter', async
             },
             "totalProductivity":25
         },
-        {
-            "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
-                "email":"nicholas.crow@email.com",
-                "name":"Nicholas Crow",
-                "picture":"picture-url"
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
-                "email":"testIt@test.com",
-                "name":"test italian",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        }
-    ]
+     ]
 
     t.same(result, expected)
 })
@@ -814,51 +619,6 @@ test('read productivity report - customer & project & name filter', async (t) =>
             },
             "totalProductivity":25
         },
-        {
-            "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
-                "email":"nicholas.crow@email.com",
-                "name":"Nicholas Crow",
-                "picture":"picture-url"
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
-                "email":"testIt@test.com",
-                "name":"test italian",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        }
     ]
 
     t.same(result, expected)
@@ -893,51 +653,6 @@ test('read productivity report - name & customer filter', async (t) => {
             },
             "totalProductivity":25
         },
-        {
-            "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
-                "email":"nicholas.crow@email.com",
-                "name":"Nicholas Crow",
-                "picture":"picture-url"
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
-                "email":"testIt@test.com",
-                "name":"test italian",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        }
     ]
 
     t.same(result, expected)
