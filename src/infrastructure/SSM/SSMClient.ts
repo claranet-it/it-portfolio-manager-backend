@@ -3,9 +3,11 @@ import { SSMClientInterface } from '@src/core/SSM/SSMClientInterface'
 
 export class SSMClient implements SSMClientInterface {
   ssm: SSM
+
   constructor() {
     this.ssm = new SSM()
   }
+
   async getJwtPrivateKey(): Promise<string> {
     const key = await this.ssm.getParameter({
       Name: process.env.JWT_PRIVATE_KEY_ARN,
@@ -16,6 +18,7 @@ export class SSMClient implements SSMClientInterface {
     }
     return key.Parameter.Value
   }
+
   async getJWTPublicKey(): Promise<string> {
     const key = await this.ssm.getParameter({
       Name: process.env.JWT_PUBLIC_KEY_ARN,
@@ -26,6 +29,7 @@ export class SSMClient implements SSMClientInterface {
     }
     return key.Parameter.Value
   }
+
   async getGoogleClientId(): Promise<string> {
     const key = await this.ssm.getParameter({
       Name: process.env.GOOGLE_CLIENT_ID_ARN,
@@ -66,6 +70,17 @@ export class SSMClient implements SSMClientInterface {
     })
     if (!key.Parameter || !key.Parameter.Value) {
       throw new Error('Slack token not found')
+    }
+    return key.Parameter.Value
+  }
+
+  async getBricklyApiKey(): Promise<string> {
+    const key = await this.ssm.getParameter({
+      Name: process.env.BRICKLY_API_KEY,
+      WithDecryption: true,
+    })
+    if (!key.Parameter || !key.Parameter.Value) {
+      throw new Error('Api key not found')
     }
     return key.Parameter.Value
   }

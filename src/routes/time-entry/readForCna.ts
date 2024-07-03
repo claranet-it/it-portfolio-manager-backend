@@ -5,15 +5,17 @@ import {
   TimeEntriesForCnaList,
   TimeEntriesForCnaListType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
+import {SSMClient} from "@src/infrastructure/SSM/SSMClient";
+import {SSMClientInterface} from "@src/core/SSM/SSMClientInterface";
+import {DummySSMClient} from "@src/infrastructure/SSM/DummySSMClient";
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: CnaReadParamType
-    Reply: TimeEntriesForCnaListType
+    Reply: TimeEntriesForCnaListType | { error: string }
   }>(
     '/time-off-for-cna',
     {
-      //onRequest: [fastify.authenticate],
       schema: {
         tags: ['Time entry'],
         querystring: CnaReadParam,
@@ -28,6 +30,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             type: 'null',
             description: 'Unauthorized',
           },
+          403: {
+            type: 'null',
+            description: 'Invalid API Key',
+          },
           500: {
             type: 'null',
             description: 'Internal server error',
@@ -37,6 +43,22 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
+        
+        const apiKey = request.headers['x-api-key'];
+
+        if (!apiKey) {
+          return reply.status(401).send({ error: 'X-Api-Key header is required' });
+        }
+
+        const isTest = process.env.STAGE_NAME === 'test'
+        const ssmClient: SSMClientInterface =
+            isTest || process.env.IS_OFFLINE ? new DummySSMClient() : new SSMClient()
+        const storedApiKey = await ssmClient.getBricklyApiKey();
+
+        if (apiKey !== storedApiKey) {
+          return reply.status(403).send({ error: 'Invalid API Key' });
+        }
+
         return await fastify
           .dependencyInjectionContainer()
           .resolve('timeEntryService')

@@ -19,4 +19,7 @@ export class DummySSMClient implements SSMClientInterface {
   async getSlackToken(): Promise<string> {
     return Promise.resolve('')
   }
+  async getBricklyApiKey(): Promise<string> {
+    return Promise.resolve(process.env.BRICKLY_API_KEY ?? '1234')
+  }
 }

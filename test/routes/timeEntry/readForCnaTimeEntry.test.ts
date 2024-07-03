@@ -2,18 +2,8 @@ import {test, beforeEach, afterEach} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
 import {TimeEntriesForCnaListType} from "@src/core/TimeEntry/model/timeEntry.model";
-//import { TimeEntriesForCnaType } from '@src/core/TimeEntry/model/timeEntry.model'
 
 let app: FastifyInstance
-
-// function getToken(): string {
-//   return app.createTestJwt({
-//     email: 'nicholas.crow@email.com',
-//     name: 'Nicholas Crow',
-//     picture: 'https://test.com/nicholas.crow.jpg',
-//     company: 'it',
-//   })
-// }
 
 beforeEach(async () => {
     app = createApp({logger: false})
@@ -24,20 +14,32 @@ afterEach(async () => {
     await app.close()
 })
 
-// test('Read time entry without authentication', async (t) => {
-//   const response = await app.inject({
-//     method: 'GET',
-//     url: '/api/time-entry/time-off-for-cna?company=it&month=01&year=2024',
-//   })
-//   t.equal(response.statusCode, 401)
-// })
+test('Read time entry without api key', async (t) => {
+  const response = await app.inject({
+    method: 'GET',
+    url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
+  })
+    console.log(JSON.stringify(response, null, 2))
+  t.equal(response.statusCode, 401)
+})
+
+test('Read time entry with invalid api key', async (t) => {
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
+        headers: {
+            'X-Api-Key': `1243`,
+        },
+    })
+    t.equal(response.statusCode, 403)
+})
 
 test('Return time entries for cna', async (t) => {
     const response = await app.inject({
         method: 'GET',
         url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
         headers: {
-            //authorization: `Bearer ${getToken()}`,
+            'X-Api-Key': `1234`,
         },
     })
     t.equal(response.statusCode, 200)
