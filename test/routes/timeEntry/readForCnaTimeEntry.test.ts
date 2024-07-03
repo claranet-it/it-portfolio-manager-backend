@@ -19,7 +19,6 @@ test('Read time entry without api key', async (t) => {
     method: 'GET',
     url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
   })
-    console.log(JSON.stringify(response, null, 2))
   t.equal(response.statusCode, 401)
 })
 
@@ -31,7 +30,7 @@ test('Read time entry with invalid api key', async (t) => {
             'X-Api-Key': `1243`,
         },
     })
-    t.equal(response.statusCode, 403)
+    t.equal(response.statusCode, 401)
 })
 
 test('Return time entries for cna', async (t) => {

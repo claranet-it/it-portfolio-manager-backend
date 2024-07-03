@@ -8,6 +8,9 @@ import {
 import { UnauthorizedError } from '@src/core/customExceptions/UnauthorizedError'
 import { CompanyRepositoryInterface } from '@src/core/Company/repository/CompanyRepositoryInterface'
 import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
+import {SSMClientInterface} from "@src/core/SSM/SSMClientInterface";
+import {DummySSMClient} from "@src/infrastructure/SSM/DummySSMClient";
+import {SSMClient} from "@src/infrastructure/SSM/SSMClient";
 
 export class AuthService {
   constructor(
@@ -39,5 +42,20 @@ export class AuthService {
       company: company.name,
     }
     return this.jwt.sign(user, { expiresIn: '1d' })
+  }
+
+  async checkApiKey( header: {apiKey: string} ) {
+    if (!header.apiKey) {
+      throw new UnauthorizedError()
+    }
+
+    const isTest = process.env.STAGE_NAME === 'test'
+    const ssmClient: SSMClientInterface =
+        isTest || process.env.IS_OFFLINE ? new DummySSMClient() : new SSMClient()
+    const storedApiKey = await ssmClient.getBricklyApiKey();
+
+    if (header.apiKey !== storedApiKey) {
+      throw new UnauthorizedError()
+    }
   }
 }

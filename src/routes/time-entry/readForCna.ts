@@ -5,14 +5,12 @@ import {
   TimeEntriesForCnaList,
   TimeEntriesForCnaListType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
-import {SSMClient} from "@src/infrastructure/SSM/SSMClient";
-import {SSMClientInterface} from "@src/core/SSM/SSMClientInterface";
-import {DummySSMClient} from "@src/infrastructure/SSM/DummySSMClient";
+import { UnauthorizedError } from '@src/core/customExceptions/UnauthorizedError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: CnaReadParamType
-    Reply: TimeEntriesForCnaListType | { error: string }
+    Reply: TimeEntriesForCnaListType | string
   }>(
     '/time-off-for-cna',
     {
@@ -43,21 +41,12 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        
-        const apiKey = request.headers['x-api-key'];
-
-        if (!apiKey) {
-          return reply.status(401).send({ error: 'X-Api-Key header is required' });
-        }
-
-        const isTest = process.env.STAGE_NAME === 'test'
-        const ssmClient: SSMClientInterface =
-            isTest || process.env.IS_OFFLINE ? new DummySSMClient() : new SSMClient()
-        const storedApiKey = await ssmClient.getBricklyApiKey();
-
-        if (apiKey !== storedApiKey) {
-          return reply.status(403).send({ error: 'Invalid API Key' });
-        }
+        await fastify
+          .dependencyInjectionContainer()
+          .resolve('authService')
+          .checkApiKey({
+            apiKey: request.headers['x-api-key'],
+          })
 
         return await fastify
           .dependencyInjectionContainer()
@@ -69,7 +58,13 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           })
       } catch (error) {
         request.log.error(error)
-        return reply.code(500).send()
+        let errorMessage = ''
+        let errorCode = 500
+        if (error instanceof UnauthorizedError) {
+          errorMessage = error.message
+          errorCode = 401
+        }
+        reply.code(errorCode).send(errorMessage)
       }
     },
   )
