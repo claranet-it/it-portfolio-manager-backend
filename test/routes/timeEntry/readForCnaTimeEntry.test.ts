@@ -35,14 +35,14 @@ afterEach(async () => {
 test('Return time entries for cna', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-off-for-cna?company=test&month=01&year=2024',
+        url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
         headers: {
             //authorization: `Bearer ${getToken()}`,
         },
     })
     t.equal(response.statusCode, 200)
     const result = response.json<TimeEntriesForCnaListType>()
-    t.equal(result.length, 2)
+    t.equal(result.length, 1)
 
     const expected = [
         {
@@ -55,28 +55,6 @@ test('Return time entries for cna', async (t) => {
             "billable":false,
             "task":{
                 "name":"Malattia"
-            },
-            "project":{
-                "name":"Assenze",
-                "billable":false,
-                "clientName":"Assenze"
-            },
-            "timeInterval":{
-                "start":"2024-01-01",
-                "end":"",
-                "duration":"2"
-            }
-        },
-        {
-            "description":"",
-            "user":{
-                "email":"nicholas.crow@email.com",
-                "name":"Nicholas Crow"
-            },
-            "userId":"nicholas.crow@email.com",
-            "billable":false,
-            "task":{
-                "name":"Donazione sangue"
             },
             "project":{
                 "name":"Assenze",

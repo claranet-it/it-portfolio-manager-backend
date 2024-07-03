@@ -48,43 +48,22 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       params.year,
     )
 
-    const users = []
-    if (params.company === 'flowing') {
-      users.push(
-        'stefania.ceccacci@claranet.com',
-        'manuel.gherardi@claranet.com',
-      )
-    } else if (params.company === 'claranet') {
-      users.push('micol.panetta@claranet.com', 'emanuele.laera@claranet.com')
-    } else if (params.company === 'test') {
-      users.push('micol.ts@email.com', 'nicholas.crow@email.com')
-    }
-
-    const results = []
-    for (const user of users) {
-      const command = new QueryCommand({
-        TableName: getTableName('TimeEntry'),
-        KeyConditionExpression:
-          'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
-        ExpressionAttributeValues: {
-          ':uid': { S: user },
-          ':from': { S: from },
-          ':to': { S: to },
-        },
-      })
-      const result = await this.dynamoDBClient.send(command)
-      if (result.Items) {
-        results.push(result.Items)
-      }
-    }
-    return results.length > 0
-      ? results
-          .flat(2)
-          .map((result) => {
-            return this.getTimeOff(result)
-          })
-          .flat() ?? []
-      : []
+    const command = new QueryCommand({
+      TableName: getTableName('TimeEntry'),
+      KeyConditionExpression:
+        'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
+      ExpressionAttributeValues: {
+        ':uid': { S: params.user },
+        ':from': { S: from },
+        ':to': { S: to },
+      },
+    })
+    const result = await this.dynamoDBClient.send(command)
+    return (
+      result.Items?.map((item) => {
+        return this.getTimeOff(item)
+      }).flat() ?? []
+    )
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
