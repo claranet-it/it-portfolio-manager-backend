@@ -8,6 +8,7 @@ import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserPr
 import { DateRangeError } from '@src/core/customExceptions/DateRangeError'
 import { UserProfileWithUidType } from '@src/core/User/model/user.model'
 import { FieldsOrderError } from '@src/core/customExceptions/FieldsOrderError'
+import { TimeEntryRowType } from '@src/core/TimeEntry/model/timeEntry.model'
 
 export class ReportService {
   constructor(
@@ -46,76 +47,45 @@ export class ReportService {
     const projectTypes = await this.reportRepository.getProjectTypes(
       params.company,
     )
-    const allUsers = await this.userProfileRepository.getAllUserProfiles()
+
+    let allUsersProfiles: UserProfileWithUidType[] =
+      await this.userProfileRepository.getAllUserProfiles()
+
+    const filter = params.customer || params.project || params.task || params.name;
+    if (filter) {
+      allUsersProfiles = allUsersProfiles.filter((profile) => {
+        return companyTasks.some((task) => task.user == profile.uid)
+      })
+    }
+
     const totalWorkingDaysInPeriod = this.countWeekdays(params.from, params.to)
 
     if (totalWorkingDaysInPeriod === 0) {
-      return await this.emptyWorkedHoursFor(allUsers)
+      if(filter) {
+        return []
+      }
+      return await this.emptyWorkedHoursFor(allUsersProfiles)
     }
 
     return await Promise.all(
-      allUsers.map(async (user) => {
+      allUsersProfiles.map(async (user) => {
         const userTasks = companyTasks.filter((task) => task.user === user.uid)
         const userInfo =
           await this.userProfileRepository.getCompleteUserProfile(user.uid)
-
-        let billableProductivityHours = 0
-        let nonBillableProductivityHours = 0
-        let slackTimeHours = 0
-        let absenceHours = 0
-        let workedHours = 0
-        for (const task of userTasks) {
-          const projectType =
-            projectTypes.find(
-              (projectType) => projectType.project === task.project,
-            )?.projectType ?? ProjectType.SLACK_TIME
-
-          switch (projectType) {
-            case ProjectType.ABSENCE:
-              absenceHours = absenceHours + task.hours
-              break
-            case ProjectType.BILLABLE:
-              billableProductivityHours = billableProductivityHours + task.hours
-              break
-            case ProjectType.NON_BILLABLE:
-              nonBillableProductivityHours +=
-                nonBillableProductivityHours + task.hours
-              break
-            case ProjectType.SLACK_TIME:
-              slackTimeHours = slackTimeHours + task.hours
-              break
-            default:
-              break
-          }
-
-          workedHours += task.hours
-        }
-
-        const totalHoursInAWorkingDay = 8
-        const totalWorkingHoursInPeriod =
-          totalWorkingDaysInPeriod * totalHoursInAWorkingDay
-        const totalHours = 100 / totalWorkingHoursInPeriod
-
-        const billableProductivityPercentage =
-          totalHours * billableProductivityHours
-        const nonBillableProductivityPercentage =
-          totalHours * nonBillableProductivityHours
-        const slackTimePercentage = totalHours * slackTimeHours
-        const absencePercentage = totalHours * absenceHours
-        const totalProductivityPercentage =
-          Math.round(billableProductivityPercentage) +
-          Math.round(nonBillableProductivityPercentage)
-
-        const total =
-          billableProductivityPercentage +
-          nonBillableProductivityPercentage +
-          slackTimePercentage +
-          absencePercentage
-        const roundedTotal =
-          Math.round(billableProductivityPercentage) +
-          Math.round(nonBillableProductivityPercentage) +
-          Math.round(slackTimePercentage) +
-          Math.round(absencePercentage)
+        const {
+          workedHours,
+          billableProductivityPercentage,
+          nonBillableProductivityPercentage,
+          slackTimePercentage,
+          absencePercentage,
+          totalProductivityPercentage,
+          total,
+          roundedTotal,
+        } = this.calculatePercentage(
+          userTasks,
+          projectTypes,
+          totalWorkingDaysInPeriod,
+        )
 
         return {
           user: {
@@ -138,6 +108,82 @@ export class ReportService {
         }
       }),
     )
+  }
+
+  private calculatePercentage(
+    userTasks: TimeEntryRowType[],
+    projectTypes: {
+      project: string
+      projectType: string
+    }[],
+    totalWorkingDaysInPeriod: number,
+  ) {
+    let billableProductivityHours = 0
+    let nonBillableProductivityHours = 0
+    let slackTimeHours = 0
+    let absenceHours = 0
+    let workedHours = 0
+    for (const task of userTasks) {
+      const projectType =
+        projectTypes.find((projectType) => projectType.project === task.project)
+          ?.projectType ?? ProjectType.SLACK_TIME
+
+      switch (projectType) {
+        case ProjectType.ABSENCE:
+          absenceHours = absenceHours + task.hours
+          break
+        case ProjectType.BILLABLE:
+          billableProductivityHours = billableProductivityHours + task.hours
+          break
+        case ProjectType.NON_BILLABLE:
+          nonBillableProductivityHours +=
+            nonBillableProductivityHours + task.hours
+          break
+        case ProjectType.SLACK_TIME:
+          slackTimeHours = slackTimeHours + task.hours
+          break
+        default:
+          break
+      }
+
+      workedHours += task.hours
+    }
+
+    const totalHoursInAWorkingDay = 8
+    const totalWorkingHoursInPeriod =
+      totalWorkingDaysInPeriod * totalHoursInAWorkingDay
+    const totalHours = 100 / totalWorkingHoursInPeriod
+
+    const billableProductivityPercentage =
+      totalHours * billableProductivityHours
+    const nonBillableProductivityPercentage =
+      totalHours * nonBillableProductivityHours
+    const slackTimePercentage = totalHours * slackTimeHours
+    const absencePercentage = totalHours * absenceHours
+    const totalProductivityPercentage =
+      Math.round(billableProductivityPercentage) +
+      Math.round(nonBillableProductivityPercentage)
+
+    const total =
+      billableProductivityPercentage +
+      nonBillableProductivityPercentage +
+      slackTimePercentage +
+      absencePercentage
+    const roundedTotal =
+      Math.round(billableProductivityPercentage) +
+      Math.round(nonBillableProductivityPercentage) +
+      Math.round(slackTimePercentage) +
+      Math.round(absencePercentage)
+    return {
+      workedHours,
+      billableProductivityPercentage,
+      nonBillableProductivityPercentage,
+      slackTimePercentage,
+      absencePercentage,
+      totalProductivityPercentage,
+      total,
+      roundedTotal,
+    }
   }
 
   private async emptyWorkedHoursFor(allUsers: UserProfileWithUidType[]) {
