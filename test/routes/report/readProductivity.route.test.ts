@@ -130,6 +130,24 @@ test('read productivity report: no working day', async (t) => {
     t.same(result, expected)
 })
 
+test('read productivity report: no working day with name filter', async (t) => {
+    const company = 'it'
+    const token = getToken(company)
+
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/report/productivity?from=2024-01-06&to=2024-01-06&name=Micol',
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
+    })
+
+    t.equal(response.statusCode, 200)
+    const result = response.json<ProductivityReportResponseType>();
+
+    t.same(result, [])
+})
+
 test('read productivity report 1 month', async (t) => {
     const company = 'it'
     const token = getToken(company)
@@ -554,6 +572,22 @@ test('read productivity report - only name filter', async (t) => {
     ]
 
     t.same(result, expected)
+})
+
+test('read productivity report - non-existing name filter', async (t) => {
+    const company = 'it'
+    const token = getToken(company)
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/report/productivity?from=2024-01-01&to=2024-01-01&name=Pippo',
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
+    })
+
+    t.equal(response.statusCode, 200)
+    const result = response.json<ProductivityReportResponseType>();
+    t.same(result, [])
 })
 
 test('read productivity report - customer & project & task & name filter', async (t) => {
