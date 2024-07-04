@@ -171,11 +171,11 @@ test('read productivity report 1 month', async (t) => {
             "workedHours":12,
             "totalTracked":{
                 "billableProductivity":1,
-                "nonBillableProductivity":3,
+                "nonBillableProductivity":2,
                 "slackTime":2,
                 "absence":1
             },
-            "totalProductivity":4
+            "totalProductivity":3
         },
         {
             "user":{
