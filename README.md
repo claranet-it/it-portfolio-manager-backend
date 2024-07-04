@@ -112,6 +112,9 @@ You can find the swagger documentation at the following url:
 ```bash
 https://<app-url>/api/documentation
 ```
+```bash
+local: http://localhost:3000/dev/documentation/static/index.html
+```
 
 ## Set up Google authentication in local environment
 
