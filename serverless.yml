@@ -30,6 +30,7 @@ provider:
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
+            - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerCompanies, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerCrews, Arn ]
         - Effect: "Allow"
@@ -273,6 +274,8 @@ resources:
             AttributeType: S
           - AttributeName: timeEntryDate
             AttributeType: S
+          - AttributeName: company
+            AttributeType: S
         KeySchema:
           - AttributeName: uid
             KeyType: HASH
@@ -281,6 +284,18 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: companyIndex
+            KeySchema:
+              - AttributeName: company
+                KeyType: HASH
+              - AttributeName: timeEntryDate
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
     ItPortfolioManagerCompanies:
       Type: AWS::DynamoDB::Table
       Properties:

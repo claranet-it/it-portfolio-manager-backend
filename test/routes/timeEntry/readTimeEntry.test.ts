@@ -54,8 +54,17 @@ test('Return time entries', async (t) => {
   })
   t.equal(response.statusCode, 200)
   const result = response.json<TimeEntryRowListType>()
-  t.equal(result.length, 2)
+  t.equal(result.length, 3)
   t.same(result, [
+    {
+      user: 'nicholas.crow@email.com',
+      date: '2024-01-01',
+      company: 'it',
+      customer: 'Claranet',
+      project: 'Assenze',
+      task: 'Donazione sangue',
+      hours: 2,
+    },
     {
       user: 'nicholas.crow@email.com',
       date: '2024-01-01',
@@ -72,7 +81,7 @@ test('Return time entries', async (t) => {
       customer: 'Claranet',
       project: 'Slack time',
       task: 'formazione',
-      hours: 2,
+      hours: 4,
     },
   ])
 })
