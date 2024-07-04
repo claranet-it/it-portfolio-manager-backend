@@ -1,22 +1,32 @@
 [
   {
     "company": { "S": "it" },
+    "projectType": {"S":  "slack-time"},
     "customerProject": { "S": "Claranet#Slack time" },    
     "tasks": { "SS": ["formazione"] }
   },
   {
-    "company": { "S": "it" },    
+    "company": { "S": "it" },
+    "projectType": {"S":  "non-billable"},
     "customerProject": {"S": "Claranet#Funzionale"},
     "tasks": { "SS": ["Attività di portfolio", "Management"] }
   },
   {
     "company": { "S": "it" },
+    "projectType": {"S":  "billable"},
     "customerProject": {"S": "test customer#SOR Sviluppo"},
     "tasks": { "SS": ["Iterazione 1", "Iterazione 2"] }
   },
   {
     "company": { "S": "other company" },
+    "projectType": {"S":  "billable"},
     "customerProject": {"S": "test customer of other company#test project of other company"},
     "tasks": { "SS": ["test task 1 of other company", "test task 2 of other company"] }
+  },
+  {
+    "company": { "S": "it" },
+    "projectType": {"S":  "absence"},
+    "customerProject": {"S": "Claranet#Assenze"},
+    "tasks": { "SS": ["Festività", "Malattia"] }
   }
 ]

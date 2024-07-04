@@ -30,6 +30,7 @@ provider:
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerEffort, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
+            - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerCompanies, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerCrews, Arn ]
         - Effect: "Allow"
@@ -50,7 +51,7 @@ plugins:
 custom:
   variables:
     stages:
-      - dev      
+      - dev
       - prod
       - test
       - stage
@@ -65,7 +66,7 @@ custom:
       stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
 
-    apiBaseUrl: 
+    apiBaseUrl:
       dev: http://localhost:3000
       test: http://localhost:3000
       stage: 'https://6w09n1v47j.execute-api.eu-south-1.amazonaws.com'
@@ -147,7 +148,7 @@ functions:
 
         if year is not specified consider [[CURRENT_YEAR]]
 
-        output_format: {"start": mm_yy "month_number": ...}"' 
+        output_format: {"start": mm_yy "month_number": ...}"'
 
     events:
       - http:
@@ -236,7 +237,7 @@ resources:
           - AttributeName: uid
             KeyType: HASH
           - AttributeName: month_year
-            KeyType: RANGE       
+            KeyType: RANGE
         GlobalSecondaryIndexes:
           - IndexName: companyIndex
             KeySchema:
@@ -253,7 +254,7 @@ resources:
         TableName: "ItPortfolioManager-Task-${opt:stage, 'dev'}"
         AttributeDefinitions:
           - AttributeName: customerProject
-            AttributeType: S                      
+            AttributeType: S
           - AttributeName: company
             AttributeType: S
         KeySchema:
@@ -270,8 +271,10 @@ resources:
         TableName: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
         AttributeDefinitions:
           - AttributeName: uid
-            AttributeType: S                      
+            AttributeType: S
           - AttributeName: timeEntryDate
+            AttributeType: S
+          - AttributeName: company
             AttributeType: S
         KeySchema:
           - AttributeName: uid
@@ -280,7 +283,19 @@ resources:
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
-          WriteCapacityUnits: 1          
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: companyIndex
+            KeySchema:
+              - AttributeName: company
+                KeyType: HASH
+              - AttributeName: timeEntryDate
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
     ItPortfolioManagerCompanies:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -290,7 +305,7 @@ resources:
             AttributeType: S
         KeySchema:
           - AttributeName: domain
-            KeyType: HASH          
+            KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -302,14 +317,13 @@ resources:
           - AttributeName: company
             AttributeType: S
           - AttributeName: name
-            AttributeType: S            
+            AttributeType: S
         KeySchema:
           - AttributeName: company
-            KeyType: HASH     
+            KeyType: HASH
           - AttributeName: name
-            KeyType: RANGE    
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
 
-                

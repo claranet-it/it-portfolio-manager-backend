@@ -3,6 +3,7 @@
     "uid": "nicholas.crow@email.com",
     "crew": "moon",
     "company": "us",
+    "picture": "picture-url",
     "name": "Nicholas Crow",
     "crewLeader": true,
     "place": "Jesi",
@@ -21,5 +22,12 @@
     "crew": "bees",
     "company": "it",
     "name" : "test italian"
+  },
+  {
+    "uid": "micol.ts@email.com",
+    "crew": "sun",
+    "company": "it",
+    "name": "Micol Panetta",
+    "picture": "picture-url"
   }
 ]

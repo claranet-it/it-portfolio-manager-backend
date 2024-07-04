@@ -46,6 +46,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             request.user.email,
             request.user.name,
             request.user.company,
+            request.user.picture,
             {
               ...request.body,
             },
