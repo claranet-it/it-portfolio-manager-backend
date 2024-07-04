@@ -51,7 +51,8 @@ export class ReportService {
     let allUsersProfiles: UserProfileWithUidType[] =
       await this.userProfileRepository.getAllUserProfiles()
 
-    const filter = params.customer || params.project || params.task || params.name;
+    const filter =
+      params.customer || params.project || params.task || params.name
     if (filter) {
       allUsersProfiles = allUsersProfiles.filter((profile) => {
         return companyTasks.some((task) => task.user == profile.uid)
@@ -61,7 +62,7 @@ export class ReportService {
     const totalWorkingDaysInPeriod = this.countWeekdays(params.from, params.to)
 
     if (totalWorkingDaysInPeriod === 0) {
-      if(filter) {
+      if (filter) {
         return []
       }
       return await this.emptyWorkedHoursFor(allUsersProfiles)
