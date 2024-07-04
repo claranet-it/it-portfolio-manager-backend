@@ -129,17 +129,16 @@ export class ReportService {
 
       switch (projectType) {
         case ProjectType.ABSENCE:
-          absenceHours = absenceHours + task.hours
+          absenceHours += task.hours
           break
         case ProjectType.BILLABLE:
-          billableProductivityHours = billableProductivityHours + task.hours
+          billableProductivityHours += task.hours
           break
         case ProjectType.NON_BILLABLE:
-          nonBillableProductivityHours +=
-            nonBillableProductivityHours + task.hours
+          nonBillableProductivityHours += task.hours
           break
         case ProjectType.SLACK_TIME:
-          slackTimeHours = slackTimeHours + task.hours
+          slackTimeHours += task.hours
           break
         default:
           break
