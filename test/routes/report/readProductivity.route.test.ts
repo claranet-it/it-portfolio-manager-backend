@@ -227,6 +227,85 @@ test('read productivity report 1 month', async (t) => {
     t.same(result, expected)
 })
 
+test('read productivity report 1 week', async (t) => {
+    const company = 'it'
+    const token = getToken(company)
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/report/productivity?from=2024-01-01&to=2024-01-07',
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
+    })
+
+    t.equal(response.statusCode, 200)
+    const result = response.json<ProductivityReportResponseType>();
+    const expected = [
+        {
+            "user":{
+                "email":"micol.ts@email.com",
+                "name":"Micol Panetta",
+                "picture":"picture-url"
+            },
+            "workedHours":8,
+            "totalTracked":{
+                "billableProductivity":5,
+                "nonBillableProductivity":5,
+                "slackTime":5,
+                "absence":5
+            },
+            "totalProductivity":10
+        },
+        {
+            "user":{
+                "email":"george.python@email.com",
+                "name":"George Python",
+                "picture":""
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billableProductivity":0,
+                "nonBillableProductivity":0,
+                "slackTime":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
+                "email":"nicholas.crow@email.com",
+                "name":"Nicholas Crow",
+                "picture":"picture-url"
+            },
+            "workedHours":8,
+            "totalTracked":{
+                "billableProductivity":0,
+                "nonBillableProductivity":5,
+                "slackTime":10,
+                "absence":5
+            },
+            "totalProductivity":5
+        },
+        {
+            "user":{
+                "email":"testIt@test.com",
+                "name":"test italian",
+                "picture":""
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billableProductivity":0,
+                "nonBillableProductivity":0,
+                "slackTime":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        }
+    ]
+
+    t.same(result, expected)
+})
+
 test('read productivity report 1 day', async (t) => {
     const company = 'it'
     const token = getToken(company)

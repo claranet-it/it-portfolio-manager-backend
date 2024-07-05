@@ -31,6 +31,7 @@ import { NetworkingService } from '@src/core/Networking/service/NetworkingServic
 import { NetworkingRepository } from '@src/infrastructure/Networking/repository/NetworkingRepository'
 import { ReportRepository } from '@src/infrastructure/Report/repository/ReportRepository'
 import { ReportService } from '@src/core/Report/service/ReportService'
+import { ProductivityCalculator } from '@src/core/Report/service/ProductivityCalculator'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -102,6 +103,10 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       reportService: asClass(ReportService),
+    })
+
+    container.register({
+      productivityCalculator: asClass(ProductivityCalculator),
     })
 
     container.register({
