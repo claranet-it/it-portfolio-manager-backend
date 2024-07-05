@@ -67,22 +67,22 @@ test('read all efforts without params', async (t) => {
             },
         },
         {
-            'george.python@email.com': {
-                crew: 'sun',
-                company: 'us',
-                name: 'George Python',
-                effort: [
+            "george.python@email.com": {
+                "crew": "sun",
+                "company": "us",
+                "name": "George Python",
+                "effort": [
                     {
-                        month_year: '01_23',
-                        confirmedEffort: 80,
-                        tentativeEffort: 0,
-                        notes: 'Moovtech',
+                        "month_year": "01_23",
+                        "confirmedEffort": 80,
+                        "tentativeEffort": 0,
+                        "notes": "Moovtech",
                     },
                     {
-                        month_year: '02_23',
-                        confirmedEffort: 50,
-                        tentativeEffort: 0,
-                        notes: 'Moovtech',
+                        "month_year": "02_23",
+                        "confirmedEffort": 50,
+                        "tentativeEffort": 0,
+                        "notes": "Moovtech",
                     },
                 ],
             },
@@ -90,7 +90,7 @@ test('read all efforts without params', async (t) => {
         {
             'nicholas.crow@email.com': {
                 crew: 'moon',
-                company: 'us',
+                company: 'it',
                 name: 'Nicholas Crow',
                 effort: [
                     {
@@ -138,7 +138,7 @@ test('read all efforts with uid param', async (t) => {
         {
             'nicholas.crow@email.com': {
                 crew: 'moon',
-                company: 'us',
+                company: 'it',
                 name: 'Nicholas Crow',
                 effort: [
                     {
@@ -185,18 +185,18 @@ test('read next efforts without params', async (t) => {
 
     const expectedResult = [
         {
-            'george.python@email.com': {
+            'micol.us@email.com': {
                 crew: 'sun',
                 company: 'us',
-                name: 'George Python',
+                name: 'Micol Panetta',
                 effort: nextMonthsEmptyEffort(3),
             },
         },
         {
-            'nicholas.crow@email.com': {
-                crew: 'moon',
+            'george.python@email.com': {
+                crew: 'sun',
                 company: 'us',
-                name: 'Nicholas Crow',
+                name: 'George Python',
                 effort: nextMonthsEmptyEffort(3),
             },
         },
@@ -230,7 +230,7 @@ test('read next efforts with uid param', async (t) => {
         {
             'nicholas.crow@email.com': {
                 crew: 'moon',
-                company: 'us',
+                company: 'it',
                 name: 'Nicholas Crow',
                 effort: nextMonthsEmptyEffort(3),
             },
@@ -259,18 +259,18 @@ test('read effort with months param', async (t) => {
     t.equal(response.statusCode, 200)
     const expectedResult = [
         {
-            'george.python@email.com': {
+            'micol.us@email.com': {
                 crew: 'sun',
                 company: 'us',
-                name: 'George Python',
+                name: 'Micol Panetta',
                 effort: nextMonthsEmptyEffort(2),
             },
         },
         {
-            'nicholas.crow@email.com': {
-                crew: 'moon',
+            'george.python@email.com': {
+                crew: 'sun',
                 company: 'us',
-                name: 'Nicholas Crow',
+                name: 'George Python',
                 effort: nextMonthsEmptyEffort(2),
             },
         },
@@ -284,16 +284,16 @@ const inputs = [
         company: 'us',
         expectedUsers: [
             {
-                uid: 'nicholas.crow@email.com',
-                crew: "moon",
-                company: "us",
-                name: "Nicholas Crow"
-            },
-            {
                 uid: 'george.python@email.com',
                 crew: "sun",
                 company: "us",
                 name: "George Python"
+            },
+            {
+                uid: "micol.us@email.com",
+                "crew": "sun",
+                "company": "us",
+                "name": "Micol Panetta",
             }
         ]
     },
@@ -301,17 +301,22 @@ const inputs = [
         company: 'it',
         expectedUsers: [
             {
-                uid: "testIt@test.com",
-                crew: "bees",
-                company: "it",
-                name: "test italian"
-            },
-            {
                 uid: "micol.ts@email.com",
                 crew: "sun",
                 company: "it",
                 name: "Micol Panetta",
-                picture: "picture-url"
+            },
+            {
+                uid: "nicholas.crow@email.com",
+                crew: "moon",
+                company: "it",
+                name: "Nicholas Crow",
+            },
+            {
+                uid: "testIt@test.com",
+                "crew": "bees",
+                "company": "it",
+                "name": "test italian",
             }
         ]
     },
@@ -337,7 +342,6 @@ inputs.forEach((input) => {
         t.equal(response.statusCode, 200)
         const efforts = response.json<EffortResponseType>()
         t.equal(efforts.length, input.expectedUsers.length)
-
 
         input.expectedUsers.forEach((user) => {
             const effort = efforts.find((effort) => Object.keys(effort)[0] === user.uid);

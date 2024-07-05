@@ -82,21 +82,6 @@ test('read productivity report: no working day', async (t) => {
         },
         {
             "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
                 "picture":"picture-url"
@@ -179,21 +164,6 @@ test('read productivity report 1 month', async (t) => {
         },
         {
             "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
                 "picture":"picture-url"
@@ -258,21 +228,6 @@ test('read productivity report 1 week', async (t) => {
         },
         {
             "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
-        },
-        {
-            "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
                 "picture":"picture-url"
@@ -334,21 +289,6 @@ test('read productivity report 1 day', async (t) => {
                 "absence":25
             },
             "totalProductivity":50
-        },
-        {
-            "user":{
-                "email":"george.python@email.com",
-                "name":"George Python",
-                "picture":""
-            },
-            "workedHours":0,
-            "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
-                "absence":0
-            },
-            "totalProductivity":0
         },
         {
             "user":{

@@ -49,7 +49,7 @@ export class ReportService {
     )
 
     let allUsersProfiles: UserProfileWithUidType[] =
-      await this.userProfileRepository.getAllUserProfiles()
+      await this.userProfileRepository.getByCompany(params.company)
 
     const filter =
       params.customer || params.project || params.task || params.name
