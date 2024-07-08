@@ -96,6 +96,18 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     return []
   }
 
+  async getAllCompleteUsersProfiles(): Promise<CompleteUserProfileType[]> {
+    const command = new ScanCommand({
+      TableName: getTableName('UserProfile'),
+    })
+    const result = await this.dynamoDBClient.send(command)
+    if (result?.Items) {
+      return result.Items.map((item) => this.getCompleteUserProfileFromDynamoItem(item))
+    }
+
+    return []
+  }
+
   async getByCompany(company: string): Promise<UserProfileWithUidType[]> {
     const command = new QueryCommand({
       TableName: getTableName('UserProfile'),

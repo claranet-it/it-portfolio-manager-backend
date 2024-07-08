@@ -5,7 +5,7 @@ import {
 import { ReportRepositoryInterface } from '@src/core/Report/repository/ReportRepositoryInterface'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { DateRangeError } from '@src/core/customExceptions/DateRangeError'
-import { UserProfileWithUidType } from '@src/core/User/model/user.model'
+import { CompleteUserProfileType, UserProfileWithUidType } from '@src/core/User/model/user.model'
 import { FieldsOrderError } from '@src/core/customExceptions/FieldsOrderError'
 import { ProductivityCalculator } from '@src/core/Report/service/ProductivityCalculator'
 
@@ -48,8 +48,8 @@ export class ReportService {
       params.company,
     )
 
-    let allUsersProfiles: UserProfileWithUidType[] =
-      await this.userProfileRepository.getByCompany(params.company)
+    let allUsersProfiles: CompleteUserProfileType[] =
+      await this.userProfileRepository.getAllCompleteUsersProfiles()
 
     const filter =
       params.customer || params.project || params.task || params.name
@@ -71,8 +71,6 @@ export class ReportService {
     return await Promise.all(
       allUsersProfiles.map(async (user) => {
         const userTasks = companyTasks.filter((task) => task.user === user.uid)
-        const userInfo =
-          await this.userProfileRepository.getCompleteUserProfile(user.uid)
         const {
           workedHours,
           billableProductivityPercentage,
@@ -88,9 +86,9 @@ export class ReportService {
 
         return {
           user: {
-            email: userInfo?.uid ?? '',
-            name: userInfo?.name ?? '',
-            picture: userInfo?.picture ?? '',
+            email: user?.uid ?? '',
+            name: user?.name ?? '',
+            picture: user?.picture ?? '',
           },
           workedHours,
           totalTracked: {
