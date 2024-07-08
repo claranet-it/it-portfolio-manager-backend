@@ -5,7 +5,7 @@ import {
 import { ReportRepositoryInterface } from '@src/core/Report/repository/ReportRepositoryInterface'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { DateRangeError } from '@src/core/customExceptions/DateRangeError'
-import { CompleteUserProfileType, UserProfileWithUidType } from '@src/core/User/model/user.model'
+import { CompleteUserProfileType } from '@src/core/User/model/user.model'
 import { FieldsOrderError } from '@src/core/customExceptions/FieldsOrderError'
 import { ProductivityCalculator } from '@src/core/Report/service/ProductivityCalculator'
 
@@ -49,7 +49,7 @@ export class ReportService {
     )
 
     let allUsersProfiles: CompleteUserProfileType[] =
-      await this.userProfileRepository.getAllCompleteUsersProfiles()
+      await this.userProfileRepository.getByCompany(params.company)
 
     const filter =
       params.customer || params.project || params.task || params.name
@@ -103,7 +103,7 @@ export class ReportService {
     )
   }
 
-  private async emptyWorkedHoursFor(allUsers: UserProfileWithUidType[]) {
+  private async emptyWorkedHoursFor(allUsers: CompleteUserProfileType[]) {
     return await Promise.all(
       allUsers.map(async (user) => {
         const userInfo =
