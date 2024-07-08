@@ -3,7 +3,7 @@ import { ProjectType } from '@src/core/Report/model/productivity.model'
 
 export class ProductivityCalculator {
   public calculate(
-    userTasks: TimeEntryRowType[],
+    userTimeEntries: TimeEntryRowType[],
     projectTypes: {
       project: string
       projectType: string
@@ -16,7 +16,7 @@ export class ProductivityCalculator {
     let absenceHours = 0
     let workedHours = 0
 
-    userTasks.map((task) => {
+    userTimeEntries.map((task) => {
       const projectType =
         projectTypes.find((projectType) => projectType.project === task.project)
           ?.projectType ?? ProjectType.SLACK_TIME
@@ -60,6 +60,8 @@ export class ProductivityCalculator {
       Math.floor(slackTimePercentage) +
       Math.floor(absencePercentage) +
       Math.floor(missingHoursPercentage)
+    console.log("ROUNDED TOTAL")
+    console.log(JSON.stringify(roundedTotal, null, 2))
 
     const percentages = {
       billable: billableProductivityPercentage,
@@ -68,6 +70,8 @@ export class ProductivityCalculator {
       absence: absencePercentage,
       missing: missingHoursPercentage,
     }
+    console.log("PERCENTAGES")
+    console.log(JSON.stringify(percentages, null, 2))
 
     let roundedBillablePercentage = Math.floor(billableProductivityPercentage)
     let roundedNonBillablePercentage = Math.floor(
@@ -82,9 +86,13 @@ export class ProductivityCalculator {
 
     const percentageGap = 100 - roundedTotal
     let decimals = this.calculateDecimalParts(percentages)
+    console.log("DECIMALS")
+    console.log(JSON.stringify(decimals, null, 2))
 
     for (let i = 0; i < percentageGap; i++) {
       const max = this.calculateMaxDecimal(decimals)
+      console.log("MAX")
+      console.log(max)
       switch (max.name) {
         case 'billableDecimal':
           roundedBillablePercentage += 1
