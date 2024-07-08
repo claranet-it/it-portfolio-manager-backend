@@ -22,7 +22,7 @@
   {
     "uid": "george.python@email.com",
     "name": "George Python",
-    "company": "it",
+    "company": "us",
     "crew": "sun",
     "skill": "PHP",
     "skillCategory": "Developer",
@@ -32,7 +32,7 @@
   {
     "uid": "george.python@email.com",
     "name": "George Python",
-    "company": "it",
+    "company": "us",
     "crew": "sun",
     "skill": "Python",
     "skillCategory": "",
@@ -42,7 +42,7 @@
   {
     "uid": "micol.ts@email.com",
     "name": "Micol Ts",
-    "company": "us",
+    "company": "it",
     "crew": "sun",
     "skill": "PHP",
     "skillCategory": "Developer",
@@ -52,7 +52,7 @@
   {
     "uid": "micol.ts@email.com",
     "name": "Micol Ts",
-    "company": "us",
+    "company": "it",
     "crew": "sun",
     "skill": "Python",
     "skillCategory": "",

@@ -25,8 +25,8 @@
     "confirmedEffort": 80,
     "tentativeEffort": 0,
     "notes": "Moovtech",
-    "name": "Nicholas Crow",
-    "company": "it",
+    "name": "George Python",
+    "company": "us",
     "crew": "sun"
   },
   {
@@ -35,8 +35,8 @@
     "confirmedEffort": 50,
     "tentativeEffort": 0,
     "notes": "Moovtech",
-    "name": "Nicholas Crow",
-    "company": "it",
+    "name": "George Python",
+    "company": "us",
     "crew": "sun"
   },
   {
@@ -46,7 +46,7 @@
     "tentativeEffort": 10,
     "notes": "Moovtech",
     "name": "Micol Ts",
-    "company": "us",
+    "company": "it",
     "crew": "sun"
   },
   {
@@ -56,7 +56,7 @@
     "tentativeEffort": 75,
     "notes": "Brickly",
     "name": "Micol Ts",
-    "company": "us",
+    "company": "it",
     "crew": "sun"
   }
 ]
