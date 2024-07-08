@@ -90,27 +90,29 @@ export class ProductivityCalculator {
     console.log(JSON.stringify(decimals, null, 2))
 
     for (let i = 0; i < percentageGap; i++) {
-      const max = this.calculateMaxDecimal(decimals)
-      console.log("MAX")
-      console.log(max)
-      switch (max.name) {
-        case 'billableDecimal':
-          roundedBillablePercentage += 1
-          break
-        case 'nonBillableDecimal':
-          roundedNonBillablePercentage += 1
-          break
-        case 'slackDecimal':
-          roundedSlackPercentage += 1
-          break
-        case 'absenceDecimal':
-          roundedAbsencePercentage += 1
-          break
-        default:
-          break
-      }
+      if(decimals.length > 0) {
+        const max = this.calculateMaxDecimal(decimals)
+        console.log("MAX")
+        console.log(max)
+        switch (max.name) {
+          case 'billableDecimal':
+            roundedBillablePercentage += 1
+            break
+          case 'nonBillableDecimal':
+            roundedNonBillablePercentage += 1
+            break
+          case 'slackDecimal':
+            roundedSlackPercentage += 1
+            break
+          case 'absenceDecimal':
+            roundedAbsencePercentage += 1
+            break
+          default:
+            break
+        }
 
-      decimals = decimals.filter((item) => item.name !== max.name)
+        decimals = decimals.filter((item) => item.name !== max.name)
+      }
     }
 
     return {
