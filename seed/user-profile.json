@@ -2,7 +2,7 @@
   {
     "uid": "nicholas.crow@email.com",
     "crew": "moon",
-    "company": "us",
+    "company": "it",
     "picture": "picture-url",
     "name": "Nicholas Crow",
     "crewLeader": true,
@@ -27,6 +27,13 @@
     "uid": "micol.ts@email.com",
     "crew": "sun",
     "company": "it",
+    "name": "Micol Panetta",
+    "picture": "picture-url"
+  },
+  {
+    "uid": "micol.us@email.com",
+    "crew": "sun",
+    "company": "us",
     "name": "Micol Panetta",
     "picture": "picture-url"
   }

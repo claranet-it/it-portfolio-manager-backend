@@ -2,7 +2,6 @@ import {
   CompleteUserProfileType,
   UpdateUserProfileType,
   UserProfileType,
-  UserProfileWithUidType,
 } from '@src/core/User/model/user.model'
 
 export interface UserProfileRepositoryInterface {
@@ -18,13 +17,11 @@ export interface UserProfileRepositoryInterface {
     userProfile: UpdateUserProfileType,
   ): Promise<void>
 
-  getAllUserProfiles(): Promise<UserProfileWithUidType[]>
-
-  getAllCompleteUsersProfiles(): Promise<CompleteUserProfileType[]>
+  getAllUserProfiles(): Promise<CompleteUserProfileType[]>
 
   getByName(name: string, company: string): Promise<{ email: string }[]>
 
-  getByCompany(company: string): Promise<UserProfileWithUidType[]>
+  getByCompany(company: string): Promise<CompleteUserProfileType[]>
 
   delete(uid: string): Promise<void>
 }

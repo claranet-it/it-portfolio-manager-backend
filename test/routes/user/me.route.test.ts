@@ -75,7 +75,7 @@ test('get user info with user profile', async t => {
     t.equal(user.name, 'Nicholas Crow')
     t.equal(user.picture, 'https://test.com/nicholas.crow.jpg')
     t.equal(user.crew, 'moon')
-    t.equal(user.company, 'us')
+    t.equal(user.company, 'it')
     t.equal(user.crewLeader, true)
     t.equal(user.place, 'Jesi')
     t.equal(user.workingExperience, 'APRA')
