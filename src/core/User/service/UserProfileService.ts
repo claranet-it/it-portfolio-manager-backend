@@ -1,4 +1,4 @@
-import { UserProfileType, UserProfileWithUidType } from '../model/user.model'
+import { CompleteUserProfileType, UserProfileType } from '../model/user.model'
 import { UserProfileRepositoryInterface } from '../repository/UserProfileRepositoryInterface'
 
 export class UserProfileService {
@@ -24,11 +24,11 @@ export class UserProfileService {
     )
   }
 
-  async getAllUserProfiles(): Promise<UserProfileWithUidType[]> {
+  async getAllUserProfiles(): Promise<CompleteUserProfileType[]> {
     return this.userProfileRepository.getAllUserProfiles()
   }
 
-  async getByCompany(company: string): Promise<UserProfileWithUidType[]> {
+  async getByCompany(company: string): Promise<CompleteUserProfileType[]> {
     return this.userProfileRepository.getByCompany(company)
   }
 
