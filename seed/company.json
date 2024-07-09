@@ -10,5 +10,9 @@
     {
         "domain": "test.com",
         "name": "test company"
+    },
+    {
+        "domain": "test.com",
+        "name": "cna test"
     }
 ]

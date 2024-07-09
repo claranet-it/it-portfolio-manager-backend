@@ -35,8 +35,8 @@ export class TimeEntryService {
               await this.userProfileRepository.getCompleteUserProfile(
                 entry.user,
               )
-            return {
-              description: '',
+            const response = {
+              description: entry.task, //TODO
               user: {
                 email: user?.uid ?? '',
                 name: user?.name ?? '',
@@ -57,6 +57,8 @@ export class TimeEntryService {
                 duration: entry.hours.toString(),
               },
             }
+            console.log(JSON.stringify(response, null, 2))
+            return response
           }),
         )
       : []

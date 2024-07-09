@@ -47,7 +47,7 @@ test('Return time entries for cna', async (t) => {
 
     const expected = [
         {
-            "description":"",
+            "description":"MALATTIA (INVIARE CERTIFICATO MEDICO)",
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta"
@@ -55,7 +55,7 @@ test('Return time entries for cna', async (t) => {
             "userId":"micol.ts@email.com",
             "billable":false,
             "task":{
-                "name":"Malattia"
+                "name":"MALATTIA (INVIARE CERTIFICATO MEDICO)"
             },
             "project":{
                 "name":"Assenze",

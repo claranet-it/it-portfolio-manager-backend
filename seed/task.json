@@ -27,6 +27,6 @@
     "company": { "S": "it" },
     "projectType": {"S":  "absence"},
     "customerProject": {"S": "Claranet#Assenze"},
-    "tasks": { "SS": ["Festività", "Malattia"] }
+    "tasks": { "SS": ["Festività", "MALATTIA (INVIARE CERTIFICATO MEDICO)"] }
   }
 ]
