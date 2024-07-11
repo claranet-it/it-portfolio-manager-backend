@@ -20,6 +20,6 @@ export class DummySSMClient implements SSMClientInterface {
     return Promise.resolve('')
   }
   async getBricklyApiKey(): Promise<string> {
-    return Promise.resolve(process.env.BRICKLY_API_KEY ?? '1234')
+    return Promise.resolve('1234')
   }
 }

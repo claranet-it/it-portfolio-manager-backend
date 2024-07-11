@@ -52,6 +52,7 @@ export class AuthService {
     const isTest = process.env.STAGE_NAME === 'test'
     const ssmClient: SSMClientInterface =
         isTest || process.env.IS_OFFLINE ? new DummySSMClient() : new SSMClient()
+
     const storedApiKey = await ssmClient.getBricklyApiKey();
 
     if (header.apiKey !== storedApiKey) {

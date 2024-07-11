@@ -76,7 +76,7 @@ export class SSMClient implements SSMClientInterface {
 
   async getBricklyApiKey(): Promise<string> {
     const key = await this.ssm.getParameter({
-      Name: process.env.BRICKLY_API_KEY,
+      Name: process.env.BRICKLY_API_KEY_ARN,
       WithDecryption: true,
     })
     if (!key.Parameter || !key.Parameter.Value) {

@@ -76,7 +76,7 @@ custom:
       - dev
       - test
     start:
-      port: 8002
+      port: 8000
       inMemory: true
       heapInitial: 200m
       heapMax: 1g
@@ -112,6 +112,7 @@ functions:
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
+      BRICKLY_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/brickly-api-key
       GOOGLE_CLIENT_ID_ARN: ${self:custom.variables.googleClientId.${opt:stage, 'dev'}}
       GOOGLE_CLIENT_SECRET_ARN: ${self:custom.variables.googleClientSecret.${opt:stage, 'dev'}}
       GOOGLE_CALLBACK_URL: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}/${opt:stage, 'dev'}/api/auth/google/oauthCallback
@@ -154,9 +155,11 @@ functions:
       - http:
           path: /
           method: ANY
+          cors: true
       - http:
           path: /{any+}
           method: ANY
+          cors: true
 
   removeResignedPeople:
     handler: src/handlers/removeResignedPeople.handler
