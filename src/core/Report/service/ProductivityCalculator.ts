@@ -3,7 +3,7 @@ import { ProjectType } from '@src/core/Report/model/productivity.model'
 
 export class ProductivityCalculator {
   public calculate(
-    userTasks: TimeEntryRowType[],
+    userTimeEntries: TimeEntryRowType[],
     projectTypes: {
       project: string
       projectType: string
@@ -16,28 +16,29 @@ export class ProductivityCalculator {
     let absenceHours = 0
     let workedHours = 0
 
-    userTasks.map((task) => {
-      const projectType =
-        projectTypes.find((projectType) => projectType.project === task.project)
-          ?.projectType ?? ProjectType.SLACK_TIME
+    userTimeEntries.map((timeEntry) => {
+      const projectType = projectTypes.find(
+        (projectType) => projectType.project === timeEntry.project,
+      )?.projectType
 
       switch (projectType) {
         case ProjectType.ABSENCE:
-          absenceHours += task.hours
+          absenceHours += timeEntry.hours
           break
         case ProjectType.BILLABLE:
-          billableProductivityHours += task.hours
+          billableProductivityHours += timeEntry.hours
           break
         case ProjectType.NON_BILLABLE:
-          nonBillableProductivityHours += task.hours
+          nonBillableProductivityHours += timeEntry.hours
           break
         case ProjectType.SLACK_TIME:
-          slackTimeHours += task.hours
+          slackTimeHours += timeEntry.hours
           break
         default:
+          slackTimeHours += timeEntry.hours
           break
       }
-      workedHours += task.hours
+      workedHours += timeEntry.hours
     })
 
     const totalHoursInAWorkingDay = 8

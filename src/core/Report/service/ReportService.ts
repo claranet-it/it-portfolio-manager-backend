@@ -39,10 +39,8 @@ export class ReportService {
       )
     }
 
-    const companyTasks = await this.reportRepository.getProductivityReport(
-      params,
-      uids,
-    )
+    const companyTimeEntries =
+      await this.reportRepository.getProductivityReport(params, uids)
 
     const projectTypes = await this.reportRepository.getProjectTypes(
       params.company,
@@ -55,7 +53,7 @@ export class ReportService {
       params.customer || params.project || params.task || params.name
     if (filter) {
       allUsersProfiles = allUsersProfiles.filter((profile) => {
-        return companyTasks.some((task) => task.user == profile.uid)
+        return companyTimeEntries.some((task) => task.user == profile.uid)
       })
     }
 
@@ -70,7 +68,9 @@ export class ReportService {
 
     return await Promise.all(
       allUsersProfiles.map(async (user) => {
-        const userTasks = companyTasks.filter((task) => task.user === user.uid)
+        const userTimeEntries = companyTimeEntries.filter(
+          (task) => task.user === user.uid,
+        )
         const {
           workedHours,
           billableProductivityPercentage,
@@ -79,7 +79,7 @@ export class ReportService {
           absencePercentage,
           totalProductivityPercentage,
         } = this.productivityCalculator.calculate(
-          userTasks,
+          userTimeEntries,
           projectTypes,
           totalWorkingDaysInPeriod,
         )
