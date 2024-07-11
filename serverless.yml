@@ -76,7 +76,7 @@ custom:
       - dev
       - test
     start:
-      port: 8000
+      port: 8002
       inMemory: true
       heapInitial: 200m
       heapMax: 1g
