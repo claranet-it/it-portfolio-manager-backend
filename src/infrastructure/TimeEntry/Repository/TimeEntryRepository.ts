@@ -162,14 +162,11 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       throw new Error('Month must be between 1 and 12')
     }
 
-    const startDate = new Date(year, month - 1, 1)
-    const endDate = new Date(year, month, 0)
+    const firstDayOfMonth = new Date(year, month-1, 1);
+    const lastDayOfMonth = new Date(year, month, 0);
 
-    startDate.setDate(startDate.getDate() + 1)
-    endDate.setDate(endDate.getDate() + 1)
-
-    const from = startDate.toISOString().split('T')[0]
-    const to = endDate.toISOString().split('T')[0]
+    const from = firstDayOfMonth.toISOString().substring(0, 10);
+    const to = lastDayOfMonth.toISOString().substring(0, 10);
 
     console.log(`FROM: ${from}`)
     console.log(`TO: ${to}`)
