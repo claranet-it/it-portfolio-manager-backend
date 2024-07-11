@@ -171,6 +171,8 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     const from = startDate.toISOString().split('T')[0]
     const to = endDate.toISOString().split('T')[0]
 
+    console.log(`FROM: ${from}`)
+    console.log(`TO: ${to}`)
     return { from, to }
   }
 }
