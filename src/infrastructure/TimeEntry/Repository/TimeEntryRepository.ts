@@ -148,7 +148,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         company: item.company?.S ?? '',
         customer: customer,
         project: project,
-        projectType: ProjectType.NON_BILLABLE,
+        projectType: ProjectType.ABSENCE,
         task: task,
         hours: parseFloat(hours),
         timeEntryDate: item.timeEntryDate?.S ?? '',
