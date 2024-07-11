@@ -38,7 +38,7 @@ test('Return time entries for cna', async (t) => {
         method: 'GET',
         url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
         headers: {
-            'X-Api-Key': `1242`,
+            'X-Api-Key': `1234`,
         },
     })
     t.equal(response.statusCode, 200)
