@@ -9,9 +9,12 @@ import {
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
   deleteTimeEntryWithUserType,
+  CnaReadParamType,
+  TimeEntryRowWithProjectType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryIntereface'
 import { getTableName } from '@src/core/db/TableName'
+import { ProjectType } from '@src/core/Report/model/productivity.model'
 
 export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
@@ -33,6 +36,32 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     return (
       result.Items?.map((item) => {
         return this.getTimeEntryFromDynamoDb(item)
+      }).flat() ?? []
+    )
+  }
+
+  async findTimeOffForCna(
+    params: CnaReadParamType,
+  ): Promise<TimeEntryRowWithProjectType[]> {
+    const { from, to } = this.getPeriodFromMonthAndYear(
+      params.month,
+      params.year,
+    )
+
+    const command = new QueryCommand({
+      TableName: getTableName('TimeEntry'),
+      KeyConditionExpression:
+        'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
+      ExpressionAttributeValues: {
+        ':uid': { S: params.user },
+        ':from': { S: from },
+        ':to': { S: to },
+      },
+    })
+    const result = await this.dynamoDBClient.send(command)
+    return (
+      result.Items?.map((item) => {
+        return this.getTimeOff(item)
       }).flat() ?? []
     )
   }
@@ -105,5 +134,43 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       })
     })
     return resultForUser
+  }
+
+  private getTimeOff(
+    item: Record<string, AttributeValue>,
+  ): TimeEntryRowWithProjectType[] {
+    const resultForUser: TimeEntryRowWithProjectType[] = []
+    item.tasks?.SS?.forEach((taskItem) => {
+      const [customer, project, task, hours] = taskItem.split('#')
+      resultForUser.push({
+        user: item.uid?.S ?? '',
+        date: item.timeEntryDate?.S ?? '',
+        company: item.company?.S ?? '',
+        customer: customer,
+        project: project,
+        projectType: ProjectType.ABSENCE,
+        task: task,
+        hours: parseFloat(hours),
+        timeEntryDate: item.timeEntryDate?.S ?? '',
+      })
+    })
+    return resultForUser.filter((result) => result.project === 'Assenze')
+  }
+
+  private getPeriodFromMonthAndYear(month: number, year: number) {
+    if (month < 1 || month > 12) {
+      throw new Error('Month must be between 1 and 12')
+    }
+
+    const startDate = new Date(year, month - 1, 1)
+    const endDate = new Date(year, month, 0)
+
+    startDate.setDate(startDate.getDate() + 1)
+    endDate.setDate(endDate.getDate() + 1)
+
+    const from = startDate.toISOString().split('T')[0]
+    const to = endDate.toISOString().split('T')[0]
+
+    return { from, to }
   }
 }

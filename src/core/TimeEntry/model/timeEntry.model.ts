@@ -6,6 +6,14 @@ export const TimeEntryReadParam = Type.Object({
   to: Type.RegExp(dateFormat),
 })
 
+export type CnaReadParamType = Static<typeof CnaReadParam>
+
+export const CnaReadParam = Type.Object({
+  user: Type.String(),
+  year: Type.Number(),
+  month: Type.Number(),
+})
+
 export type TimeEntryReadParamType = Static<typeof TimeEntryReadParam>
 
 export const TimeEntryReadParamWithUser = Type.Intersect([
@@ -27,11 +35,45 @@ export const TimeEntryRow = Type.Object({
   hours: Type.Number(),
 })
 
+export const TimeEntriesForCna = Type.Object({
+  description: Type.String(),
+  user: Type.Object({ email: Type.String(), name: Type.String() }),
+  userId: Type.String(),
+  billable: Type.Boolean(),
+  task: Type.Object({ name: Type.String() }),
+  project: Type.Object({
+    name: Type.String(),
+    billable: Type.Boolean(),
+    clientName: Type.String(),
+  }),
+  timeInterval: Type.Object({
+    start: Type.String(),
+    end: Type.String(),
+    duration: Type.String(),
+  }),
+})
+
+export const TimeEntryRowWithProject = Type.Object({
+  user: Type.String(),
+  date: Type.String(),
+  company: Type.String(),
+  customer: Type.String(),
+  project: Type.String(),
+  projectType: Type.String(),
+  task: Type.String(),
+  hours: Type.Number(),
+  timeEntryDate: Type.String(),
+})
+
 export const TimeEntryRowList = Type.Array(TimeEntryRow)
-
 export type TimeEntryRowType = Static<typeof TimeEntryRow>
-
 export type TimeEntryRowListType = Static<typeof TimeEntryRowList>
+
+export type TimeEntryRowWithProjectType = Static<typeof TimeEntryRowWithProject>
+
+export const TimeEntriesForCnaList = Type.Array(TimeEntriesForCna)
+export type TimeEntriesForCnaListType = Static<typeof TimeEntriesForCnaList>
+export type TimeEntriesForCnaType = Static<typeof TimeEntriesForCna>
 
 export const InsertTimeEntryRow = Type.Object({
   date: Type.RegExp(dateFormat),

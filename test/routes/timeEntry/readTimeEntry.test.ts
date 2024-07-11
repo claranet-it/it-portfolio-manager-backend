@@ -62,7 +62,7 @@ test('Return time entries', async (t) => {
       company: 'it',
       customer: 'Claranet',
       project: 'Assenze',
-      task: 'Donazione sangue',
+      task: 'DONAZIONE SANGUE',
       hours: 2,
     },
     {
