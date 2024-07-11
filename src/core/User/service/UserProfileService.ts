@@ -8,7 +8,9 @@ export class UserProfileService {
     return await this.userProfileRepository.getUserProfile(uid)
   }
 
-  async getCompleteUserProfile(uid: string): Promise<CompleteUserProfileType | null> {
+  async getCompleteUserProfile(
+    uid: string,
+  ): Promise<CompleteUserProfileType | null> {
     return await this.userProfileRepository.getCompleteUserProfile(uid)
   }
 
