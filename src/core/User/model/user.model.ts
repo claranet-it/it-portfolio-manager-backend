@@ -6,7 +6,11 @@ export const User = Type.Object({
   picture: Type.String(),
 })
 
-export type UserType = Static<typeof User>
+export const UserCompany = Type.Object({
+  company: Type.String(),
+})
+
+export type UserCompanyType = Static<typeof UserCompany>
 
 export const UserProfile = Type.Object({
   crew: Type.String(),
@@ -36,9 +40,18 @@ export const CompleteUserProfile = Type.Intersect([
   Type.Object({ picture: Type.String() }),
 ])
 
+export const CnaUserProfile = Type.Object({
+  email: Type.String(),
+  id: Type.String(),
+  name: Type.String(),
+})
+
 export type UserProfileWithUidType = Static<typeof UserProfileWithUid>
 
 export type CompleteUserProfileType = Static<typeof CompleteUserProfile>
+
+export const CnaUserProfileList = Type.Array(CnaUserProfile)
+export type CnaUserProfileListType = Static<typeof CnaUserProfileList>
 
 export const UpdateUserProfile = Type.Object({
   crew: Type.String(),

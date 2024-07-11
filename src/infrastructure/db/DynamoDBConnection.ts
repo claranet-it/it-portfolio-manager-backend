@@ -6,7 +6,7 @@ export class DynamoDBConnection {
     if (process.env.IS_OFFLINE) {
       dynamoDbClientOptions = {
         region: 'localhost',
-        endpoint: 'http://0.0.0.0:8000',
+        endpoint: 'http://0.0.0.0:8002',
         credentials: {
           accessKeyId: 'MockAccessKeyId',
           secretAccessKey: 'MockSecretAccessKey',
