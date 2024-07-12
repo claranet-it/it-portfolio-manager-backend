@@ -156,11 +156,11 @@ test('read productivity report 1 month', async (t) => {
             "workedHours":12,
             "totalTracked":{
                 "billableProductivity":1,
-                "nonBillableProductivity":2,
+                "nonBillableProductivity":3,
                 "slackTime":2,
-                "absence":1
+                "absence":0
             },
-            "totalProductivity":3
+            "totalProductivity":4
         },
         {
             "user":{
@@ -220,11 +220,11 @@ test('read productivity report 1 week', async (t) => {
             "workedHours":8,
             "totalTracked":{
                 "billableProductivity":5,
-                "nonBillableProductivity":5,
+                "nonBillableProductivity":8,
                 "slackTime":5,
-                "absence":5
+                "absence":2
             },
-            "totalProductivity":10
+            "totalProductivity":13
         },
         {
             "user":{
@@ -284,11 +284,11 @@ test('read productivity report 1 day', async (t) => {
             "workedHours":8,
             "totalTracked":{
                 "billableProductivity":25,
-                "nonBillableProductivity":25,
+                "nonBillableProductivity":38,
                 "slackTime":25,
-                "absence":25
+                "absence":12
             },
-            "totalProductivity":50
+            "totalProductivity":63
         },
         {
             "user":{
@@ -484,11 +484,11 @@ test('read productivity report - customer & project filter', async (t) => {
             "workedHours":2,
             "totalTracked":{
                 "billableProductivity":0,
-                "nonBillableProductivity":0,
+                "nonBillableProductivity":13,
                 "slackTime":0,
-                "absence":25
+                "absence":12
             },
-            "totalProductivity":0
+            "totalProductivity":13
         },
         {
             "user":{
@@ -582,11 +582,11 @@ test('read productivity report - only name filter', async (t) => {
             "workedHours":8,
             "totalTracked":{
                 "billableProductivity":25,
-                "nonBillableProductivity":25,
+                "nonBillableProductivity":38,
                 "slackTime":25,
-                "absence":25
+                "absence":12
             },
-            "totalProductivity":50
+            "totalProductivity":63
         },
     ]
 
