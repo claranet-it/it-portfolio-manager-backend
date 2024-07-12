@@ -69,5 +69,5 @@ test('Return time entries for cna', async (t) => {
             }
         }
     ]
-    t.same(result, expected)
+   t.same(result, expected)
 })
