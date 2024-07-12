@@ -65,7 +65,7 @@ test('Return time entries for cna', async (t) => {
             "timeInterval":{
                 "start":"2024-01-01",
                 "end":"",
-                "duration":"2"
+                "duration":"1"
             }
         }
     ]
