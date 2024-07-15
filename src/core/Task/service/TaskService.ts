@@ -1,5 +1,6 @@
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import {
+  CustomerUpdateParamsType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
@@ -22,5 +23,9 @@ export class TaskService {
 
   async createTask(params: TaskCreateReadParamsType): Promise<void> {
     return this.taskRepository.createTask(params)
+  }
+
+  async updateCustomer(params: CustomerUpdateParamsType): Promise<void> {
+    return this.taskRepository.updateCustomer(params)
   }
 }

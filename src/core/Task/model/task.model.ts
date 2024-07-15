@@ -17,6 +17,19 @@ export const TaskReadQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
 })
+export const CustomerUpdateQueryParams = Type.Object({
+  customer: Type.String(),
+  project: Type.String(),
+  newCustomer: Type.String(),
+})
+
+export const CustomerUpdateParams = Type.Intersect([
+  CustomerUpdateQueryParams,
+  Type.Object({ company: Type.String() }),
+])
+
+export type CustomerUpdateQueryParamsType = Static<typeof CustomerUpdateQueryParams>
+export type CustomerUpdateParamsType = Static<typeof CustomerUpdateParams>
 
 export type TaskReadQueryParamsType = Static<typeof TaskReadQueryParams>
 
