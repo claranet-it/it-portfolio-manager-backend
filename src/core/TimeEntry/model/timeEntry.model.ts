@@ -9,7 +9,7 @@ export const TimeEntryReadParam = Type.Object({
 export type CnaReadParamType = Static<typeof CnaReadParam>
 
 export const CnaReadParam = Type.Object({
-  user: Type.String(),
+  company: Type.String(),
   year: Type.Number(),
   month: Type.Number(),
 })

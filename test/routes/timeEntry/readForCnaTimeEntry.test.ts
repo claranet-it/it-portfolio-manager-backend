@@ -17,7 +17,7 @@ afterEach(async () => {
 test('Read time entry without api key', async (t) => {
   const response = await app.inject({
     method: 'GET',
-    url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
+    url: '/api/time-entry/time-off-for-cna?company=it&month=01&year=2024',
   })
   t.equal(response.statusCode, 401)
 })
@@ -25,7 +25,7 @@ test('Read time entry without api key', async (t) => {
 test('Read time entry with invalid api key', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
+        url: '/api/time-entry/time-off-for-cna?company=it&month=01&year=2024',
         headers: {
             'X-Api-Key': `1243`,
         },
@@ -36,7 +36,7 @@ test('Read time entry with invalid api key', async (t) => {
 test('Return time entries for cna', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
+        url: '/api/time-entry/time-off-for-cna?company=it&month=01&year=2024',
         headers: {
             'X-Api-Key': `1234`,
         },
@@ -44,7 +44,8 @@ test('Return time entries for cna', async (t) => {
     t.equal(response.statusCode, 200)
     const result = response.json<TimeEntriesForCnaListType>()
     t.equal(result.length, 1)
-
+    console.log("VERSION")
+    console.log(process.version)
     const expected = [
         {
             "description":"MALATTIA (INVIARE CERTIFICATO MEDICO)",
