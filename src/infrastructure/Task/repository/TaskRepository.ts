@@ -70,6 +70,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   async createTask(params: TaskCreateReadParamsType): Promise<void> {
     const company = params.company
     const project = params.project
+    const projectType = params.projectType
     const customer = params.customer
     const task = params.task
     if (customer.includes('#') || project.includes('#')) {
@@ -84,11 +85,12 @@ export class TaskRepository implements TaskRepositoryInterface {
         customerProject: { S: customerProject },
         company: { S: company },
       },
-      UpdateExpression: 'ADD tasks :task',
+      UpdateExpression: 'SET projectType = :projectType ADD tasks :task',
       ExpressionAttributeValues: {
         ':task': {
           SS: [task],
         },
+        ':projectType': { S: projectType },
       },
     }
     await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))

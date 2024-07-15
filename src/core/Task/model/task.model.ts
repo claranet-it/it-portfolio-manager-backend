@@ -30,6 +30,7 @@ export type TaskReadParamsType = Static<typeof TaskReadParams>
 export const TaskCreateQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
+  projectType: Type.String(),
   task: Type.String(),
 })
 
