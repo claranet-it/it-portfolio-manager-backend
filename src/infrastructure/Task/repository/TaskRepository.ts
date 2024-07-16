@@ -5,6 +5,7 @@ import {
     UpdateItemCommand,
 } from '@aws-sdk/client-dynamodb'
 import {
+    CustomerProjectDeleteParamsType,
     CustomerProjectUpdateParamsType,
     ProjectReadParamsType,
     TaskCreateReadParamsType,
@@ -259,12 +260,12 @@ export class TaskRepository implements TaskRepositoryInterface {
 
         const oldTasksWithProjectType = await this.getTasksWithProjectType({company, project, customer})
         const oldTasks = oldTasksWithProjectType.tasks
+
         if(oldTasks.includes(params.newTask)) {
             throw Error('Task already exists') //TODO
         }
 
         const newTasks = oldTasks.filter(task => task !== params.task)
-
         newTasks.push(params.newTask)
 
         const updateParams = {
@@ -273,10 +274,35 @@ export class TaskRepository implements TaskRepositoryInterface {
                 customerProject: {S: customerProject},
                 company: {S: company},
             },
-            UpdateExpression: 'SET tasks :task',
+            UpdateExpression: 'SET tasks = :task',
             ExpressionAttributeValues: {
                 ':task': {
                     SS: newTasks,
+                },
+            },
+        }
+
+        await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
+    }
+
+    async deleteCustomerProject(params: CustomerProjectDeleteParamsType): Promise<void> {
+        const company = params.company
+        const project = params.project
+        const customer = params.customer
+        const inactive = params.inactive || false
+
+        const customerProject = `${customer}#${project}`
+
+        const updateParams = {
+            TableName: getTableName('Task'),
+            Key: {
+                customerProject: {S: customerProject},
+                company: {S: company},
+            },
+            UpdateExpression: 'SET inactive :inactive',
+            ExpressionAttributeValues: {
+                ':inactive': {
+                    BOOL: inactive,
                 },
             },
         }

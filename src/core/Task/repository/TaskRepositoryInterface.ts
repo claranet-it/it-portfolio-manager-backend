@@ -1,4 +1,5 @@
 import {
+  CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
@@ -12,4 +13,5 @@ export interface TaskRepositoryInterface {
   createTask(params: TaskCreateReadParamsType): Promise<void>
   updateCustomerProject(params: CustomerProjectUpdateParamsType): Promise<void>;
   updateTask(params: TaskUpdateParamsType): Promise<void>;
+  deleteCustomerProject(params: CustomerProjectDeleteParamsType): Promise<void>;
 }

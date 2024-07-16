@@ -45,7 +45,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .deleteCustomerProject({ ...request.body, company: request.user.company })
+          .updateTask({ ...request.body, company: request.user.company })
       } catch (error) {
         request.log.error(error)
         let errorCode = 500
