@@ -8,7 +8,7 @@ import {
     CustomerProjectUpdateParamsType,
     ProjectReadParamsType,
     TaskCreateReadParamsType,
-    TaskReadParamsType,
+    TaskReadParamsType, TaskUpdateParamsType,
 } from '@src/core/Task/model/task.model'
 import {TaskRepositoryInterface} from '@src/core/Task/repository/TaskRepositoryInterface'
 import {InvalidCharacterError} from '@src/core/customExceptions/InvalidCharacterError'
@@ -26,6 +26,7 @@ export class TaskRepository implements TaskRepositoryInterface {
             ExpressionAttributeValues: {':company': {S: company}},
         })
         const result = await this.dynamoDBClient.send(command)
+        //TODO se tutti project inactive rimuovere dalla lista (filter)
         return Array.from(
             new Set(
                 result.Items?.map(
@@ -224,6 +225,62 @@ export class TaskRepository implements TaskRepositoryInterface {
 
         const transactCommand = new TransactWriteItemsCommand(input)
         await this.dynamoDBClient.send(transactCommand)
+    }
+
+    async updateTask(params: TaskUpdateParamsType): Promise<void> {
+        const company = params.company
+        const project = params.project
+        const customer = params.customer
+
+        const customerProject = `${customer}#${project}`
+
+        if(!params.newTask) {
+            throw Error('New task must be valorized') //TODO
+        }
+
+       const command = new QueryCommand({
+            TableName: getTableName('TimeEntry'),
+            IndexName: 'companyIndex',
+            KeyConditionExpression:
+                'company = :company',
+            ExpressionAttributeValues: {
+                ':company': {S: params.company},
+            },
+        })
+        const result = await this.dynamoDBClient.send(command)
+        const timeEntries = result.Items?.map((item) => {
+            return this.getTimeEntry(item)
+        }).flat() ?? []
+
+        const projectAlreadyAssigned = timeEntries.some(entry => entry.customer === params.customer && entry.project === params.project && entry.task.includes(params.task))
+        if (projectAlreadyAssigned) {
+            throw Error('Task already assigned') //TODO
+        }
+
+        const oldTasksWithProjectType = await this.getTasksWithProjectType({company, project, customer})
+        const oldTasks = oldTasksWithProjectType.tasks
+        if(oldTasks.includes(params.newTask)) {
+            throw Error('Task already exists') //TODO
+        }
+
+        const newTasks = oldTasks.filter(task => task !== params.task)
+
+        newTasks.push(params.newTask)
+
+        const updateParams = {
+            TableName: getTableName('Task'),
+            Key: {
+                customerProject: {S: customerProject},
+                company: {S: company},
+            },
+            UpdateExpression: 'SET tasks :task',
+            ExpressionAttributeValues: {
+                ':task': {
+                    SS: newTasks,
+                },
+            },
+        }
+        await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
     }
 
     private getTimeEntry(

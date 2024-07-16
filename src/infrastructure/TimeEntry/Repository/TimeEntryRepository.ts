@@ -12,7 +12,7 @@ import {
   CnaReadParamType,
   TimeEntryRowWithProjectType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
-import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryIntereface'
+import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 

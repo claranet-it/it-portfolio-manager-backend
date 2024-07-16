@@ -6,7 +6,7 @@ import {
   CnaReadParamType,
   TimeEntriesForCnaType,
 } from '../model/timeEntry.model'
-import { TimeEntryRepositoryInterface } from '../repository/TimeEntryRepositoryIntereface'
+import { TimeEntryRepositoryInterface } from '../repository/TimeEntryRepositoryInterface'
 import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'

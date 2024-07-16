@@ -2,7 +2,7 @@ import {
   CustomerProjectUpdateParamsType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
-  TaskReadParamsType,
+  TaskReadParamsType, TaskUpdateParamsType,
 } from '../model/task.model'
 
 export interface TaskRepositoryInterface {
@@ -10,5 +10,6 @@ export interface TaskRepositoryInterface {
   getProjects(params: ProjectReadParamsType): Promise<string[]>
   getTasks(params: TaskReadParamsType): Promise<string[]>
   createTask(params: TaskCreateReadParamsType): Promise<void>
-  updateCustomerProject(params: CustomerProjectUpdateParamsType): void;
+  updateCustomerProject(params: CustomerProjectUpdateParamsType): Promise<void>;
+  updateTask(params: TaskUpdateParamsType): Promise<void>;
 }
