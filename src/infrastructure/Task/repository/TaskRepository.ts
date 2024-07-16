@@ -5,7 +5,7 @@ import {
     UpdateItemCommand,
 } from '@aws-sdk/client-dynamodb'
 import {
-    CustomerUpdateParamsType,
+    CustomerProjectUpdateParamsType,
     ProjectReadParamsType,
     TaskCreateReadParamsType,
     TaskReadParamsType,
@@ -130,7 +130,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
     }
 
-    async updateCustomerProject(params: CustomerUpdateParamsType): Promise<void> {
+    async updateCustomerProject(params: CustomerProjectUpdateParamsType): Promise<void> {
         const company = params.company
         const project = params.project
         const customer = params.customer
@@ -139,6 +139,10 @@ export class TaskRepository implements TaskRepositoryInterface {
         let existingCustomerProject
         const oldCustomerProject = `${customer}#${project}`
         let newCustomerProject
+
+        if(params.newCustomer && params.newProject) {
+            throw Error('New customer OR new Project must be valorized') //TODO
+        }
         if(params.newCustomer) {
             newValue = params.newCustomer
             existingCustomerProject = await this.getTasks({company, project, customer: newValue})
@@ -148,7 +152,7 @@ export class TaskRepository implements TaskRepositoryInterface {
             existingCustomerProject = await this.getTasks({company, project: newValue, customer})
             newCustomerProject = `${customer}#${newValue}`
         } else {
-            throw Error('New customer or new Project must be valorized')
+            throw Error('New customer OR new Project must be valorized') //TODO
         }
 
         if (newValue.includes('#')) {
@@ -158,7 +162,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         }
 
         if (existingCustomerProject.length > 0) { //ADD check
-            throw Error('Customer project already exists')
+            throw Error('Customer project already exists') //TODO
         }
 
         const command = new QueryCommand({

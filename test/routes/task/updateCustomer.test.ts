@@ -27,7 +27,7 @@ afterEach(async () => {
 test('update customer without authentication', async (t) => {
     const response = await app.inject({
         method: 'PUT',
-        url: '/api/task/customer',
+        url: '/api/task/customer-project',
     })
     t.equal(response.statusCode, 401)
 })
@@ -44,9 +44,9 @@ test('update customer', async (t) => {
 
     response = await getCustomers(company);
     t.equal(response.statusCode, 200)
+
     let customers = response.json<CustomerListType>()
-    console.log("CUSTOMERS")
-    console.log(JSON.stringify(customers, null, 2))
+
     t.equal(customers.length, 1)
     let expectedResult = ['Test update customer']
     t.same(customers, expectedResult)
@@ -56,15 +56,10 @@ test('update customer', async (t) => {
 
     response = await getCustomers(company);
     t.equal(response.statusCode, 200)
-
     customers = response.json<CustomerListType>()
     t.equal(customers.length, 1)
     expectedResult = ['Test update new customer']
     t.same(customers, expectedResult)
-})
-
-test('update customer with time entries', async (t) => {
-    t.equal(1,0)
 })
 
 async function postTask(customer: string, company: string, project: string, projectType: string, task: string) {
@@ -86,7 +81,7 @@ async function postTask(customer: string, company: string, project: string, proj
 async function putCustomer(customer: string, company: string, project: string, newCustomer: string) {
     return await app.inject({
         method: 'PUT',
-        url: '/api/task/customer/',
+        url: '/api/task/customer-project/',
         headers: {
             authorization: `Bearer ${getToken(company)}`,
         },

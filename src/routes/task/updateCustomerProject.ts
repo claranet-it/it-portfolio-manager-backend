@@ -41,11 +41,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return reply.code(200)
-        // return await fastify
-        //   .dependencyInjectionContainer()
-        //   .resolve('taskService')
-        //   .updateCustomerProject({ ...request.body, company: request.user.company })
+        return await fastify
+          .dependencyInjectionContainer()
+          .resolve('taskService')
+          .updateCustomerProject({ ...request.body, company: request.user.company })
       } catch (error) {
         request.log.error(error)
         let errorCode = 500
