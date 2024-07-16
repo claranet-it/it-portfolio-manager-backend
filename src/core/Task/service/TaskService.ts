@@ -25,7 +25,7 @@ export class TaskService {
     return this.taskRepository.createTask(params)
   }
 
-  async updateCustomer(params: CustomerUpdateParamsType): Promise<void> {
-    return this.taskRepository.updateCustomer(params)
+  async updateCustomerProject(params: CustomerUpdateParamsType): Promise<void> {
+    return this.taskRepository.updateCustomerProject(params)
   }
 }

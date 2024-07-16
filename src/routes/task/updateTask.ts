@@ -1,19 +1,20 @@
 import { FastifyInstance } from 'fastify'
 import {
-  CustomerUpdateParams, CustomerUpdateQueryParamsType,
+  TaskUpdateQueryParams,
+  TaskUpdateQueryParamsType,
 } from '@src/core/Task/model/task.model'
 import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.put<{
-    Body: CustomerUpdateQueryParamsType
+    Body: TaskUpdateQueryParamsType
   }>(
-    '/customer',
+    '/task',
     {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Task'],
-        body: CustomerUpdateParams,
+        body: TaskUpdateQueryParams,
         security: [
           {
             apiKey: [],
@@ -41,10 +42,11 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return await fastify
-          .dependencyInjectionContainer()
-          .resolve('taskService')
-          .updateCustomer({ ...request.body, company: request.user.company })
+        return reply.code(200)
+        // return await fastify
+        //   .dependencyInjectionContainer()
+        //   .resolve('taskService')
+        //   .deleteCustomerProject({ ...request.body, company: request.user.company })
       } catch (error) {
         request.log.error(error)
         let errorCode = 500

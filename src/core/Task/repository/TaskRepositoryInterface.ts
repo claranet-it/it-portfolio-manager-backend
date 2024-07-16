@@ -10,5 +10,5 @@ export interface TaskRepositoryInterface {
   getProjects(params: ProjectReadParamsType): Promise<string[]>
   getTasks(params: TaskReadParamsType): Promise<string[]>
   createTask(params: TaskCreateReadParamsType): Promise<void>
-  updateCustomer(params: CustomerUpdateParamsType): void;
+  updateCustomerProject(params: CustomerUpdateParamsType): void;
 }

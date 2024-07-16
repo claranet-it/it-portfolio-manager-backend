@@ -13,7 +13,6 @@ import {
 import {TaskRepositoryInterface} from '@src/core/Task/repository/TaskRepositoryInterface'
 import {InvalidCharacterError} from '@src/core/customExceptions/InvalidCharacterError'
 import {getTableName} from '@src/core/db/TableName'
-import {ProductivityReportReadParamWithCompanyType} from "@src/core/Report/model/productivity.model";
 import {TimeEntryRowType} from "@src/core/TimeEntry/model/timeEntry.model";
 
 export class TaskRepository implements TaskRepositoryInterface {
@@ -131,23 +130,36 @@ export class TaskRepository implements TaskRepositoryInterface {
         await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
     }
 
-    async updateCustomer(params: CustomerUpdateParamsType): Promise<void> {
+    async updateCustomerProject(params: CustomerUpdateParamsType): Promise<void> {
         const company = params.company
         const project = params.project
         const customer = params.customer
-        const newCustomer = params.newCustomer
-        if (newCustomer.includes('#') || project.includes('#')) {
+
+        let newValue
+        let existingCustomerProject
+        const oldCustomerProject = `${customer}#${project}`
+        let newCustomerProject
+        if(params.newCustomer) {
+            newValue = params.newCustomer
+            existingCustomerProject = await this.getTasks({company, project, customer: newValue})
+            newCustomerProject = `${newValue}#${project}`
+        } else if(params.newProject){
+            newValue = params.newProject
+            existingCustomerProject = await this.getTasks({company, project: newValue, customer})
+            newCustomerProject = `${customer}#${newValue}`
+        } else {
+            throw Error('New customer or new Project must be valorized')
+        }
+
+        if (newValue.includes('#')) {
             throw new InvalidCharacterError(
                 '# is not a valid character for customer or project',
             )
         }
 
-        const existingCustomerProject = await this.getTasks({company, project, customer: newCustomer})
         if (existingCustomerProject.length > 0) { //ADD check
             throw Error('Customer project already exists')
         }
-        const oldCustomerProject = `${customer}#${project}`
-        const newCustomerProject = `${newCustomer}#${project}`
 
         const command = new QueryCommand({
             TableName: getTableName('TimeEntry'),
@@ -200,7 +212,6 @@ export class TaskRepository implements TaskRepositoryInterface {
                             ':projectType': {
                                 S: oldTasks.projectType,
                             },
-
                         },
                     },
                 }
