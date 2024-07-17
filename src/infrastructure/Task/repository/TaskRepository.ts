@@ -24,10 +24,10 @@ export class TaskRepository implements TaskRepositoryInterface {
         const command = new QueryCommand({
             TableName: getTableName('Task'),
             KeyConditionExpression: 'company = :company',
-            ExpressionAttributeValues: {':company': {S: company}},
+            FilterExpression: 'inactive = :inactive',
+            ExpressionAttributeValues: {':company': {S: company}, ':inactive': {BOOL: false}},
         })
         const result = await this.dynamoDBClient.send(command)
-        //TODO se tutti project inactive rimuovere dalla lista (filter)
         return Array.from(
             new Set(
                 result.Items?.map(
@@ -42,9 +42,11 @@ export class TaskRepository implements TaskRepositoryInterface {
             TableName: getTableName('Task'),
             KeyConditionExpression:
                 'company = :company and begins_with(customerProject, :customer)',
+            FilterExpression: 'inactive = :inactive',
             ExpressionAttributeValues: {
                 ':company': {S: params.company},
                 ':customer': {S: params.customer},
+                ':inactive': {BOOL: false}
             },
         })
         const result = await this.dynamoDBClient.send(command)
@@ -60,9 +62,11 @@ export class TaskRepository implements TaskRepositoryInterface {
             TableName: getTableName('Task'),
             KeyConditionExpression:
                 'company = :company and customerProject = :customerProject',
+            FilterExpression: 'inactive = :inactive',
             ExpressionAttributeValues: {
                 ':company': {S: params.company},
                 ':customerProject': {S: `${params.customer}#${params.project}`},
+                ':inactive': {BOOL: false}
             },
         })
         const result = await this.dynamoDBClient.send(command)
@@ -78,9 +82,11 @@ export class TaskRepository implements TaskRepositoryInterface {
             TableName: getTableName('Task'),
             KeyConditionExpression:
                 'company = :company and customerProject = :customerProject',
+            FilterExpression: 'inactive = :inactive',
             ExpressionAttributeValues: {
                 ':company': {S: params.company},
                 ':customerProject': {S: `${params.customer}#${params.project}`},
+                ':inactive': {BOOL: false}
             },
         })
         const result = await this.dynamoDBClient.send(command)
@@ -208,10 +214,11 @@ export class TaskRepository implements TaskRepositoryInterface {
                         },
                         TableName: getTableName('Task'),
                         UpdateExpression:
-                            'SET #tasks = :tasks, #projectType = :projectType',
+                            'SET #tasks = :tasks, #projectType = :projectType, #inactive = :inactive',
                         ExpressionAttributeNames: {
                             '#tasks': 'tasks',
                             '#projectType': 'projectType',
+                            '#inactive': 'inactive'
                            },
                         ExpressionAttributeValues: {
                             ':tasks': {
@@ -219,6 +226,9 @@ export class TaskRepository implements TaskRepositoryInterface {
                             },
                             ':projectType': {
                                 S: oldTasks.projectType,
+                            },
+                            ':inactive': {
+                                BOOL: false,
                             },
                         },
                     },
