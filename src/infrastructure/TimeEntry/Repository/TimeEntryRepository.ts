@@ -60,8 +60,6 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     })
 
     const result = await this.dynamoDBClient.send(command)
-    //console.log(JSON.stringify(result.Items, null, 2))
-
     return (
       result.Items?.map((item) => {
         return this.getTimeOff(item)
@@ -157,10 +155,9 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         timeEntryDate: item.timeEntryDate?.S ?? '',
       })
     })
-    const res =  resultForCompany.filter(
+    return resultForCompany.filter(
       (result) => result.project === 'Assenze' && result.task !== 'FESTIVITA',
     )
-    console.log(JSON.stringify(res, null, 2))
   }
 
   private getPeriodFromMonthAndYear(month: number, year: number) {
