@@ -1,9 +1,10 @@
 import { FastifyInstance } from 'fastify'
 import {
-   CustomerProjectUpdateQueryParams, CustomerProjectUpdateQueryParamsType,
+  CustomerProjectUpdateQueryParams,
+  CustomerProjectUpdateQueryParamsType,
 } from '@src/core/Task/model/task.model'
 import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
-import {TaskError} from "@src/core/customExceptions/TaskError";
+import { TaskError } from '@src/core/customExceptions/TaskError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.put<{
@@ -45,12 +46,18 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .updateCustomerProject({ ...request.body, company: request.user.company })
+          .updateCustomerProject({
+            ...request.body,
+            company: request.user.company,
+          })
       } catch (error) {
         request.log.error(error)
         let errorCode = 500
         let errorMessage = ''
-        if (error instanceof InvalidCharacterError || error instanceof TaskError) {
+        if (
+          error instanceof InvalidCharacterError ||
+          error instanceof TaskError
+        ) {
           errorCode = 400
           errorMessage = error.message
         }

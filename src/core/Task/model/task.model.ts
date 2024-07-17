@@ -29,13 +29,17 @@ export const CustomerProjectUpdateParams = Type.Intersect([
   Type.Object({ company: Type.String() }),
 ])
 
-export type CustomerProjectUpdateQueryParamsType = Static<typeof CustomerProjectUpdateQueryParams>
-export type CustomerProjectUpdateParamsType = Static<typeof CustomerProjectUpdateParams>
+export type CustomerProjectUpdateQueryParamsType = Static<
+  typeof CustomerProjectUpdateQueryParams
+>
+export type CustomerProjectUpdateParamsType = Static<
+  typeof CustomerProjectUpdateParams
+>
 
 export const CustomerProjectDeleteQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
-  inactive: Type.Optional(Type.Boolean({default: true})),
+  inactive: Type.Optional(Type.Boolean({ default: true })),
 })
 
 export const CustomerProjectDeleteParams = Type.Intersect([
@@ -43,8 +47,12 @@ export const CustomerProjectDeleteParams = Type.Intersect([
   Type.Object({ company: Type.String() }),
 ])
 
-export type CustomerProjectDeleteQueryParamsType = Static<typeof CustomerProjectDeleteQueryParams>
-export type CustomerProjectDeleteParamsType = Static<typeof CustomerProjectDeleteParams>
+export type CustomerProjectDeleteQueryParamsType = Static<
+  typeof CustomerProjectDeleteQueryParams
+>
+export type CustomerProjectDeleteParamsType = Static<
+  typeof CustomerProjectDeleteParams
+>
 
 export const TaskUpdateQueryParams = Type.Object({
   customer: Type.String(),

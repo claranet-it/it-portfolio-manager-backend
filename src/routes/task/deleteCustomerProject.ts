@@ -3,8 +3,7 @@ import {
   CustomerProjectDeleteQueryParams,
   CustomerProjectDeleteQueryParamsType,
 } from '@src/core/Task/model/task.model'
-import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
-import {TaskError} from "@src/core/customExceptions/TaskError";
+import { TaskError } from '@src/core/customExceptions/TaskError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.delete<{
@@ -46,7 +45,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .deleteCustomerProject({ ...request.body, company: request.user.company })
+          .deleteCustomerProject({
+            ...request.body,
+            company: request.user.company,
+          })
       } catch (error) {
         request.log.error(error)
         let errorCode = 500

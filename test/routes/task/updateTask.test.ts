@@ -1,7 +1,7 @@
 import {test, beforeEach, afterEach} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
-import {CustomerListType, TaskListType} from '@src/core/Task/model/task.model'
+import  {TaskListType} from '@src/core/Task/model/task.model'
 import {ProjectType} from "@src/core/Report/model/productivity.model";
 
 let app: FastifyInstance

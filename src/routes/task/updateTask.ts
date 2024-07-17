@@ -3,8 +3,7 @@ import {
   TaskUpdateQueryParams,
   TaskUpdateQueryParamsType,
 } from '@src/core/Task/model/task.model'
-import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
-import {TaskError} from "@src/core/customExceptions/TaskError";
+import { TaskError } from '@src/core/customExceptions/TaskError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.put<{

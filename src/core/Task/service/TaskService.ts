@@ -4,7 +4,8 @@ import {
   CustomerProjectUpdateParamsType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
-  TaskReadParamsType, TaskUpdateParamsType,
+  TaskReadParamsType,
+  TaskUpdateParamsType,
 } from '../model/task.model'
 
 export class TaskService {
@@ -26,13 +27,17 @@ export class TaskService {
     return this.taskRepository.createTask(params)
   }
 
-  async updateCustomerProject(params: CustomerProjectUpdateParamsType): Promise<void> {
+  async updateCustomerProject(
+    params: CustomerProjectUpdateParamsType,
+  ): Promise<void> {
     return this.taskRepository.updateCustomerProject(params)
   }
   async updateTask(params: TaskUpdateParamsType): Promise<void> {
     return this.taskRepository.updateTask(params)
   }
-  async deleteCustomerProject(params: CustomerProjectDeleteParamsType): Promise<void> {
+  async deleteCustomerProject(
+    params: CustomerProjectDeleteParamsType,
+  ): Promise<void> {
     return this.taskRepository.deleteCustomerProject(params)
   }
 }

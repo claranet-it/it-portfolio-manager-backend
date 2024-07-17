@@ -154,7 +154,9 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         timeEntryDate: item.timeEntryDate?.S ?? '',
       })
     })
-    return resultForUser.filter((result) => result.project === 'Assenze' && result.task !== 'FESTIVITA')
+    return resultForUser.filter(
+      (result) => result.project === 'Assenze' && result.task !== 'FESTIVITA',
+    )
   }
 
   private getPeriodFromMonthAndYear(month: number, year: number) {
@@ -162,11 +164,11 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       throw new Error('Month must be between 1 and 12')
     }
 
-    const firstDayOfMonth = new Date(year, month-1, 1);
-    const lastDayOfMonth = new Date(year, month, 0);
+    const firstDayOfMonth = new Date(year, month - 1, 1)
+    const lastDayOfMonth = new Date(year, month, 0)
 
-    const from = firstDayOfMonth.toISOString().substring(0, 10);
-    const to = lastDayOfMonth.toISOString().substring(0, 10);
+    const from = firstDayOfMonth.toISOString().substring(0, 10)
+    const to = lastDayOfMonth.toISOString().substring(0, 10)
 
     console.log(`FROM: ${from}`)
     console.log(`TO: ${to}`)
