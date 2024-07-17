@@ -23,10 +23,11 @@ export class TaskRepository implements TaskRepositoryInterface {
     async getCustomers(company: string): Promise<string[]> {
         const command = new QueryCommand({
             TableName: getTableName('Task'),
-            KeyConditionExpression: 'company = :company AND inactive = :inactive',
-            ExpressionAttributeValues: {':company': {S: company}, ':inactive': {BOOL: false}},
+            KeyConditionExpression: 'company = :company',
+            ExpressionAttributeValues: {':company': {S: company}},
         })
         const result = await this.dynamoDBClient.send(command)
+        //TODO se tutti project inactive rimuovere dalla lista (filter)
         return Array.from(
             new Set(
                 result.Items?.map(
@@ -40,11 +41,10 @@ export class TaskRepository implements TaskRepositoryInterface {
         const command = new QueryCommand({
             TableName: getTableName('Task'),
             KeyConditionExpression:
-                'company = :company and begins_with(customerProject, :customer) AND inactive = :inactive',
+                'company = :company and begins_with(customerProject, :customer)',
             ExpressionAttributeValues: {
                 ':company': {S: params.company},
                 ':customer': {S: params.customer},
-                ':inactive': {BOOL: false}
             },
         })
         const result = await this.dynamoDBClient.send(command)
@@ -59,11 +59,10 @@ export class TaskRepository implements TaskRepositoryInterface {
         const command = new QueryCommand({
             TableName: getTableName('Task'),
             KeyConditionExpression:
-                'company = :company and customerProject = :customerProject AND inactive = :inactive',
+                'company = :company and customerProject = :customerProject',
             ExpressionAttributeValues: {
                 ':company': {S: params.company},
                 ':customerProject': {S: `${params.customer}#${params.project}`},
-                ':inactive': {BOOL: false}
             },
         })
         const result = await this.dynamoDBClient.send(command)
@@ -78,11 +77,10 @@ export class TaskRepository implements TaskRepositoryInterface {
         const command = new QueryCommand({
             TableName: getTableName('Task'),
             KeyConditionExpression:
-                'company = :company and customerProject = :customerProject AND inactive = :inactive',
+                'company = :company and customerProject = :customerProject',
             ExpressionAttributeValues: {
                 ':company': {S: params.company},
                 ':customerProject': {S: `${params.customer}#${params.project}`},
-                ':inactive': {BOOL: false}
             },
         })
         const result = await this.dynamoDBClient.send(command)
