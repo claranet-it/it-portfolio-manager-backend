@@ -23,7 +23,7 @@ export class ProductivityCalculator {
 
       switch (projectType) {
         case ProjectType.ABSENCE:
-          if(timeEntry.task === 'FESTIVITA') {
+          if (timeEntry.task === 'FESTIVITA') {
             nonBillableProductivityHours += timeEntry.hours
           } else {
             absenceHours += timeEntry.hours

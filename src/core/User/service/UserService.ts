@@ -33,16 +33,19 @@ export class UserService {
   async getUsers(params: UserCompanyType): Promise<CnaUserProfileListType> {
     let usersProfiles = []
     if (params.company === 'flowing') {
-      const user1 = await this.userProfileService.getCompleteUserProfile('stefania.ceccacci@claranet.com')
-      const user2 = await this.userProfileService.getCompleteUserProfile('manuel.gherardi@claranet.com')
+      const user1 = await this.userProfileService.getCompleteUserProfile(
+        'stefania.ceccacci@claranet.com',
+      )
+      const user2 = await this.userProfileService.getCompleteUserProfile(
+        'manuel.gherardi@claranet.com',
+      )
       usersProfiles.push(user1, user2)
     } else {
       usersProfiles = await this.userProfileService.getAllUserProfiles()
     }
 
     return Promise.all(
-        usersProfiles.map(async (profile) => {
-
+      usersProfiles.map(async (profile) => {
         if (!profile) {
           return {
             email: '',
