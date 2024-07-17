@@ -208,7 +208,9 @@ test('throw error if # in customer', async (t) => {
     const company = 'it'
     const response = await postTask(customer, company, project, projectType, task)
     t.equal(response.statusCode, 400)
-    t.equal(response.payload, '# is not a valid character for customer or project')
+    t.same(JSON.parse(response.payload)['message'],
+       '# is not a valid character for customer or project',
+    );
 })
 
 test('throw error if # in project', async (t) => {
@@ -219,7 +221,9 @@ test('throw error if # in project', async (t) => {
     const company = 'it'
     const response = await postTask(customer, company, project, projectType, task)
     t.equal(response.statusCode, 400)
-    t.equal(response.payload, '# is not a valid character for customer or project')
+    t.same(JSON.parse(response.payload)['message'],
+        '# is not a valid character for customer or project',
+    );
 })
 
 async function postTask(customer: string, company: string, project: string, projectType: string, task: string) {
