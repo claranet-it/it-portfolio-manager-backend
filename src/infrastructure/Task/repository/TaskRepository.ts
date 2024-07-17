@@ -15,6 +15,7 @@ import {TaskRepositoryInterface} from '@src/core/Task/repository/TaskRepositoryI
 import {InvalidCharacterError} from '@src/core/customExceptions/InvalidCharacterError'
 import {getTableName} from '@src/core/db/TableName'
 import {TimeEntryRowType} from "@src/core/TimeEntry/model/timeEntry.model";
+import {TaskError} from "@src/core/customExceptions/TaskError";
 
 export class TaskRepository implements TaskRepositoryInterface {
     constructor(private dynamoDBClient: DynamoDBClient) {
@@ -151,7 +152,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         let newCustomerProject
 
         if(params.newCustomer && params.newProject) {
-            throw Error('New customer OR new Project must be valorized') //TODO
+            throw new TaskError('New customer OR new Project must be valorized')
         }
         if(params.newCustomer) {
             newValue = params.newCustomer
@@ -162,7 +163,7 @@ export class TaskRepository implements TaskRepositoryInterface {
             existingCustomerProject = await this.getTasks({company, project: newValue, customer})
             newCustomerProject = `${customer}#${newValue}`
         } else {
-            throw Error('New customer OR new Project must be valorized') //TODO
+            throw new TaskError('New customer OR new Project must be valorized')
         }
 
         if (newValue.includes('#')) {
@@ -172,7 +173,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         }
 
         if (existingCustomerProject.length > 0) { //ADD check
-            throw Error('Customer project already exists') //TODO
+            throw new TaskError('Customer project already exists')
         }
 
         const command = new QueryCommand({
@@ -191,7 +192,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
         const projectAlreadyAssigned = timeEntries.some(entry => entry.customer === params.customer && entry.project === params.project)
         if (projectAlreadyAssigned) {
-            throw Error('Customer project already assigned')
+            throw new TaskError('Customer project already assigned')
         }
 
         const oldTasks = await this.getTasksWithProjectType({company, project, customer})
@@ -248,7 +249,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         const customerProject = `${customer}#${project}`
 
         if(!params.newTask) {
-            throw Error('New task must be valorized') //TODO
+            throw new TaskError('New task must be valorized')
         }
 
        const command = new QueryCommand({
@@ -267,14 +268,14 @@ export class TaskRepository implements TaskRepositoryInterface {
 
         const projectAlreadyAssigned = timeEntries.some(entry => entry.customer === params.customer && entry.project === params.project && entry.task.includes(params.task))
         if (projectAlreadyAssigned) {
-            throw Error('Task already assigned') //TODO
+            throw new TaskError('Task already assigned')
         }
 
         const oldTasksWithProjectType = await this.getTasksWithProjectType({company, project, customer})
         const oldTasks = oldTasksWithProjectType.tasks
 
         if(oldTasks.includes(params.newTask)) {
-            throw Error('Task already exists') //TODO
+            throw new TaskError('Task already exists')
         }
 
         const newTasks = oldTasks.filter(task => task !== params.task)

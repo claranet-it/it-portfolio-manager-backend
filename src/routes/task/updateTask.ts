@@ -4,6 +4,7 @@ import {
   TaskUpdateQueryParamsType,
 } from '@src/core/Task/model/task.model'
 import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
+import {TaskError} from "@src/core/customExceptions/TaskError";
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.put<{
@@ -50,7 +51,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         request.log.error(error)
         let errorCode = 500
         let errorMessage = ''
-        if (error instanceof InvalidCharacterError) {
+        if (error instanceof TaskError) {
           errorCode = 400
           errorMessage = error.message
         }
