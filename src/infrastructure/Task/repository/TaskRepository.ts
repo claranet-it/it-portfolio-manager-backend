@@ -109,6 +109,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         const projectType = params.projectType
         const customer = params.customer
         const task = params.task
+
         if (customer.includes('#') || project.includes('#')) {
             throw new InvalidCharacterError(
                 '# is not a valid character for customer or project',
@@ -121,12 +122,13 @@ export class TaskRepository implements TaskRepositoryInterface {
                 customerProject: {S: customerProject},
                 company: {S: company},
             },
-            UpdateExpression: 'SET projectType = :projectType ADD tasks :task',
+            UpdateExpression: 'SET projectType = :projectType, inactive = :inactive ADD tasks :task',
             ExpressionAttributeValues: {
                 ':task': {
                     SS: [task],
                 },
                 ':projectType': {S: projectType},
+                ':inactive': {BOOL: false},
             },
         }
         await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
