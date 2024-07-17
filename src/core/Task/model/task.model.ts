@@ -35,7 +35,7 @@ export type CustomerProjectUpdateParamsType = Static<typeof CustomerProjectUpdat
 export const CustomerProjectDeleteQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
-  inactive: Type.Optional(Type.Boolean({default: false})),
+  inactive: Type.Optional(Type.Boolean({default: true})),
 })
 
 export const CustomerProjectDeleteParams = Type.Intersect([
