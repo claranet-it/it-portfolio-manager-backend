@@ -15,17 +15,17 @@ afterEach(async () => {
 })
 
 test('Read time entry without api key', async (t) => {
-  const response = await app.inject({
-    method: 'GET',
-    url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
-  })
-  t.equal(response.statusCode, 401)
+    const response = await app.inject({
+        method: 'GET',
+        url: '/api/time-entry/time-off-for-cna?company=it&month=01&year=2024',
+    })
+    t.equal(response.statusCode, 401)
 })
 
 test('Read time entry with invalid api key', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
+        url: '/api/time-entry/time-off-for-cna?company=it&month=01&year=2024',
         headers: {
             'X-Api-Key': `1243`,
         },
@@ -36,38 +36,59 @@ test('Read time entry with invalid api key', async (t) => {
 test('Return time entries for cna', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-off-for-cna?user=micol.ts@email.com&month=01&year=2024',
+        url: '/api/time-entry/time-off-for-cna?company=it&month=01&year=2024',
         headers: {
             'X-Api-Key': `1234`,
         },
     })
     t.equal(response.statusCode, 200)
     const result = response.json<TimeEntriesForCnaListType>()
-    t.equal(result.length, 1)
+    t.equal(result.length, 2)
 
     const expected = [
         {
-            "description":"MALATTIA (INVIARE CERTIFICATO MEDICO)",
-            "user":{
-                "email":"micol.ts@email.com",
-                "name":"Micol Panetta"
+            "description": "MALATTIA (INVIARE CERTIFICATO MEDICO)",
+            "user": {
+                "email": "micol.ts@email.com",
+                "name": "Micol Panetta"
             },
-            "userId":"micol.ts@email.com",
-            "billable":false,
-            "task":{
-                "name":"MALATTIA (INVIARE CERTIFICATO MEDICO)"
+            "userId": "micol.ts@email.com",
+            "billable": false,
+            "task": {
+                "name": "MALATTIA (INVIARE CERTIFICATO MEDICO)"
             },
-            "project":{
-                "name":"Assenze",
-                "billable":false,
-                "clientName":"Assenze"
+            "project": {
+                "name": "Assenze",
+                "billable": false,
+                "clientName": "Assenze"
             },
-            "timeInterval":{
-                "start":"2024-01-01",
-                "end":"",
-                "duration":"1"
+            "timeInterval": {
+                "start": "2024-01-01",
+                "end": "",
+                "duration": "1"
             }
+        }, {
+            "description": "DONAZIONE SANGUE",
+            "user": {
+                "email": "nicholas.crow@email.com",
+                "name": "Nicholas Crow",
+            },
+            "userId": "nicholas.crow@email.com",
+            "billable": false,
+            "task": {
+                "name": "DONAZIONE SANGUE",
+            },
+            "project": {
+                "name": "Assenze",
+                "billable": false,
+                "clientName": "Assenze",
+            },
+            "timeInterval": {
+                "start": "2024-01-01",
+                "end": "",
+                "duration": "2",
+            },
         }
     ]
-   t.same(result, expected)
+    t.same(result, expected)
 })

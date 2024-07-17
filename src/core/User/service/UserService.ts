@@ -31,26 +31,33 @@ export class UserService {
   }
 
   async getUsers(params: UserCompanyType): Promise<CnaUserProfileListType> {
-    let users = []
-    if (params.company === 'it') {
-      users = ['micol.panetta@claranet.com', 'emanuele.laera@claranet.com']
+    let usersProfiles = []
+    if (params.company === 'flowing') {
+      const user1 = await this.userProfileService.getCompleteUserProfile(
+        'stefania.ceccacci@claranet.com',
+      )
+      const user2 = await this.userProfileService.getCompleteUserProfile(
+        'manuel.gherardi@claranet.com',
+      )
+      usersProfiles.push(user1, user2)
     } else {
-      users = ['stefania.ceccacci@claranet.com', 'manuel.gherardi@claranet.com']
+      usersProfiles = await this.userProfileService.getAllUserProfiles()
     }
 
     return Promise.all(
-      users.map(async (user) => {
-        const userProfile =
-          await this.userProfileService.getCompleteUserProfile(user)
-
-        if (!userProfile) {
-          throw Error('User not found')
+      usersProfiles.map(async (profile) => {
+        if (!profile) {
+          return {
+            email: '',
+            id: '',
+            name: '',
+          }
         }
 
         return {
-          email: userProfile?.uid,
-          id: userProfile?.uid,
-          name: userProfile?.name,
+          email: profile?.uid,
+          id: profile?.uid,
+          name: profile?.name,
         }
       }),
     )
