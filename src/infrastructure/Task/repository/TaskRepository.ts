@@ -57,10 +57,17 @@ export class TaskRepository implements TaskRepositoryInterface {
     })
     const result = await this.dynamoDBClient.send(command)
     return (
-      result.Items?.map(
-        (item) => item.customerProject?.S?.split('#')[1] ?? '',
-      ).sort() ?? []
-    )
+      result.Items?.map((item) => {
+        if (
+          item.customerProject?.S?.split('#')[1] &&
+          item.customerProject?.S?.split('#')[0] === params.customer
+        ) {
+          return item.customerProject?.S?.split('#')[1]
+        } else {
+          return ''
+        }
+      }).sort() ?? []
+    ).filter((item) => item != '')
   }
 
   async getTasks(params: TaskReadParamsType): Promise<string[]> {
