@@ -350,7 +350,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         customerProject: { S: customerProject },
         company: { S: company },
       },
-      UpdateExpression: 'SET inactive :inactive',
+      UpdateExpression: 'SET inactive = :inactive',
       ExpressionAttributeValues: {
         ':inactive': {
           BOOL: inactive,
