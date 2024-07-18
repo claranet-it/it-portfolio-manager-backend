@@ -42,10 +42,11 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return await fastify
+        await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
           .updateTask({ ...request.body, company: request.user.company })
+        return reply.send(JSON.stringify({ message: 'OK' }))
       } catch (error) {
         request.log.error(error)
         let errorCode = 500

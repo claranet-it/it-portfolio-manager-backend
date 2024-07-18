@@ -160,6 +160,9 @@ test('create task with same customer and project - update', async (t) => {
     // SECOND INSERT
     response = await postTask(customer, company, project, ProjectType.SLACK_TIME, 'Test task3');
     t.equal(response.statusCode, 200)
+    t.same(JSON.parse(response.payload)['message'],
+        'OK',
+    );
 
     // CHECK TASK
     response = await getTask(customer, project, company)
