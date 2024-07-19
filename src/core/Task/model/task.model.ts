@@ -17,6 +17,57 @@ export const TaskReadQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
 })
+export const CustomerProjectUpdateQueryParams = Type.Object({
+  customer: Type.String(),
+  project: Type.String(),
+  newCustomer: Type.Optional(Type.String()),
+  newProject: Type.Optional(Type.String()),
+})
+
+export const CustomerProjectUpdateParams = Type.Intersect([
+  CustomerProjectUpdateQueryParams,
+  Type.Object({ company: Type.String() }),
+])
+
+export type CustomerProjectUpdateQueryParamsType = Static<
+  typeof CustomerProjectUpdateQueryParams
+>
+export type CustomerProjectUpdateParamsType = Static<
+  typeof CustomerProjectUpdateParams
+>
+
+export const CustomerProjectDeleteQueryParams = Type.Object({
+  customer: Type.String(),
+  project: Type.String(),
+  inactive: Type.Optional(Type.Boolean({ default: true })),
+})
+
+export const CustomerProjectDeleteParams = Type.Intersect([
+  CustomerProjectDeleteQueryParams,
+  Type.Object({ company: Type.String() }),
+])
+
+export type CustomerProjectDeleteQueryParamsType = Static<
+  typeof CustomerProjectDeleteQueryParams
+>
+export type CustomerProjectDeleteParamsType = Static<
+  typeof CustomerProjectDeleteParams
+>
+
+export const TaskUpdateQueryParams = Type.Object({
+  customer: Type.String(),
+  project: Type.String(),
+  task: Type.String(),
+  newTask: Type.String(),
+})
+
+export const TaskUpdateParams = Type.Intersect([
+  TaskUpdateQueryParams,
+  Type.Object({ company: Type.String() }),
+])
+
+export type TaskUpdateQueryParamsType = Static<typeof TaskUpdateQueryParams>
+export type TaskUpdateParamsType = Static<typeof TaskUpdateParams>
 
 export type TaskReadQueryParamsType = Static<typeof TaskReadQueryParams>
 
@@ -30,6 +81,7 @@ export type TaskReadParamsType = Static<typeof TaskReadParams>
 export const TaskCreateQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
+  projectType: Type.String(),
   task: Type.String(),
 })
 

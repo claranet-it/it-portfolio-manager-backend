@@ -1,20 +1,20 @@
 import { FastifyInstance } from 'fastify'
 import {
-  TaskCreateQueryParams,
-  TaskCreateQueryParamsType,
+  CustomerProjectDeleteQueryParams,
+  CustomerProjectDeleteQueryParamsType,
 } from '@src/core/Task/model/task.model'
-import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
+import { TaskError } from '@src/core/customExceptions/TaskError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.post<{
-    Body: TaskCreateQueryParamsType
+  fastify.delete<{
+    Body: CustomerProjectDeleteQueryParamsType
   }>(
-    '/task',
+    '/customer-project',
     {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Task'],
-        body: TaskCreateQueryParams,
+        body: CustomerProjectDeleteQueryParams,
         security: [
           {
             apiKey: [],
@@ -23,7 +23,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         response: {
           204: {
             type: 'null',
-            description: 'Task saved successfully',
+            description: 'Customer updated successfully',
           },
           400: {
             type: 'null',
@@ -45,13 +45,16 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .createTask({ ...request.body, company: request.user.company })
+          .deleteCustomerProject({
+            ...request.body,
+            company: request.user.company,
+          })
         return reply.send(JSON.stringify({ message: 'OK' }))
       } catch (error) {
         request.log.error(error)
         let errorCode = 500
         let errorMessage = ''
-        if (error instanceof InvalidCharacterError) {
+        if (error instanceof TaskError) {
           errorCode = 400
           errorMessage = error.message
         }

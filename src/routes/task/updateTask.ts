@@ -1,20 +1,20 @@
 import { FastifyInstance } from 'fastify'
 import {
-  TaskCreateQueryParams,
-  TaskCreateQueryParamsType,
+  TaskUpdateQueryParams,
+  TaskUpdateQueryParamsType,
 } from '@src/core/Task/model/task.model'
-import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
+import { TaskError } from '@src/core/customExceptions/TaskError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.post<{
-    Body: TaskCreateQueryParamsType
+  fastify.put<{
+    Body: TaskUpdateQueryParamsType
   }>(
     '/task',
     {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Task'],
-        body: TaskCreateQueryParams,
+        body: TaskUpdateQueryParams,
         security: [
           {
             apiKey: [],
@@ -23,7 +23,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         response: {
           204: {
             type: 'null',
-            description: 'Task saved successfully',
+            description: 'Task updated successfully',
           },
           400: {
             type: 'null',
@@ -45,13 +45,13 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .createTask({ ...request.body, company: request.user.company })
+          .updateTask({ ...request.body, company: request.user.company })
         return reply.send(JSON.stringify({ message: 'OK' }))
       } catch (error) {
         request.log.error(error)
         let errorCode = 500
         let errorMessage = ''
-        if (error instanceof InvalidCharacterError) {
+        if (error instanceof TaskError) {
           errorCode = 400
           errorMessage = error.message
         }
