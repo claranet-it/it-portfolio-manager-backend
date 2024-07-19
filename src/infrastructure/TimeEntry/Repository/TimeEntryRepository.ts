@@ -47,17 +47,18 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       params.month,
       params.year,
     )
-
     const command = new QueryCommand({
       TableName: getTableName('TimeEntry'),
+      IndexName: 'companyIndex',
       KeyConditionExpression:
-        'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
+        'company = :company AND timeEntryDate BETWEEN :from AND :to',
       ExpressionAttributeValues: {
-        ':uid': { S: params.user },
+        ':company': { S: params.company },
         ':from': { S: from },
         ':to': { S: to },
       },
     })
+
     const result = await this.dynamoDBClient.send(command)
     return (
       result.Items?.map((item) => {
@@ -139,10 +140,10 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   private getTimeOff(
     item: Record<string, AttributeValue>,
   ): TimeEntryRowWithProjectType[] {
-    const resultForUser: TimeEntryRowWithProjectType[] = []
+    const resultForCompany: TimeEntryRowWithProjectType[] = []
     item.tasks?.SS?.forEach((taskItem) => {
       const [customer, project, task, hours] = taskItem.split('#')
-      resultForUser.push({
+      resultForCompany.push({
         user: item.uid?.S ?? '',
         date: item.timeEntryDate?.S ?? '',
         company: item.company?.S ?? '',
@@ -154,7 +155,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         timeEntryDate: item.timeEntryDate?.S ?? '',
       })
     })
-    return resultForUser.filter(
+    return resultForCompany.filter(
       (result) => result.project === 'Assenze' && result.task !== 'FESTIVITA',
     )
   }
@@ -167,11 +168,18 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     const firstDayOfMonth = new Date(year, month - 1, 1)
     const lastDayOfMonth = new Date(year, month, 0)
 
-    const from = firstDayOfMonth.toISOString().substring(0, 10)
-    const to = lastDayOfMonth.toISOString().substring(0, 10)
+    const fromYear = firstDayOfMonth.getFullYear()
+    const fromMonth = firstDayOfMonth.getMonth() + 1
+    const fromDay = firstDayOfMonth.getDate()
 
-    console.log(`FROM: ${from}`)
-    console.log(`TO: ${to}`)
+    const toYear = lastDayOfMonth.getFullYear()
+    const toMonth = lastDayOfMonth.getMonth() + 1
+    const toDay = lastDayOfMonth.getDate()
+
+    const from = `${fromYear}-${(fromMonth > 9 ? '' : '0') + fromMonth}-${(fromDay > 9 ? '' : '0') + fromDay}`
+    const to = `${toYear}-${(toMonth > 9 ? '' : '0') + toMonth}-${(toDay > 9 ? '' : '0') + toDay}`
+    console.log(from)
+    console.log(to)
     return { from, to }
   }
 }

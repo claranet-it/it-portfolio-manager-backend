@@ -52,7 +52,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .dependencyInjectionContainer()
           .resolve('timeEntryService')
           .findTimeOffForCna({
-            user: request.query.user,
+            company: request.query.company,
             year: request.query.year,
             month: request.query.month,
           })

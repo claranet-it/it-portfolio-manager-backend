@@ -28,14 +28,12 @@ export class TimeEntryService {
     params: CnaReadParamType,
   ): Promise<TimeEntriesForCnaType[]> {
     const timeEntries = await this.timeEntryRepository.findTimeOffForCna(params)
+    const users = await this.userProfileRepository.getAllUserProfiles()
     return timeEntries.length > 0
       ? Promise.all(
           timeEntries.map(async (entry) => {
-            const user =
-              await this.userProfileRepository.getCompleteUserProfile(
-                entry.user,
-              )
-            const response = {
+            const user = users.find((user) => user.uid === entry.user)
+            return {
               description: entry.task, //TODO
               user: {
                 email: user?.uid ?? '',
@@ -57,8 +55,6 @@ export class TimeEntryService {
                 duration: entry.hours.toString(),
               },
             }
-            console.log(JSON.stringify(response, null, 2))
-            return response
           }),
         )
       : []
