@@ -1,8 +1,11 @@
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import {
+  CustomerProjectDeleteParamsType,
+  CustomerProjectUpdateParamsType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
+  TaskUpdateParamsType,
 } from '../model/task.model'
 
 export class TaskService {
@@ -22,5 +25,19 @@ export class TaskService {
 
   async createTask(params: TaskCreateReadParamsType): Promise<void> {
     return this.taskRepository.createTask(params)
+  }
+
+  async updateCustomerProject(
+    params: CustomerProjectUpdateParamsType,
+  ): Promise<void> {
+    return this.taskRepository.updateCustomerProject(params)
+  }
+  async updateTask(params: TaskUpdateParamsType): Promise<void> {
+    return this.taskRepository.updateTask(params)
+  }
+  async deleteCustomerProject(
+    params: CustomerProjectDeleteParamsType,
+  ): Promise<void> {
+    return this.taskRepository.deleteCustomerProject(params)
   }
 }
