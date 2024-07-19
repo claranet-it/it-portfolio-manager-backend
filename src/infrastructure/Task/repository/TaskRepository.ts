@@ -19,6 +19,7 @@ import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharact
 import { getTableName } from '@src/core/db/TableName'
 import { TimeEntryRowType } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TaskError } from '@src/core/customExceptions/TaskError'
+import * as fs from 'fs'
 
 export class TaskRepository implements TaskRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
@@ -370,6 +371,40 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     }
     await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
+  }
+
+  async populateTasks(): Promise<void> {
+    const company = 'it'
+    const projectType = 'billable'
+
+    const input = JSON.parse(
+      fs.readFileSync('./seed/clockify_tasks.json', 'utf8'),
+    )
+
+    for (const task of input) {
+      const customerProject = `${task.customer}#${task.project}`
+      const updateParams = {
+        TableName: getTableName('Task'),
+        Key: {
+          customerProject: { S: customerProject },
+          company: { S: company },
+        },
+        UpdateExpression:
+          'SET projectType = :projectType, inactive = :inactive ADD tasks :task',
+        ExpressionAttributeValues: {
+          ':task': {
+            SS: [task.task],
+          },
+          ':projectType': { S: projectType },
+          ':inactive': { BOOL: false },
+        },
+      }
+      try {
+        await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 
   private getTimeEntry(

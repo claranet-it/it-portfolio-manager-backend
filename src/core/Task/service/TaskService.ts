@@ -1,31 +1,29 @@
-import {TaskRepositoryInterface} from '@src/core/Task/repository/TaskRepositoryInterface'
+import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import {
-    CustomerProjectDeleteParamsType,
-    CustomerProjectUpdateParamsType,
-    ProjectReadParamsType,
-    TaskCreateReadParamsType,
-    TaskReadParamsType,
-    TaskUpdateParamsType,
+  CustomerProjectDeleteParamsType,
+  CustomerProjectUpdateParamsType,
+  ProjectReadParamsType,
+  TaskCreateReadParamsType,
+  TaskReadParamsType,
+  TaskUpdateParamsType,
 } from '../model/task.model'
 
 export class TaskService {
-    constructor(private taskRepository: TaskRepositoryInterface) {
-    }
+  constructor(private taskRepository: TaskRepositoryInterface) {}
 
-    async getCustomers(company: string): Promise<string[]> {
-        return this.taskRepository.getCustomers(company)
-    }
+  async getCustomers(company: string): Promise<string[]> {
+    return this.taskRepository.getCustomers(company)
+  }
 
-    async getProjects(params: ProjectReadParamsType): Promise<string[]> {
-        return this.taskRepository.getProjects(params)
-    }
+  async getProjects(params: ProjectReadParamsType): Promise<string[]> {
+    return this.taskRepository.getProjects(params)
+  }
 
-    async getTasks(params: TaskReadParamsType): Promise<string[]> {
-        return this.taskRepository.getTasks(params)
-    }
+  async getTasks(params: TaskReadParamsType): Promise<string[]> {
+    return this.taskRepository.getTasks(params)
+  }
 
     async createTask(params: TaskCreateReadParamsType): Promise<void> {
-
         if (!params.projectType) {
             const existingTasksOnProject =
                 await this.taskRepository.getTasksWithProjectType({
@@ -42,19 +40,21 @@ export class TaskService {
         return this.taskRepository.createTask(params)
     }
 
-    async updateCustomerProject(
-        params: CustomerProjectUpdateParamsType,
-    ): Promise<void> {
-        return this.taskRepository.updateCustomerProject(params)
-    }
+  async updateCustomerProject(
+    params: CustomerProjectUpdateParamsType,
+  ): Promise<void> {
+    return this.taskRepository.updateCustomerProject(params)
+  }
+  async updateTask(params: TaskUpdateParamsType): Promise<void> {
+    return this.taskRepository.updateTask(params)
+  }
+  async deleteCustomerProject(
+    params: CustomerProjectDeleteParamsType,
+  ): Promise<void> {
+    return this.taskRepository.deleteCustomerProject(params)
+  }
 
-    async updateTask(params: TaskUpdateParamsType): Promise<void> {
-        return this.taskRepository.updateTask(params)
-    }
-
-    async deleteCustomerProject(
-        params: CustomerProjectDeleteParamsType,
-    ): Promise<void> {
-        return this.taskRepository.deleteCustomerProject(params)
-    }
+  async populateTasks(): Promise<void> {
+    return this.taskRepository.populateTasks()
+  }
 }

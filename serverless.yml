@@ -265,9 +265,7 @@ resources:
             KeyType: HASH
           - AttributeName: customerProject
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        BillingMode: PAY_PER_REQUEST
     ItPortfolioManagerTimeEntry:
       Type: AWS::DynamoDB::Table
       Properties:
