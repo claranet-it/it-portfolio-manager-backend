@@ -39,7 +39,7 @@ test('create new task - new insert', async (t) => {
     const projectType = ProjectType.BILLABLE;
     const task = 'Test task';
 
-    let response = await postTask(customer, company, project, projectType, task);
+    let response = await postTask(customer, company, project, task, projectType);
     t.equal(response.statusCode, 200)
 
     response = await getTask(customer, project, company);
@@ -59,7 +59,7 @@ test('create task with existing customer and new project - new insert', async (t
     const task = 'Test task old';
 
     //FIRST INSERT
-    let response = await postTask(customer, company, project, projectType, task);
+    let response = await postTask(customer, company, project, task, projectType);
     t.equal(response.statusCode, 200)
 
     response = await getTask('Test existing customer', 'Test old project', 'fr');
@@ -73,8 +73,9 @@ test('create task with existing customer and new project - new insert', async (t
     response = await postTask(customer,
         company,
         'Test new project',
-        ProjectType.BILLABLE,
-        'Test task new');
+        'Test task new',
+        ProjectType.BILLABLE
+        );
     t.equal(response.statusCode, 200)
 
     // CHECK NEW
@@ -102,7 +103,7 @@ test('create task with existing project and new customer - new insert', async (t
     const task = 'Test task old';
 
     //FIRST INSERT
-    let response = await postTask(customer, company, project, projectType, task);
+    let response = await postTask(customer, company, project, task, projectType);
     t.equal(response.statusCode, 200)
 
     response = await getTask(customer, project, company)
@@ -113,12 +114,13 @@ test('create task with existing project and new customer - new insert', async (t
     t.same(tasks, expectedResult)
 
     //SECOND INSERT
-    response = await postTask(customer, company, project, projectType, task);
+    response = await postTask(customer, company, project, task, projectType);
     response = await postTask('Test new customer',
         company,
         project,
-        ProjectType.NON_BILLABLE,
-        'Test task new');
+        'Test task new',
+        ProjectType.NON_BILLABLE
+        );
     t.equal(response.statusCode, 200)
 
     // CHECK NEW
@@ -146,7 +148,7 @@ test('create task with same customer and project - update', async (t) => {
     const task = 'Test task2';
 
     // FIRST INSERT
-    let response = await postTask(customer, company, project, projectType, task);
+    let response = await postTask(customer, company, project, task, projectType);
     t.equal(response.statusCode, 200)
 
     response = await getTask(customer, project, company)
@@ -158,7 +160,7 @@ test('create task with same customer and project - update', async (t) => {
     t.same(tasks, expectedResult)
 
     // SECOND INSERT
-    response = await postTask(customer, company, project, ProjectType.SLACK_TIME, 'Test task3');
+    response = await postTask(customer, company, project,'Test task3');
     t.equal(response.statusCode, 200)
     t.same(JSON.parse(response.payload)['message'],
         'OK',
@@ -171,6 +173,11 @@ test('create task with same customer and project - update', async (t) => {
     t.equal(tasks.length, 2)
     expectedResult = ['Test task2', 'Test task3']
     t.same(tasks, expectedResult)
+
+    // CHECK PROJECT TYPE TODO
+    // const checkTasks = await taskRepository.getTasksWithProjectType({customer, project, company})
+    // expectedResult = {  } //tasks: ['Test task2', 'Test task3'], projectType: ProjectType.SLACK_TIME
+    // t.same(checkTasks, {})
 })
 
 test('create task with existing customer and project but different company - new insert', async (t) => {
@@ -181,11 +188,11 @@ test('create task with existing customer and project but different company - new
     const task = 'Test';
 
     // INSERT UK ROW
-    let response = await postTask(customer, company, project, projectType, task);
+    let response = await postTask(customer, company, project, task, projectType);
     t.equal(response.statusCode, 200)
 
     // INSERT US ROW
-    response = await postTask(customer, 'us', project, ProjectType.SLACK_TIME, task);
+    response = await postTask(customer, 'us', project, task, ProjectType.SLACK_TIME);
     t.equal(response.statusCode, 200)
 
     //CHECK US TASKS
@@ -209,7 +216,7 @@ test('throw error if # in customer', async (t) => {
     const projectType = ProjectType.NON_BILLABLE
     const task = 'test task'
     const company = 'it'
-    const response = await postTask(customer, company, project, projectType, task)
+    const response = await postTask(customer, company, project, task, projectType)
     t.equal(response.statusCode, 400)
     t.same(JSON.parse(response.payload)['message'],
        '# is not a valid character for customer or project',
@@ -222,14 +229,14 @@ test('throw error if # in project', async (t) => {
     const projectType = ProjectType.BILLABLE
     const task = 'test task'
     const company = 'it'
-    const response = await postTask(customer, company, project, projectType, task)
+    const response = await postTask(customer, company, project, task, projectType)
     t.equal(response.statusCode, 400)
     t.same(JSON.parse(response.payload)['message'],
         '# is not a valid character for customer or project',
     );
 })
 
-async function postTask(customer: string, company: string, project: string, projectType: string, task: string) {
+async function postTask(customer: string, company: string, project: string, task: string, projectType?: string) {
     return await app.inject({
         method: 'POST',
         url: '/api/task/task/',
