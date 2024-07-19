@@ -137,6 +137,11 @@ export class TaskRepository implements TaskRepositoryInterface {
         '# is not a valid character for customer or project',
       )
     }
+
+    if (!params.projectType) {
+      throw new TaskError('Project type missing')
+    }
+
     const customerProject = `${customer}#${project}`
     const updateParams = {
       TableName: getTableName('Task'),

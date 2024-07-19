@@ -81,6 +81,13 @@ export type TaskReadParamsType = Static<typeof TaskReadParams>
 export const TaskCreateQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
+  projectType: Type.Optional(Type.String()),
+  task: Type.String(),
+})
+
+export const TaskCreateQueryParamsNoOpt = Type.Object({
+  customer: Type.String(),
+  project: Type.String(),
   projectType: Type.String(),
   task: Type.String(),
 })
@@ -88,7 +95,7 @@ export const TaskCreateQueryParams = Type.Object({
 export type TaskCreateQueryParamsType = Static<typeof TaskCreateQueryParams>
 
 export const TaskCreateReadParams = Type.Intersect([
-  TaskCreateQueryParams,
+  TaskCreateQueryParamsNoOpt,
   Type.Object({ company: Type.String() }),
 ])
 
