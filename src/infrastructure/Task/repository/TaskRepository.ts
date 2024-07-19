@@ -137,10 +137,8 @@ export class TaskRepository implements TaskRepositoryInterface {
       )
     }
 
-    if(!params.projectType) {
-      throw new TaskError(
-          'Project type missing',
-      )
+    if (!params.projectType) {
+      throw new TaskError('Project type missing')
     }
 
     const customerProject = `${customer}#${project}`
