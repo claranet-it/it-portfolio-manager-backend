@@ -176,6 +176,48 @@ test('update hours on existing task', async(t) => {
 
 })
 
+test('throws error if trying to save absence on a saturday or sunday', async(t) => {
+  const date = '2024-01-28'
+  const customer = 'Claranet'
+  const project = 'Assenze'
+  const task = 'FERIE'
+  const hours = 2
+  const addTimeentryResponse = await addTimeEntry(
+      date,
+      customer,
+      project,
+      task,
+      hours,
+  )
+  t.equal(addTimeentryResponse.statusCode, 400)
+  t.same(JSON.parse(addTimeentryResponse.payload)['message'],
+      'Cannot insert absence on Saturday or Sunday',
+  );
+})
+
+test('returns without saving if entry has 0 hours', async(t) => {
+  const date = '2024-01-27'
+  const customer = 'Claranet'
+  const project = 'Funzionale'
+  const task = 'Attività di portfolio'
+  const hours = 0
+  const addTimeentryResponse = await addTimeEntry(
+      date,
+      customer,
+      project,
+      task,
+      hours,
+  )
+  t.equal(addTimeentryResponse.statusCode, 204)
+
+  const entry = await getTimeEntry('2024-01-27', '2024-01-27')
+  t.equal(entry.statusCode, 200)
+  const timeEntry = entry.json<TimeEntryRowListType>()
+  t.equal(timeEntry.length, 0)
+  t.same(timeEntry, [])
+
+})
+
 test('throws error on not existing customer', async(t) => {
   const date = '2024-01-02'
   const customer = 'unexisting customer'
@@ -190,7 +232,9 @@ test('throws error on not existing customer', async(t) => {
     hours,
   )
   t.equal(addTimeentryResponse.statusCode, 400)
-  t.equal(addTimeentryResponse.payload, 'Customer, project or tasks not existing')
+  t.same(JSON.parse(addTimeentryResponse.payload)['message'],
+      'Customer, project or tasks not existing',
+  );
 })
 
 test('throws error on not existing project', async(t) => {
@@ -207,7 +251,9 @@ test('throws error on not existing project', async(t) => {
     hours,
   )
   t.equal(addTimeentryResponse.statusCode, 400)
-  t.equal(addTimeentryResponse.payload, 'Customer, project or tasks not existing')
+  t.same(JSON.parse(addTimeentryResponse.payload)['message'],
+      'Customer, project or tasks not existing',
+  );
 })
 
 test('throws error on not existing task', async(t) => {
@@ -224,7 +270,9 @@ test('throws error on not existing task', async(t) => {
     hours,
   )
   t.equal(addTimeentryResponse.statusCode, 400)
-  t.equal(addTimeentryResponse.payload, 'Customer, project or tasks not existing')
+  t.same(JSON.parse(addTimeentryResponse.payload)['message'],
+      'Customer, project or tasks not existing',
+  );
 })
 
 async function addTimeEntry(
@@ -250,3 +298,14 @@ async function addTimeEntry(
   })
   return response
 }
+
+async function getTimeEntry(from: string, to: string) {
+ return await app.inject({
+    method: 'GET',
+    url: `/api/time-entry/mine?from=${from}&to=${to}`,
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+  })
+}
+
