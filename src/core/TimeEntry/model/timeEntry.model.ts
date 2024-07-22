@@ -33,6 +33,9 @@ export const TimeEntryRow = Type.Object({
   project: Type.String(),
   task: Type.String(),
   hours: Type.Number(),
+  description: Type.String(),
+  startHour: Type.String(),
+  endHour: Type.String(),
 })
 
 export const TimeEntriesForCna = Type.Object({
@@ -81,6 +84,9 @@ export const InsertTimeEntryRow = Type.Object({
   project: Type.String(),
   task: Type.String(),
   hours: Type.Number(),
+  description: Type.Optional(Type.String()),
+  startHour: Type.Optional(Type.String()),
+  endHour: Type.Optional(Type.String()),
 })
 
 export type InsertTimeEntryRowType = Static<typeof InsertTimeEntryRow>

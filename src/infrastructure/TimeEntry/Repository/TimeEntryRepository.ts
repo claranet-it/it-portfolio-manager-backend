@@ -76,7 +76,8 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         uid: { S: params.user },
         timeEntryDate: { S: params.date },
       },
-      UpdateExpression: 'SET company = :company ADD tasks :task',
+      UpdateExpression:
+        'SET company = :company, description = :description, startHour = :startHour, endHour = :endHour ADD tasks :task',
       ExpressionAttributeValues: {
         ':company': { S: params.company },
         ':task': {
@@ -84,8 +85,12 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
             `${params.customer}#${params.project}#${params.task}#${params.hours}`,
           ],
         },
+        ':description': { S: params.description ?? '' },
+        ':startHour': { S: params.startHour ?? '' },
+        ':endHour': { S: params.endHour ?? '' },
       },
     })
+
     await this.dynamoDBClient.send(command)
   }
 
@@ -148,6 +153,9 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         project: project,
         task: task,
         hours: parseFloat(hours),
+        description: item.description?.S ?? '',
+        startHour: item.startHour?.S ?? '',
+        endHour: item.endHour?.S ?? '',
       })
     })
     return resultForUser

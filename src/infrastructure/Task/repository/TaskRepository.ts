@@ -2140,6 +2140,9 @@ export class TaskRepository implements TaskRepositoryInterface {
         project: project,
         task: task,
         hours: parseFloat(hours),
+        description: item.description?.S ?? '',
+        startHour: item.startHour?.S ?? '',
+        endHour: item.endHour?.S ?? '',
       })
     })
     return resultForCompany
