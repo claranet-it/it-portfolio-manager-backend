@@ -73,8 +73,15 @@ export class TimeEntryService {
     if (!this.isWeekDay(params.date) && params.project === 'Assenze') {
       throw new TimeEntryError('Cannot insert absence on Saturday or Sunday')
     }
+
     if (params.hours === 0) {
-      return
+      return await this.delete({
+        user: params.user,
+        customer: params.customer,
+        project: params.project,
+        task: params.task,
+        date: params.date,
+      })
     }
 
     return await this.timeEntryRepository.saveMine(params)
