@@ -1,5 +1,6 @@
 import {
   AttributeValue,
+  DeleteItemCommand,
   DynamoDBClient,
   GetItemCommand,
   QueryCommand,
@@ -97,24 +98,39 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       },
     })
     const timeEntry = await this.dynamoDBClient.send(getItemCommand)
-    const task = timeEntry.Item?.tasks?.SS?.find((task) =>
-      task.startsWith(`${params.customer}#${params.project}#${params.task}`),
-    )
-    if (task) {
-      const updateCommand = new UpdateItemCommand({
-        TableName: getTableName('TimeEntry'),
-        Key: {
-          uid: { S: params.user },
-          timeEntryDate: { S: params.date },
-        },
-        UpdateExpression: 'DELETE tasks :task',
-        ExpressionAttributeValues: {
-          ':task': {
-            SS: [task],
-          },
-        },
-      })
-      await this.dynamoDBClient.send(updateCommand)
+
+    if (timeEntry.Item?.tasks?.SS) {
+      const task = timeEntry.Item.tasks.SS.find((task) =>
+        task.startsWith(`${params.customer}#${params.project}#${params.task}`),
+      )
+
+      if (task) {
+        if (timeEntry.Item?.tasks?.SS?.length > 1) {
+          const updateCommand = new UpdateItemCommand({
+            TableName: getTableName('TimeEntry'),
+            Key: {
+              uid: { S: params.user },
+              timeEntryDate: { S: params.date },
+            },
+            UpdateExpression: 'DELETE tasks :task',
+            ExpressionAttributeValues: {
+              ':task': {
+                SS: [task],
+              },
+            },
+          })
+          await this.dynamoDBClient.send(updateCommand)
+        } else {
+          const deleteCommand = new DeleteItemCommand({
+            TableName: getTableName('TimeEntry'),
+            Key: {
+              uid: { S: params.user },
+              timeEntryDate: { S: params.date },
+            },
+          })
+          await this.dynamoDBClient.send(deleteCommand)
+        }
+      }
     }
   }
 

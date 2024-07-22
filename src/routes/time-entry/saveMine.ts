@@ -4,6 +4,7 @@ import {
   InsertTimeEntryRow,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
+import { TimeEntryError } from '@src/core/customExceptions/TimeEntryError'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post<{
@@ -55,12 +56,17 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         request.log.error(error)
         let errorCode = 500
         let errorMessage = ''
-        if (error instanceof TaskNotExistsError) {
+        if (
+          error instanceof TaskNotExistsError ||
+          error instanceof TimeEntryError
+        ) {
           errorCode = 400
           errorMessage = error.message
         }
 
-        return reply.code(errorCode).send(errorMessage)
+        return reply
+          .code(errorCode)
+          .send(JSON.stringify({ message: errorMessage }))
       }
     },
   )

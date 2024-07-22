@@ -10,6 +10,7 @@ import { TimeEntryRepositoryInterface } from '../repository/TimeEntryRepositoryI
 import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
+import { TimeEntryError } from '@src/core/customExceptions/TimeEntryError'
 
 export class TimeEntryService {
   constructor(
@@ -69,10 +70,23 @@ export class TimeEntryService {
     if (!tasks.includes(params.task)) {
       throw new TaskNotExistsError()
     }
+    if (!this.isWeekDay(params.date) && params.project === 'Assenze') {
+      throw new TimeEntryError('Cannot insert absence on Saturday or Sunday')
+    }
+    if (params.hours === 0) {
+      return
+    }
+
     return await this.timeEntryRepository.saveMine(params)
   }
 
   async delete(params: deleteTimeEntryWithUserType): Promise<void> {
     await this.timeEntryRepository.delete(params)
+  }
+
+  private isWeekDay(date: string): boolean {
+    const start = new Date(date)
+    const dayOfWeek = start.getDay()
+    return !(dayOfWeek === 0 || dayOfWeek === 6)
   }
 }
