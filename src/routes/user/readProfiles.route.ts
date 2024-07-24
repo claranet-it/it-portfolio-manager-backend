@@ -50,8 +50,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
 
         return await fastify
           .dependencyInjectionContainer()
-          .resolve('userService')
-          .getUsers({
+          .resolve('userProfileService')
+          .getUsersForCna({
             company: request.query.company,
           })
       } catch (error) {

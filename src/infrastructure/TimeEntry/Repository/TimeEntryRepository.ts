@@ -16,6 +16,7 @@ import {
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
+import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
 
 export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
@@ -41,7 +42,36 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     )
   }
 
-  async findTimeOffForCna(
+  async findTimeOffForFlowing(
+    params: CnaReadParamType,
+  ): Promise<TimeEntryRowWithProjectType[]> {
+    const { from, to } = this.getPeriodFromMonthAndYear(
+      params.month,
+      params.year,
+    )
+    const users = []
+    for (const user of flowingUsers) {
+      const command = new QueryCommand({
+        TableName: getTableName('TimeEntry'),
+        KeyConditionExpression:
+          'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
+        ExpressionAttributeValues: {
+          ':uid': { S: user },
+          ':from': { S: from },
+          ':to': { S: to },
+        },
+      })
+      const result = await this.dynamoDBClient.send(command)
+      users.push(
+        result.Items?.map((item) => {
+          return this.getTimeOff(item)
+        }).flat() ?? [],
+      )
+    }
+    return users.flat()
+  }
+
+  async findTimeOffForClaranet(
     params: CnaReadParamType,
   ): Promise<TimeEntryRowWithProjectType[]> {
     const { from, to } = this.getPeriodFromMonthAndYear(
@@ -65,7 +95,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       result.Items?.map((item) => {
         return this.getTimeOff(item)
       }).flat() ?? []
-    )
+    ).filter((profile) => !flowingUsers.includes(profile.user))
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {

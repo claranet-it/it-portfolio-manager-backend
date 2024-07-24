@@ -13,6 +13,7 @@ import {
   UpdateUserProfileType,
   UserProfileType,
 } from '@src/core/User/model/user.model'
+import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
 
 export class UserProfileRepository implements UserProfileRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
@@ -95,6 +96,41 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     }
 
     return []
+  }
+
+  async getClaranetUserProfiles(): Promise<CompleteUserProfileType[]> {
+    const command = new ScanCommand({
+      TableName: getTableName('UserProfile'),
+    })
+    const result = await this.dynamoDBClient.send(command)
+    if (result?.Items) {
+      return result.Items.map((item) =>
+        this.getCompleteUserProfileFromDynamoItem(item),
+      ).filter((profile) => !flowingUsers.includes(profile.uid))
+    }
+
+    return []
+  }
+
+  async getFlowingUserProfiles(): Promise<CompleteUserProfileType[]> {
+    const users = []
+    for (const uid of flowingUsers) {
+      const command = new QueryCommand({
+        TableName: getTableName('UserProfile'),
+        KeyConditionExpression: 'uid = :uid',
+        ExpressionAttributeValues: { ':uid': { S: uid } },
+      })
+
+      const result = await this.dynamoDBClient.send(command)
+      if (
+        result?.Items?.length === 1 &&
+        (result?.Items[0]?.crew?.S || result?.Items[0]?.company?.S)
+      ) {
+        users.push(this.getCompleteUserProfileFromDynamoItem(result.Items[0]))
+      }
+
+    }
+    return users
   }
 
   async getByCompany(company: string): Promise<CompleteUserProfileType[]> {

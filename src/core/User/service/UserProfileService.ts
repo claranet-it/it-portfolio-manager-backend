@@ -1,4 +1,9 @@
-import { CompleteUserProfileType, UserProfileType } from '../model/user.model'
+import {
+  CnaUserProfileListType,
+  CompleteUserProfileType,
+  UserCompanyType,
+  UserProfileType,
+} from '../model/user.model'
 import { UserProfileRepositoryInterface } from '../repository/UserProfileRepositoryInterface'
 
 export class UserProfileService {
@@ -40,5 +45,34 @@ export class UserProfileService {
 
   async delete(uid: string) {
     await this.userProfileRepository.delete(uid)
+  }
+
+  async getUsersForCna(
+    params: UserCompanyType,
+  ): Promise<CnaUserProfileListType> {
+    let usersProfiles = []
+    if (params.company === 'flowing') {
+      usersProfiles = await this.userProfileRepository.getFlowingUserProfiles()
+    } else {
+      usersProfiles = await this.userProfileRepository.getClaranetUserProfiles()
+    }
+
+    return Promise.all(
+      usersProfiles.map(async (profile) => {
+        if (!profile) {
+          return {
+            email: '',
+            id: '',
+            name: '',
+          }
+        }
+
+        return {
+          email: profile?.uid,
+          id: profile?.uid,
+          name: profile?.name,
+        }
+      }),
+    )
   }
 }

@@ -42,18 +42,13 @@ test('Read users profiles - it', async t => {
     })
     t.equal(response.statusCode, 200)
     const result = response.json<TimeEntriesForCnaListType>()
-    t.equal(result.length, 7)
+    t.equal(result.length, 5)
 
-    const expected = [
+   const expected = [
         {
             "email": "micol.us@email.com",
             "id": "micol.us@email.com",
             "name": "Micol Panetta",
-        },
-        {
-            "email": "stefania.ceccacci@claranet.com",
-            "id": "stefania.ceccacci@claranet.com",
-            "name": "Stefania Ceccacci",
         },
         {
             "email": "micol.ts@email.com",
@@ -69,11 +64,6 @@ test('Read users profiles - it', async t => {
             "email": "nicholas.crow@email.com",
             "id": "nicholas.crow@email.com",
             "name": "Nicholas Crow",
-        },
-        {
-            "email": "manuel.gherardi@claranet.com",
-            "id": "manuel.gherardi@claranet.com",
-            "name": "Manuel Gherardi",
         },
         {
             "email": "testIt@test.com",
