@@ -37,8 +37,8 @@ export default function createApp(
   app.register(swagger, {
     swagger: {
       info: {
-        title: 'Portfolio Manager',
-        description: 'Claranet Italy Portfolio Manager Backend',
+        title: 'Brickly',
+        description: 'Skill-based Capaciy Planning Tool',
         version: '0.1.0',
       },
       securityDefinitions: {
