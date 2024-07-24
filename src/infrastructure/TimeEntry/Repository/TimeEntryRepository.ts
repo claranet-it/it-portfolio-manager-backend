@@ -76,18 +76,14 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         uid: { S: params.user },
         timeEntryDate: { S: params.date },
       },
-      UpdateExpression:
-        'SET company = :company, description = :description, startHour = :startHour, endHour = :endHour ADD tasks :task',
+      UpdateExpression: 'SET company = :company ADD tasks :task',
       ExpressionAttributeValues: {
         ':company': { S: params.company },
         ':task': {
           SS: [
-            `${params.customer}#${params.project}#${params.task}#${params.hours}`,
+            `${params.customer}#${params.project}#${params.task}#${params.hours}#${params.description ?? ''}#${params.startHour ?? ''}#${params.endHour ?? ''}`,
           ],
         },
-        ':description': { S: params.description ?? '' },
-        ':startHour': { S: params.startHour ?? '' },
-        ':endHour': { S: params.endHour ?? '' },
       },
     })
 
@@ -144,7 +140,8 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   ): TimeEntryRowType[] {
     const resultForUser: TimeEntryRowType[] = []
     item.tasks?.SS?.forEach((taskItem) => {
-      const [customer, project, task, hours] = taskItem.split('#')
+      const [customer, project, task, hours, description, startHour, endHour] =
+        taskItem.split('#')
       resultForUser.push({
         user: item.uid?.S ?? '',
         date: item.timeEntryDate?.S ?? '',
@@ -153,9 +150,9 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         project: project,
         task: task,
         hours: parseFloat(hours),
-        description: item.description?.S ?? '',
-        startHour: item.startHour?.S ?? '',
-        endHour: item.endHour?.S ?? '',
+        description: description ?? '',
+        startHour: startHour ?? '',
+        endHour: endHour ?? '',
       })
     })
     return resultForUser

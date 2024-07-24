@@ -147,7 +147,7 @@ test('insert time entry in an existing day with description', async (t) => {
   const startHour =  '08:00'
   const endHour =  '10:00'
 
-  const firstResponse = await addTimeEntry(
+  const firstTaskInsert = await addTimeEntry(
       date,
       customer,
       project,
@@ -157,7 +157,28 @@ test('insert time entry in an existing day with description', async (t) => {
       startHour,
       endHour
   )
-  t.equal(firstResponse.statusCode, 204)
+  t.equal(firstTaskInsert.statusCode, 204)
+
+  const secondDate = '2024-01-08'
+  const secondCustomer = 'Claranet'
+  const secondProject = 'Funzionale'
+  const secondTask = 'Management'
+  const secondHours = 4
+  const secondDescription = 'description 2'
+  const secondStartHour =  '14:00'
+  const secondEndHour =  '18:00'
+
+  const secondTaskInsert = await addTimeEntry(
+      secondDate,
+      secondCustomer,
+      secondProject,
+      secondTask,
+      secondHours,
+      secondDescription,
+      secondStartHour,
+      secondEndHour
+  )
+  t.equal(secondTaskInsert.statusCode, 204)
 
   const getTimeEntryResponse = await app.inject({
     method: 'GET',
@@ -168,7 +189,7 @@ test('insert time entry in an existing day with description', async (t) => {
   })
   t.equal(getTimeEntryResponse.statusCode, 200)
   const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
-  t.equal(timeEntry.length, 1)
+  t.equal(timeEntry.length, 2)
   t.same(timeEntry, [
     {
       user: 'nicholas.crow@email.com',
@@ -181,6 +202,18 @@ test('insert time entry in an existing day with description', async (t) => {
       description,
       startHour,
       endHour,
+    },
+    {
+      user: 'nicholas.crow@email.com',
+      date: date,
+      company: 'it',
+      customer: secondCustomer,
+      task: secondTask,
+      project: secondProject,
+      hours: secondHours,
+      description: secondDescription,
+      startHour: secondStartHour,
+      endHour: secondEndHour
     },
   ])
 })
