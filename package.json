@@ -61,6 +61,7 @@
     "@slack/web-api": "^7.0.2",
     "awilix": "^9.0.0",
     "crypto": "^1.0.1",
+    "fast-csv": "^5.0.1",
     "fastify": "^4.23.2",
     "fastify-plugin": "^4.5.1",
     "get-jwks": "^8.3.0",

@@ -5,12 +5,16 @@ import {
   deleteTimeEntryWithUserType,
   CnaReadParamType,
   TimeEntriesForCnaType,
+  TimeEntryReadParamWithCompanyAndCrewType,
+  TimeEntryReportType
 } from '../model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '../repository/TimeEntryRepositoryInterface'
 import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { TimeEntryError } from '@src/core/customExceptions/TimeEntryError'
+import { parse } from '@fast-csv/parse';
+import {CsvParserStream} from "fast-csv";
 
 export class TimeEntryService {
   constructor(
@@ -59,6 +63,57 @@ export class TimeEntryService {
           }),
         )
       : []
+  }
+
+  async generateReport(
+    params: TimeEntryReadParamWithCompanyAndCrewType,
+  ): Promise<CsvParserStream<TimeEntryReportType,TimeEntryReportType>> {
+    const timeEntries =
+      await this.timeEntryRepository.findTimeEntriesForReport(params)
+    const profiles = await this.userProfileRepository.getAllUserProfiles()
+    const users = params.crew
+      ? profiles.filter((profile) => profile.crew === params.crew)
+      : profiles
+
+    const data = timeEntries.length > 0
+      ? Promise.all(
+          timeEntries.map(async (entry) => {
+            const user = users.find((user) => user.uid === entry.user)
+            const task = await this.taskRepository.getTasksWithProjectType({
+              company: params.company,
+              project: entry.project,
+              customer: entry.customer,
+            })
+            return {
+              date: entry.date,
+              email: user?.uid ?? '',
+              name: user?.name ?? '',
+              company: user?.company ?? '',
+              crew: user?.crew ?? '',
+              customer: entry.customer,
+              project: entry.project,
+              task: entry.task,
+              projectType: task.projectType,
+              hours: entry.hours,
+              description: entry.description,
+              startHour: entry.startHour,
+              endHour: entry.endHour,
+            }
+          }),
+        )
+      : []
+
+    const headers = ['Date','Email','Name','Company','Crew','Customer','Project','Task','ProjectType','Hours','Description','StartHour','EndHour']
+
+    const stream = parse({ headers })
+        .on('error', error => console.error(error))
+        .on('data', row => console.log(row))
+        .on('end', (rowCount: number) => console.log(`Parsed ${rowCount} rows`));
+
+    stream.write(JSON.stringify(data));
+    stream.end();
+
+    return stream.
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
