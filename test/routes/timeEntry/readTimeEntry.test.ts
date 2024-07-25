@@ -64,6 +64,9 @@ test('Return time entries', async (t) => {
       project: 'Assenze',
       task: 'DONAZIONE SANGUE',
       hours: 2,
+      description: "",
+      startHour: "",
+      endHour: "",
     },
     {
       user: 'nicholas.crow@email.com',
@@ -73,6 +76,9 @@ test('Return time entries', async (t) => {
       project: 'Funzionale',
       task: 'Attività di portfolio',
       hours: 2,
+      description: "",
+      startHour: "",
+      endHour: "",
     },
     {
       user: 'nicholas.crow@email.com',
@@ -82,6 +88,9 @@ test('Return time entries', async (t) => {
       project: 'Slack time',
       task: 'formazione',
       hours: 4,
+      description: "",
+      startHour: "",
+      endHour: "",
     },
   ])
 })

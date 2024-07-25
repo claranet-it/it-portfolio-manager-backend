@@ -37,14 +37,14 @@ test('insert time entry in new day', async (t) => {
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
-  const addTimeentryResponse = await addTimeEntry(
+  const addTimeEntryResponse = await addTimeEntry(
     date,
     customer,
     project,
     task,
     hours,
   )
-  t.equal(addTimeentryResponse.statusCode, 204)
+  t.equal(addTimeEntryResponse.statusCode, 204)
 
   const getTimeEntryResponse = await app.inject({
     method: 'GET',
@@ -64,7 +64,10 @@ test('insert time entry in new day', async (t) => {
     task: task,
     project: project,
     hours: hours,
-  })
+    description: "",
+    startHour: "",
+    endHour: "",
+})
 })
 
 test('insert time entry in an existing day', async (t) => {
@@ -115,6 +118,9 @@ test('insert time entry in an existing day', async (t) => {
       task: firstTask,
       project: firstProject,
       hours: firstHours,
+      description: "",
+      startHour: "",
+      endHour: "",
     },
     {
       user: 'nicholas.crow@email.com',
@@ -124,6 +130,90 @@ test('insert time entry in an existing day', async (t) => {
       task: secondTask,
       project: secondProject,
       hours: secondHours,
+      description: "",
+      startHour: "",
+      endHour: "",
+    },
+  ])
+})
+
+test('insert time entry in an existing day with description', async (t) => {
+  const date = '2024-01-08'
+  const customer = 'Claranet'
+  const project = 'Funzionale'
+  const task = 'Attività di portfolio'
+  const hours = 2
+  const description = 'description'
+  const startHour =  '08:00'
+  const endHour =  '10:00'
+
+  const firstTaskInsert = await addTimeEntry(
+      date,
+      customer,
+      project,
+      task,
+      hours,
+      description,
+      startHour,
+      endHour
+  )
+  t.equal(firstTaskInsert.statusCode, 204)
+
+  const secondDate = '2024-01-08'
+  const secondCustomer = 'Claranet'
+  const secondProject = 'Funzionale'
+  const secondTask = 'Management'
+  const secondHours = 4
+  const secondDescription = 'description 2'
+  const secondStartHour =  '14:00'
+  const secondEndHour =  '18:00'
+
+  const secondTaskInsert = await addTimeEntry(
+      secondDate,
+      secondCustomer,
+      secondProject,
+      secondTask,
+      secondHours,
+      secondDescription,
+      secondStartHour,
+      secondEndHour
+  )
+  t.equal(secondTaskInsert.statusCode, 204)
+
+  const getTimeEntryResponse = await app.inject({
+    method: 'GET',
+    url: '/api/time-entry/mine?from=2024-01-08&to=2024-01-08',
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+  })
+  t.equal(getTimeEntryResponse.statusCode, 200)
+  const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
+  t.equal(timeEntry.length, 2)
+  t.same(timeEntry, [
+    {
+      user: 'nicholas.crow@email.com',
+      date: date,
+      company: 'it',
+      customer,
+      task,
+      project,
+      hours,
+      description,
+      startHour,
+      endHour,
+    },
+    {
+      user: 'nicholas.crow@email.com',
+      date: date,
+      company: 'it',
+      customer: secondCustomer,
+      task: secondTask,
+      project: secondProject,
+      hours: secondHours,
+      description: secondDescription,
+      startHour: secondStartHour,
+      endHour: secondEndHour
     },
   ])
 })
@@ -171,9 +261,11 @@ test('update hours on existing task', async(t) => {
       task: task,
       project: project,
       hours: newHours,
+      description: "",
+      startHour: "",
+      endHour: "",
     }    
   ])
-
 })
 
 test('throws error if trying to save absence on a saturday or sunday', async(t) => {
@@ -182,15 +274,15 @@ test('throws error if trying to save absence on a saturday or sunday', async(t) 
   const project = 'Assenze'
   const task = 'FERIE'
   const hours = 2
-  const addTimeentryResponse = await addTimeEntry(
+  const addTimeEntryResponse = await addTimeEntry(
       date,
       customer,
       project,
       task,
       hours,
   )
-  t.equal(addTimeentryResponse.statusCode, 400)
-  t.same(JSON.parse(addTimeentryResponse.payload)['message'],
+  t.equal(addTimeEntryResponse.statusCode, 400)
+  t.same(JSON.parse(addTimeEntryResponse.payload)['message'],
       'Cannot insert absence on Saturday or Sunday',
   );
 })
@@ -215,7 +307,6 @@ test('returns without saving if entry has 0 hours', async(t) => {
   const timeEntry = entry.json<TimeEntryRowListType>()
   t.equal(timeEntry.length, 0)
   t.same(timeEntry, [])
-
 })
 
 test('throws error on not existing customer', async(t) => {
@@ -281,22 +372,27 @@ async function addTimeEntry(
   project: string,
   task: string,
   hours: number,
+  description?: string,
+  startHour?: string,
+  endHour?: string
 ) {
-  const response = await app.inject({
+  return await app.inject({
     method: 'POST',
     url: '/api/time-entry/mine',
     headers: {
       authorization: `Bearer ${getToken()}`,
     },
     payload: {
-      date: date,
-      customer: customer,
-      project: project,
-      task: task,
-      hours: hours,
+      date,
+      customer,
+      project,
+      task,
+      hours,
+      description,
+      startHour,
+      endHour
     },
   })
-  return response
 }
 
 async function getTimeEntry(from: string, to: string) {
