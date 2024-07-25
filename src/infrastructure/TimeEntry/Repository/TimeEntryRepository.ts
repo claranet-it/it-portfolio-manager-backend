@@ -194,8 +194,6 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
 
     const from = `${fromYear}-${(fromMonth > 9 ? '' : '0') + fromMonth}-${(fromDay > 9 ? '' : '0') + fromDay}`
     const to = `${toYear}-${(toMonth > 9 ? '' : '0') + toMonth}-${(toDay > 9 ? '' : '0') + toDay}`
-    console.log(from)
-    console.log(to)
     return { from, to }
   }
 }
