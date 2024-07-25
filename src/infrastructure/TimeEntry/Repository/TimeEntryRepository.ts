@@ -16,6 +16,9 @@ import {
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
+import { invariant } from '@src/helpers/invariant'
+
+const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
@@ -177,10 +180,9 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   }
 
   private getPeriodFromMonthAndYear(month: number, year: number) {
-    if (month < 1 || month > 12) {
-      throw new Error('Month must be between 1 and 12')
-    }
-
+    invariant(MONTHS.includes(month) , 'Month is not valid')
+    invariant(year > 0, 'Year is required')
+    
     const firstDayOfMonth = new Date(year, month - 1, 1)
     const lastDayOfMonth = new Date(year, month, 0)
 
