@@ -1,5 +1,5 @@
 export const invariant = (condition: boolean, message: string): void => {
-    if (!condition) {
-        throw new Error(message)
-    }
+  if (!condition) {
+    throw new Error(message)
+  }
 }

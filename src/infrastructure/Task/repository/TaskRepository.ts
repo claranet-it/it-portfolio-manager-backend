@@ -371,7 +371,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     }
     await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
   }
-  
+
   private getTimeEntry(
     item: Record<string, AttributeValue>,
   ): TimeEntryRowType[] {

@@ -8,7 +8,7 @@ import { EffortRepositoryInterface } from '../repository/EffortRepositoryInterfa
 import { UserProfileService } from '@src/core/User/service/UserProfileService'
 import { EffortList } from '../model/effortList'
 import { UserProfileWithUidType } from '@src/core/User/model/user.model'
-import { EffortExcedsMaxError } from '@src/core/customExceptions/EffortExcedesMaxError'
+import { EffortExceedsMaxError } from '@src/core/customExceptions/EffortExcedesMaxError'
 
 export class EffortService {
   constructor(
@@ -119,7 +119,7 @@ export class EffortService {
       throw new UserProfileNotInitializedError()
     }
     if (params.confirmedEffort + params.tentativeEffort > 100) {
-      throw new EffortExcedsMaxError(params.month_year)
+      throw new EffortExceedsMaxError(params.month_year)
     }
 
     await this.effortRepository.saveEffort(params)

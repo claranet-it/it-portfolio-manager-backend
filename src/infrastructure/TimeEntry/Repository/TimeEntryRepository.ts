@@ -185,9 +185,9 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   }
 
   private getPeriodFromMonthAndYear(month: number, year: number) {
-    invariant(MONTHS.includes(month) , 'Month is not valid')
+    invariant(MONTHS.includes(month), 'Month is not valid')
     invariant(year > 0, 'Year is required')
-    
+
     const firstDayOfMonth = new Date(year, month - 1, 1)
     const lastDayOfMonth = new Date(year, month, 0)
 

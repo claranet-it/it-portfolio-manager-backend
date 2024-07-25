@@ -62,7 +62,9 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           errorMessage = error.message
           errorCode = 401
         }
-        reply.code(errorCode).send(errorMessage)
+        return reply
+          .code(errorCode)
+          .send(JSON.stringify({ message: errorMessage }))
       }
     },
   )
