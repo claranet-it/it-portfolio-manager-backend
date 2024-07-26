@@ -51,8 +51,4 @@ export class TaskService {
   ): Promise<void> {
     return this.taskRepository.deleteCustomerProject(params)
   }
-
-  async populateTasks(): Promise<void> {
-    return this.taskRepository.populateTasks()
-  }
 }
