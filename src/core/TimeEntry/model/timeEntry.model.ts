@@ -19,7 +19,7 @@ export type TimeEntryReadParamType = Static<typeof TimeEntryReadParam>
 export const TimeEntryReadParamWithCrew = Type.Object({
   from: Type.RegExp(dateFormat),
   to: Type.RegExp(dateFormat),
-  crew: Type.String(),
+  crew: Type.Optional(Type.String()),
 })
 
 export type TimeEntryReadParamWithCrewType = Static<

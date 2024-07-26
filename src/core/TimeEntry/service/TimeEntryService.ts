@@ -67,19 +67,19 @@ export class TimeEntryService {
 
   async generateReport(
     params: TimeEntryReadParamWithCompanyAndCrewType,
-  ): Promise<CsvParserStream<TimeEntryReportType,TimeEntryReportType>> {
+  ): Promise<TimeEntryReportType[]> { //CsvParserStream<TimeEntryReportType,TimeEntryReportType>
     const timeEntries =
       await this.timeEntryRepository.findTimeEntriesForReport(params)
-    const profiles = await this.userProfileRepository.getAllUserProfiles()
-    const users = params.crew
-      ? profiles.filter((profile) => profile.crew === params.crew)
-      : profiles
+    const users = await this.userProfileRepository.getByCompany(params.company)
+    const filteredUsers = params.crew
+      ? users.filter((profile) => profile.crew === params.crew)
+      : users
 
-    const data = timeEntries.length > 0
-      ? Promise.all(
+    return timeEntries.length > 0
+      ? await Promise.all(
           timeEntries.map(async (entry) => {
-            const user = users.find((user) => user.uid === entry.user)
-            const task = await this.taskRepository.getTasksWithProjectType({
+            const user = filteredUsers.find((user) => user.uid === entry.user)
+            const tasks = await this.taskRepository.getTasksWithProjectType({
               company: params.company,
               project: entry.project,
               customer: entry.customer,
@@ -93,7 +93,7 @@ export class TimeEntryService {
               customer: entry.customer,
               project: entry.project,
               task: entry.task,
-              projectType: task.projectType,
+              projectType: tasks.projectType,
               hours: entry.hours,
               description: entry.description,
               startHour: entry.startHour,
@@ -103,17 +103,18 @@ export class TimeEntryService {
         )
       : []
 
-    const headers = ['Date','Email','Name','Company','Crew','Customer','Project','Task','ProjectType','Hours','Description','StartHour','EndHour']
+    // const headers = ['Date','Email','Name','Company','Crew','Customer','Project','Task','ProjectType','Hours','Description','StartHour','EndHour']
+    //
+    // const stream = parse({ headers })
+    //     .on('error', error => console.error(error))
+    //     .on('data', row => console.log(row))
+    //     .on('end', (rowCount: number) => console.log(`Parsed ${rowCount} rows`));
+    //
+    // stream.write(JSON.stringify(data));
+    // stream.end();
+    //
+    // return stream
 
-    const stream = parse({ headers })
-        .on('error', error => console.error(error))
-        .on('data', row => console.log(row))
-        .on('end', (rowCount: number) => console.log(`Parsed ${rowCount} rows`));
-
-    stream.write(JSON.stringify(data));
-    stream.end();
-
-    return stream.
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {

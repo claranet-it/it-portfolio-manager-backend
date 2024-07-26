@@ -33,7 +33,7 @@ test('Read time entry without authorization', async (t) => {
 test('Generate time entries report', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/report?from=2024-01-01&to=2024-01-31',
+        url: '/api/time-entry/report?from=2024-01-01&to=2024-12-31',
         headers: {
             authorization: `Bearer ${getToken()}`,
         },
@@ -43,6 +43,5 @@ test('Generate time entries report', async (t) => {
     //const result = response.json<TimeEntryReportListType>()
     //t.equal(result.length, 2)
 
-
-    //t.same(result, '')
+   // t.same(result, '')
 })

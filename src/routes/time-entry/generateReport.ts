@@ -37,10 +37,11 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        return await fastify
+        const res = await fastify
           .dependencyInjectionContainer()
           .resolve('timeEntryService')
           .generateReport({ ...request.query, company: request.user.company })
+        console.log(JSON.stringify(res, null, 2))
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
