@@ -41,7 +41,7 @@ export class TimeEntryService {
     }
 
     return timeEntries.length > 0
-      ? Promise.all(
+      ? await Promise.all(
           timeEntries.map(async (entry) => {
             const user = users.find((user) => user.uid === entry.user)
             return {
