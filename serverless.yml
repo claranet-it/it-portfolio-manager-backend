@@ -95,7 +95,7 @@ custom:
           - table: ItPortfolioManager-Task-${opt:stage, 'dev'}
             rawsources: [ ./seed/task.json ]
           - table: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
-            rawsources: [ ./seed/time-entry.json ]
+            rawsources: [ ./seed/time-entry-for-cna.json ]
           - table: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
             sources: ['./seed/company.json']
           - table: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
