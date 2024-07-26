@@ -99,13 +99,16 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
   }
 
   async getClaranetUserProfiles(): Promise<CompleteUserProfileType[]> {
-    const command = new ScanCommand({
+    const command = new QueryCommand({
       TableName: getTableName('UserProfile'),
+      IndexName: 'companyIndex',
+      KeyConditionExpression: 'company = :company',
+      ExpressionAttributeValues: { ':company': { S: 'it' } },
     })
     const result = await this.dynamoDBClient.send(command)
     if (result?.Items) {
       return result.Items.map((item) =>
-        this.getCompleteUserProfileFromDynamoItem(item),
+          this.getCompleteUserProfileFromDynamoItem(item),
       ).filter((profile) => !flowingUsers.includes(profile.uid))
     }
 
