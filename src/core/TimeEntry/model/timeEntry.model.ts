@@ -20,6 +20,7 @@ export const TimeEntryReadParamWithCrew = Type.Object({
   from: Type.RegExp(dateFormat),
   to: Type.RegExp(dateFormat),
   crew: Type.Optional(Type.String()),
+  format: Type.Union([Type.Literal('json'), Type.Literal('csv')]),
 })
 
 export type TimeEntryReadParamWithCrewType = Static<

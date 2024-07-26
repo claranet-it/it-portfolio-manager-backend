@@ -1,17 +1,17 @@
 import { FastifyInstance } from 'fastify'
 import {
-  TimeEntryRowList,
   TimeEntryReadParamWithCrewType,
   TimeEntryReadParamWithCrew,
   TimeEntryReportListType,
+  TimeEntryReportList,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: TimeEntryReadParamWithCrewType
-    Reply: TimeEntryReportListType
+    Reply: TimeEntryReportListType | string
   }>(
-    '/report',
+    '/time-report',
     {
       onRequest: [fastify.authenticate],
       schema: {
@@ -23,7 +23,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: TimeEntryRowList,
+          200: TimeEntryReportList,
           401: {
             type: 'null',
             description: 'Unauthorized',
@@ -37,11 +37,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        const res = await fastify
+        return await fastify
           .dependencyInjectionContainer()
           .resolve('timeEntryService')
           .generateReport({ ...request.query, company: request.user.company })
-        console.log(JSON.stringify(res, null, 2))
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
