@@ -16,7 +16,10 @@ import {
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
+import { invariant } from '@src/helpers/invariant'
 import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
+
+const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
@@ -106,18 +109,14 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         uid: { S: params.user },
         timeEntryDate: { S: params.date },
       },
-      UpdateExpression:
-        'SET company = :company, description = :description, startHour = :startHour, endHour = :endHour ADD tasks :task',
+      UpdateExpression: 'SET company = :company ADD tasks :task',
       ExpressionAttributeValues: {
         ':company': { S: params.company },
         ':task': {
           SS: [
-            `${params.customer}#${params.project}#${params.task}#${params.hours}`,
+            `${params.customer}#${params.project}#${params.task}#${params.hours}#${params.description ?? ''}#${params.startHour ?? ''}#${params.endHour ?? ''}`,
           ],
         },
-        ':description': { S: params.description ?? '' },
-        ':startHour': { S: params.startHour ?? '' },
-        ':endHour': { S: params.endHour ?? '' },
       },
     })
 
@@ -174,7 +173,8 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   ): TimeEntryRowType[] {
     const resultForUser: TimeEntryRowType[] = []
     item.tasks?.SS?.forEach((taskItem) => {
-      const [customer, project, task, hours] = taskItem.split('#')
+      const [customer, project, task, hours, description, startHour, endHour] =
+        taskItem.split('#')
       resultForUser.push({
         user: item.uid?.S ?? '',
         date: item.timeEntryDate?.S ?? '',
@@ -183,9 +183,9 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         project: project,
         task: task,
         hours: parseFloat(hours),
-        description: item.description?.S ?? '',
-        startHour: item.startHour?.S ?? '',
-        endHour: item.endHour?.S ?? '',
+        description: description ?? '',
+        startHour: startHour ?? '',
+        endHour: endHour ?? '',
       })
     })
     return resultForUser
@@ -215,9 +215,8 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   }
 
   private getPeriodFromMonthAndYear(month: number, year: number) {
-    if (month < 1 || month > 12) {
-      throw new Error('Month must be between 1 and 12')
-    }
+    invariant(MONTHS.includes(month), 'Month is not valid')
+    invariant(year > 0, 'Year is required')
 
     const firstDayOfMonth = new Date(year, month - 1, 1)
     const lastDayOfMonth = new Date(year, month, 0)
@@ -232,8 +231,6 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
 
     const from = `${fromYear}-${(fromMonth > 9 ? '' : '0') + fromMonth}-${(fromDay > 9 ? '' : '0') + fromDay}`
     const to = `${toYear}-${(toMonth > 9 ? '' : '0') + toMonth}-${(toDay > 9 ? '' : '0') + toDay}`
-    console.log(from)
-    console.log(to)
     return { from, to }
   }
 }

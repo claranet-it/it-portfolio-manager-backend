@@ -31,7 +31,6 @@ export class ClaranetProvider implements ProviderInterface {
       picture: string
       'https://claranet/company': string
     }>(token, { key: key })
-    console.log(company)
     if (!email || !name || !picture || !company) {
       throw new UnauthorizedError()
     }

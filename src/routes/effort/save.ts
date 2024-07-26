@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { EffortRow, EffortRowType } from '@src/core/Effort/model/effort'
 import { UserProfileNotInitializedError } from '@src/core/customExceptions/UserProfileNotInitializedError'
-import { EffortExcedsMaxError } from '@src/core/customExceptions/EffortExcedesMaxError'
+import { EffortExceedsMaxError } from '@src/core/customExceptions/EffortExcedesMaxError'
 import { Type } from '@sinclair/typebox'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
@@ -53,12 +53,13 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           errorCode = 304
           errorMessage = error.message
         }
-        if (error instanceof EffortExcedsMaxError) {
+        if (error instanceof EffortExceedsMaxError) {
           errorCode = 400
           errorMessage = error.message
-          return reply.code(errorCode).send({ message: errorMessage })
         }
-        return reply.code(errorCode).send(errorMessage)
+        return reply
+          .code(errorCode)
+          .send(JSON.stringify({ message: errorMessage }))
       }
     },
   )
