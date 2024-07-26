@@ -27,17 +27,17 @@ const inputs = [
   {
     company: 'it',
     customer: 'Claranet',
-    expectProjects: ['Assenze', 'Funzionale', 'Slack time'],
+    expectProjects: [{name: 'Assenze', type: 'absence'},{name: 'Funzionale', type: 'non-billable'},{name: 'Slack time', type: 'slack-time'}]
   },
   {
     company: 'it',
     customer: 'test customer',
-    expectProjects: ['SOR Sviluppo'],
+    expectProjects: [{name: 'SOR Sviluppo', type: 'billable'}],
   },
   {
     company: "other company",
     customer: 'test customer of other company',
-    expectProjects: ['test project of other company'],
+    expectProjects: [{name:'test project of other company', type: 'billable'}],
   },
 ]
 
@@ -62,7 +62,6 @@ inputs.forEach((input) => {
 
     const projects = response.json<ProjectListType>()
     t.equal(projects.length, input.expectProjects.length)
-
 
     t.same(projects, input.expectProjects)
   })

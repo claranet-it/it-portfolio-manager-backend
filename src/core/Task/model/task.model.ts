@@ -105,7 +105,8 @@ export const CustomerList = Type.Array(Type.String())
 
 export type CustomerListType = Static<typeof CustomerList>
 
-export const ProjectList = Type.Array(Type.String())
+export const Project = Type.Object({ name: Type.String(), type: Type.String() })
+export const ProjectList = Type.Array(Project)
 
 export type ProjectListType = Static<typeof ProjectList>
 

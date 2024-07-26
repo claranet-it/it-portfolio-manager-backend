@@ -47,7 +47,7 @@ test('delete customer-project', async (t) => {
 
     let customers = response.json<CustomerListType>()
     t.equal(customers.length, 1)
-    let expectedResult = ['Test delete customer']
+    const expectedResult = ['Test delete customer']
     t.same(customers, expectedResult)
 
     response = await getProjects(company, customer);
@@ -55,8 +55,8 @@ test('delete customer-project', async (t) => {
 
     const projects = response.json<ProjectListType>()
     t.equal(projects.length, 1)
-    expectedResult = ['Test delete project']
-    t.same(projects, expectedResult)
+    const projExpectedResult = [{ name: "Test delete project", type: "billable" }]
+    t.same(projects, projExpectedResult)
 
     response = await deleteProject(company, customer, project);
     t.equal(response.statusCode, 200)

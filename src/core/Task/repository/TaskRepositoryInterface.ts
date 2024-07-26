@@ -1,6 +1,7 @@
 import {
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
+  ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
@@ -9,7 +10,7 @@ import {
 
 export interface TaskRepositoryInterface {
   getCustomers(company: string): Promise<string[]>
-  getProjects(params: ProjectReadParamsType): Promise<string[]>
+  getProjects(params: ProjectReadParamsType): Promise<ProjectListType>
   getTasks(params: TaskReadParamsType): Promise<string[]>
   getTasksWithProjectType(
     params: TaskReadParamsType,

@@ -9,6 +9,7 @@ import {
 import {
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
+  ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
@@ -43,7 +44,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     ).sort()
   }
 
-  async getProjects(params: ProjectReadParamsType): Promise<string[]> {
+  async getProjects(params: ProjectReadParamsType): Promise<ProjectListType> {
     const command = new QueryCommand({
       TableName: getTableName('Task'),
       KeyConditionExpression:
@@ -62,12 +63,18 @@ export class TaskRepository implements TaskRepositoryInterface {
           item.customerProject?.S?.split('#')[1] &&
           item.customerProject?.S?.split('#')[0] === params.customer
         ) {
-          return item.customerProject?.S?.split('#')[1]
+          return {
+            name: item.customerProject?.S?.split('#')[1],
+            type: item.projectType?.S ?? '',
+          }
         } else {
-          return ''
+          return {
+            name: '',
+            type: '',
+          }
         }
       }).sort() ?? []
-    ).filter((item) => item != '')
+    ).filter((item) => item.name != '')
   }
 
   async getTasks(params: TaskReadParamsType): Promise<string[]> {
