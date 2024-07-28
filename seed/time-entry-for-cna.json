@@ -1,7 +1,7 @@
 [
   {
     "uid": { "S": "stefania.ceccacci@claranet.com" },
-    "company": {"S": "flowing"},
+    "company": {"S": "it"},
     "timeEntryDate": { "S": "2024-07-17" },
     "tasks": {
       "SS": [
@@ -11,7 +11,7 @@
   },
   {
     "uid": { "S": "stefania.ceccacci@claranet.com" },
-    "company": {"S": "flowing"},
+    "company": {"S": "it"},
     "timeEntryDate": { "S": "2024-07-18" },
     "tasks": {
       "SS": [
@@ -21,7 +21,7 @@
   },
   {
     "uid": { "S": "stefania.ceccacci@claranet.com" },
-    "company": {"S": "flowing"},
+    "company": {"S": "it"},
     "timeEntryDate": { "S": "2024-07-19" },
     "tasks": {
       "SS": [
@@ -31,7 +31,7 @@
   },
   {
     "uid": { "S": "stefania.ceccacci@claranet.com" },
-    "company": {"S": "flowing"},
+    "company": {"S": "it"},
     "timeEntryDate": { "S": "2024-07-22" },
     "tasks": {
       "SS": [
@@ -41,7 +41,7 @@
   },
   {
     "uid": { "S": "stefania.ceccacci@claranet.com" },
-    "company": {"S": "flowing"},
+    "company": {"S": "it"},
     "timeEntryDate": { "S": "2024-07-23" },
     "tasks": {
       "SS": [
@@ -51,7 +51,7 @@
   },
   {
     "uid": { "S": "stefania.ceccacci@claranet.com" },
-    "company": {"S": "flowing"},
+    "company": {"S": "it"},
     "timeEntryDate": { "S": "2024-07-24" },
     "tasks": {
       "SS": [
@@ -61,7 +61,7 @@
   },
   {
     "uid": { "S": "stefania.ceccacci@claranet.com" },
-    "company": {"S": "flowing"},
+    "company": {"S": "it"},
     "timeEntryDate": { "S": "2024-07-25" },
     "tasks": {
       "SS": [
@@ -71,7 +71,7 @@
   },
   {
     "uid": { "S": "stefania.ceccacci@claranet.com" },
-    "company": {"S": "flowing"},
+    "company": {"S": "it"},
     "timeEntryDate": { "S": "2024-07-26" },
     "tasks": {
       "SS": [
@@ -81,18 +81,18 @@
   },
   {
     "uid": { "S": "manuel.gherardi@claranet.com" },
-    "company": {"S": "flowing"},
+    "company": {"S": "it"},
     "timeEntryDate": { "S": "2024-07-01" },
     "tasks": {
       "SS": [
-        "Claranet#Funzionale#Attività amministrative e legali: Amministrazione e Contabilità#4"
+        "Claranet#Funzionale#Attività amministrative e legali: Amministrazione e Contabilità#4",
       ]
     }
   },
   {
     "uid": { "S": "micol.panetta@claranet.com" },
     "company": {"S": "it"},
-    "timeEntryDate": { "S": "2024-07-23" },
+    "timeEntryDate": { "S": "2024-07-24" },
     "tasks": {
       "SS": [
         "Claranet#Assenze#PERMESSO STUDIO#2",
@@ -105,7 +105,7 @@
   {
     "uid": { "S": "micol.panetta@claranet.com" },
     "company": {"S": "it"},
-    "timeEntryDate": { "S": "2024-07-24" },
+    "timeEntryDate": { "S": "2024-07-25" },
     "tasks": {
       "SS": [
         "Claranet#Slack time#formazione#2",

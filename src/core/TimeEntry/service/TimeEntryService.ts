@@ -39,8 +39,6 @@ export class TimeEntryService {
         await this.timeEntryRepository.findTimeOffForClaranet(params)
       users = await this.userProfileRepository.getClaranetUserProfiles()
     }
-    console.log(JSON.stringify(timeEntries, null, 2))
-    console.log(JSON.stringify(users, null, 2))
 
     return timeEntries.length > 0
       ? await Promise.all(
