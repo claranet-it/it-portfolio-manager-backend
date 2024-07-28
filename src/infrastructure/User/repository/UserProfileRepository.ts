@@ -108,7 +108,7 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     const result = await this.dynamoDBClient.send(command)
     if (result?.Items) {
       return result.Items.map((item) =>
-          this.getCompleteUserProfileFromDynamoItem(item),
+        this.getCompleteUserProfileFromDynamoItem(item),
       ).filter((profile) => !flowingUsers.includes(profile.uid))
     }
 
@@ -131,7 +131,6 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
       ) {
         users.push(this.getCompleteUserProfileFromDynamoItem(result.Items[0]))
       }
-
     }
     return users
   }
