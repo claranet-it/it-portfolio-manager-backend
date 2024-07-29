@@ -13,6 +13,7 @@ import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsErro
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { TimeEntryError } from '@src/core/customExceptions/TimeEntryError'
+import { CompleteUserProfileType } from '@src/core/User/model/user.model'
 import { writeToString } from 'fast-csv'
 
 export class TimeEntryService {
@@ -31,10 +32,19 @@ export class TimeEntryService {
   async findTimeOffForCna(
     params: CnaReadParamType,
   ): Promise<TimeEntriesForCnaType[]> {
-    const timeEntries = await this.timeEntryRepository.findTimeOffForCna(params)
-    const users = await this.userProfileRepository.getAllUserProfiles()
+    let timeEntries
+    let users: CompleteUserProfileType[]
+    if (params.company === 'flowing') {
+      timeEntries = await this.timeEntryRepository.findTimeOffForFlowing(params)
+      users = await this.userProfileRepository.getFlowingUserProfiles()
+    } else {
+      timeEntries =
+        await this.timeEntryRepository.findTimeOffForClaranet(params)
+      users = await this.userProfileRepository.getClaranetUserProfiles()
+    }
+
     return timeEntries.length > 0
-      ? Promise.all(
+      ? await Promise.all(
           timeEntries.map(async (entry) => {
             const user = users.find((user) => user.uid === entry.user)
             return {

@@ -44,6 +44,11 @@ const skills = {
 
 export const skillsList = skills.Developer.concat(skills.Cloud)
 
+export const flowingUsers = [
+  'stefania.ceccacci@claranet.com',
+  'manuel.gherardi@claranet.com',
+]
+
 const scoreRange = {
   min: getMinimumScore(),
   max: getMaximumScore(),
