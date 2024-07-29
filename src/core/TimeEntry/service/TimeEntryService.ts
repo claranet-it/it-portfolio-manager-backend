@@ -114,10 +114,12 @@ export class TimeEntryService {
           )
         : []
 
-    if(params.crew) {
-      reportData = reportData.filter(data => data.crew === params.crew)
+    if (params.crew) {
+      reportData = reportData.filter((data) => data.crew === params.crew)
     }
-    return params.format === 'json' ? reportData : this.generateCsvFrom(reportData)
+    return params.format === 'json'
+      ? reportData
+      : this.generateCsvFrom(reportData)
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
