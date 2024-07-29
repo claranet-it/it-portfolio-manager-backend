@@ -19,6 +19,10 @@ export interface UserProfileRepositoryInterface {
 
   getAllUserProfiles(): Promise<CompleteUserProfileType[]>
 
+  getFlowingUserProfiles(): Promise<CompleteUserProfileType[]>
+
+  getClaranetUserProfiles(): Promise<CompleteUserProfileType[]>
+
   getByName(name: string, company: string): Promise<{ email: string }[]>
 
   getByCompany(company: string): Promise<CompleteUserProfileType[]>
