@@ -8,7 +8,10 @@ import {
 
 export interface TimeEntryRepositoryInterface {
   find(params: TimeEntryReadParamWithUserType): Promise<TimeEntryRowType[]>
-  findTimeOffForCna(
+  findTimeOffForFlowing(
+    params: CnaReadParamType,
+  ): Promise<TimeEntryRowWithProjectType[]>
+  findTimeOffForClaranet(
     params: CnaReadParamType,
   ): Promise<TimeEntryRowWithProjectType[]>
   saveMine(params: TimeEntryRowType): Promise<void>
