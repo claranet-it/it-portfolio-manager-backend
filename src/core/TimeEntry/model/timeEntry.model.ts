@@ -68,11 +68,34 @@ export const TimeEntryRowWithProject = Type.Object({
   timeEntryDate: Type.String(),
 })
 
+export const TimeEntryRowWithProjectEntity = Type.Object({
+  user: Type.String(),
+  date: Type.String(),
+  company: Type.String(),
+  customer: Type.String(),
+  project: Type.Object({ name: Type.String(), type: Type.String() }),
+  task: Type.String(),
+  hours: Type.Number(),
+  description: Type.String(),
+  startHour: Type.String(),
+  endHour: Type.String(),
+})
+
 export const TimeEntryRowList = Type.Array(TimeEntryRow)
 export type TimeEntryRowType = Static<typeof TimeEntryRow>
 export type TimeEntryRowListType = Static<typeof TimeEntryRowList>
 
 export type TimeEntryRowWithProjectType = Static<typeof TimeEntryRowWithProject>
+
+export type TimeEntryRowWithProjectEntityType = Static<
+  typeof TimeEntryRowWithProjectEntity
+>
+export const TimeEntryRowWithProjectEntityList = Type.Array(
+  TimeEntryRowWithProjectEntity,
+)
+export type TimeEntryRowWithProjectEntityListType = Static<
+  typeof TimeEntryRowWithProjectEntityList
+>
 
 export const TimeEntriesForCnaList = Type.Array(TimeEntriesForCna)
 export type TimeEntriesForCnaListType = Static<typeof TimeEntriesForCnaList>

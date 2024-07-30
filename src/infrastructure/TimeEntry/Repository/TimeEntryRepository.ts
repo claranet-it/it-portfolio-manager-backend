@@ -12,21 +12,26 @@ import {
   deleteTimeEntryWithUserType,
   CnaReadParamType,
   TimeEntryRowWithProjectType,
+  TimeEntryRowWithProjectEntityType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { invariant } from '@src/helpers/invariant'
 import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
+import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 export class TimeEntryRepository implements TimeEntryRepositoryInterface {
-  constructor(private dynamoDBClient: DynamoDBClient) {}
+  constructor(
+    private dynamoDBClient: DynamoDBClient,
+    private taskRepository: TaskRepositoryInterface,
+  ) {}
 
   async find(
     params: TimeEntryReadParamWithUserType,
-  ): Promise<TimeEntryRowType[]> {
+  ): Promise<TimeEntryRowWithProjectEntityType[]> {
     const command = new QueryCommand({
       TableName: getTableName('TimeEntry'),
       KeyConditionExpression:
@@ -38,11 +43,34 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       },
     })
     const result = await this.dynamoDBClient.send(command)
-    return (
-      result.Items?.map((item) => {
-        return this.getTimeEntryFromDynamoDb(item)
-      }).flat() ?? []
+    const entries = await Promise.all(
+      result.Items?.map(async (item) => {
+        return await this.getTimeEntryFromDynamoDb(item)
+      }).flat() ?? [],
     )
+    return entries.flat()
+  }
+
+  async findTasks(
+    params: TimeEntryRowType,
+  ): Promise<TimeEntryRowWithProjectEntityType[]> {
+    const command = new QueryCommand({
+      TableName: getTableName('TimeEntry'),
+      KeyConditionExpression: 'uid = :uid AND timeEntryDate = :timeEntryDate',
+      ExpressionAttributeValues: {
+        ':uid': { S: params.user },
+        ':timeEntryDate': { S: params.date },
+      },
+    })
+
+    const result = await this.dynamoDBClient.send(command)
+    const entries = await Promise.all(
+      result.Items?.map(async (item) => {
+        return this.getTimeEntryFromDynamoDb(item)
+      }).flat() ?? [],
+    )
+    console.log(JSON.stringify(entries, null, 2))
+    return entries.flat()
   }
 
   async findTimeOffForFlowing(
@@ -103,22 +131,58 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
     await this.delete(params)
-    const command = new UpdateItemCommand({
-      TableName: getTableName('TimeEntry'),
-      Key: {
-        uid: { S: params.user },
-        timeEntryDate: { S: params.date },
-      },
-      UpdateExpression: 'SET company = :company ADD tasks :task',
-      ExpressionAttributeValues: {
-        ':company': { S: params.company },
-        ':task': {
-          SS: [
-            `${params.customer}#${params.project}#${params.task}#${params.hours}#${params.description ?? ''}#${params.startHour ?? ''}#${params.endHour ?? ''}`,
-          ],
+
+    //console.log(JSON.stringify(params, null, 2))
+    const existingUserTasks = await this.findTasks(params)
+    //console.log(JSON.stringify(existingUserTasks, null, 2))
+    const existingTask = existingUserTasks.filter(
+      (task) =>
+        task.customer === params.customer &&
+        task.project.name == params.project &&
+        task.task === params.task &&
+        task.date === params.date &&
+        task.startHour != '' &&
+        task.endHour != '',
+    )
+
+    let command
+    if (existingTask.length > 0) {
+      // console.log("QUI1");
+      command = new UpdateItemCommand({
+        TableName: getTableName('TimeEntry'),
+        Key: {
+          uid: { S: params.user },
+          timeEntryDate: { S: params.date },
         },
-      },
-    })
+        UpdateExpression: 'SET company = :company, tasks = :task',
+        ExpressionAttributeValues: {
+          ':company': { S: params.company },
+          ':task': {
+            SS: [
+              `${params.customer}#${params.project}#${params.task}#${params.hours}#${params.description ?? ''}#${params.startHour ?? ''}#${params.endHour ?? ''}`,
+            ],
+          },
+        },
+      })
+    } else {
+      // console.log("QUI2");
+      command = new UpdateItemCommand({
+        TableName: getTableName('TimeEntry'),
+        Key: {
+          uid: { S: params.user },
+          timeEntryDate: { S: params.date },
+        },
+        UpdateExpression: 'SET company = :company ADD tasks :task',
+        ExpressionAttributeValues: {
+          ':company': { S: params.company },
+          ':task': {
+            SS: [
+              `${params.customer}#${params.project}#${params.task}#${params.hours}#${params.description ?? ''}#${params.startHour ?? ''}#${params.endHour ?? ''}`,
+            ],
+          },
+        },
+      })
+    }
 
     await this.dynamoDBClient.send(command)
   }
@@ -168,10 +232,10 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     }
   }
 
-  private getTimeEntryFromDynamoDb(
+  private async getTimeEntryFromDynamoDb(
     item: Record<string, AttributeValue>,
-  ): TimeEntryRowType[] {
-    const resultForUser: TimeEntryRowType[] = []
+  ): Promise<TimeEntryRowWithProjectEntityType[]> {
+    const resultForUser: TimeEntryRowWithProjectEntityType[] = []
     item.tasks?.SS?.forEach((taskItem) => {
       const [customer, project, task, hours, description, startHour, endHour] =
         taskItem.split('#')
@@ -180,7 +244,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         date: item.timeEntryDate?.S ?? '',
         company: item.company?.S ?? '',
         customer: customer,
-        project: project,
+        project: { name: project, type: '' },
         task: task,
         hours: parseFloat(hours),
         description: description ?? '',
@@ -188,7 +252,18 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         endHour: endHour ?? '',
       })
     })
-    return resultForUser
+    return Promise.all(
+      resultForUser.map(async (res) => {
+        const tasks = await this.taskRepository.getTasksWithProjectType({
+          company: res.company,
+          project: res.project.name,
+          customer: res.customer,
+        })
+
+        res.project.type = tasks.projectType
+        return res
+      }),
+    )
   }
 
   private getTimeOff(

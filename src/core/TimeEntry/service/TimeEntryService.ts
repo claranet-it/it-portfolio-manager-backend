@@ -5,6 +5,7 @@ import {
   deleteTimeEntryWithUserType,
   CnaReadParamType,
   TimeEntriesForCnaType,
+  TimeEntryRowWithProjectEntityType,
 } from '../model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '../repository/TimeEntryRepositoryInterface'
 import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
@@ -22,7 +23,7 @@ export class TimeEntryService {
 
   async find(
     params: TimeEntryReadParamWithUserType,
-  ): Promise<TimeEntryRowType[]> {
+  ): Promise<TimeEntryRowWithProjectEntityType[]> {
     return await this.timeEntryRepository.find(params)
   }
 
