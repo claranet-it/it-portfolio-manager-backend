@@ -1,7 +1,7 @@
 import {test, beforeEach, afterEach} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
-import {CustomerListType, ProjectListType} from '@src/core/Task/model/task.model'
+import {ProjectListType} from '@src/core/Task/model/task.model'
 import {ProjectType} from "@src/core/Report/model/productivity.model";
 
 let app: FastifyInstance
@@ -24,48 +24,41 @@ afterEach(async () => {
     await app.close()
 })
 
-test('delete customer-project without authentication', async (t) => {
+test('update project type without authentication', async (t) => {
     const response = await app.inject({
-        method: 'DELETE',
-        url: '/api/task/customer-project',
+        method: 'PUT',
+        url: '/api/task/project-type',
     })
     t.equal(response.statusCode, 401)
 })
 
-test('delete customer-project', async (t) => {
-    const customer = 'Test delete customer';
-    const company = 'test delete company';
-    const project = 'Test delete project';
+test('update project type', async (t) => {
+    const customer = 'Test update project type customer';
+    const company = 'test update project type company';
+    const project = 'Test update project type project';
     const projectType = ProjectType.BILLABLE;
-    const task = 'Test delete task';
+    const task = 'Test update project type task';
 
     let response = await postTask(customer, company, project, projectType, task);
     t.equal(response.statusCode, 200)
 
-    response = await getCustomers(company);
+    response = await getProjects(customer, project, company)
     t.equal(response.statusCode, 200)
 
-    let customers = response.json<CustomerListType>()
-    t.equal(customers.length, 1)
-    const expectedResult = ['Test delete customer']
-    t.same(customers, expectedResult)
-
-    response = await getProjects(company, customer);
-    t.equal(response.statusCode, 200)
-
-    const projects = response.json<ProjectListType>()
+    let projects = response.json<ProjectListType>()
     t.equal(projects.length, 1)
-    const projExpectedResult = [{ name: "Test delete project", type: "billable" }]
-    t.same(projects, projExpectedResult)
+    let expectedResult = [{name:'Test update project type project', type: ProjectType.BILLABLE}]
+    t.same(projects, expectedResult)
 
-    response = await deleteProject(company, customer, project);
+    response = await putProjectType(customer, company, project, ProjectType.NON_BILLABLE);
     t.equal(response.statusCode, 200)
 
-    response = await getProjects(company, customer);
+    response = await getProjects(customer, project, company)
     t.equal(response.statusCode, 200)
-    customers = response.json<CustomerListType>()
-    t.equal(customers.length, 0)
-    t.same(customers, [])
+    projects = response.json<ProjectListType>()
+    t.equal(projects.length, 1)
+    expectedResult = [{name:'Test update project type project', type: ProjectType.NON_BILLABLE}]
+    t.same(projects, expectedResult)
 })
 
 async function postTask(customer: string, company: string, project: string, projectType: string, task: string) {
@@ -84,34 +77,25 @@ async function postTask(customer: string, company: string, project: string, proj
     })
 }
 
-async function deleteProject(company: string, customer: string, project: string) {
+async function putProjectType(customer: string, company: string, project: string, newProjectType: string) {
     return await app.inject({
-        method: 'DELETE',
-        url: '/api/task/customer-project/',
+        method: 'PUT',
+        url: '/api/task/project-type/',
         headers: {
             authorization: `Bearer ${getToken(company)}`,
         },
         payload: {
             customer: customer,
             project: project,
+            newProjectType: newProjectType,
         }
     })
 }
 
-async function getCustomers(company: string) {
+async function getProjects(customer: string, project: string, company: string) {
     return await app.inject({
         method: 'GET',
-        url: `/api/task/customer`,
-        headers: {
-            authorization: `Bearer ${getToken(company)}`,
-        },
-    })
-}
-
-async function getProjects(company:string, customer: string) {
-    return await app.inject({
-        method: 'GET',
-        url: `/api/task/project?customer=${customer}`,
+            url: `/api/task/project?customer=${customer}`,
         headers: {
             authorization: `Bearer ${getToken(company)}`,
         },

@@ -11,6 +11,7 @@ import {
   CustomerProjectUpdateParamsType,
   ProjectListType,
   ProjectReadParamsType,
+  ProjectTypeUpdateParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
   TaskUpdateParamsType,
@@ -346,6 +347,35 @@ export class TaskRepository implements TaskRepositoryInterface {
       ExpressionAttributeValues: {
         ':task': {
           SS: newTasks,
+        },
+      },
+    }
+
+    await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
+  }
+
+  async updateProjectType(params: ProjectTypeUpdateParamsType): Promise<void> {
+    const company = params.company
+    const project = params.project
+    const customer = params.customer
+    const projectType = params.newProjectType
+
+    const customerProject = `${customer}#${project}`
+
+    if (!params.newProjectType) {
+      throw new TaskError('New project type must be valorized')
+    }
+
+    const updateParams = {
+      TableName: getTableName('Task'),
+      Key: {
+        customerProject: { S: customerProject },
+        company: { S: company },
+      },
+      UpdateExpression: 'SET projectType = :projectType',
+      ExpressionAttributeValues: {
+        ':projectType': {
+          S: projectType,
         },
       },
     }

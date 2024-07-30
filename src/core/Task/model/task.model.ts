@@ -69,6 +69,22 @@ export const TaskUpdateParams = Type.Intersect([
 export type TaskUpdateQueryParamsType = Static<typeof TaskUpdateQueryParams>
 export type TaskUpdateParamsType = Static<typeof TaskUpdateParams>
 
+export const ProjectTypeUpdateQueryParams = Type.Object({
+  customer: Type.String(),
+  project: Type.String(),
+  newProjectType: Type.String(),
+})
+
+export const ProjectTypeUpdateParams = Type.Intersect([
+  ProjectTypeUpdateQueryParams,
+  Type.Object({ company: Type.String() }),
+])
+
+export type ProjectTypeUpdateQueryParamsType = Static<
+  typeof ProjectTypeUpdateQueryParams
+>
+export type ProjectTypeUpdateParamsType = Static<typeof ProjectTypeUpdateParams>
+
 export type TaskReadQueryParamsType = Static<typeof TaskReadQueryParams>
 
 export const TaskReadParams = Type.Intersect([

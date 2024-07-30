@@ -3,6 +3,7 @@ import {
   CustomerProjectUpdateParamsType,
   ProjectListType,
   ProjectReadParamsType,
+  ProjectTypeUpdateParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
   TaskUpdateParamsType,
@@ -19,4 +20,5 @@ export interface TaskRepositoryInterface {
   updateCustomerProject(params: CustomerProjectUpdateParamsType): Promise<void>
   updateTask(params: TaskUpdateParamsType): Promise<void>
   deleteCustomerProject(params: CustomerProjectDeleteParamsType): Promise<void>
+  updateProjectType(params: ProjectTypeUpdateParamsType): void
 }
