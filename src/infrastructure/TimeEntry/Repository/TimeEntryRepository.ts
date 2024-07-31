@@ -51,28 +51,6 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     return entries.flat()
   }
 
-  async findTasks(
-    params: TimeEntryRowType,
-  ): Promise<TimeEntryRowWithProjectEntityType[]> {
-    const command = new QueryCommand({
-      TableName: getTableName('TimeEntry'),
-      KeyConditionExpression: 'uid = :uid AND timeEntryDate = :timeEntryDate',
-      ExpressionAttributeValues: {
-        ':uid': { S: params.user },
-        ':timeEntryDate': { S: params.date },
-      },
-    })
-
-    const result = await this.dynamoDBClient.send(command)
-    const entries = await Promise.all(
-      result.Items?.map(async (item) => {
-        return this.getTimeEntryFromDynamoDb(item)
-      }).flat() ?? [],
-    )
-    console.log(JSON.stringify(entries, null, 2))
-    return entries.flat()
-  }
-
   async findTimeOffForFlowing(
     params: CnaReadParamType,
   ): Promise<TimeEntryRowWithProjectType[]> {
@@ -132,57 +110,22 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   async saveMine(params: TimeEntryRowType): Promise<void> {
     await this.delete(params)
 
-    //console.log(JSON.stringify(params, null, 2))
-    const existingUserTasks = await this.findTasks(params)
-    //console.log(JSON.stringify(existingUserTasks, null, 2))
-    const existingTask = existingUserTasks.filter(
-      (task) =>
-        task.customer === params.customer &&
-        task.project.name == params.project &&
-        task.task === params.task &&
-        task.date === params.date &&
-        task.startHour != '' &&
-        task.endHour != '',
-    )
-
-    let command
-    if (existingTask.length > 0) {
-      // console.log("QUI1");
-      command = new UpdateItemCommand({
-        TableName: getTableName('TimeEntry'),
-        Key: {
-          uid: { S: params.user },
-          timeEntryDate: { S: params.date },
+    const command = new UpdateItemCommand({
+      TableName: getTableName('TimeEntry'),
+      Key: {
+        uid: { S: params.user },
+        timeEntryDate: { S: params.date },
+      },
+      UpdateExpression: 'SET company = :company ADD tasks :task',
+      ExpressionAttributeValues: {
+        ':company': { S: params.company },
+        ':task': {
+          SS: [
+            `${params.customer}#${params.project}#${params.task}#${params.hours}#${params.description ?? ''}#${params.startHour ?? ''}#${params.endHour ?? ''}`,
+          ],
         },
-        UpdateExpression: 'SET company = :company, tasks = :task',
-        ExpressionAttributeValues: {
-          ':company': { S: params.company },
-          ':task': {
-            SS: [
-              `${params.customer}#${params.project}#${params.task}#${params.hours}#${params.description ?? ''}#${params.startHour ?? ''}#${params.endHour ?? ''}`,
-            ],
-          },
-        },
-      })
-    } else {
-      // console.log("QUI2");
-      command = new UpdateItemCommand({
-        TableName: getTableName('TimeEntry'),
-        Key: {
-          uid: { S: params.user },
-          timeEntryDate: { S: params.date },
-        },
-        UpdateExpression: 'SET company = :company ADD tasks :task',
-        ExpressionAttributeValues: {
-          ':company': { S: params.company },
-          ':task': {
-            SS: [
-              `${params.customer}#${params.project}#${params.task}#${params.hours}#${params.description ?? ''}#${params.startHour ?? ''}#${params.endHour ?? ''}`,
-            ],
-          },
-        },
-      })
-    }
+      },
+    })
 
     await this.dynamoDBClient.send(command)
   }
@@ -236,34 +179,39 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     item: Record<string, AttributeValue>,
   ): Promise<TimeEntryRowWithProjectEntityType[]> {
     const resultForUser: TimeEntryRowWithProjectEntityType[] = []
-    item.tasks?.SS?.forEach((taskItem) => {
-      const [customer, project, task, hours, description, startHour, endHour] =
-        taskItem.split('#')
-      resultForUser.push({
-        user: item.uid?.S ?? '',
-        date: item.timeEntryDate?.S ?? '',
-        company: item.company?.S ?? '',
-        customer: customer,
-        project: { name: project, type: '' },
-        task: task,
-        hours: parseFloat(hours),
-        description: description ?? '',
-        startHour: startHour ?? '',
-        endHour: endHour ?? '',
-      })
-    })
-    return Promise.all(
-      resultForUser.map(async (res) => {
+    if (item.tasks?.SS) {
+      for (const taskItem of item.tasks.SS) {
+        const [
+          customer,
+          project,
+          task,
+          hours,
+          description,
+          startHour,
+          endHour,
+        ] = taskItem.split('#')
         const tasks = await this.taskRepository.getTasksWithProjectType({
-          company: res.company,
-          project: res.project.name,
-          customer: res.customer,
+          company: item.company?.S ?? '',
+          project: project,
+          customer: customer,
         })
 
-        res.project.type = tasks.projectType
-        return res
-      }),
-    )
+        resultForUser.push({
+          user: item.uid?.S ?? '',
+          date: item.timeEntryDate?.S ?? '',
+          company: item.company?.S ?? '',
+          customer: customer,
+          project: { name: project, type: tasks.projectType },
+          task: task,
+          hours: parseFloat(hours),
+          description: description ?? '',
+          startHour: startHour ?? '',
+          endHour: endHour ?? '',
+        })
+      }
+    }
+
+    return resultForUser
   }
 
   private getTimeOff(
