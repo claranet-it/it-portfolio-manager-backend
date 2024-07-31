@@ -4,7 +4,6 @@ import {
   CustomerProjectUpdateParamsType,
   ProjectListType,
   ProjectReadParamsType,
-  ProjectTypeUpdateParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
   TaskUpdateParamsType,
@@ -26,17 +25,6 @@ export class TaskService {
   }
 
   async createTask(params: TaskCreateReadParamsType): Promise<void> {
-    if (!params.projectType) {
-      const existingTasksOnProject =
-        await this.taskRepository.getTasksWithProjectType({
-          customer: params.customer,
-          project: params.project,
-          company: params.company,
-        })
-      if (existingTasksOnProject.tasks.length > 0) {
-        params['projectType'] = existingTasksOnProject.projectType
-      }
-    }
     return this.taskRepository.createTask(params)
   }
 
@@ -47,10 +35,6 @@ export class TaskService {
   }
   async updateTask(params: TaskUpdateParamsType): Promise<void> {
     return this.taskRepository.updateTask(params)
-  }
-
-  async updateProjectType(params: ProjectTypeUpdateParamsType): Promise<void> {
-    return this.taskRepository.updateProjectType(params)
   }
 
   async deleteCustomerProject(

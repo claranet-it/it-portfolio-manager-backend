@@ -11,7 +11,6 @@ import {
   CustomerProjectUpdateParamsType,
   ProjectListType,
   ProjectReadParamsType,
-  ProjectTypeUpdateParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
   TaskUpdateParamsType,
@@ -67,11 +66,13 @@ export class TaskRepository implements TaskRepositoryInterface {
           return {
             name: item.customerProject?.S?.split('#')[1],
             type: item.projectType?.S ?? '',
+            plannedHours: Number(item.plannedHours.N) ?? 0
           }
         } else {
           return {
             name: '',
             type: '',
+            plannedHours: 0
           }
         }
       }).sort() ?? []
@@ -98,9 +99,9 @@ export class TaskRepository implements TaskRepositoryInterface {
     )
   }
 
-  async getTasksWithProjectType(
+  async getTasksWithProjectDetails(
     params: TaskReadParamsType,
-  ): Promise<{ tasks: string[]; projectType: string }> {
+  ): Promise<{ tasks: string[]; projectType: string, plannedHours: number }> {
     const command = new QueryCommand({
       TableName: getTableName('Task'),
       KeyConditionExpression:
@@ -120,36 +121,38 @@ export class TaskRepository implements TaskRepositoryInterface {
           .flat()
           .sort() ?? []
       const projectType = result.Items[0].projectType?.S ?? ''
+      const plannedHours = Number(result.Items[0].plannedHours?.N ?? 0)
       return {
         tasks,
         projectType,
+        plannedHours
       }
     }
 
     return {
       tasks: [],
-      projectType: '', //TODO
+      projectType: '',
+      plannedHours: 0
     }
   }
 
   async createTask(params: TaskCreateReadParamsType): Promise<void> {
     const company = params.company
     const project = params.project
-    const projectType = params.projectType
     const customer = params.customer
     const task = params.task
 
-    if (customer.includes('#') || project.includes('#')) {
+    if (customer.includes('#') || project.name.includes('#')) {
       throw new InvalidCharacterError(
         '# is not a valid character for customer or project',
       )
     }
 
-    if (!params.projectType) {
+    if (!params.project.type) {
       throw new TaskError('Project type missing')
     }
 
-    const customerProject = `${customer}#${project}`
+    const customerProject = `${customer}#${project.name}`
     const updateParams = {
       TableName: getTableName('Task'),
       Key: {
@@ -157,12 +160,13 @@ export class TaskRepository implements TaskRepositoryInterface {
         company: { S: company },
       },
       UpdateExpression:
-        'SET projectType = :projectType, inactive = :inactive ADD tasks :task',
+        'SET projectType = :projectType, inactive = :inactive, plannedHours = :plannedHours ADD tasks :task',
       ExpressionAttributeValues: {
         ':task': {
           SS: [task],
         },
-        ':projectType': { S: projectType },
+        ':projectType': { S: project.type},
+        ':plannedHours': { N: project.plannedHours?.toString() ?? '0'},
         ':inactive': { BOOL: false },
       },
     }
@@ -178,8 +182,12 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     let newValue
     let existingCustomerProject
-    const oldCustomerProject = `${customer}#${project}`
+    const oldCustomerProject = `${customer}#${project.name}`
     let newCustomerProject
+
+    if (params.project.name ) {
+      throw new TaskError('Project name must be valorized')
+    }
 
     if (params.newCustomer && params.newProject) {
       throw new TaskError('New customer OR new Project must be valorized')
@@ -188,26 +196,33 @@ export class TaskRepository implements TaskRepositoryInterface {
       newValue = params.newCustomer
       existingCustomerProject = await this.getTasks({
         company,
-        project,
+        project: project.name ?? '',
         customer: newValue,
       })
-      newCustomerProject = `${newValue}#${project}`
+      newCustomerProject = `${newValue}#${project.name}`
+
+      if (newValue.includes('#')) {
+        throw new InvalidCharacterError(
+            '# is not a valid character for customer or project',
+        )
+      }
+
     } else if (params.newProject) {
       newValue = params.newProject
       existingCustomerProject = await this.getTasks({
         company,
-        project: newValue,
+        project: newValue.name,
         customer,
       })
-      newCustomerProject = `${customer}#${newValue}`
+      newCustomerProject = `${customer}#${newValue.name}`
+
+      if (newValue.name.includes('#')) {
+        throw new InvalidCharacterError(
+            '# is not a valid character for customer or project',
+        )
+      }
     } else {
       throw new TaskError('New customer OR new Project must be valorized')
-    }
-
-    if (newValue.includes('#')) {
-      throw new InvalidCharacterError(
-        '# is not a valid character for customer or project',
-      )
     }
 
     if (existingCustomerProject.length > 0) {
@@ -231,15 +246,15 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     const projectAlreadyAssigned = timeEntries.some(
       (entry) =>
-        entry.customer === params.customer && entry.project === params.project,
+        entry.customer === params.customer && entry.project === params.project.name,
     )
     if (projectAlreadyAssigned) {
       throw new TaskError('Customer project already assigned')
     }
 
-    const oldTasks = await this.getTasksWithProjectType({
+    const oldTasks = await this.getTasksWithProjectDetails({
       company,
-      project,
+      project: project.name,
       customer,
     })
 
@@ -323,7 +338,7 @@ export class TaskRepository implements TaskRepositoryInterface {
       throw new TaskError('Task already assigned')
     }
 
-    const oldTasksWithProjectType = await this.getTasksWithProjectType({
+    const oldTasksWithProjectType = await this.getTasksWithProjectDetails({
       company,
       project,
       customer,
@@ -347,35 +362,6 @@ export class TaskRepository implements TaskRepositoryInterface {
       ExpressionAttributeValues: {
         ':task': {
           SS: newTasks,
-        },
-      },
-    }
-
-    await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
-  }
-
-  async updateProjectType(params: ProjectTypeUpdateParamsType): Promise<void> {
-    const company = params.company
-    const project = params.project
-    const customer = params.customer
-    const projectType = params.newProjectType
-
-    const customerProject = `${customer}#${project}`
-
-    if (!params.newProjectType) {
-      throw new TaskError('New project type must be valorized')
-    }
-
-    const updateParams = {
-      TableName: getTableName('Task'),
-      Key: {
-        customerProject: { S: customerProject },
-        company: { S: company },
-      },
-      UpdateExpression: 'SET projectType = :projectType',
-      ExpressionAttributeValues: {
-        ':projectType': {
-          S: projectType,
         },
       },
     }

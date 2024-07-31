@@ -190,7 +190,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
           startHour,
           endHour,
         ] = taskItem.split('#')
-        const tasks = await this.taskRepository.getTasksWithProjectType({
+        const tasks = await this.taskRepository.getTasksWithProjectDetails({
           company: item.company?.S ?? '',
           project: project,
           customer: customer,
@@ -201,7 +201,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
           date: item.timeEntryDate?.S ?? '',
           company: item.company?.S ?? '',
           customer: customer,
-          project: { name: project, type: tasks.projectType },
+          project: { name: project, type: tasks.projectType, plannedHours: tasks.plannedHours },
           task: task,
           hours: parseFloat(hours),
           description: description ?? '',
