@@ -55,7 +55,7 @@ test('delete customer-project', async (t) => {
 
     const projects = response.json<ProjectListType>()
     t.equal(projects.length, 1)
-    const projExpectedResult = [{ name: "Test delete project", type: "billable" }]
+    const projExpectedResult = [{ name: "Test delete project", type: "billable", plannedHours: 0 }]
     t.same(projects, projExpectedResult)
 
     response = await deleteProject(company, customer, project);
@@ -68,7 +68,7 @@ test('delete customer-project', async (t) => {
     t.same(customers, [])
 })
 
-async function postTask(customer: string, company: string, project: string, projectType: string, task: string) {
+async function postTask(customer: string, company: string, project: string, projectType: string, task: string, plannedHours?: string) {
     return await app.inject({
         method: 'POST',
         url: '/api/task/task/',
@@ -77,8 +77,7 @@ async function postTask(customer: string, company: string, project: string, proj
         },
         payload: {
             customer: customer,
-            project: project,
-            projectType: projectType,
+            project: { name: project, type: projectType, plannedHours },
             task: task
         }
     })

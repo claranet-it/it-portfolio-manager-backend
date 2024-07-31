@@ -181,69 +181,43 @@ test('insert time entry in an existing day with description', async (t) => {
   )
   t.equal(secondTaskInsert.statusCode, 204)
 
-  const thirdStartHour =  '18:00'
-  const thirdEndHour =  '20:00'
 
-  const thirdTaskInsert = await addTimeEntry(
-      secondDate,
-      secondCustomer,
-      secondProject,
-      secondTask,
-      secondHours,
-      secondDescription,
-      thirdStartHour,
-      thirdEndHour
-  )
-  t.equal(thirdTaskInsert.statusCode, 204)
-  //
-  // const getTimeEntryResponse = await app.inject({
-  //   method: 'GET',
-  //   url: '/api/time-entry/mine?from=2024-01-08&to=2024-01-08',
-  //   headers: {
-  //     authorization: `Bearer ${getToken()}`,
-  //   },
-  // })
-  // t.equal(getTimeEntryResponse.statusCode, 200)
-  // const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
-  // t.equal(timeEntry.length, 2)
-  // t.same(timeEntry, []);
-  //   {
-  //     user: 'nicholas.crow@email.com',
-  //     date: date,
-  //     company: 'it',
-  //     customer,
-  //     task,
-  //     project,
-  //     hours,
-  //     description,
-  //     startHour,
-  //     endHour,
-  //   },
-  //   {
-  //     user: 'nicholas.crow@email.com',
-  //     date: date,
-  //     company: 'it',
-  //     customer: secondCustomer,
-  //     task: secondTask,
-  //     project: secondProject,
-  //     hours: secondHours,
-  //     description: secondDescription,
-  //     startHour: secondStartHour,
-  //     endHour: secondEndHour
-  //   },
-  //   {
-  //     user: 'nicholas.crow@email.com',
-  //     date: date,
-  //     company: 'it',
-  //     customer: secondCustomer,
-  //     task: secondTask,
-  //     project: secondProject,
-  //     hours: secondHours,
-  //     description: secondDescription,
-  //     startHour: thirdStartHour,
-  //     endHour: thirdEndHour
-  //   },
-  // ])
+  const getTimeEntryResponse = await app.inject({
+    method: 'GET',
+    url: '/api/time-entry/mine?from=2024-01-08&to=2024-01-08',
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+  })
+  t.equal(getTimeEntryResponse.statusCode, 200)
+  const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
+  t.equal(timeEntry.length, 2)
+  t.same(timeEntry, [
+    {
+      user: 'nicholas.crow@email.com',
+      date: date,
+      company: 'it',
+      customer,
+      task,
+      project,
+      hours,
+      description,
+      startHour,
+      endHour,
+    },
+    {
+      user: 'nicholas.crow@email.com',
+      date: date,
+      company: 'it',
+      customer: secondCustomer,
+      task: secondTask,
+      project: secondProject,
+      hours: secondHours,
+      description: secondDescription,
+      startHour: secondStartHour,
+      endHour: secondEndHour
+    }
+  ])
 })
 
 test('update hours on existing task', async(t) => {

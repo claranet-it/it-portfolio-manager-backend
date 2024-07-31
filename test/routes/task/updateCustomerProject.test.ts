@@ -1,7 +1,7 @@
 import {test, beforeEach, afterEach} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
-import {CustomerListType} from '@src/core/Task/model/task.model'
+import {CustomerListType, ProjectDetailsType} from '@src/core/Task/model/task.model'
 import {ProjectType} from "@src/core/Report/model/productivity.model";
 
 let app: FastifyInstance
@@ -51,7 +51,7 @@ test('update customer', async (t) => {
     let expectedResult = ['Test update customer']
     t.same(customers, expectedResult)
 
-    response = await putCustomer(customer, company, project, "Test update new customer");
+    response = await putCustomer(customer, company, {name: project, type: projectType, plannedHours: 0}, "Test update new customer");
     t.equal(response.statusCode, 200)
 
     response = await getCustomers(company);
@@ -62,7 +62,7 @@ test('update customer', async (t) => {
     t.same(customers, expectedResult)
 })
 
-async function postTask(customer: string, company: string, project: string, projectType: string, task: string) {
+async function postTask(customer: string, company: string, project: string, projectType: string, task: string, plannedHours?: string) {
     return await app.inject({
         method: 'POST',
         url: '/api/task/task/',
@@ -71,14 +71,13 @@ async function postTask(customer: string, company: string, project: string, proj
         },
         payload: {
             customer: customer,
-            project: project,
-            projectType: projectType,
+            project: {name:project, type: projectType, plannedHours: plannedHours},
             task: task
         }
     })
 }
 
-async function putCustomer(customer: string, company: string, project: string, newCustomer: string) {
+async function putCustomer(customer: string, company: string, project: ProjectDetailsType, newCustomer: string) {
     return await app.inject({
         method: 'PUT',
         url: '/api/task/customer-project/',

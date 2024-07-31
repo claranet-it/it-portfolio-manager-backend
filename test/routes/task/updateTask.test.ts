@@ -61,7 +61,7 @@ test('update task', async (t) => {
     t.same(tasks, expectedResult)
 })
 
-async function postTask(customer: string, company: string, project: string, projectType: string, task: string) {
+async function postTask(customer: string, company: string, project: string, projectType: string, task: string, plannedHours?: string) {
     return await app.inject({
         method: 'POST',
         url: '/api/task/task/',
@@ -70,8 +70,7 @@ async function postTask(customer: string, company: string, project: string, proj
         },
         payload: {
             customer: customer,
-            project: project,
-            projectType: projectType,
+            project: {name:project, type: projectType, plannedHours: plannedHours},
             task: task
         }
     })
