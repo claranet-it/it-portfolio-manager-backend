@@ -114,7 +114,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         entry.task === params.task,
     )
 
-    if ((params.index ?? 0) < filteredEntries.length) {
+    if (undefined !== params.index && params.index < filteredEntries.length) {
       await this.delete(params)
     }
 
