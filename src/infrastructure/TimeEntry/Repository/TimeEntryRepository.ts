@@ -102,7 +102,13 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
-    await this.delete(params)
+    const timeEntries = await this.find({user: params.user, from: params.date, to: params.date})
+    const filteredEntries = timeEntries.filter((entry) => entry.customer === params.customer && entry.project === params.project && entry.task === params.task)
+
+    if ((params.index ?? 0) < filteredEntries.length) {
+      await this.delete(params)
+    }
+
     const command = new UpdateItemCommand({
       TableName: getTableName('TimeEntry'),
       Key: {
@@ -172,12 +178,22 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     item: Record<string, AttributeValue>,
   ): TimeEntryRowType[] {
     const resultForUser: TimeEntryRowType[] = []
+    const indexMap: Record<string, number> = {};
     item.tasks?.SS?.forEach((taskItem) => {
       const [customer, project, task, hours, description, startHour, endHour] =
         taskItem.split('#')
+      const date = item.timeEntryDate?.S ?? '';
+
+      const indexMapKey = `${date}#${customer}#${project}#${task}`;
+      if (!(indexMapKey in indexMap)) {
+        indexMap[indexMapKey] = 0;
+      } else {
+        indexMap[indexMapKey]++;
+      }
+
       resultForUser.push({
         user: item.uid?.S ?? '',
-        date: item.timeEntryDate?.S ?? '',
+        date: date,
         company: item.company?.S ?? '',
         customer: customer,
         project: project,
@@ -186,7 +202,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         description: description ?? '',
         startHour: startHour ?? '',
         endHour: endHour ?? '',
-        index: 0,
+        index: indexMap[indexMapKey],
       })
     })
     return resultForUser
