@@ -13,6 +13,7 @@ import {
   CnaReadParamType,
   TimeEntryRowWithProjectType,
   TimeEntryRowWithProjectEntityType,
+  TimeEntryReadParamWithCompanyAndCrewType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
@@ -49,6 +50,29 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       }).flat() ?? [],
     )
     return entries.flat()
+  }
+
+  async findTimeEntriesForReport(
+    params: TimeEntryReadParamWithCompanyAndCrewType,
+  ): Promise<TimeEntryRowType[]> {
+    const command = new QueryCommand({
+      TableName: getTableName('TimeEntry'),
+      IndexName: 'companyIndex',
+      KeyConditionExpression:
+        'company = :company AND timeEntryDate BETWEEN :from AND :to',
+      ExpressionAttributeValues: {
+        ':company': { S: params.company },
+        ':from': { S: params.from },
+        ':to': { S: params.to },
+      },
+    })
+
+    const result = await this.dynamoDBClient.send(command)
+    return (
+      result.Items?.map((item) => {
+        return this.getTimeEntryFromDynamoDb(item)
+      }).flat() ?? []
+    )
   }
 
   async findTimeOffForFlowing(

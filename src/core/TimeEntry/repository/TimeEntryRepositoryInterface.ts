@@ -5,6 +5,7 @@ import {
   CnaReadParamType,
   TimeEntryRowWithProjectType,
   TimeEntryRowWithProjectEntityType,
+  TimeEntryReadParamWithCompanyAndCrewType,
 } from '../model/timeEntry.model'
 
 export interface TimeEntryRepositoryInterface {
@@ -17,6 +18,9 @@ export interface TimeEntryRepositoryInterface {
   findTimeOffForClaranet(
     params: CnaReadParamType,
   ): Promise<TimeEntryRowWithProjectType[]>
+  findTimeEntriesForReport(
+    params: TimeEntryReadParamWithCompanyAndCrewType,
+  ): Promise<TimeEntryRowType[]>
   saveMine(params: TimeEntryRowType): Promise<void>
   delete(params: deleteTimeEntryWithUserType): Promise<void>
 }
