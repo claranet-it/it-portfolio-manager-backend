@@ -68,7 +68,9 @@ test('insert time entry in new day', async (t) => {
     startHour: "",
     endHour: "",
     index: 0,
-})
+  })
+
+  await deleteTimeEntry(date, customer, project, task, 0)
 })
 
 test('insert time entry in an existing day', async (t) => {
@@ -138,6 +140,8 @@ test('insert time entry in an existing day', async (t) => {
       index: 0,
     },
   ])
+  await deleteTimeEntry(date, firstCustomer, firstProject, firstTask, 0)
+  await deleteTimeEntry(date, secondCustomer, secondProject, secondTask, 0)
 })
 
 test('insert time entry in an existing day with description', async (t) => {
@@ -158,7 +162,8 @@ test('insert time entry in an existing day with description', async (t) => {
       hours,
       description,
       startHour,
-      endHour
+      endHour,
+      0
   )
   t.equal(firstTaskInsert.statusCode, 204)
 
@@ -179,7 +184,8 @@ test('insert time entry in an existing day with description', async (t) => {
       secondHours,
       secondDescription,
       secondStartHour,
-      secondEndHour
+      secondEndHour,
+      1
   )
   t.equal(secondTaskInsert.statusCode, 204)
 
@@ -221,6 +227,8 @@ test('insert time entry in an existing day with description', async (t) => {
       index: 0,
     },
   ])
+  await deleteTimeEntry(date, customer, project, task, 0)
+  await deleteTimeEntry(date, secondCustomer, secondProject, secondTask, 0)
 })
 
 test('update hours on existing task', async(t) => {
@@ -245,6 +253,10 @@ test('update hours on existing task', async(t) => {
     project,
     task,
     newHours,
+    "",
+    "",
+    "",
+    0
   )
   t.equal(updateTimeEntryResponse.statusCode, 204)
   const getTimeEntryResponse = await app.inject({
@@ -272,6 +284,7 @@ test('update hours on existing task', async(t) => {
       index: 0,
     }    
   ])
+  await deleteTimeEntry(date, customer, project, task, 0)
 })
 
 test('add hours on existing task', async(t) => {
@@ -344,6 +357,8 @@ test('add hours on existing task', async(t) => {
       index: 1,
     }
   ])
+  await deleteTimeEntry(date, customer, project, task, 1)
+  await deleteTimeEntry(date, customer, project, task, 0)
 })
 
 test('throws error if trying to save absence on a saturday or sunday', async(t) => {
@@ -472,6 +487,29 @@ async function addTimeEntry(
       endHour,
       index
     },
+  })
+}
+
+async function deleteTimeEntry(
+  date: string,
+  customer: string,
+  project: string,
+  task: string,
+  index?: number
+) {
+  return await app.inject({
+    method: 'DELETE',
+    url: '/api/time-entry/mine',
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+    payload: {
+        date: date,
+        customer: customer,
+        project: project,
+        task: task,
+        index: index,
+      },
   })
 }
 
