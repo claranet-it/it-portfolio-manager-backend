@@ -186,6 +186,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         description: description ?? '',
         startHour: startHour ?? '',
         endHour: endHour ?? '',
+        index: 0,
       })
     })
     return resultForUser
