@@ -1,6 +1,7 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
+import {ProjectListType} from "@src/core/Task/model/task.model";
 
 let app: FastifyInstance
 
@@ -26,17 +27,17 @@ const inputs = [
   {
     company: 'it',
     customer: 'Claranet',
-    expectProjects: [{name: 'Assenze', type: 'absence'},{name: 'Funzionale', type: 'non-billable'},{name: 'Slack time', type: 'slack-time'}]
+    expectProjects: [{name: 'Assenze', type: 'absence', plannedHours: 0},{name: 'Funzionale', type: 'non-billable', plannedHours: 0},{name: 'Slack time', type: 'slack-time', plannedHours: 0}]
   },
   {
     company: 'it',
     customer: 'test customer',
-    expectProjects: [{name: 'SOR Sviluppo', type: 'billable'}],
+    expectProjects: [{name: 'SOR Sviluppo', type: 'billable', plannedHours: 0}],
   },
   {
     company: "other company",
     customer: 'test customer of other company',
-    expectProjects: [{name:'test project of other company', type: 'billable'}],
+    expectProjects: [{name:'test project of other company', type: 'billable', plannedHours: 0}],
   },
 ]
 
@@ -58,10 +59,10 @@ inputs.forEach((input) => {
     })
 
     t.equal(response.statusCode, 200)
-    console.log(JSON.stringify(response, null, 2))
-    // const projects = response.json<ProjectListType>()
-    // t.equal(projects.length, input.expectProjects.length)
-    //
-    // t.same(projects, input.expectProjects)
+
+    const projects = response.json<ProjectListType>()
+    t.equal(projects.length, input.expectProjects.length)
+
+    t.same(projects, input.expectProjects)
   })
 })

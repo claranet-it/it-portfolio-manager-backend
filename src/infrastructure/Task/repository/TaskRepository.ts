@@ -199,126 +199,152 @@ export class TaskRepository implements TaskRepositoryInterface {
                 'Only one between new customer and new project must be valorized',
             )
         }
-        if (params.newCustomer) {
-            newValue = params.newCustomer
-            existingCustomerProject = await this.getTasks({
+
+        if (params.newProject && params.newProject.name === params.project.name && (params.newProject.type || params.newProject.plannedHours)) {
+            const projectType = params.newProject.type ? params.newProject.type : params.project.type
+            const plannedHours = params.newProject.plannedHours ? params.newProject.plannedHours : params.project.plannedHours
+
+            const customerProject = `${customer}#${project.name}`
+
+            const updateParams = {
+                TableName: getTableName('Task'),
+                Key: {
+                    customerProject: {S: customerProject},
+                    company: {S: company},
+                },
+                UpdateExpression: 'SET projectType = :projectType, plannedHours = :plannedHours',
+                ExpressionAttributeValues: {
+                    ':projectType': {
+                        S: projectType,
+                    },
+                    ':plannedHours': {
+                        N: plannedHours?.toString(),
+                    },
+                },
+            }
+
+            await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
+
+        } else {
+
+            if (params.newCustomer) {
+                newValue = params.newCustomer
+                existingCustomerProject = await this.getTasks({
+                    company,
+                    project: project.name,
+                    customer: newValue,
+                })
+                newCustomerProject = `${newValue}#${project.name}`
+
+                if (newValue.includes('#')) {
+                    throw new InvalidCharacterError(
+                        '# is not a valid character for a customer',
+                    )
+                }
+            } else if (params.newProject) {
+                newValue = params.newProject
+                existingCustomerProject = await this.getTasks({
+                    company,
+                    project: newValue.name,
+                    customer,
+                })
+                newCustomerProject = `${customer}#${newValue.name}`
+
+                if (newValue.name.includes('#')) {
+                    throw new InvalidCharacterError(
+                        '# is not a valid character for a project',
+                    )
+                }
+            } else {
+                throw new TaskError(
+                    'At least one between new customer and new project must be valorized',
+                )
+            }
+
+            if (existingCustomerProject.length > 0) {
+                throw new TaskError('Customer project already exists')
+            }
+
+            const command = new QueryCommand({
+                TableName: getTableName('TimeEntry'),
+                IndexName: 'companyIndex',
+                KeyConditionExpression: 'company = :company',
+                ExpressionAttributeValues: {
+                    ':company': {S: params.company},
+                },
+            })
+            const result = await this.dynamoDBClient.send(command)
+            const timeEntries =
+                result.Items?.map((item) => {
+                    return this.getTimeEntry(item)
+                }).flat() ?? []
+
+            const projectAlreadyAssigned = timeEntries.some(
+                (entry) =>
+                    entry.customer === params.customer &&
+                    entry.project === params.project.name,
+            )
+            if (projectAlreadyAssigned) {
+                throw new TaskError('Customer project already assigned')
+            }
+
+            const oldTasks = await this.getTasksWithProjectDetails({
                 company,
                 project: project.name,
-                customer: newValue,
-            })
-            newCustomerProject = `${newValue}#${project.name}`
-
-            if (newValue.includes('#')) {
-                throw new InvalidCharacterError(
-                    '# is not a valid character for a customer',
-                )
-            }
-        } else if (params.newProject) {
-            newValue = params.newProject
-            existingCustomerProject = await this.getTasks({
-                company,
-                project: newValue.name,
                 customer,
             })
-            newCustomerProject = `${customer}#${newValue.name}`
 
-            if (newValue.name.includes('#')) {
-                throw new InvalidCharacterError(
-                    '# is not a valid character for a project',
-                )
-            }
-        } else {
-            throw new TaskError(
-                'At least one between new customer and new project must be valorized',
-            )
-        }
-
-        if (existingCustomerProject.length > 0) {
-            throw new TaskError('Customer project already exists')
-        }
-
-        const command = new QueryCommand({
-            TableName: getTableName('TimeEntry'),
-            IndexName: 'companyIndex',
-            KeyConditionExpression: 'company = :company',
-            ExpressionAttributeValues: {
-                ':company': {S: params.company},
-            },
-        })
-        const result = await this.dynamoDBClient.send(command)
-        const timeEntries =
-            result.Items?.map((item) => {
-                return this.getTimeEntry(item)
-            }).flat() ?? []
-
-        const projectAlreadyAssigned = timeEntries.some(
-            (entry) =>
-                entry.customer === params.customer &&
-                entry.project === params.project.name,
-        )
-        if (projectAlreadyAssigned) {
-            throw new TaskError('Customer project already assigned')
-        }
-
-        const oldTasks = await this.getTasksWithProjectDetails({
-            company,
-            project: project.name,
-            customer,
-        })
-
-        const input: TransactWriteItemsCommandInput = {
-            TransactItems: [
-                {
-                    Delete: {
-                        Key: {
-                            company: {S: params.company},
-                            customerProject: {S: oldCustomerProject},
+            const input: TransactWriteItemsCommandInput = {
+                TransactItems: [
+                    {
+                        Delete: {
+                            Key: {
+                                company: {S: params.company},
+                                customerProject: {S: oldCustomerProject},
+                            },
+                            TableName: getTableName('Task'),
                         },
-                        TableName: getTableName('Task'),
                     },
-                },
-                {
-                    Update: {
-                        Key: {
-                            company: {S: params.company},
-                            customerProject: {S: newCustomerProject},
-                        },
-                        TableName: getTableName('Task'),
-                        UpdateExpression:
-                            'SET #tasks = :tasks, #projectType = :projectType, #inactive = :inactive, #plannedHours = :plannedHours',
-                        ExpressionAttributeNames: {
-                            '#tasks': 'tasks',
-                            '#projectType': 'projectType',
-                            '#inactive': 'inactive',
-                            '#plannedHours': 'plannedHours',
-                        },
-                        ExpressionAttributeValues: {
-                            ':tasks': {
-                                SS: oldTasks.tasks,
+                    {
+                        Update: {
+                            Key: {
+                                company: {S: params.company},
+                                customerProject: {S: newCustomerProject},
                             },
-                            ':projectType': {
-                                S: params.project.type
-                                    ? params.project.type
-                                    : oldTasks.projectType,
+                            TableName: getTableName('Task'),
+                            UpdateExpression:
+                                'SET #tasks = :tasks, #projectType = :projectType, #inactive = :inactive, #plannedHours = :plannedHours',
+                            ExpressionAttributeNames: {
+                                '#tasks': 'tasks',
+                                '#projectType': 'projectType',
+                                '#inactive': 'inactive',
+                                '#plannedHours': 'plannedHours',
                             },
-                            ':inactive': {
-                                BOOL: false,
-                            },
-                            ':plannedHours': {
-                                N: params.project.plannedHours
-                                    ? params.project.plannedHours.toString()
-                                    : oldTasks.plannedHours
+                            ExpressionAttributeValues: {
+                                ':tasks': {
+                                    SS: oldTasks.tasks,
+                                },
+                                ':projectType': {
+                                    S: oldTasks.projectType,
+                                },
+                                ':inactive': {
+                                    BOOL: false,
+                                },
+                                ':plannedHours': {
+                                    N: oldTasks.plannedHours
                                         ? oldTasks.plannedHours.toString()
                                         : '0',
+                                },
                             },
                         },
                     },
-                },
-            ],
-        }
+                ],
+            }
 
-        const transactCommand = new TransactWriteItemsCommand(input)
-        await this.dynamoDBClient.send(transactCommand)
+            const transactCommand = new TransactWriteItemsCommand(input)
+            await this.dynamoDBClient.send(transactCommand)
+
+        }
     }
 
     async updateTask(params: TaskUpdateParamsType): Promise<void> {
