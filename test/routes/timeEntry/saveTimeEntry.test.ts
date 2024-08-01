@@ -274,6 +274,78 @@ test('update hours on existing task', async(t) => {
   ])
 })
 
+test('add hours on existing task', async(t) => {
+  const date = '2024-01-04'
+  const customer = 'Claranet'
+  const project = 'Slack time'
+  const task = 'formazione'
+  const hours = 2
+  const addTimeentryResponse = await addTimeEntry(
+    date,
+    customer,
+    project,
+    task,
+    hours,
+    '',
+    '09:00',
+    '11:00',
+    0
+  )
+  t.equal(addTimeentryResponse.statusCode, 204)
+
+  const newHours = 5
+  const updateTimeEntryResponse = await addTimeEntry(
+    date,
+    customer,
+    project,
+    task,
+    newHours,
+    '',
+    '12:00',
+    '17:00',
+    1
+  )
+  t.equal(updateTimeEntryResponse.statusCode, 204)
+  const getTimeEntryResponse = await app.inject({
+    method: 'GET',
+    url: '/api/time-entry/mine?from=2024-01-04&to=2024-01-04',
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+  })
+  t.equal(getTimeEntryResponse.statusCode, 200)
+  const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
+  t.equal(timeEntry.length, 2)
+  t.same(timeEntry, [
+    {
+      user: 'nicholas.crow@email.com',
+      date: date,
+      company: 'it',
+      customer: customer,
+      task: task,
+      project: project,
+      hours: hours,
+      description: "",
+      startHour: "09:00",
+      endHour: "11:00",
+      index: 0,
+    },
+    {
+      user: 'nicholas.crow@email.com',
+      date: date,
+      company: 'it',
+      customer: customer,
+      task: task,
+      project: project,
+      hours: newHours,
+      description: "",
+      startHour: "12:00",
+      endHour: "17:00",
+      index: 1,
+    }
+  ])
+})
+
 test('throws error if trying to save absence on a saturday or sunday', async(t) => {
   const date = '2024-01-28'
   const customer = 'Claranet'
@@ -380,7 +452,8 @@ async function addTimeEntry(
   hours: number,
   description?: string,
   startHour?: string,
-  endHour?: string
+  endHour?: string,
+  index?: number
 ) {
   return await app.inject({
     method: 'POST',
@@ -396,7 +469,8 @@ async function addTimeEntry(
       hours,
       description,
       startHour,
-      endHour
+      endHour,
+      index
     },
   })
 }
