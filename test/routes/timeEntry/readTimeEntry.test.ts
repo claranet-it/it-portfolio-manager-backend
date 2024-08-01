@@ -64,6 +64,7 @@ test('Return time entries', async (t) => {
             project: {
                 name: "Assenze",
                 type: "absence",
+                plannedHours: 0
             },
             task: 'DONAZIONE SANGUE',
             hours: 2,
@@ -79,6 +80,7 @@ test('Return time entries', async (t) => {
             project: {
                 name: "Funzionale",
                 type: "non-billable",
+                plannedHours: 0
             },
             task: 'Attività di portfolio',
             hours: 2,
@@ -94,6 +96,7 @@ test('Return time entries', async (t) => {
             project: {
                 name: "Slack time",
                 type: "slack-time",
+                plannedHours: 0
             },
             task: 'formazione',
             hours: 4,

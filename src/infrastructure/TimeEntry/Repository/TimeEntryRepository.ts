@@ -201,7 +201,11 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
           date: item.timeEntryDate?.S ?? '',
           company: item.company?.S ?? '',
           customer: customer,
-          project: { name: project, type: tasks.projectType, plannedHours: tasks.plannedHours },
+          project: {
+            name: project,
+            type: tasks.projectType,
+            plannedHours: tasks.plannedHours,
+          },
           task: task,
           hours: parseFloat(hours),
           description: description ?? '',

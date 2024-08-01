@@ -1,4 +1,5 @@
 import { Static, Type } from '@sinclair/typebox'
+import { Project } from '@src/core/Task/model/task.model'
 
 const dateFormat = /([0-9][0-9][0-9][0-9])-(0[1-9]|1[012])-([0-9][0-9])$/
 export const TimeEntryReadParam = Type.Object({
@@ -73,7 +74,7 @@ export const TimeEntryRowWithProjectEntity = Type.Object({
   date: Type.String(),
   company: Type.String(),
   customer: Type.String(),
-  project: Type.Object({ name: Type.String(), type: Type.String() }),
+  project: Project,
   task: Type.String(),
   hours: Type.Number(),
   description: Type.String(),

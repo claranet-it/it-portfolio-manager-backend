@@ -162,7 +162,7 @@ test('create task with same customer and project - update', async (t) => {
     t.same(tasks, expectedResult)
 
     // SECOND INSERT
-    response = await postTask(customer, company, project,'Test task3');
+    response = await postTask(customer, company, project,'Test task3', projectType);
     t.equal(response.statusCode, 200)
     t.same(JSON.parse(response.payload)['message'],
         'OK',

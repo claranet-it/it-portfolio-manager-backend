@@ -1,5 +1,4 @@
 import { Static, Type } from '@sinclair/typebox'
-import {ProjectType} from "@src/core/Report/model/productivity.model";
 
 export const ProjectQueryParam = Type.Object({
   customer: Type.String(),
@@ -19,9 +18,17 @@ export const TaskReadQueryParams = Type.Object({
   project: Type.String(),
 })
 
-export const ProjectOpt = Type.Object({ name: Type.Optional(Type.String()), type: Type.Optional(Type.String()), plannedHours: Type.Optional(Type.Number()) })
+export const ProjectOpt = Type.Object({
+  name: Type.Optional(Type.String()),
+  type: Type.Optional(Type.String()),
+  plannedHours: Type.Optional(Type.Number()),
+})
 
-export const Project = Type.Object({ name: Type.String(), type: Type.String(), plannedHours: Type.Number() })
+export const Project = Type.Object({
+  name: Type.String(),
+  type: Type.String(),
+  plannedHours: Type.Number(),
+})
 
 export type ProjectDetailsType = Static<typeof Project>
 export const ProjectList = Type.Array(Project)
@@ -30,13 +37,20 @@ export type ProjectListType = Static<typeof ProjectList>
 
 export const CustomerProjectUpdateQueryParams = Type.Object({
   customer: Type.String(),
+  project: ProjectOpt,
+  newCustomer: Type.Optional(Type.String()),
+  newProject: Type.Optional(ProjectOpt),
+})
+
+export const CustomerProjectParams = Type.Object({
+  customer: Type.String(),
   project: Project,
   newCustomer: Type.Optional(Type.String()),
   newProject: Type.Optional(Project),
 })
 
 export const CustomerProjectUpdateParams = Type.Intersect([
-  CustomerProjectUpdateQueryParams,
+  CustomerProjectParams,
   Type.Object({ company: Type.String() }),
 ])
 
