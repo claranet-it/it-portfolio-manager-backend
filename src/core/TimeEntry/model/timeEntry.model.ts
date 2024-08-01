@@ -97,6 +97,7 @@ export const DeleteTimeEntryRow = Type.Object({
   customer: Type.String(),
   project: Type.String(),
   task: Type.String(),
+  index: Type.Optional(Type.Number()),
 })
 
 export type DeleteTimeEntryRowType = Static<typeof DeleteTimeEntryRow>
