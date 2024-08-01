@@ -325,13 +325,13 @@ export class TaskRepository implements TaskRepositoryInterface {
                                     SS: oldTasks.tasks,
                                 },
                                 ':projectType': {
-                                    S: oldTasks.projectType,
+                                    S: params.newProject && params.newProject.type ? params.newProject.type : oldTasks.projectType,
                                 },
                                 ':inactive': {
                                     BOOL: false,
                                 },
                                 ':plannedHours': {
-                                    N: oldTasks.plannedHours
+                                    N: params.newProject && params.newProject.plannedHours ? params.newProject.plannedHours.toString() : oldTasks.plannedHours
                                         ? oldTasks.plannedHours.toString()
                                         : '0',
                                 },

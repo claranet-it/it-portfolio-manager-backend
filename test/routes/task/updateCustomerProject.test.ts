@@ -62,6 +62,40 @@ test('update customer', async (t) => {
     t.same(customers, expectedResult)
 })
 
+test('update project - all', async (t) => {
+    const customer = 'Test update project all customer';
+    const company = 'Test update project all company';
+    const project = 'Test update project all project';
+    const projectType = ProjectType.SLACK_TIME;
+    const plannedHours = 200;
+    const task = 'Test update project all task';
+
+    let response = await postTask(customer, company, project, projectType, task, plannedHours);
+    t.equal(response.statusCode, 200)
+
+    response = await getProjects(company, customer);
+    t.equal(response.statusCode, 200)
+
+    let projects = response.json<ProjectListType>()
+
+    t.equal(projects.length, 1)
+    let expectedResult = [{name: project, type: ProjectType.SLACK_TIME, plannedHours: plannedHours}]
+    t.same(projects, expectedResult)
+
+    const newProjectName = 'Test update NEW project all project'
+    const newProjectType = ProjectType.BILLABLE
+    const newPlannedHours = 300
+    response = await putProject(customer, company, {name: project, type: projectType, plannedHours: plannedHours}, {name: newProjectName, type: newProjectType, plannedHours: newPlannedHours});
+    t.equal(response.statusCode, 200)
+
+    response = await getProjects(company, customer);
+    t.equal(response.statusCode, 200)
+    projects = response.json<ProjectListType>()
+    t.equal(projects.length, 1)
+    expectedResult =  [{name: newProjectName, type: newProjectType, plannedHours: newPlannedHours}]
+    t.same(projects, expectedResult)
+})
+
 test('update project - only name', async (t) => {
     const customer = 'Test update project customer';
     const company = 'Test update project company';
@@ -155,7 +189,7 @@ test('update project - only plannedHours', async (t) => {
     t.same(projects, expectedResult)
 })
 
-async function postTask(customer: string, company: string, project: string, projectType: string, task: string, plannedHours?: string) {
+async function postTask(customer: string, company: string, project: string, projectType: string, task: string, plannedHours?: number) {
     return await app.inject({
         method: 'POST',
         url: '/api/task/task/',
