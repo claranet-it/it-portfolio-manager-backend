@@ -278,13 +278,13 @@ test('update hours on existing task', async(t) => {
 test('add hours on existing task', async(t) => {
   const date = '2024-01-04'
   const customer = 'Claranet'
-  const project = 'Slack time'
+  const project = {name: 'Slack time', type: "slack-time", plannedHours: 0}
   const task = 'formazione'
   const hours = 2
-  const addTimeentryResponse = await addTimeEntry(
+  const addTimeEntryResponse = await addTimeEntry(
     date,
     customer,
-    project,
+    project.name,
     task,
     hours,
     '',
@@ -292,13 +292,13 @@ test('add hours on existing task', async(t) => {
     '11:00',
     0
   )
-  t.equal(addTimeentryResponse.statusCode, 204)
+  t.equal(addTimeEntryResponse.statusCode, 204)
 
   const newHours = 5
   const updateTimeEntryResponse = await addTimeEntry(
     date,
     customer,
-    project,
+    project.name,
     task,
     newHours,
     '',

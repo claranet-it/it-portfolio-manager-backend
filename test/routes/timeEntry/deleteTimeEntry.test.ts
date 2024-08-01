@@ -81,7 +81,7 @@ test('delete time entry', async (t) => {
 test('delete the right time entry if there are more than one', async (t) => {
   const date = '2024-01-10'
   const customer = 'Claranet'
-  const project = 'Slack time'
+  const project = {name: 'Slack time', type: "slack-time", plannedHours: 0}
   const task = 'formazione'
   const hours = 2
   const addResponse1 = await app.inject({
@@ -93,7 +93,7 @@ test('delete the right time entry if there are more than one', async (t) => {
     payload: {
       date: date,
       customer: customer,
-      project: project,
+      project: project.name,
       task: task,
       hours: hours,
       index: 0,
@@ -109,7 +109,7 @@ test('delete the right time entry if there are more than one', async (t) => {
     payload: {
       date: date,
       customer: customer,
-      project: project,
+      project: project.name,
       task: task,
       hours: hours + 2,
       index: 1,
@@ -125,7 +125,7 @@ test('delete the right time entry if there are more than one', async (t) => {
     payload: {
         date: date,
         customer: customer,
-        project: project,
+        project: project.name,
         task: task,
         index: 1,
       },

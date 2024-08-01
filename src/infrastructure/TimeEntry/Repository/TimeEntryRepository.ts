@@ -141,7 +141,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     const filteredEntries = timeEntries.filter(
       (entry) =>
         entry.customer === params.customer &&
-        entry.project === params.project &&
+        entry.project.name === params.project &&
         entry.task === params.task,
     )
 
@@ -237,14 +237,14 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
           customer: customer,
         })
 
-      const date = item.timeEntryDate?.S ?? ''
+        const date = item.timeEntryDate?.S ?? ''
 
-      const indexMapKey = `${date}#${customer}#${project}#${task}`
-      if (!(indexMapKey in indexMap)) {
-        indexMap[indexMapKey] = 0
-      } else {
-        indexMap[indexMapKey]++
-      }
+        const indexMapKey = `${date}#${customer}#${project}#${task}`
+        if (!(indexMapKey in indexMap)) {
+          indexMap[indexMapKey] = 0
+        } else {
+          indexMap[indexMapKey]++
+        }
 
         resultForUser.push({
           user: item.uid?.S ?? '',
