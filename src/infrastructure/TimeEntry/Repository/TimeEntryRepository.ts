@@ -102,8 +102,17 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
-    const timeEntries = await this.find({user: params.user, from: params.date, to: params.date})
-    const filteredEntries = timeEntries.filter((entry) => entry.customer === params.customer && entry.project === params.project && entry.task === params.task)
+    const timeEntries = await this.find({
+      user: params.user,
+      from: params.date,
+      to: params.date,
+    })
+    const filteredEntries = timeEntries.filter(
+      (entry) =>
+        entry.customer === params.customer &&
+        entry.project === params.project &&
+        entry.task === params.task,
+    )
 
     if ((params.index ?? 0) < filteredEntries.length) {
       await this.delete(params)
@@ -179,17 +188,17 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     item: Record<string, AttributeValue>,
   ): TimeEntryRowType[] {
     const resultForUser: TimeEntryRowType[] = []
-    const indexMap: Record<string, number> = {};
+    const indexMap: Record<string, number> = {}
     item.tasks?.SS?.forEach((taskItem) => {
       const [customer, project, task, hours, description, startHour, endHour] =
         taskItem.split('#')
-      const date = item.timeEntryDate?.S ?? '';
+      const date = item.timeEntryDate?.S ?? ''
 
-      const indexMapKey = `${date}#${customer}#${project}#${task}`;
+      const indexMapKey = `${date}#${customer}#${project}#${task}`
       if (!(indexMapKey in indexMap)) {
-        indexMap[indexMapKey] = 0;
+        indexMap[indexMapKey] = 0
       } else {
-        indexMap[indexMapKey]++;
+        indexMap[indexMapKey]++
       }
 
       resultForUser.push({
