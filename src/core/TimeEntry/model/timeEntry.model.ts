@@ -56,6 +56,7 @@ export const TimeEntryRow = Type.Object({
   description: Type.String(),
   startHour: Type.String(),
   endHour: Type.String(),
+  index: Type.Optional(Type.Number()),
 })
 
 export const TimeEntryReport = Type.Object({
@@ -160,6 +161,7 @@ export const DeleteTimeEntryRow = Type.Object({
   customer: Type.String(),
   project: Type.String(),
   task: Type.String(),
+  index: Type.Optional(Type.Number()),
 })
 
 export type DeleteTimeEntryRowType = Static<typeof DeleteTimeEntryRow>
