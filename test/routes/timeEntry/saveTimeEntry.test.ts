@@ -67,6 +67,7 @@ test('insert time entry in new day', async (t) => {
     description: "",
     startHour: "",
     endHour: "",
+    index: 0,
 })
 })
 
@@ -121,6 +122,7 @@ test('insert time entry in an existing day', async (t) => {
       description: "",
       startHour: "",
       endHour: "",
+      index: 0,
     },
     {
       user: 'nicholas.crow@email.com',
@@ -133,6 +135,7 @@ test('insert time entry in an existing day', async (t) => {
       description: "",
       startHour: "",
       endHour: "",
+      index: 0,
     },
   ])
 })
@@ -202,6 +205,7 @@ test('insert time entry in an existing day with description', async (t) => {
       description,
       startHour,
       endHour,
+      index: 0,
     },
     {
       user: 'nicholas.crow@email.com',
@@ -213,7 +217,8 @@ test('insert time entry in an existing day with description', async (t) => {
       hours: secondHours,
       description: secondDescription,
       startHour: secondStartHour,
-      endHour: secondEndHour
+      endHour: secondEndHour,
+      index: 0,
     },
   ])
 })
@@ -264,6 +269,7 @@ test('update hours on existing task', async(t) => {
       description: "",
       startHour: "",
       endHour: "",
+      index: 0,
     }    
   ])
 })

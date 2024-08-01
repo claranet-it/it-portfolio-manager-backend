@@ -36,6 +36,7 @@ export const TimeEntryRow = Type.Object({
   description: Type.String(),
   startHour: Type.String(),
   endHour: Type.String(),
+  index: Type.Optional(Type.Number()),
 })
 
 export const TimeEntriesForCna = Type.Object({
