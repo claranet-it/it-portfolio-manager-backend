@@ -68,6 +68,7 @@ export const TimeEntryReport = Type.Object({
   project: Type.String(),
   task: Type.String(),
   projectType: Type.String(),
+  plannedHours: Type.Number(),
   hours: Type.Number(),
   description: Type.String(),
   startHour: Type.String(),

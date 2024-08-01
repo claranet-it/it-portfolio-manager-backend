@@ -20,7 +20,7 @@ export interface TimeEntryRepositoryInterface {
   ): Promise<TimeEntryRowWithProjectType[]>
   findTimeEntriesForReport(
     params: TimeEntryReadParamWithCompanyAndCrewType,
-  ): Promise<TimeEntryRowType[]>
+  ): Promise<TimeEntryRowWithProjectEntityType[]>
   saveMine(params: TimeEntryRowType): Promise<void>
   delete(params: deleteTimeEntryWithUserType): Promise<void>
 }

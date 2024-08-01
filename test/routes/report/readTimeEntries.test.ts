@@ -53,6 +53,7 @@ test('Generate time entries report - json', async (t) => {
             "project": "Assenze",
             "task": "FESTIVITA",
             "projectType": "absence",
+            "plannedHours": 0,
             "hours": 1,
             "description": "",
             "startHour": "",
@@ -68,6 +69,7 @@ test('Generate time entries report - json', async (t) => {
             "project": "Assenze",
             "task": "MALATTIA (INVIARE CERTIFICATO MEDICO)",
             "projectType": "absence",
+            "plannedHours": 0,
             "hours": 1,
             "description": "",
             "startHour": "",
@@ -83,6 +85,7 @@ test('Generate time entries report - json', async (t) => {
             "project": "Funzionale",
             "task": "Attività di portfolio",
             "projectType": "non-billable",
+            "plannedHours": 0,
             "hours": 2,
             "description": "",
             "startHour": "",
@@ -98,6 +101,7 @@ test('Generate time entries report - json', async (t) => {
             "project": "Slack time",
             "task": "formazione",
             "projectType": "slack-time",
+            "plannedHours": 0,
             "hours": 2,
             "description": "",
             "startHour": "",
@@ -113,6 +117,7 @@ test('Generate time entries report - json', async (t) => {
             "project": "SOR Sviluppo",
             "task": "Iterazione 1",
             "projectType": "billable",
+            "plannedHours": 0,
             "hours": 2,
             "description": "",
             "startHour": "",
@@ -128,6 +133,7 @@ test('Generate time entries report - json', async (t) => {
             "project": "Assenze",
             "task": "DONAZIONE SANGUE",
             "projectType": "absence",
+            "plannedHours": 0,
             "hours": 2,
             "description": "",
             "startHour": "",
@@ -143,6 +149,7 @@ test('Generate time entries report - json', async (t) => {
             "project": "Funzionale",
             "task": "Attività di portfolio",
             "projectType": "non-billable",
+            "plannedHours": 0,
             "hours": 2,
             "description": "",
             "startHour": "",
@@ -158,6 +165,7 @@ test('Generate time entries report - json', async (t) => {
             "project": "Slack time",
             "task": "formazione",
             "projectType": "slack-time",
+            "plannedHours": 0,
             "hours": 4,
             "description": "",
             "startHour": "",
@@ -173,6 +181,7 @@ test('Generate time entries report - json', async (t) => {
             "project": "Funzionale",
             "task": "Attività di portfolio",
             "projectType": "non-billable",
+            "plannedHours": 0,
             "hours": 2,
             "description": "",
             "startHour": "",
@@ -188,6 +197,7 @@ test('Generate time entries report - json', async (t) => {
             "project": "Slack time",
             "task": "formazione",
             "projectType": "slack-time",
+            "plannedHours": 0,
             "hours": 2,
             "description": "",
             "startHour": "",
@@ -221,6 +231,7 @@ test('Generate time entries report - json FILTER by crew', async (t) => {
             "project": "Assenze",
             "task": "DONAZIONE SANGUE",
             "projectType": "absence",
+            "plannedHours": 0,
             "hours": 2,
             "description": "",
             "startHour": "",
@@ -236,6 +247,7 @@ test('Generate time entries report - json FILTER by crew', async (t) => {
             "project": "Funzionale",
             "task": "Attività di portfolio",
             "projectType": "non-billable",
+            "plannedHours": 0,
             "hours": 2,
             "description": "",
             "startHour": "",
@@ -251,6 +263,7 @@ test('Generate time entries report - json FILTER by crew', async (t) => {
             "project": "Slack time",
             "task": "formazione",
             "projectType": "slack-time",
+            "plannedHours": 0,
             "hours": 4,
             "description": "",
             "startHour": "",
@@ -288,17 +301,17 @@ test('Generate time entries report - csv', async (t) => {
 
     const result = response.payload
     const expected =
-        "DATE,EMAIL,NAME,COMPANY,CREW,CUSTOMER,PROJECT,TASK,PROJECT TYPE,HOURS,DESCRIPTION,START HOUR,END HOUR\n" +
-        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Assenze,FESTIVITA,absence,1,,,\n" +
-        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Assenze,MALATTIA (INVIARE CERTIFICATO MEDICO),absence,1,,,\n" +
-        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Funzionale,Attività di portfolio,non-billable,2,,,\n" +
-        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Slack time,formazione,slack-time,2,,,\n" +
-        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,test customer,SOR Sviluppo,Iterazione 1,billable,2,,,\n" +
-        "2024-01-01,nicholas.crow@email.com,Nicholas Crow,it,moon,Claranet,Assenze,DONAZIONE SANGUE,absence,2,,,\n" +
-        "2024-01-01,nicholas.crow@email.com,Nicholas Crow,it,moon,Claranet,Funzionale,Attività di portfolio,non-billable,2,,,\n" +
-        "2024-01-01,nicholas.crow@email.com,Nicholas Crow,it,moon,Claranet,Slack time,formazione,slack-time,4,,,\n" +
-        "2024-01-31,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Funzionale,Attività di portfolio,non-billable,2,,,\n" +
-        "2024-01-31,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Slack time,formazione,slack-time,2,,,"
+        "DATE,EMAIL,NAME,COMPANY,CREW,CUSTOMER,PROJECT,TASK,PROJECT TYPE,PLANNED HOURS,HOURS,DESCRIPTION,START HOUR,END HOUR\n" +
+        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Assenze,FESTIVITA,absence,0,1,,,\n" +
+        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Assenze,MALATTIA (INVIARE CERTIFICATO MEDICO),absence,0,1,,,\n" +
+        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Funzionale,Attività di portfolio,non-billable,0,2,,,\n" +
+        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Slack time,formazione,slack-time,0,2,,,\n" +
+        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,test customer,SOR Sviluppo,Iterazione 1,billable,0,2,,,\n" +
+        "2024-01-01,nicholas.crow@email.com,Nicholas Crow,it,moon,Claranet,Assenze,DONAZIONE SANGUE,absence,0,2,,,\n" +
+        "2024-01-01,nicholas.crow@email.com,Nicholas Crow,it,moon,Claranet,Funzionale,Attività di portfolio,non-billable,0,2,,,\n" +
+        "2024-01-01,nicholas.crow@email.com,Nicholas Crow,it,moon,Claranet,Slack time,formazione,slack-time,0,4,,,\n" +
+        "2024-01-31,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Funzionale,Attività di portfolio,non-billable,0,2,,,\n" +
+        "2024-01-31,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Slack time,formazione,slack-time,0,2,,,"
     t.same(result, expected)
 })
 
@@ -314,14 +327,14 @@ test('Generate time entries report - csv FILTER by crew', async (t) => {
 
     const result = response.payload
     const expected =
-        "DATE,EMAIL,NAME,COMPANY,CREW,CUSTOMER,PROJECT,TASK,PROJECT TYPE,HOURS,DESCRIPTION,START HOUR,END HOUR\n" +
-        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Assenze,FESTIVITA,absence,1,,,\n" +
-        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Assenze,MALATTIA (INVIARE CERTIFICATO MEDICO),absence,1,,,\n" +
-        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Funzionale,Attività di portfolio,non-billable,2,,,\n" +
-        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Slack time,formazione,slack-time,2,,,\n" +
-        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,test customer,SOR Sviluppo,Iterazione 1,billable,2,,,\n" +
-        "2024-01-31,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Funzionale,Attività di portfolio,non-billable,2,,,\n" +
-        "2024-01-31,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Slack time,formazione,slack-time,2,,,"
+        "DATE,EMAIL,NAME,COMPANY,CREW,CUSTOMER,PROJECT,TASK,PROJECT TYPE,PLANNED HOURS,HOURS,DESCRIPTION,START HOUR,END HOUR\n" +
+        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Assenze,FESTIVITA,absence,0,1,,,\n" +
+        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Assenze,MALATTIA (INVIARE CERTIFICATO MEDICO),absence,0,1,,,\n" +
+        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Funzionale,Attività di portfolio,non-billable,0,2,,,\n" +
+        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Slack time,formazione,slack-time,0,2,,,\n" +
+        "2024-01-01,micol.ts@email.com,Micol Panetta,it,sun,test customer,SOR Sviluppo,Iterazione 1,billable,0,2,,,\n" +
+        "2024-01-31,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Funzionale,Attività di portfolio,non-billable,0,2,,,\n" +
+        "2024-01-31,micol.ts@email.com,Micol Panetta,it,sun,Claranet,Slack time,formazione,slack-time,0,2,,,"
     t.same(result, expected)
 })
 
@@ -337,6 +350,6 @@ test('Generate time entries report - csv NO entries', async (t) => {
 
     const result = response.payload
     const expected =
-        "DATE,EMAIL,NAME,COMPANY,CREW,CUSTOMER,PROJECT,TASK,PROJECT TYPE,HOURS,DESCRIPTION,START HOUR,END HOUR"
+        "DATE,EMAIL,NAME,COMPANY,CREW,CUSTOMER,PROJECT,TASK,PROJECT TYPE,PLANNED HOURS,HOURS,DESCRIPTION,START HOUR,END HOUR"
     t.same(result, expected)
 })

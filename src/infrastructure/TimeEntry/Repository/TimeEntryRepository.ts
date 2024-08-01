@@ -54,7 +54,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
 
   async findTimeEntriesForReport(
     params: TimeEntryReadParamWithCompanyAndCrewType,
-  ): Promise<TimeEntryRowType[]> {
+  ): Promise<TimeEntryRowWithProjectEntityType[]> {
     const command = new QueryCommand({
       TableName: getTableName('TimeEntry'),
       IndexName: 'companyIndex',
@@ -68,11 +68,12 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     })
 
     const result = await this.dynamoDBClient.send(command)
-    return (
-      result.Items?.map((item) => {
-        return this.getTimeEntryFromDynamoDb(item)
-      }).flat() ?? []
+    const entries = await Promise.all(
+      result.Items?.map(async (item) => {
+        return await this.getTimeEntryFromDynamoDb(item)
+      }).flat() ?? [],
     )
+    return entries.flat()
   }
 
   async findTimeOffForFlowing(
