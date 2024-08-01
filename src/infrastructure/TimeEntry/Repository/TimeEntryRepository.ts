@@ -140,9 +140,10 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     const timeEntry = await this.dynamoDBClient.send(getItemCommand)
 
     if (timeEntry.Item?.tasks?.SS) {
-      const task = timeEntry.Item.tasks.SS.find((task) =>
+      const tasks = timeEntry.Item.tasks.SS.filter((task) =>
         task.startsWith(`${params.customer}#${params.project}#${params.task}`),
       )
+      const task = tasks[params.index ?? 0]
 
       if (task) {
         if (timeEntry.Item?.tasks?.SS?.length > 1) {
