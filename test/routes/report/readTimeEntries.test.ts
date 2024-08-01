@@ -25,7 +25,7 @@ afterEach(async () => {
 test('Read time entry without authorization', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-report?from=2024-01-01&to=2024-01-31',
+        url: '/api/report/time-entries?from=2024-01-01&to=2024-01-31',
     })
     t.equal(response.statusCode, 401)
 })
@@ -33,7 +33,7 @@ test('Read time entry without authorization', async (t) => {
 test('Generate time entries report - json', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-report?from=2024-01-01&to=2024-12-31&format=json',
+        url: '/api/report/time-entries?from=2024-01-01&to=2024-12-31&format=json',
         headers: {
             authorization: `Bearer ${getToken()}`,
         },
@@ -201,7 +201,7 @@ test('Generate time entries report - json', async (t) => {
 test('Generate time entries report - json FILTER by crew', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-report?from=2024-01-01&to=2024-12-31&format=json&crew=moon',
+        url: '/api/report/time-entries?from=2024-01-01&to=2024-12-31&format=json&crew=moon',
         headers: {
             authorization: `Bearer ${getToken()}`,
         },
@@ -264,7 +264,7 @@ test('Generate time entries report - json FILTER by crew', async (t) => {
 test('Generate time entries report - json NO entries', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-report?from=2023-01-01&to=2023-12-31&format=json',
+        url: '/api/report/time-entries?from=2023-01-01&to=2023-12-31&format=json',
         headers: {
             authorization: `Bearer ${getToken()}`,
         },
@@ -279,7 +279,7 @@ test('Generate time entries report - json NO entries', async (t) => {
 test('Generate time entries report - csv', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-report?from=2024-01-01&to=2024-12-31&format=csv',
+        url: '/api/report/time-entries?from=2024-01-01&to=2024-12-31&format=csv',
         headers: {
             authorization: `Bearer ${getToken()}`,
         },
@@ -305,7 +305,7 @@ test('Generate time entries report - csv', async (t) => {
 test('Generate time entries report - csv FILTER by crew', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-report?from=2024-01-01&to=2024-12-31&format=csv&crew=sun',
+        url: '/api/report/time-entries?from=2024-01-01&to=2024-12-31&format=csv&crew=sun',
         headers: {
             authorization: `Bearer ${getToken()}`,
         },
@@ -328,7 +328,7 @@ test('Generate time entries report - csv FILTER by crew', async (t) => {
 test('Generate time entries report - csv NO entries', async (t) => {
     const response = await app.inject({
         method: 'GET',
-        url: '/api/time-entry/time-report?from=2023-01-01&to=2023-12-31&format=csv',
+        url: '/api/report/time-entries?from=2023-01-01&to=2023-12-31&format=csv',
         headers: {
             authorization: `Bearer ${getToken()}`,
         },

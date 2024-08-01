@@ -90,7 +90,7 @@ export class TimeEntryService {
         ? await Promise.all(
             timeEntries.map(async (entry) => {
               const user = filteredUsers.find((user) => user.uid === entry.user)
-              const tasks = await this.taskRepository.getTasksWithProjectType({
+              const tasks = await this.taskRepository.getTasksWithProjectDetails({
                 company: params.company,
                 project: entry.project,
                 customer: entry.customer,

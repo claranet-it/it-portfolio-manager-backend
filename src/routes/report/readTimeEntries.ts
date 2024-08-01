@@ -11,7 +11,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     Querystring: TimeEntryReadParamWithCrewType
     Reply: TimeEntryReportListType | string
   }>(
-    '/time-report',
+    '/time-entries',
     {
       onRequest: [fastify.authenticate],
       schema: {
