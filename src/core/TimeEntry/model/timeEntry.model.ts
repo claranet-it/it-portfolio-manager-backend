@@ -16,6 +16,25 @@ export const CnaReadParam = Type.Object({
 
 export type TimeEntryReadParamType = Static<typeof TimeEntryReadParam>
 
+export const TimeEntryReadParamWithCrew = Type.Object({
+  from: Type.RegExp(dateFormat),
+  to: Type.RegExp(dateFormat),
+  crew: Type.Optional(Type.String()),
+  format: Type.Union([Type.Literal('json'), Type.Literal('csv')]),
+})
+
+export type TimeEntryReadParamWithCrewType = Static<
+  typeof TimeEntryReadParamWithCrew
+>
+export const TimeEntryReadParamWithCompanyAndCrew = Type.Intersect([
+  TimeEntryReadParamWithCrew,
+  Type.Object({ company: Type.String() }),
+])
+
+export type TimeEntryReadParamWithCompanyAndCrewType = Static<
+  typeof TimeEntryReadParamWithCompanyAndCrew
+>
+
 export const TimeEntryReadParamWithUser = Type.Intersect([
   Type.Object({ user: Type.String() }),
   TimeEntryReadParam,
@@ -37,6 +56,26 @@ export const TimeEntryRow = Type.Object({
   startHour: Type.String(),
   endHour: Type.String(),
 })
+
+export const TimeEntryReport = Type.Object({
+  date: Type.String(),
+  email: Type.String(),
+  name: Type.String(),
+  company: Type.String(),
+  crew: Type.String(),
+  customer: Type.String(),
+  project: Type.String(),
+  task: Type.String(),
+  projectType: Type.String(),
+  hours: Type.Number(),
+  description: Type.String(),
+  startHour: Type.String(),
+  endHour: Type.String(),
+})
+
+export const TimeEntryReportList = Type.Array(TimeEntryReport)
+export type TimeEntryReportType = Static<typeof TimeEntryReport>
+export type TimeEntryReportListType = Static<typeof TimeEntryReportList>
 
 export const TimeEntriesForCna = Type.Object({
   description: Type.String(),
