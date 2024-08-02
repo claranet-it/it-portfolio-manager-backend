@@ -6,6 +6,7 @@ export type TableName =
   | 'TimeEntry'
   | 'Company'
   | 'Crew'
+  | 'TaskProperties'
 
 export function getTableName(tableName: TableName) {
   const stage = process.env.STAGE_NAME || 'dev'

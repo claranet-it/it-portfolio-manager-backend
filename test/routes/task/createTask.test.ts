@@ -48,7 +48,11 @@ test('create new task - new insert', async (t) => {
 
     const tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    const expectedResult = ['Test task']
+    const expectedResult = [{
+        name: 'Test task',
+        completed: false,
+        plannedHours: 0,
+    }]
     t.same(tasks, expectedResult)
 })
 
@@ -68,7 +72,11 @@ test('create task with existing customer and new project - new insert', async (t
     t.equal(response.statusCode, 200)
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    let expectedResult = ['Test task old']
+    let expectedResult = [{
+        name: 'Test task old',
+        completed: false,
+        plannedHours: 0,
+    }]
     t.same(tasks, expectedResult)
 
     //SECOND INSERT
@@ -85,7 +93,11 @@ test('create task with existing customer and new project - new insert', async (t
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    expectedResult = ['Test task new']
+    expectedResult = [{
+        name: 'Test task new',
+        completed: false,
+        plannedHours: 0,
+    }]
     t.same(tasks, expectedResult)
 
     // CHECK OLD STILL EXISTS
@@ -93,7 +105,11 @@ test('create task with existing customer and new project - new insert', async (t
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    expectedResult = ['Test task old']
+    expectedResult = [{
+        name: 'Test task old',
+        completed: false,
+        plannedHours: 0,
+    }]
     t.same(tasks, expectedResult)
 })
 
@@ -112,7 +128,11 @@ test('create task with existing project and new customer - new insert', async (t
     t.equal(response.statusCode, 200)
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    let expectedResult = ['Test task old']
+    let expectedResult = [{
+        name: 'Test task old',
+        completed: false,
+        plannedHours: 0,
+    }]
     t.same(tasks, expectedResult)
 
     //SECOND INSERT
@@ -130,7 +150,11 @@ test('create task with existing project and new customer - new insert', async (t
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    expectedResult = ['Test task new']
+    expectedResult = [{
+        name: 'Test task new',
+        completed: false,
+        plannedHours: 0,
+    }]
     t.same(tasks, expectedResult)
 
     // CHECK OLD STILL EXISTS
@@ -138,7 +162,11 @@ test('create task with existing project and new customer - new insert', async (t
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    expectedResult = ['Test task old']
+    expectedResult = [{
+        name: 'Test task old',
+        completed: false,
+        plannedHours: 0,
+    }]
     t.same(tasks, expectedResult)
 })
 
@@ -158,7 +186,11 @@ test('create task with same customer and project - update', async (t) => {
 
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    let expectedResult = ['Test task2']
+    let expectedResult = [{
+        name: 'Test task2',
+        completed: false,
+        plannedHours: 0,
+    }]
     t.same(tasks, expectedResult)
 
     // SECOND INSERT
@@ -173,7 +205,15 @@ test('create task with same customer and project - update', async (t) => {
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 2)
-    expectedResult = ['Test task2', 'Test task3']
+    expectedResult = [{
+        name: 'Test task2',
+        completed: false,
+        plannedHours: 0,
+    }, {
+        name: 'Test task3',
+        completed: false,
+        plannedHours: 0,
+    }]
     t.same(tasks, expectedResult)
 
     // CHECK PROJECT TYPE TODO
@@ -202,14 +242,22 @@ test('create task with existing customer and project but different company - new
     t.equal(response.statusCode, 200)
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    t.same(tasks, ['Test'])
+    t.same(tasks, [{
+        name: 'Test',
+        completed: false,
+        plannedHours: 0,
+    }])
 
     //CHECK UK TASKS
     response = await getTask(customer, project, 'uk')
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    t.same(tasks, ['Test'])
+    t.same(tasks, [{
+        name: 'Test',
+        completed: false,
+        plannedHours: 0,
+    }])
 })
 
 test('throw error if # in customer', async (t) => {

@@ -14,6 +14,7 @@ import {
   TaskCreateReadParamsType,
   TaskReadParamsType,
   TaskUpdateParamsType,
+  TaskType,
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
@@ -95,11 +96,64 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
     const result = await this.dynamoDBClient.send(command)
-    return (
+    const tasks =
       result.Items?.map((item) => item.tasks?.SS ?? [])
         .flat()
         .sort() ?? []
-    )
+
+    return tasks
+  }
+
+  async getTasksWithProperties(
+    params: TaskReadParamsType,
+  ): Promise<TaskType[]> {
+    const tasks = await this.getTasks(params)
+
+    const propertiesCommand = new QueryCommand({
+      TableName: getTableName('TaskProperties'),
+      KeyConditionExpression: 'projectId = :customerProject',
+      ExpressionAttributeValues: {
+        ':customerProject': {
+          S: `${params.company}#${params.customer}#${params.project}`,
+        },
+      },
+    })
+    const propertiesResult = await this.dynamoDBClient.send(propertiesCommand)
+    const properties = propertiesResult.Items
+    let filteredProperties: Record<string, AttributeValue>[] = []
+    if (properties && properties.length > 0) {
+      filteredProperties = properties.filter((item) =>
+        tasks.includes(item.task?.S ?? ''),
+      )
+    }
+
+    const mappedProperties = filteredProperties.map((item) => {
+      return {
+        name: item.task.S ?? '',
+        completed: item.completed.BOOL ?? false,
+        plannedHours: parseInt(item.plannedHours.N ?? '0'),
+      }
+    })
+
+    return tasks.map((task) => {
+      const taskProperties = mappedProperties.filter(
+        (property) => property.name === task,
+      )
+
+      if (!taskProperties || taskProperties.length === 0) {
+        return {
+          name: task,
+          completed: false,
+          plannedHours: 0,
+        }
+      }
+
+      return {
+        name: taskProperties[0].name,
+        completed: taskProperties[0].completed,
+        plannedHours: taskProperties[0].plannedHours,
+      }
+    })
   }
 
   async getTasksWithProjectDetails(

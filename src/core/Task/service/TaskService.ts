@@ -5,6 +5,7 @@ import {
   ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
+  TaskListType,
   TaskReadParamsType,
   TaskUpdateParamsType,
 } from '../model/task.model'
@@ -20,8 +21,8 @@ export class TaskService {
     return this.taskRepository.getProjects(params)
   }
 
-  async getTasks(params: TaskReadParamsType): Promise<string[]> {
-    return this.taskRepository.getTasks(params)
+  async getTasks(params: TaskReadParamsType): Promise<TaskListType> {
+    return this.taskRepository.getTasksWithProperties(params)
   }
 
   async createTask(params: TaskCreateReadParamsType): Promise<void> {
