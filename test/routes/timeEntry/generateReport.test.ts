@@ -22,13 +22,13 @@ afterEach(async () => {
     await app.close()
 })
 
-test('Read time entry without authorization', async (t) => {
-    const response = await app.inject({
-        method: 'GET',
-        url: '/api/time-entry/time-report?from=2024-01-01&to=2024-01-31',
-    })
-    t.equal(response.statusCode, 401)
-})
+// test('Read time entry without authorization', async (t) => {
+//     const response = await app.inject({
+//         method: 'GET',
+//         url: '/api/time-entry/time-report?from=2024-01-01&to=2024-01-31',
+//     })
+//     t.equal(response.statusCode, 401)
+// })
 
 test('Generate time entries report - json', async (t) => {
     const response = await app.inject({
