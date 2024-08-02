@@ -84,7 +84,7 @@ npm run format
 ### Pre-commit hook
 
 ```bash
-npm run prepare
+npm run precommit:init
 ```
 
 then copy the content of `pre-commit.dist` into `.husky/pre-commit`
