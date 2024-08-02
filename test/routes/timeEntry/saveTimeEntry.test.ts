@@ -358,8 +358,8 @@ test('add hours on existing task', async(t) => {
       index: 1,
     }
   ])
-  await deleteTimeEntry(date, customer, project, task, 1)
-  await deleteTimeEntry(date, customer, project, task, 0)
+  await deleteTimeEntry(date, customer, project.name, task, 1)
+  await deleteTimeEntry(date, customer, project.name, task, 0)
 })
 
 test('throws error if trying to save absence on a saturday or sunday', async(t) => {
