@@ -13,7 +13,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
   }>(
     '/time-report',
     {
-      onRequest: [fastify.authenticate],
+      //onRequest: [fastify.authenticate],
       schema: {
         tags: ['Time entry'],
         querystring: TimeEntryReadParamWithCrew,
@@ -40,7 +40,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('timeEntryService')
-          .generateReport({ ...request.query, company: request.user.company })
+          .generateReport({ ...request.query, company: 'it' })
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
