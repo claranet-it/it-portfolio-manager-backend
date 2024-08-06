@@ -27,7 +27,7 @@ export class TaskPropertiesRepository
     const updateParams = {
       TableName: getTableName('TaskProperties'),
       Key: {
-        project: { S: `${params.customer}#${params.project}` },
+        projectId: { S: `${params.company}#${params.customer}#${params.project}` },
         task: { S: params.task },
       },
       UpdateExpression:

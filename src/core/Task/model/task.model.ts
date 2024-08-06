@@ -139,13 +139,19 @@ export const TaskList = Type.Array(Task)
 
 export type TaskListType = Static<typeof TaskList>
 
-const TaskPropertiesUpdateParams = Type.Object({
+export const TaskPropertiesUpdateQueryParams = Type.Object({
   customer: Type.String(),
-  project: Project,
+  project: Type.String(),
   task: Type.String(),
   completed: Type.Optional(Type.Boolean()),
   plannedHours: Type.Optional(Type.Number()),
 })
+export type TaskPropertiesUpdateQueryParamsType = Static<typeof TaskPropertiesUpdateQueryParams>
+
+const TaskPropertiesUpdateParams = Type.Intersect([
+  TaskPropertiesUpdateQueryParams,
+  Type.Object({company: Type.String()}),
+])
 export type TaskPropertiesUpdateParamsType = Static<
   typeof TaskPropertiesUpdateParams
 >

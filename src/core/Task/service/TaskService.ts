@@ -1,17 +1,18 @@
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import {
-  CustomerProjectDeleteParamsType,
-  CustomerProjectUpdateParamsType,
-  ProjectListType,
-  ProjectReadParamsType,
-  TaskCreateReadParamsType,
-  TaskListType,
-  TaskReadParamsType,
-  TaskUpdateParamsType,
+    CustomerProjectDeleteParamsType,
+    CustomerProjectUpdateParamsType,
+    ProjectListType,
+    ProjectReadParamsType,
+    TaskCreateReadParamsType,
+    TaskListType, TaskPropertiesUpdateParamsType,
+    TaskReadParamsType,
+    TaskUpdateParamsType,
 } from '../model/task.model'
+import { TaskPropertiesRepositoryInterface } from '@src/core/Task/repository/TaskPropertiesRepositoryInterface'
 
 export class TaskService {
-  constructor(private taskRepository: TaskRepositoryInterface) {}
+  constructor(private taskRepository: TaskRepositoryInterface, private taskPropertiesRepository: TaskPropertiesRepositoryInterface) {}
 
   async getCustomers(company: string): Promise<string[]> {
     return this.taskRepository.getCustomers(company)
@@ -36,6 +37,10 @@ export class TaskService {
   }
   async updateTask(params: TaskUpdateParamsType): Promise<void> {
     return this.taskRepository.updateTask(params)
+  }
+
+  async updateTaskProperties(params: TaskPropertiesUpdateParamsType): Promise<void> {
+    return this.taskPropertiesRepository.updateTaskProperties(params)
   }
 
   async deleteCustomerProject(

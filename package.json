@@ -16,7 +16,7 @@
     "test": "npm run test:prepare && npm run test:execute && npm run dynamodb:kill",
     "test:ci": "npm run dynamodb:start:test && sleep 60 && npm run test:execute",
     "test:coverage:execute": "STAGE_NAME=test IS_OFFLINE=true tap test --node-arg=--require=ts-node/register",
-    "test:coverage": "npm run dynamodb:start:test && npm run test:coverage:execute && npm run dynamodb:kill",
+    "test:coverage": "npm run dynamodb:kill && sleep 5 && npm run dynamodb:start:test && npm run test:coverage:execute && npm run dynamodb:kill",
     "test:filter:execute": "STAGE_NAME=test IS_OFFLINE=true tap test --grep=\"$npm_config_filter\" --node-arg=--require=ts-node/register --disable-coverage",
     "test:filter": "npm run dynamodb:kill && sleep 5 && npm run dynamodb:start:test && npm run test:filter:execute && npm run dynamodb:kill",
     "lint": "eslint . --ext .ts",
