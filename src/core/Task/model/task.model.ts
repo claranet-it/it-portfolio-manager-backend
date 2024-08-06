@@ -146,11 +146,13 @@ export const TaskPropertiesUpdateQueryParams = Type.Object({
   completed: Type.Optional(Type.Boolean()),
   plannedHours: Type.Optional(Type.Number()),
 })
-export type TaskPropertiesUpdateQueryParamsType = Static<typeof TaskPropertiesUpdateQueryParams>
+export type TaskPropertiesUpdateQueryParamsType = Static<
+  typeof TaskPropertiesUpdateQueryParams
+>
 
 const TaskPropertiesUpdateParams = Type.Intersect([
   TaskPropertiesUpdateQueryParams,
-  Type.Object({company: Type.String()}),
+  Type.Object({ company: Type.String() }),
 ])
 export type TaskPropertiesUpdateParamsType = Static<
   typeof TaskPropertiesUpdateParams

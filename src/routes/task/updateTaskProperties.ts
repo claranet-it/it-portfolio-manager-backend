@@ -45,7 +45,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .updateTaskProperties({ ...request.body, company: request.user.company })
+          .updateTaskProperties({
+            ...request.body,
+            company: request.user.company,
+          })
         return reply.send(JSON.stringify({ message: 'OK' }))
       } catch (error) {
         request.log.error(error)

@@ -1,12 +1,12 @@
 import {
-    CustomerProjectDeleteParamsType,
-    CustomerProjectUpdateParamsType,
-    ProjectListType,
-    ProjectReadParamsType,
-    TaskCreateReadParamsType,
-    TaskReadParamsType,
-    TaskUpdateParamsType,
-    TaskType,
+  CustomerProjectDeleteParamsType,
+  CustomerProjectUpdateParamsType,
+  ProjectListType,
+  ProjectReadParamsType,
+  TaskCreateReadParamsType,
+  TaskReadParamsType,
+  TaskUpdateParamsType,
+  TaskType,
 } from '../model/task.model'
 
 export interface TaskRepositoryInterface {

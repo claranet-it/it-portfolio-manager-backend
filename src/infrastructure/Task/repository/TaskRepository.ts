@@ -96,12 +96,11 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
     const result = await this.dynamoDBClient.send(command)
-    const tasks =
+    return (
       result.Items?.map((item) => item.tasks?.SS ?? [])
         .flat()
         .sort() ?? []
-
-    return tasks
+    )
   }
 
   async getTasksWithProperties(
