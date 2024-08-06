@@ -67,6 +67,7 @@ test('Return time entries', async (t) => {
       description: "",
       startHour: "",
       endHour: "",
+      index: 0,
     },
     {
       user: 'nicholas.crow@email.com',
@@ -79,6 +80,7 @@ test('Return time entries', async (t) => {
       description: "",
       startHour: "",
       endHour: "",
+      index: 0,
     },
     {
       user: 'nicholas.crow@email.com',
@@ -91,6 +93,7 @@ test('Return time entries', async (t) => {
       description: "",
       startHour: "",
       endHour: "",
+      index: 0,
     },
   ])
 })

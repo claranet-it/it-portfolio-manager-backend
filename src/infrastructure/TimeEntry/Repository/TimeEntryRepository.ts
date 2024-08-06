@@ -126,7 +126,22 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
-    await this.delete(params)
+    const timeEntries = await this.find({
+      user: params.user,
+      from: params.date,
+      to: params.date,
+    })
+    const filteredEntries = timeEntries.filter(
+      (entry) =>
+        entry.customer === params.customer &&
+        entry.project === params.project &&
+        entry.task === params.task,
+    )
+
+    if (undefined !== params.index && params.index < filteredEntries.length) {
+      await this.delete(params)
+    }
+
     const command = new UpdateItemCommand({
       TableName: getTableName('TimeEntry'),
       Key: {
@@ -158,9 +173,10 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     const timeEntry = await this.dynamoDBClient.send(getItemCommand)
 
     if (timeEntry.Item?.tasks?.SS) {
-      const task = timeEntry.Item.tasks.SS.find((task) =>
+      const tasks = timeEntry.Item.tasks.SS.filter((task) =>
         task.startsWith(`${params.customer}#${params.project}#${params.task}`),
       )
+      const task = tasks[params.index ?? 0]
 
       if (task) {
         if (timeEntry.Item?.tasks?.SS?.length > 1) {
@@ -196,12 +212,22 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     item: Record<string, AttributeValue>,
   ): TimeEntryRowType[] {
     const resultForUser: TimeEntryRowType[] = []
+    const indexMap: Record<string, number> = {}
     item.tasks?.SS?.forEach((taskItem) => {
       const [customer, project, task, hours, description, startHour, endHour] =
         taskItem.split('#')
+      const date = item.timeEntryDate?.S ?? ''
+
+      const indexMapKey = `${date}#${customer}#${project}#${task}`
+      if (!(indexMapKey in indexMap)) {
+        indexMap[indexMapKey] = 0
+      } else {
+        indexMap[indexMapKey]++
+      }
+
       resultForUser.push({
         user: item.uid?.S ?? '',
-        date: item.timeEntryDate?.S ?? '',
+        date: date,
         company: item.company?.S ?? '',
         customer: customer,
         project: project,
@@ -210,6 +236,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         description: description ?? '',
         startHour: startHour ?? '',
         endHour: endHour ?? '',
+        index: indexMap[indexMapKey],
       })
     })
     return resultForUser

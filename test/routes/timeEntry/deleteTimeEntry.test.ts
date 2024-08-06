@@ -77,3 +77,80 @@ test('delete time entry', async (t) => {
   const result = getResponse.json<TimeEntryRowListType>()
   t.same(result, [])
 })
+
+test('delete the right time entry if there are more than one', async (t) => {
+  const date = '2024-01-10'
+  const customer = 'Claranet'
+  const project = 'Slack time'
+  const task = 'formazione'
+  const hours = 2
+  const addResponse1 = await app.inject({
+    method: 'POST',
+    url: '/api/time-entry/mine',
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+    payload: {
+      date: date,
+      customer: customer,
+      project: project,
+      task: task,
+      hours: hours,
+      index: 0,
+    },
+  })
+  t.equal(addResponse1.statusCode, 204)
+  const addResponse2 = await app.inject({
+    method: 'POST',
+    url: '/api/time-entry/mine',
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+    payload: {
+      date: date,
+      customer: customer,
+      project: project,
+      task: task,
+      hours: hours + 2,
+      index: 1,
+    },
+  })
+  t.equal(addResponse2.statusCode, 204)
+  const deleteRespose = await app.inject({
+    method: 'DELETE',
+    url: '/api/time-entry/mine',
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+    payload: {
+        date: date,
+        customer: customer,
+        project: project,
+        task: task,
+        index: 1,
+      },
+  })
+  t.equal(deleteRespose.statusCode, 200)
+
+  const getResponse = await app.inject({
+    method: 'GET',
+    url: `/api/time-entry/mine?from=${date}&to=${date}`,
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+  })
+  const result = getResponse.json<TimeEntryRowListType>()
+  t.same(result, [{
+    user: "nicholas.crow@email.com",
+    company: "it",
+    date: date,
+    customer: customer,
+    project: project,
+    task: task,
+    hours: hours,
+    description: "",
+    startHour: "",
+    endHour: "",
+    index: 0,
+  }])
+})
