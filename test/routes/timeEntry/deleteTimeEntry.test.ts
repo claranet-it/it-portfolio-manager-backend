@@ -153,4 +153,30 @@ test('delete the right time entry if there are more than one', async (t) => {
     endHour: "",
     index: 0,
   }])
+
+  const cleanupResponse = await app.inject({
+    method: 'DELETE',
+    url: '/api/time-entry/mine',
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+    payload: {
+        date: date,
+        customer: customer,
+        project: project,
+        task: task,
+        index: 0,
+      },
+  })
+  t.equal(cleanupResponse.statusCode, 200)
+
+  const cleanupCheckResponse = await app.inject({
+    method: 'GET',
+    url: `/api/time-entry/mine?from=${date}&to=${date}`,
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+  })
+  const cleanupCheckResult = cleanupCheckResponse.json<TimeEntryRowListType>()
+  t.same(cleanupCheckResult, [])
 })
