@@ -142,6 +142,7 @@ export class TimeEntryService {
         project: params.project,
         task: params.task,
         date: params.date,
+        index: params.index,
       })
     }
 
