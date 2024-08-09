@@ -433,6 +433,25 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     const customerProject = `${customer}#${project}`
 
+    const command = new QueryCommand({
+        TableName: getTableName('TimeEntry'),
+        IndexName: 'companyIndex',
+        KeyConditionExpression: 'company = :company',
+        ExpressionAttributeValues: {
+          ':company': { S: company },
+        },
+      })
+    const result = await this.dynamoDBClient.send(command)
+    const timeEntries =
+      result.Items?.map((item) => {
+        return this.getTimeEntry(item)
+      }).flat() ?? []
+
+    const projectAlreadyAssigned = timeEntries.some((entry) => entry.customer === params.customer && entry.project === params.project)
+    if (projectAlreadyAssigned) {
+      throw new TaskError('Customer project already assigned')
+    }
+
     const updateParams = {
       TableName: getTableName('Task'),
       Key: {

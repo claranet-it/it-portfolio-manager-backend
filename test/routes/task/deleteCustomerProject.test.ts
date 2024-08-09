@@ -68,6 +68,62 @@ test('delete customer-project', async (t) => {
     t.same(customers, [])
 })
 
+test('can\'t delete customer-project if there are time entries', async (t) => {
+    const customer = 'Test delete customer';
+    const company = 'test delete company';
+    const project = 'Test delete project';
+    const projectType = ProjectType.BILLABLE;
+    const task = 'Test delete task';
+
+    let response = await postTask(customer, company, project, projectType, task);
+    t.equal(response.statusCode, 200)
+
+    const addTimeEntryResponse = await app.inject({
+        method: 'POST',
+        url: '/api/time-entry/mine',
+        headers: {
+            authorization: `Bearer ${getToken(company)}`,
+        },
+        payload: {
+          date: '2024-08-01',
+          customer: customer,
+          project: project,
+          task: task,
+          hours: 2,
+        },
+      })
+    t.equal(addTimeEntryResponse.statusCode, 204)
+
+    response = await getCustomers(company);
+    t.equal(response.statusCode, 200)
+
+    let customers = response.json<CustomerListType>()
+    t.equal(customers.length, 1)
+    const expectedResult = ['Test delete customer']
+    t.same(customers, expectedResult)
+
+    response = await getProjects(company, customer);
+    t.equal(response.statusCode, 200)
+
+    const projects = response.json<ProjectListType>()
+    t.equal(projects.length, 1)
+    const projExpectedResult = [{ name: "Test delete project", type: "billable", plannedHours: 0 }]
+    t.same(projects, projExpectedResult)
+
+    response = await deleteProject(company, customer, project);
+    t.equal(response.statusCode, 400)
+
+    response = await getProjects(company, customer);
+    t.equal(response.statusCode, 200)
+    customers = response.json<CustomerListType>()
+    t.equal(customers.length, 1)
+    t.same(customers, [{
+      "name": "Test delete project",
+      "type": "billable",
+      "plannedHours": 0,
+    }])
+})
+
 async function postTask(customer: string, company: string, project: string, projectType: string, task: string, plannedHours?: string) {
     return await app.inject({
         method: 'POST',
