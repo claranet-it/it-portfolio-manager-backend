@@ -33,6 +33,7 @@ provider:
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ], 'index', 'companyIndex' ] ]
             - "Fn::GetAtt": [ ItPortfolioManagerCompanies, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerCrews, Arn ]
+            - "Fn::GetAtt": [ ItPortfolioManagerTaskProperties, Arn ]
         - Effect: "Allow"
           Action:
             - "ssm:GetParameter"
@@ -94,6 +95,8 @@ custom:
             sources: [ ./seed/effort.json ]
           - table: ItPortfolioManager-Task-${opt:stage, 'dev'}
             rawsources: [ ./seed/task.json ]
+          - table: ItPortfolioManager-TaskProperties-${opt:stage, 'dev'}
+            rawsources: [ ./seed/task-properties.json ]
           - table: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
             rawsources: [ ./seed/time-entry.json ]
           - table: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
@@ -323,6 +326,23 @@ resources:
           - AttributeName: company
             KeyType: HASH
           - AttributeName: name
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    ItPortfolioManagerTaskProperties:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: "ItPortfolioManager-TaskProperties-${opt:stage, 'dev'}"
+        AttributeDefinitions:
+          - AttributeName: projectId
+            AttributeType: S
+          - AttributeName: task
+            AttributeType: S
+        KeySchema:
+          - AttributeName: projectId
+            KeyType: HASH
+          - AttributeName: task
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1

@@ -1,0 +1,14 @@
+[
+  {
+    "projectId": { "S": "it#Claranet#Slack time" },    
+    "task": { "S": "formazione" },
+    "completed": { "BOOL": false },
+    "plannedHours": 0
+  },
+  {
+    "projectId": { "S": "it#test customer#SOR Sviluppo"},
+    "task": { "S": "Iterazione 1" },
+    "completed": { "BOOL": true },
+    "plannedHours": 100
+  }
+]

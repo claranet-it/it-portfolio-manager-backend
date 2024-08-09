@@ -28,19 +28,19 @@ const inputs = [
     company: 'it',
     customer: 'Claranet',
     project: 'Funzionale',
-    expectedTasks: ['Attività di portfolio', "Management"],
+    expectedTasks: [{name: 'Attività di portfolio', completed: false, plannedHours: 0}, {name: "Management", completed: false, plannedHours: 0},],
   },
   {
     company: 'it',
     customer: 'Claranet',
     project: 'Slack time',
-    expectedTasks: ['formazione'],
+    expectedTasks: [{name: 'formazione', completed: false, plannedHours: 0}],
   },
   {
     company: 'it',
     customer: 'test customer',
     project: 'SOR Sviluppo',
-    expectedTasks: ['Iterazione 1', 'Iterazione 2'],
+    expectedTasks: [{name: 'Iterazione 1', completed: false, plannedHours: 0}, {name: 'Iterazione 2', completed: false, plannedHours: 0}],
   }
 ]
 
@@ -67,4 +67,37 @@ inputs.forEach((input) => {
     t.equal(tasks.length, input.expectedTasks.length)
     t.same(tasks, input.expectedTasks)
   })
+})
+
+test('read task with additional properties', async (t) => {
+  const input = {
+    company: 'it',
+    customer: 'Claranet',
+    project: 'Slack time',
+  }
+
+  const token = app.createTestJwt({
+    email: 'nicholas.crow@email.com',
+    name: 'Nicholas Crow',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: input.company
+  })
+
+  const response = await app.inject({
+    method: 'GET',
+    url: `/api/task/task?customer=${input.customer}&project=${input.project}`,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
+
+  t.equal(response.statusCode, 200)
+
+  const tasks = response.json<TaskListType>()
+  t.equal(tasks.length, 1)
+  t.same(tasks, [{
+    name: 'formazione',
+    completed: false,
+    plannedHours: 0,
+  }])
 })

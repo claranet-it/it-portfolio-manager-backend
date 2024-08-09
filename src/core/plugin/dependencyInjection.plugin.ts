@@ -32,6 +32,7 @@ import { NetworkingRepository } from '@src/infrastructure/Networking/repository/
 import { ReportRepository } from '@src/infrastructure/Report/repository/ReportRepository'
 import { ReportService } from '@src/core/Report/service/ReportService'
 import { ProductivityCalculator } from '@src/core/Report/service/ProductivityCalculator'
+import { TaskPropertiesRepository } from '@src/infrastructure/Task/repository/TaskPropertiesRepository'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -118,6 +119,9 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       taskRepository: asClass(TaskRepository),
+    })
+    container.register({
+      taskPropertiesRepository: asClass(TaskPropertiesRepository),
     })
     container.register({
       taskService: asClass(TaskService),
