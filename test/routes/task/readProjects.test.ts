@@ -1,7 +1,7 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { ProjectListType } from '@src/core/Task/model/task.model'
+import {ProjectListType} from "@src/core/Task/model/task.model";
 
 let app: FastifyInstance
 
@@ -27,17 +27,17 @@ const inputs = [
   {
     company: 'it',
     customer: 'Claranet',
-    expectProjects: ['Assenze', 'Funzionale', 'Slack time'],
+    expectProjects: [{name: 'Assenze', type: 'absence', plannedHours: 0},{name: 'Funzionale', type: 'non-billable', plannedHours: 0},{name: 'Slack time', type: 'slack-time', plannedHours: 0}]
   },
   {
     company: 'it',
     customer: 'test customer',
-    expectProjects: ['SOR Sviluppo'],
+    expectProjects: [{name: 'SOR Sviluppo', type: 'billable', plannedHours: 0}],
   },
   {
     company: "other company",
     customer: 'test customer of other company',
-    expectProjects: ['test project of other company'],
+    expectProjects: [{name:'test project of other company', type: 'billable', plannedHours: 0}],
   },
 ]
 
@@ -62,7 +62,6 @@ inputs.forEach((input) => {
 
     const projects = response.json<ProjectListType>()
     t.equal(projects.length, input.expectProjects.length)
-
 
     t.same(projects, input.expectProjects)
   })

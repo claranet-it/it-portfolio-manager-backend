@@ -81,11 +81,11 @@ test('delete time entry', async (t) => {
 test('delete the right time entry if there are more than one', async (t) => {
   const date = '2024-01-10'
   const customer = 'Claranet'
-  const project = 'Slack time'
+  const project = {name: 'Slack time', type: "slack-time", plannedHours: 0}
   const task = 'formazione'
-  const addResponse1 = await createTimeEntry(date, customer, project, task, 1, 0)
+  const addResponse1 = await createTimeEntry(date, customer, project.name, task, 1, 0)
   t.equal(addResponse1.statusCode, 204)
-  const addResponse2 = await createTimeEntry(date, customer, project, task, 2, 1)
+  const addResponse2 = await createTimeEntry(date, customer, project.name, task, 2, 1)
   t.equal(addResponse2.statusCode, 204)
   const deleteRespose = await app.inject({
     method: 'DELETE',
@@ -96,7 +96,7 @@ test('delete the right time entry if there are more than one', async (t) => {
     payload: {
         date: date,
         customer: customer,
-        project: project,
+        project: project.name,
         task: task,
         index: 1,
       },
@@ -125,7 +125,7 @@ test('delete the right time entry if there are more than one', async (t) => {
     index: 0,
   }])
 
-  const cleanupResponse = await cleanup(date, customer, project, task)
+  const cleanupResponse = await cleanup(date, customer, project.name, task)
   t.equal(cleanupResponse.statusCode, 200)
 
   const cleanupCheckResponse = await app.inject({
@@ -142,11 +142,11 @@ test('delete the right time entry if there are more than one', async (t) => {
 test('delete the right time entry if there are more than one by setting hours to 0', async (t) => {
   const date = '2024-01-10'
   const customer = 'Claranet'
-  const project = 'Slack time'
+  const project = {name: 'Slack time', type: "slack-time", plannedHours: 0}
   const task = 'formazione'
-  const addResponse1 = await createTimeEntry(date, customer, project, task, 1, 0)
+  const addResponse1 = await createTimeEntry(date, customer, project.name, task, 1, 0)
   t.equal(addResponse1.statusCode, 204)
-  const addResponse2 = await createTimeEntry(date, customer, project, task, 2, 1)
+  const addResponse2 = await createTimeEntry(date, customer, project.name, task, 2, 1)
   t.equal(addResponse2.statusCode, 204)
   const deleteRespose = await app.inject({
     method: 'POST',
@@ -157,7 +157,7 @@ test('delete the right time entry if there are more than one by setting hours to
     payload: {
         date: date,
         customer: customer,
-        project: project,
+        project: project.name,
         task: task,
         hours: 0,
         index: 1,
@@ -187,7 +187,7 @@ test('delete the right time entry if there are more than one by setting hours to
     index: 0,
   }])
 
-  const cleanupResponse = await cleanup(date, customer, project, task)
+  const cleanupResponse = await cleanup(date, customer, project.name, task)
   t.equal(cleanupResponse.statusCode, 200)
 
   const cleanupCheckResponse = await app.inject({

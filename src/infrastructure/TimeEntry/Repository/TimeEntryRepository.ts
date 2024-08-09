@@ -12,6 +12,7 @@ import {
   deleteTimeEntryWithUserType,
   CnaReadParamType,
   TimeEntryRowWithProjectType,
+  TimeEntryRowWithProjectEntityType,
   TimeEntryReadParamWithCompanyAndCrewType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
@@ -19,15 +20,19 @@ import { getTableName } from '@src/core/db/TableName'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { invariant } from '@src/helpers/invariant'
 import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
+import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 export class TimeEntryRepository implements TimeEntryRepositoryInterface {
-  constructor(private dynamoDBClient: DynamoDBClient) {}
+  constructor(
+    private dynamoDBClient: DynamoDBClient,
+    private taskRepository: TaskRepositoryInterface,
+  ) {}
 
   async find(
     params: TimeEntryReadParamWithUserType,
-  ): Promise<TimeEntryRowType[]> {
+  ): Promise<TimeEntryRowWithProjectEntityType[]> {
     const command = new QueryCommand({
       TableName: getTableName('TimeEntry'),
       KeyConditionExpression:
@@ -39,16 +44,17 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       },
     })
     const result = await this.dynamoDBClient.send(command)
-    return (
-      result.Items?.map((item) => {
-        return this.getTimeEntryFromDynamoDb(item)
-      }).flat() ?? []
+    const entries = await Promise.all(
+      result.Items?.map(async (item) => {
+        return await this.getTimeEntryFromDynamoDb(item)
+      }).flat() ?? [],
     )
+    return entries.flat()
   }
 
   async findTimeEntriesForReport(
     params: TimeEntryReadParamWithCompanyAndCrewType,
-  ): Promise<TimeEntryRowType[]> {
+  ): Promise<TimeEntryRowWithProjectEntityType[]> {
     const command = new QueryCommand({
       TableName: getTableName('TimeEntry'),
       IndexName: 'companyIndex',
@@ -62,11 +68,12 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     })
 
     const result = await this.dynamoDBClient.send(command)
-    return (
-      result.Items?.map((item) => {
-        return this.getTimeEntryFromDynamoDb(item)
-      }).flat() ?? []
+    const entries = await Promise.all(
+      result.Items?.map(async (item) => {
+        return await this.getTimeEntryFromDynamoDb(item)
+      }).flat() ?? [],
     )
+    return entries.flat()
   }
 
   async findTimeOffForFlowing(
@@ -134,7 +141,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     const filteredEntries = timeEntries.filter(
       (entry) =>
         entry.customer === params.customer &&
-        entry.project === params.project &&
+        entry.project.name === params.project &&
         entry.task === params.task,
     )
 
@@ -208,37 +215,57 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     }
   }
 
-  private getTimeEntryFromDynamoDb(
+  private async getTimeEntryFromDynamoDb(
     item: Record<string, AttributeValue>,
-  ): TimeEntryRowType[] {
-    const resultForUser: TimeEntryRowType[] = []
+  ): Promise<TimeEntryRowWithProjectEntityType[]> {
+    const resultForUser: TimeEntryRowWithProjectEntityType[] = []
     const indexMap: Record<string, number> = {}
-    item.tasks?.SS?.forEach((taskItem) => {
-      const [customer, project, task, hours, description, startHour, endHour] =
-        taskItem.split('#')
-      const date = item.timeEntryDate?.S ?? ''
+    if (item.tasks?.SS) {
+      for (const taskItem of item.tasks.SS) {
+        const [
+          customer,
+          project,
+          task,
+          hours,
+          description,
+          startHour,
+          endHour,
+        ] = taskItem.split('#')
+        const tasks = await this.taskRepository.getTasksWithProjectDetails({
+          company: item.company?.S ?? '',
+          project: project,
+          customer: customer,
+        })
 
-      const indexMapKey = `${date}#${customer}#${project}#${task}`
-      if (!(indexMapKey in indexMap)) {
-        indexMap[indexMapKey] = 0
-      } else {
-        indexMap[indexMapKey]++
+        const date = item.timeEntryDate?.S ?? ''
+
+        const indexMapKey = `${date}#${customer}#${project}#${task}`
+        if (!(indexMapKey in indexMap)) {
+          indexMap[indexMapKey] = 0
+        } else {
+          indexMap[indexMapKey]++
+        }
+
+        resultForUser.push({
+          user: item.uid?.S ?? '',
+          date: date,
+          company: item.company?.S ?? '',
+          customer: customer,
+          project: {
+            name: project,
+            type: tasks.projectType,
+            plannedHours: tasks.plannedHours,
+          },
+          task: task,
+          hours: parseFloat(hours),
+          description: description ?? '',
+          startHour: startHour ?? '',
+          endHour: endHour ?? '',
+          index: indexMap[indexMapKey],
+        })
       }
+    }
 
-      resultForUser.push({
-        user: item.uid?.S ?? '',
-        date: date,
-        company: item.company?.S ?? '',
-        customer: customer,
-        project: project,
-        task: task,
-        hours: parseFloat(hours),
-        description: description ?? '',
-        startHour: startHour ?? '',
-        endHour: endHour ?? '',
-        index: indexMap[indexMapKey],
-      })
-    })
     return resultForUser
   }
 

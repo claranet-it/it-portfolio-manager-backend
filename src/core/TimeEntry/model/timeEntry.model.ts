@@ -1,4 +1,5 @@
 import { Static, Type } from '@sinclair/typebox'
+import { Project } from '@src/core/Task/model/task.model'
 
 const dateFormat = /([0-9][0-9][0-9][0-9])-(0[1-9]|1[012])-([0-9][0-9])$/
 export const TimeEntryReadParam = Type.Object({
@@ -68,6 +69,7 @@ export const TimeEntryReport = Type.Object({
   project: Type.String(),
   task: Type.String(),
   projectType: Type.String(),
+  plannedHours: Type.Number(),
   hours: Type.Number(),
   description: Type.String(),
   startHour: Type.String(),
@@ -108,11 +110,35 @@ export const TimeEntryRowWithProject = Type.Object({
   timeEntryDate: Type.String(),
 })
 
+export const TimeEntryRowWithProjectEntity = Type.Object({
+  user: Type.String(),
+  date: Type.String(),
+  company: Type.String(),
+  customer: Type.String(),
+  project: Project,
+  task: Type.String(),
+  hours: Type.Number(),
+  description: Type.String(),
+  startHour: Type.String(),
+  endHour: Type.String(),
+  index: Type.Optional(Type.Number()),
+})
+
 export const TimeEntryRowList = Type.Array(TimeEntryRow)
 export type TimeEntryRowType = Static<typeof TimeEntryRow>
 export type TimeEntryRowListType = Static<typeof TimeEntryRowList>
 
 export type TimeEntryRowWithProjectType = Static<typeof TimeEntryRowWithProject>
+
+export type TimeEntryRowWithProjectEntityType = Static<
+  typeof TimeEntryRowWithProjectEntity
+>
+export const TimeEntryRowWithProjectEntityList = Type.Array(
+  TimeEntryRowWithProjectEntity,
+)
+export type TimeEntryRowWithProjectEntityListType = Static<
+  typeof TimeEntryRowWithProjectEntityList
+>
 
 export const TimeEntriesForCnaList = Type.Array(TimeEntriesForCna)
 export type TimeEntriesForCnaListType = Static<typeof TimeEntriesForCnaList>

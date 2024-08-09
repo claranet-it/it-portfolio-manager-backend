@@ -2,6 +2,7 @@ import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
+import {ProjectType} from "@src/core/Report/model/productivity.model";
 
 let app: FastifyInstance
 
@@ -62,7 +63,7 @@ test('insert time entry in new day', async (t) => {
     date: date,
     customer: customer,
     task: task,
-    project: project,
+    project: {name: project, type: "slack-time", plannedHours: 0},
     hours: hours,
     description: "",
     startHour: "",
@@ -119,7 +120,7 @@ test('insert time entry in an existing day', async (t) => {
       company: 'it',
       customer: firstCustomer,
       task: firstTask,
-      project: firstProject,
+      project: {name: firstProject, type: ProjectType.NON_BILLABLE, plannedHours: 0},
       hours: firstHours,
       description: "",
       startHour: "",
@@ -132,7 +133,7 @@ test('insert time entry in an existing day', async (t) => {
       company: 'it',
       customer: secondCustomer,
       task: secondTask,
-      project: secondProject,
+      project: {name: secondProject, type: ProjectType.SLACK_TIME, plannedHours: 0},
       hours: secondHours,
       description: "",
       startHour: "",
@@ -206,7 +207,7 @@ test('insert time entry in an existing day with description', async (t) => {
       company: 'it',
       customer,
       task,
-      project,
+      project: {name: "Funzionale", type: "non-billable", plannedHours: 0},
       hours,
       description,
       startHour,
@@ -219,7 +220,7 @@ test('insert time entry in an existing day with description', async (t) => {
       company: 'it',
       customer: secondCustomer,
       task: secondTask,
-      project: secondProject,
+      project: {name: "Funzionale", type: "non-billable", plannedHours: 0},
       hours: secondHours,
       description: secondDescription,
       startHour: secondStartHour,
@@ -276,7 +277,7 @@ test('update hours on existing task', async(t) => {
       company: 'it',
       customer: customer,
       task: task,
-      project: project,
+      project: {name:project, type:ProjectType.SLACK_TIME, plannedHours: 0},
       hours: newHours,
       description: "",
       startHour: "",
@@ -290,13 +291,13 @@ test('update hours on existing task', async(t) => {
 test('add hours on existing task', async(t) => {
   const date = '2024-01-04'
   const customer = 'Claranet'
-  const project = 'Slack time'
+  const project = {name: 'Slack time', type: "slack-time", plannedHours: 0}
   const task = 'formazione'
   const hours = 2
-  const addTimeentryResponse = await addTimeEntry(
+  const addTimeEntryResponse = await addTimeEntry(
     date,
     customer,
-    project,
+    project.name,
     task,
     hours,
     '',
@@ -304,13 +305,13 @@ test('add hours on existing task', async(t) => {
     '11:00',
     0
   )
-  t.equal(addTimeentryResponse.statusCode, 204)
+  t.equal(addTimeEntryResponse.statusCode, 204)
 
   const newHours = 5
   const updateTimeEntryResponse = await addTimeEntry(
     date,
     customer,
-    project,
+    project.name,
     task,
     newHours,
     '',
@@ -357,8 +358,8 @@ test('add hours on existing task', async(t) => {
       index: 1,
     }
   ])
-  await deleteTimeEntry(date, customer, project, task, 1)
-  await deleteTimeEntry(date, customer, project, task, 0)
+  await deleteTimeEntry(date, customer, project.name, task, 1)
+  await deleteTimeEntry(date, customer, project.name, task, 0)
 })
 
 test('throws error if trying to save absence on a saturday or sunday', async(t) => {

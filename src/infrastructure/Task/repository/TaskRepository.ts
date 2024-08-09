@@ -9,6 +9,7 @@ import {
 import {
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
+  ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
@@ -43,7 +44,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     ).sort()
   }
 
-  async getProjects(params: ProjectReadParamsType): Promise<string[]> {
+  async getProjects(params: ProjectReadParamsType): Promise<ProjectListType> {
     const command = new QueryCommand({
       TableName: getTableName('Task'),
       KeyConditionExpression:
@@ -55,6 +56,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         ':inactive': { BOOL: false },
       },
     })
+
     const result = await this.dynamoDBClient.send(command)
     return (
       result.Items?.map((item) => {
@@ -62,12 +64,22 @@ export class TaskRepository implements TaskRepositoryInterface {
           item.customerProject?.S?.split('#')[1] &&
           item.customerProject?.S?.split('#')[0] === params.customer
         ) {
-          return item.customerProject?.S?.split('#')[1]
+          return {
+            name: item.customerProject?.S?.split('#')[1],
+            type: item.projectType?.S ?? '',
+            plannedHours: item.plannedHours?.N
+              ? Number(item.plannedHours?.N)
+              : 0,
+          }
         } else {
-          return ''
+          return {
+            name: '',
+            type: '',
+            plannedHours: 0,
+          }
         }
       }).sort() ?? []
-    ).filter((item) => item != '')
+    ).filter((item) => item.name != '')
   }
 
   async getTasks(params: TaskReadParamsType): Promise<string[]> {
@@ -90,9 +102,9 @@ export class TaskRepository implements TaskRepositoryInterface {
     )
   }
 
-  async getTasksWithProjectType(
+  async getTasksWithProjectDetails(
     params: TaskReadParamsType,
-  ): Promise<{ tasks: string[]; projectType: string }> {
+  ): Promise<{ tasks: string[]; projectType: string; plannedHours: number }> {
     const command = new QueryCommand({
       TableName: getTableName('Task'),
       KeyConditionExpression:
@@ -112,36 +124,38 @@ export class TaskRepository implements TaskRepositoryInterface {
           .flat()
           .sort() ?? []
       const projectType = result.Items[0].projectType?.S ?? ''
+      const plannedHours = Number(result.Items[0].plannedHours?.N ?? 0)
       return {
         tasks,
         projectType,
+        plannedHours,
       }
     }
 
     return {
       tasks: [],
-      projectType: '', //TODO
+      projectType: '',
+      plannedHours: 0,
     }
   }
 
   async createTask(params: TaskCreateReadParamsType): Promise<void> {
     const company = params.company
     const project = params.project
-    const projectType = params.projectType
     const customer = params.customer
     const task = params.task
 
-    if (customer.includes('#') || project.includes('#')) {
+    if (customer.includes('#') || project.name.includes('#')) {
       throw new InvalidCharacterError(
         '# is not a valid character for customer or project',
       )
     }
 
-    if (!params.projectType) {
+    if (!params.project.type) {
       throw new TaskError('Project type missing')
     }
 
-    const customerProject = `${customer}#${project}`
+    const customerProject = `${customer}#${project.name}`
     const updateParams = {
       TableName: getTableName('Task'),
       Key: {
@@ -149,12 +163,13 @@ export class TaskRepository implements TaskRepositoryInterface {
         company: { S: company },
       },
       UpdateExpression:
-        'SET projectType = :projectType, inactive = :inactive ADD tasks :task',
+        'SET projectType = :projectType, inactive = :inactive, plannedHours = :plannedHours ADD tasks :task',
       ExpressionAttributeValues: {
         ':task': {
           SS: [task],
         },
-        ':projectType': { S: projectType },
+        ':projectType': { S: project.type },
+        ':plannedHours': { N: project.plannedHours?.toString() ?? '0' },
         ':inactive': { BOOL: false },
       },
     }
@@ -170,114 +185,176 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     let newValue
     let existingCustomerProject
-    const oldCustomerProject = `${customer}#${project}`
+    const oldCustomerProject = `${customer}#${project.name}`
     let newCustomerProject
 
-    if (params.newCustomer && params.newProject) {
-      throw new TaskError('New customer OR new Project must be valorized')
-    }
-    if (params.newCustomer) {
-      newValue = params.newCustomer
-      existingCustomerProject = await this.getTasks({
-        company,
-        project,
-        customer: newValue,
-      })
-      newCustomerProject = `${newValue}#${project}`
-    } else if (params.newProject) {
-      newValue = params.newProject
-      existingCustomerProject = await this.getTasks({
-        company,
-        project: newValue,
-        customer,
-      })
-      newCustomerProject = `${customer}#${newValue}`
-    } else {
-      throw new TaskError('New customer OR new Project must be valorized')
+    if (!params.project.name) {
+      throw new TaskError('Project name must be valorized')
     }
 
-    if (newValue.includes('#')) {
-      throw new InvalidCharacterError(
-        '# is not a valid character for customer or project',
+    if (params.newCustomer && params.newProject) {
+      throw new TaskError(
+        'Only one between new customer and new project must be valorized',
       )
     }
 
-    if (existingCustomerProject.length > 0) {
-      //ADD check
-      throw new TaskError('Customer project already exists')
-    }
+    if (
+      params.newProject &&
+      params.newProject.name === params.project.name &&
+      (params.newProject.type || params.newProject.plannedHours)
+    ) {
+      const projectType = params.newProject.type
+        ? params.newProject.type
+        : params.project.type
+      const plannedHours = params.newProject.plannedHours
+        ? params.newProject.plannedHours
+        : params.project.plannedHours
 
-    const command = new QueryCommand({
-      TableName: getTableName('TimeEntry'),
-      IndexName: 'companyIndex',
-      KeyConditionExpression: 'company = :company',
-      ExpressionAttributeValues: {
-        ':company': { S: params.company },
-      },
-    })
-    const result = await this.dynamoDBClient.send(command)
-    const timeEntries =
-      result.Items?.map((item) => {
-        return this.getTimeEntry(item)
-      }).flat() ?? []
+      const customerProject = `${customer}#${project.name}`
 
-    const projectAlreadyAssigned = timeEntries.some(
-      (entry) =>
-        entry.customer === params.customer && entry.project === params.project,
-    )
-    if (projectAlreadyAssigned) {
-      throw new TaskError('Customer project already assigned')
-    }
-
-    const oldTasks = await this.getTasksWithProjectType({
-      company,
-      project,
-      customer,
-    })
-
-    const input: TransactWriteItemsCommandInput = {
-      TransactItems: [
-        {
-          Delete: {
-            Key: {
-              company: { S: params.company },
-              customerProject: { S: oldCustomerProject },
-            },
-            TableName: getTableName('Task'),
+      const updateParams = {
+        TableName: getTableName('Task'),
+        Key: {
+          customerProject: { S: customerProject },
+          company: { S: company },
+        },
+        UpdateExpression:
+          'SET projectType = :projectType, plannedHours = :plannedHours',
+        ExpressionAttributeValues: {
+          ':projectType': {
+            S: projectType,
+          },
+          ':plannedHours': {
+            N: plannedHours?.toString(),
           },
         },
-        {
-          Update: {
-            Key: {
-              company: { S: params.company },
-              customerProject: { S: newCustomerProject },
-            },
-            TableName: getTableName('Task'),
-            UpdateExpression:
-              'SET #tasks = :tasks, #projectType = :projectType, #inactive = :inactive',
-            ExpressionAttributeNames: {
-              '#tasks': 'tasks',
-              '#projectType': 'projectType',
-              '#inactive': 'inactive',
-            },
-            ExpressionAttributeValues: {
-              ':tasks': {
-                SS: oldTasks.tasks,
+      }
+
+      await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
+    } else {
+      if (params.newCustomer) {
+        newValue = params.newCustomer
+        existingCustomerProject = await this.getTasks({
+          company,
+          project: project.name,
+          customer: newValue,
+        })
+        newCustomerProject = `${newValue}#${project.name}`
+
+        if (newValue.includes('#')) {
+          throw new InvalidCharacterError(
+            '# is not a valid character for a customer',
+          )
+        }
+      } else if (params.newProject) {
+        newValue = params.newProject
+        existingCustomerProject = await this.getTasks({
+          company,
+          project: newValue.name,
+          customer,
+        })
+        newCustomerProject = `${customer}#${newValue.name}`
+
+        if (newValue.name.includes('#')) {
+          throw new InvalidCharacterError(
+            '# is not a valid character for a project',
+          )
+        }
+      } else {
+        throw new TaskError(
+          'At least one between new customer and new project must be valorized',
+        )
+      }
+
+      if (existingCustomerProject.length > 0) {
+        throw new TaskError('Customer project already exists')
+      }
+
+      const command = new QueryCommand({
+        TableName: getTableName('TimeEntry'),
+        IndexName: 'companyIndex',
+        KeyConditionExpression: 'company = :company',
+        ExpressionAttributeValues: {
+          ':company': { S: params.company },
+        },
+      })
+      const result = await this.dynamoDBClient.send(command)
+      const timeEntries =
+        result.Items?.map((item) => {
+          return this.getTimeEntry(item)
+        }).flat() ?? []
+
+      const projectAlreadyAssigned = timeEntries.some(
+        (entry) =>
+          entry.customer === params.customer &&
+          entry.project === params.project.name,
+      )
+      if (projectAlreadyAssigned) {
+        throw new TaskError('Customer project already assigned')
+      }
+
+      const oldTasks = await this.getTasksWithProjectDetails({
+        company,
+        project: project.name,
+        customer,
+      })
+
+      const input: TransactWriteItemsCommandInput = {
+        TransactItems: [
+          {
+            Delete: {
+              Key: {
+                company: { S: params.company },
+                customerProject: { S: oldCustomerProject },
               },
-              ':projectType': {
-                S: oldTasks.projectType,
+              TableName: getTableName('Task'),
+            },
+          },
+          {
+            Update: {
+              Key: {
+                company: { S: params.company },
+                customerProject: { S: newCustomerProject },
               },
-              ':inactive': {
-                BOOL: false,
+              TableName: getTableName('Task'),
+              UpdateExpression:
+                'SET #tasks = :tasks, #projectType = :projectType, #inactive = :inactive, #plannedHours = :plannedHours',
+              ExpressionAttributeNames: {
+                '#tasks': 'tasks',
+                '#projectType': 'projectType',
+                '#inactive': 'inactive',
+                '#plannedHours': 'plannedHours',
+              },
+              ExpressionAttributeValues: {
+                ':tasks': {
+                  SS: oldTasks.tasks,
+                },
+                ':projectType': {
+                  S:
+                    params.newProject && params.newProject.type
+                      ? params.newProject.type
+                      : oldTasks.projectType,
+                },
+                ':inactive': {
+                  BOOL: false,
+                },
+                ':plannedHours': {
+                  N:
+                    params.newProject && params.newProject.plannedHours
+                      ? params.newProject.plannedHours.toString()
+                      : oldTasks.plannedHours
+                        ? oldTasks.plannedHours.toString()
+                        : '0',
+                },
               },
             },
           },
-        },
-      ],
-    }
+        ],
+      }
 
-    const transactCommand = new TransactWriteItemsCommand(input)
-    await this.dynamoDBClient.send(transactCommand)
+      const transactCommand = new TransactWriteItemsCommand(input)
+      await this.dynamoDBClient.send(transactCommand)
+    }
   }
 
   async updateTask(params: TaskUpdateParamsType): Promise<void> {
@@ -315,7 +392,7 @@ export class TaskRepository implements TaskRepositoryInterface {
       throw new TaskError('Task already assigned')
     }
 
-    const oldTasksWithProjectType = await this.getTasksWithProjectType({
+    const oldTasksWithProjectType = await this.getTasksWithProjectDetails({
       company,
       project,
       customer,
@@ -355,6 +432,25 @@ export class TaskRepository implements TaskRepositoryInterface {
     const inactive = params.inactive || true
 
     const customerProject = `${customer}#${project}`
+
+    const command = new QueryCommand({
+        TableName: getTableName('TimeEntry'),
+        IndexName: 'companyIndex',
+        KeyConditionExpression: 'company = :company',
+        ExpressionAttributeValues: {
+          ':company': { S: company },
+        },
+      })
+    const result = await this.dynamoDBClient.send(command)
+    const timeEntries =
+      result.Items?.map((item) => {
+        return this.getTimeEntry(item)
+      }).flat() ?? []
+
+    const projectAlreadyAssigned = timeEntries.some((entry) => entry.customer === params.customer && entry.project === params.project)
+    if (projectAlreadyAssigned) {
+      throw new TaskError('Customer project already assigned')
+    }
 
     const updateParams = {
       TableName: getTableName('Task'),

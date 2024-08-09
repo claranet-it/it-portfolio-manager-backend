@@ -37,9 +37,10 @@ test('create new task - new insert', async (t) => {
     const company = 'es';
     const project = 'Test project';
     const projectType = ProjectType.BILLABLE;
+    const plannedHours = 200;
     const task = 'Test task';
 
-    let response = await postTask(customer, company, project, task, projectType);
+    let response = await postTask(customer, company, project, task, projectType, plannedHours);
     t.equal(response.statusCode, 200)
 
     response = await getTask(customer, project, company);
@@ -56,10 +57,11 @@ test('create task with existing customer and new project - new insert', async (t
     const company = 'fr';
     const project = 'Test old project';
     const projectType = ProjectType.BILLABLE
+    const plannedHours = 100;
     const task = 'Test task old';
 
     //FIRST INSERT
-    let response = await postTask(customer, company, project, task, projectType);
+    let response = await postTask(customer, company, project, task, projectType, plannedHours);
     t.equal(response.statusCode, 200)
 
     response = await getTask('Test existing customer', 'Test old project', 'fr');
@@ -160,7 +162,7 @@ test('create task with same customer and project - update', async (t) => {
     t.same(tasks, expectedResult)
 
     // SECOND INSERT
-    response = await postTask(customer, company, project,'Test task3');
+    response = await postTask(customer, company, project,'Test task3', projectType);
     t.equal(response.statusCode, 200)
     t.same(JSON.parse(response.payload)['message'],
         'OK',
@@ -236,7 +238,7 @@ test('throw error if # in project', async (t) => {
     );
 })
 
-async function postTask(customer: string, company: string, project: string, task: string, projectType?: string) {
+async function postTask(customer: string, company: string, project: string, task: string, projectType?: string, plannedHours?: number) {
     return await app.inject({
         method: 'POST',
         url: '/api/task/task/',
@@ -245,8 +247,7 @@ async function postTask(customer: string, company: string, project: string, task
         },
         payload: {
             customer: customer,
-            project: project,
-            projectType: projectType,
+            project: {name:project, type: projectType, plannedHours: plannedHours},
             task: task
         }
     })

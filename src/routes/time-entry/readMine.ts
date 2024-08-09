@@ -1,15 +1,15 @@
 import { FastifyInstance } from 'fastify'
 import {
-  TimeEntryRowListType,
-  TimeEntryRowList,
   TimeEntryReadParamType,
   TimeEntryReadParam,
+  TimeEntryRowWithProjectEntityListType,
+  TimeEntryRowWithProjectEntityList,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: TimeEntryReadParamType
-    Reply: TimeEntryRowListType
+    Reply: TimeEntryRowWithProjectEntityListType
   }>(
     '/mine',
     {
@@ -23,7 +23,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: TimeEntryRowList,
+          200: TimeEntryRowWithProjectEntityList,
           401: {
             type: 'null',
             description: 'Unauthorized',

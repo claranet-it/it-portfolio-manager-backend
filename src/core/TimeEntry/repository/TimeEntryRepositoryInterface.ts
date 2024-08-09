@@ -4,11 +4,14 @@ import {
   deleteTimeEntryWithUserType,
   CnaReadParamType,
   TimeEntryRowWithProjectType,
+  TimeEntryRowWithProjectEntityType,
   TimeEntryReadParamWithCompanyAndCrewType,
 } from '../model/timeEntry.model'
 
 export interface TimeEntryRepositoryInterface {
-  find(params: TimeEntryReadParamWithUserType): Promise<TimeEntryRowType[]>
+  find(
+    params: TimeEntryReadParamWithUserType,
+  ): Promise<TimeEntryRowWithProjectEntityType[]>
   findTimeOffForFlowing(
     params: CnaReadParamType,
   ): Promise<TimeEntryRowWithProjectType[]>
@@ -17,7 +20,7 @@ export interface TimeEntryRepositoryInterface {
   ): Promise<TimeEntryRowWithProjectType[]>
   findTimeEntriesForReport(
     params: TimeEntryReadParamWithCompanyAndCrewType,
-  ): Promise<TimeEntryRowType[]>
+  ): Promise<TimeEntryRowWithProjectEntityType[]>
   saveMine(params: TimeEntryRowType): Promise<void>
   delete(params: deleteTimeEntryWithUserType): Promise<void>
 }
