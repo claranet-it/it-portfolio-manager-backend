@@ -435,13 +435,13 @@ export class TaskRepository implements TaskRepositoryInterface {
         return this.getTimeEntry(item)
       }).flat() ?? []
 
-    const projectAlreadyAssigned = timeEntries.some(
+    const projectAlreadyAssigned = timeEntries.filter(
       (entry) =>
         entry.customer === params.customer &&
         entry.project === params.project &&
         entry.task.includes(params.task),
     )
-    if (projectAlreadyAssigned) {
+    if (projectAlreadyAssigned.length > 0) {
       throw new TaskError('Task already assigned')
     }
 
