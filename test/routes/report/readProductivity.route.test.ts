@@ -73,9 +73,9 @@ test('read productivity report: no working day', async (t) => {
             },
             "workedHours":0,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":0
@@ -88,9 +88,9 @@ test('read productivity report: no working day', async (t) => {
             },
             "workedHours":0,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":0
@@ -103,9 +103,9 @@ test('read productivity report: no working day', async (t) => {
             },
             "workedHours":0,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":0
@@ -155,9 +155,9 @@ test('read productivity report 1 month', async (t) => {
             },
             "workedHours":12,
             "totalTracked":{
-                "billableProductivity":1,
-                "nonBillableProductivity":3,
-                "slackTime":2,
+                "billable":1,
+                "non-billable":3,
+                "slack-time":2,
                 "absence":0
             },
             "totalProductivity":4
@@ -170,9 +170,9 @@ test('read productivity report 1 month', async (t) => {
             },
             "workedHours":8,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":1,
-                "slackTime":2,
+                "billable":0,
+                "non-billable":1,
+                "slack-time":2,
                 "absence":1
             },
             "totalProductivity":1
@@ -185,9 +185,9 @@ test('read productivity report 1 month', async (t) => {
             },
             "workedHours":0,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":0
@@ -219,9 +219,9 @@ test('read productivity report 1 week', async (t) => {
             },
             "workedHours":8,
             "totalTracked":{
-                "billableProductivity":5,
-                "nonBillableProductivity":8,
-                "slackTime":5,
+                "billable":5,
+                "non-billable":8,
+                "slack-time":5,
                 "absence":2
             },
             "totalProductivity":13
@@ -234,9 +234,9 @@ test('read productivity report 1 week', async (t) => {
             },
             "workedHours":8,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":5,
-                "slackTime":10,
+                "billable":0,
+                "non-billable":5,
+                "slack-time":10,
                 "absence":5
             },
             "totalProductivity":5
@@ -249,9 +249,9 @@ test('read productivity report 1 week', async (t) => {
             },
             "workedHours":0,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":0
@@ -283,9 +283,9 @@ test('read productivity report 1 day', async (t) => {
             },
             "workedHours":8,
             "totalTracked":{
-                "billableProductivity":25,
-                "nonBillableProductivity":38,
-                "slackTime":25,
+                "billable":25,
+                "non-billable":38,
+                "slack-time":25,
                 "absence":12
             },
             "totalProductivity":63
@@ -298,9 +298,9 @@ test('read productivity report 1 day', async (t) => {
             },
             "workedHours":8,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":25,
-                "slackTime":50,
+                "billable":0,
+                "non-billable":25,
+                "slack-time":50,
                 "absence":25
             },
             "totalProductivity":25
@@ -313,9 +313,9 @@ test('read productivity report 1 day', async (t) => {
             },
             "workedHours":0,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":0
@@ -449,9 +449,9 @@ test('read productivity report - customer filter', async (t) => {
             },
             "workedHours":2,
             "totalTracked":{
-                "billableProductivity":25,
-                "nonBillableProductivity":0,
-                "slackTime":0,
+                "billable":25,
+                "non-billable":0,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":25
@@ -483,9 +483,9 @@ test('read productivity report - customer & project filter', async (t) => {
             },
             "workedHours":2,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":13,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":13,
+                "slack-time":0,
                 "absence":12
             },
             "totalProductivity":13
@@ -498,9 +498,9 @@ test('read productivity report - customer & project filter', async (t) => {
             },
             "workedHours":2,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":0,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
                 "absence":25
             },
             "totalProductivity":0
@@ -532,9 +532,9 @@ test('read productivity report - customer & project & task filter', async (t) =>
             },
             "workedHours":2,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":25,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":25,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":25
@@ -547,9 +547,9 @@ test('read productivity report - customer & project & task filter', async (t) =>
             },
             "workedHours":2,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":25,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":25,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":25
@@ -581,9 +581,9 @@ test('read productivity report - only name filter', async (t) => {
             },
             "workedHours":8,
             "totalTracked":{
-                "billableProductivity":25,
-                "nonBillableProductivity":38,
-                "slackTime":25,
+                "billable":25,
+                "non-billable":38,
+                "slack-time":25,
                 "absence":12
             },
             "totalProductivity":63
@@ -631,9 +631,9 @@ test('read productivity report - customer & project & task & name filter', async
             },
             "workedHours":2,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":25,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":25,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":25
@@ -665,9 +665,9 @@ test('read productivity report - customer & project & name filter', async (t) =>
             },
             "workedHours":2,
             "totalTracked":{
-                "billableProductivity":0,
-                "nonBillableProductivity":25,
-                "slackTime":0,
+                "billable":0,
+                "non-billable":25,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":25
@@ -699,9 +699,9 @@ test('read productivity report - name & customer filter', async (t) => {
             },
             "workedHours":2,
             "totalTracked":{
-                "billableProductivity":25,
-                "nonBillableProductivity":0,
-                "slackTime":0,
+                "billable":25,
+                "non-billable":0,
+                "slack-time":0,
                 "absence":0
             },
             "totalProductivity":25
