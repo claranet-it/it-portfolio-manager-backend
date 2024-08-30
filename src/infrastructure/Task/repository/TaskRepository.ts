@@ -421,30 +421,6 @@ export class TaskRepository implements TaskRepositoryInterface {
       throw new TaskError('New task must be valorized')
     }
 
-    const command = new QueryCommand({
-      TableName: getTableName('TimeEntry'),
-      IndexName: 'companyIndex',
-      KeyConditionExpression: 'company = :company',
-      ExpressionAttributeValues: {
-        ':company': { S: params.company },
-      },
-    })
-    const result = await this.dynamoDBClient.send(command)
-    const timeEntries =
-      result.Items?.map((item) => {
-        return this.getTimeEntry(item)
-      }).flat() ?? []
-
-    const projectAlreadyAssigned = timeEntries.filter(
-      (entry) =>
-        entry.customer === params.customer &&
-        entry.project === params.project &&
-        entry.task.includes(params.task),
-    )
-    if (projectAlreadyAssigned.length > 0) {
-      throw new TaskError('Task already assigned')
-    }
-
     const oldTasksWithProjectType = await this.getTasksWithProjectDetails({
       company,
       project,
@@ -474,6 +450,66 @@ export class TaskRepository implements TaskRepositoryInterface {
     }
 
     await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
+
+    const command = new QueryCommand({
+      TableName: getTableName('TimeEntry'),
+      IndexName: 'companyIndex',
+      KeyConditionExpression: 'company = :company',
+      ExpressionAttributeValues: {
+        ':company': { S: params.company },
+      },
+    })
+    const result = await this.dynamoDBClient.send(command)
+    const timeEntries =
+      result.Items?.map((item) => {
+        return this.getTimeEntry(item)
+      }).flat() ?? []
+
+    const timeEntriesAssigned = timeEntries.filter(
+      (entry) =>
+        entry.customer === params.customer &&
+        entry.project === params.project &&
+        entry.task.includes(params.task),
+    )
+
+    if (timeEntriesAssigned.length > 0) {
+      // (!) Update all the time entries (!)
+      timeEntriesAssigned.forEach(async (entry) => {
+        const deleteEntryCommand = new UpdateItemCommand({
+          TableName: getTableName('TimeEntry'),
+          Key: {
+            uid: { S: entry.user },
+            timeEntryDate: { S: entry.date },
+          },
+          UpdateExpression: 'DELETE tasks :task',
+          ExpressionAttributeValues: {
+            ':task': {
+              SS: [
+                `${entry.customer}#${entry.project}#${entry.task}#${entry.hours}#${entry.description ?? ''}#${entry.startHour?.length > 0 ? entry.startHour : '00:00'}#${entry.endHour?.length > 0 ? entry.endHour : '00:00'}`,
+              ],
+            },
+          },
+        })
+        await this.dynamoDBClient.send(deleteEntryCommand)
+
+        const updateEntryCommand = new UpdateItemCommand({
+          TableName: getTableName('TimeEntry'),
+          Key: {
+            uid: { S: entry.user },
+            timeEntryDate: { S: entry.date },
+          },
+          UpdateExpression: 'ADD tasks :task',
+          ExpressionAttributeValues: {
+            ':task': {
+              SS: [
+                `${entry.customer}#${entry.project}#${params.newTask}#${entry.hours}#${entry.description ?? ''}#${entry.startHour?.length > 0 ? entry.startHour : '00:00'}#${entry.endHour?.length > 0 ? entry.endHour : '00:00'}`,
+              ],
+            },
+          },
+        })
+        await this.dynamoDBClient.send(updateEntryCommand)
+      })
+    }
   }
 
   async deleteCustomerProject(
