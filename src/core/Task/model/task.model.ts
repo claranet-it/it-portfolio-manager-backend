@@ -128,6 +128,32 @@ export const CustomerList = Type.Array(Type.String())
 
 export type CustomerListType = Static<typeof CustomerList>
 
-export const TaskList = Type.Array(Type.String())
+export const Task = Type.Object({
+  name: Type.String(),
+  completed: Type.Boolean(),
+  plannedHours: Type.Number(),
+})
+export type TaskType = Static<typeof Task>
+
+export const TaskList = Type.Array(Task)
 
 export type TaskListType = Static<typeof TaskList>
+
+export const TaskPropertiesUpdateQueryParams = Type.Object({
+  customer: Type.String(),
+  project: Type.String(),
+  task: Type.String(),
+  completed: Type.Optional(Type.Boolean()),
+  plannedHours: Type.Optional(Type.Number()),
+})
+export type TaskPropertiesUpdateQueryParamsType = Static<
+  typeof TaskPropertiesUpdateQueryParams
+>
+
+const TaskPropertiesUpdateParams = Type.Intersect([
+  TaskPropertiesUpdateQueryParams,
+  Type.Object({ company: Type.String() }),
+])
+export type TaskPropertiesUpdateParamsType = Static<
+  typeof TaskPropertiesUpdateParams
+>

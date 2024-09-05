@@ -47,7 +47,12 @@ test('update task', async (t) => {
 
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    let expectedResult = ['Test update task task']
+    let expectedResult = [
+        {
+            name: 'Test update task task',
+            completed: false,
+            plannedHours: 0,
+        }]
     t.same(tasks, expectedResult)
 
     response = await putTask(customer, company, project, task, "Test update new task");
@@ -57,8 +62,14 @@ test('update task', async (t) => {
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    expectedResult = ['Test update new task']
+    expectedResult = [{
+        name: 'Test update new task',
+        completed: false,
+        plannedHours: 0,
+    }]
     t.same(tasks, expectedResult)
+
+
 })
 
 async function postTask(customer: string, company: string, project: string, projectType: string, task: string, plannedHours?: string) {
