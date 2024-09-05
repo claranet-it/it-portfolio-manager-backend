@@ -7,9 +7,9 @@ export const User = Type.Object({
 })
 
 export const TotalTracked = Type.Object({
-  billableProductivity: Type.Number(),
-  nonBillableProductivity: Type.Number(),
-  slackTime: Type.Number(),
+  billable: Type.Number(),
+  'non-billable': Type.Number(),
+  'slack-time': Type.Number(),
   absence: Type.Number(),
 })
 
