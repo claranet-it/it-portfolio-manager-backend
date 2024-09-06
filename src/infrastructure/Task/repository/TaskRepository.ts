@@ -15,6 +15,7 @@ import {
   TaskReadParamsType,
   TaskUpdateParamsType,
   TaskType,
+  TaskStructureListType,
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
@@ -101,6 +102,44 @@ export class TaskRepository implements TaskRepositoryInterface {
         .flat()
         .sort() ?? []
     )
+  }
+
+  async getTaskStructure(company: string): Promise<TaskStructureListType> {
+    const command = new QueryCommand({
+      TableName: getTableName('Task'),
+      KeyConditionExpression: 'company = :company',
+      FilterExpression: 'inactive = :inactive',
+      ExpressionAttributeValues: {
+        ':company': { S: company },
+        ':inactive': { BOOL: false },
+      },
+    })
+    const result = await this.dynamoDBClient.send(command)
+
+    if (result.Items == undefined) {
+      return []
+    }
+
+    const taskList: TaskStructureListType = []
+    for (let i = 0; i < result.Items.length; i++) {
+      const item = result.Items[i]
+      const customer = item.customerProject?.S?.split('#')[0] ?? ''
+      const project = item.customerProject?.S?.split('#')[1] ?? ''
+      const tasks = item.tasks?.SS
+      if (tasks == undefined) {
+        continue
+      }
+
+      for (let j = 0; j < tasks.length; j++) {
+        taskList.push({
+          task: tasks[j],
+          customer: customer,
+          project: project,
+        })
+      }
+    }
+
+    return taskList
   }
 
   async getTasksWithProperties(
