@@ -157,3 +157,12 @@ const TaskPropertiesUpdateParams = Type.Intersect([
 export type TaskPropertiesUpdateParamsType = Static<
   typeof TaskPropertiesUpdateParams
 >
+
+export const TaskStructure = Type.Object({
+  customer: Type.String(),
+  project: Type.String(),
+  task: Type.String(),
+})
+export type TaskStructureType = Static<typeof TaskStructure>
+export const TaskStructureList = Type.Array(TaskStructure)
+export type TaskStructureListType = Static<typeof TaskStructureList>
