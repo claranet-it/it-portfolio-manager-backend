@@ -102,7 +102,17 @@ test('update task with time entries assigned', async (t) => {
 
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 2)
-    let expectedResult = ['Test update new task', 'Test update task task']
+    let expectedResult = [
+      {
+        name: 'Test update new task',
+        completed: false,
+        plannedHours: 0,
+      },
+      {
+        name: 'Test update task task',
+        completed: false,
+        plannedHours: 0,
+      }]
     t.has(tasks, expectedResult)
 
     response = await getTimeEntry(date, date, company)
@@ -135,7 +145,17 @@ test('update task with time entries assigned', async (t) => {
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 2)
-    expectedResult = ['Test update new task', 'Test updated task']
+    expectedResult = [
+      {
+        name: 'Test update new task',
+        completed: false,
+        plannedHours: 0,
+      },
+      {
+        name: 'Test updated task',
+        completed: false,
+        plannedHours: 0,
+      }]
     t.same(tasks, expectedResult)
 
     response = await getTimeEntry(date, date, company)
