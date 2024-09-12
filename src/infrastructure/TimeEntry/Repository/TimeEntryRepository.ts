@@ -287,9 +287,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         timeEntryDate: item.timeEntryDate?.S ?? '',
       })
     })
-    return resultForCompany.filter(
-      (result) => result.project === 'Assenze' && result.task !== 'FESTIVITA',
-    )
+    return resultForCompany.filter((result) => result.project === 'Assenze')
   }
 
   private getPeriodFromMonthAndYear(month: number, year: number) {
