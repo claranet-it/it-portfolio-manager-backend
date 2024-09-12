@@ -43,9 +43,31 @@ test('Return time entries for cna', async (t) => {
     })
     t.equal(response.statusCode, 200)
     const result = response.json<TimeEntriesForCnaListType>()
-    t.equal(result.length, 2)
+    t.equal(result.length, 3)
 
     const expected = [
+        {
+            "description": "FESTIVITA",
+            "user": {
+                "email": "micol.ts@email.com",
+                "name": "Micol Panetta",
+            },
+            "userId": "micol.ts@email.com",
+            "billable": false,
+            "task": {
+                "name": "FESTIVITA",
+            },
+            "project": {
+                "name": "Assenze",
+                "billable": false,
+                "clientName": "Assenze",
+            },
+            "timeInterval": {
+                "start": "2024-01-01",
+                "end": "",
+                "duration": "1",
+            },
+        },
         {
             "description": "MALATTIA (INVIARE CERTIFICATO MEDICO)",
             "user": {
