@@ -2,26 +2,10 @@ import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import { TaskListType} from '@src/core/Task/model/task.model'
+import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
-
-beforeEach(async () => {
-  app = createApp({ logger: false })
-  await app.ready()
-})
-
-afterEach(async () => {
-  await app.close()
-})
-
-test('read tasks without authentication', async (t) => {
-  const response = await app.inject({
-    method: 'GET',
-    url: '/api/task/task',
-  })
-
-  t.equal(response.statusCode, 401)
-})
+const prisma = new PrismaClient()
 
 const inputs = [
   {
@@ -43,6 +27,98 @@ const inputs = [
     expectedTasks: [{name: 'Iterazione 1', completed: false, plannedHours: 0}, {name: 'Iterazione 2', completed: false, plannedHours: 0}],
   }
 ]
+
+beforeEach(async () => {
+  app = createApp({ logger: false })
+  await app.ready()
+
+  const claranet = await prisma.customer.create({
+    data: {
+      name: 'Claranet',
+      company_id: 'it',
+    }
+  })
+  const testCustomer = await prisma.customer.create({
+    data: {
+      name: 'test customer',
+      company_id: 'it',
+    }
+  })
+  const funzionale = await prisma.project.create({
+    data: {
+      name: 'Funzionale',
+      customer_id: claranet.id
+    }
+  })
+  const slackTime = await prisma.project.create({
+    data: {
+      name: 'Slack time',
+      customer_id: claranet.id
+    }
+  })
+  const sor = await prisma.project.create({
+    data: {
+      name: 'SOR Sviluppo',
+      customer_id: testCustomer.id
+    }
+  })
+  await prisma.projectTask.create({
+      data: {
+        name: 'Attività di portfolio',
+        project_id: funzionale.id,
+      }
+    }
+  )
+  await prisma.projectTask.create({
+    data: {
+      name: 'Management',
+      project_id: funzionale.id,
+    }
+  })
+  await prisma.projectTask.create({
+    data: {
+      name: 'formazione',
+      project_id: slackTime.id,
+    }
+  })
+  await prisma.projectTask.create({
+    data: {
+      name: 'Iterazione 1',
+      project_id: sor.id,
+    }
+  })
+  await prisma.projectTask.create({
+    data: {
+      name: 'Iterazione 2',
+      project_id: sor.id,
+    }
+  })
+})
+
+afterEach(async () => {
+  const deleteCustomer = prisma.customer.deleteMany()
+  const deleteProject = prisma.project.deleteMany()
+  const deleteTask = prisma.projectTask.deleteMany()
+  const deleteTimeEntry = prisma.timeEntry.deleteMany()
+
+  await prisma.$transaction([
+    deleteTimeEntry,
+    deleteTask,
+    deleteProject,
+    deleteCustomer,
+  ])
+  await prisma.$disconnect()
+  await app.close()
+})
+
+test('read tasks without authentication', async (t) => {
+  const response = await app.inject({
+    method: 'GET',
+    url: '/api/task/task',
+  })
+
+  t.equal(response.statusCode, 401)
+})
 
 inputs.forEach((input) => {
   test('read task with company, customer and project param', async (t) => {
