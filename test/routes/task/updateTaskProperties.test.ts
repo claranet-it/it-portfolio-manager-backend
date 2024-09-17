@@ -3,6 +3,7 @@ import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
 import {TaskListType} from '@src/core/Task/model/task.model'
 import {ProjectType} from "@src/core/Report/model/productivity.model";
+import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
 
@@ -21,6 +22,19 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
+    const prisma = new PrismaClient()
+    const deleteCustomer = prisma.customer.deleteMany()
+    const deleteProject = prisma.project.deleteMany()
+    const deleteTask = prisma.projectTask.deleteMany()
+    const deleteTimeEntry = prisma.timeEntry.deleteMany()
+
+    await prisma.$transaction([
+        deleteTimeEntry,
+        deleteTask,
+        deleteProject,
+        deleteCustomer,
+    ])
+    await prisma.$disconnect()
     await app.close()
 })
 

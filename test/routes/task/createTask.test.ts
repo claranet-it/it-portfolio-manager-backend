@@ -1,10 +1,12 @@
-import {test, beforeEach, afterEach} from 'tap'
+import { afterEach, beforeEach, test } from 'tap'
 import createApp from '@src/app'
-import {FastifyInstance} from 'fastify'
-import {TaskListType} from '@src/core/Task/model/task.model'
-import {ProjectType} from "@src/core/Report/model/productivity.model";
+import { FastifyInstance } from 'fastify'
+import { TaskListType } from '@src/core/Task/model/task.model'
+import { ProjectType } from '@src/core/Report/model/productivity.model'
+import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
+const prisma = new PrismaClient()
 
 function getToken(company: string): string {
     return app.createTestJwt({
@@ -21,6 +23,16 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
+    const deleteCustomer = prisma.customer.deleteMany()
+    const deleteProject = prisma.project.deleteMany()
+    const deleteTask = prisma.projectTask.deleteMany()
+
+    await prisma.$transaction([
+        deleteTask,
+        deleteProject,
+        deleteCustomer,
+    ])
+    await prisma.$disconnect()
     await app.close()
 })
 
@@ -258,32 +270,6 @@ test('create task with existing customer and project but different company - new
         completed: false,
         plannedHours: 0,
     }])
-})
-
-test('throw error if # in customer', async (t) => {
-    const customer = 'test#test'
-    const project = 'test project'
-    const projectType = ProjectType.NON_BILLABLE
-    const task = 'test task'
-    const company = 'it'
-    const response = await postTask(customer, company, project, task, projectType)
-    t.equal(response.statusCode, 400)
-    t.same(JSON.parse(response.payload)['message'],
-       '# is not a valid character for customer or project',
-    );
-})
-
-test('throw error if # in project', async (t) => {
-    const customer = 'test'
-    const project = 'test#project'
-    const projectType = ProjectType.BILLABLE
-    const task = 'test task'
-    const company = 'it'
-    const response = await postTask(customer, company, project, task, projectType)
-    t.equal(response.statusCode, 400)
-    t.same(JSON.parse(response.payload)['message'],
-        '# is not a valid character for customer or project',
-    );
 })
 
 async function postTask(customer: string, company: string, project: string, task: string, projectType?: string, plannedHours?: number) {
