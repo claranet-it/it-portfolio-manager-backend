@@ -67,7 +67,7 @@ export class TimeEntryService {
                 clientName: entry.project,
               },
               timeInterval: {
-                start: entry.timeEntryDate,
+                start: entry.timeEntryDate.substring(0, 10),
                 end: '',
                 duration: entry.hours.toString(),
               },
@@ -144,7 +144,7 @@ export class TimeEntryService {
       })
     }
 
-    return await this.timeEntryRepository.saveMine(params)
+    await this.timeEntryRepository.saveMine(params)
   }
 
   async csvImport(

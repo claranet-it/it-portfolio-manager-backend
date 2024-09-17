@@ -55,7 +55,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       } catch (error) {
         request.log.error(error)
         let errorCode = 500
-        let errorMessage = ''
+        let errorMessage = error
         if (
           error instanceof TaskNotExistsError ||
           error instanceof TimeEntryError

@@ -50,6 +50,31 @@ plugins:
   - serverless-offline
 
 custom:
+  vpc:
+    dev:
+      subnetIds:
+        - subnet-0dd2ae0510c3168cd
+        - subnet-003b9c2bd22cf8de4
+      securityGroupIds:
+        - sg-0f70cb05c44cdae65
+    test:
+      subnetIds:
+        - subnet-0dd2ae0510c3168cd
+        - subnet-003b9c2bd22cf8de4
+      securityGroupIds:
+        - sg-0f70cb05c44cdae65
+    stage:
+      subnetIds:
+        - subnet-0dd2ae0510c3168cd
+        - subnet-003b9c2bd22cf8de4
+      securityGroupIds:
+        - sg-0f70cb05c44cdae65
+    prod:
+      subnetIds:
+        - subnet-00e9390b3de78c81a
+        - subnet-00d78be45329823a6
+      securityGroupIds:
+        - sg-05b4669bc61b06099
   variables:
     stages:
       - dev
@@ -108,10 +133,12 @@ package:
   patterns:
     - node_modules/**
     - .serverless/**
+    - prisma/generated/**
 
 functions:
   app:
     handler: src/handlers/app.handler
+    vpc: ${self:custom.vpc.${opt:stage, 'dev'}}
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
@@ -121,6 +148,7 @@ functions:
       GOOGLE_CALLBACK_URL: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}/${opt:stage, 'dev'}/api/auth/google/oauthCallback
       JWT_PRIVATE_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-private-key
       JWT_PUBLIC_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-public-key
+      DATABASE_URL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/database-url}
       FIND_TEAM_OPENAI_PROMPT: "  Given the SKILL data:
 
       [[SKILL]]
@@ -166,6 +194,7 @@ functions:
 
   removeResignedPeople:
     handler: src/handlers/removeResignedPeople.handler
+    vpc: ${self:custom.vpc.${opt:stage, 'dev'}}
     events:
       - schedule: cron(0 4 * * ? *)
     environment:
