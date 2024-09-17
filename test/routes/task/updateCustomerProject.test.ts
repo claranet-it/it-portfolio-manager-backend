@@ -1,8 +1,13 @@
-import {test, beforeEach, afterEach} from 'tap'
+import { afterEach, beforeEach, test } from 'tap'
 import createApp from '@src/app'
-import {FastifyInstance} from 'fastify'
-import {CustomerListType, ProjectDetailsType, ProjectListType} from '@src/core/Task/model/task.model'
-import {ProjectType} from "@src/core/Report/model/productivity.model";
+import { FastifyInstance } from 'fastify'
+import {
+  CustomerListType,
+  ProjectDetailsType,
+  ProjectListType,
+} from '@src/core/Task/model/task.model'
+import { PrismaClient } from '../../../prisma/generated'
+import { ProjectType } from '@src/core/Report/model/productivity.model'
 
 let app: FastifyInstance
 
@@ -21,6 +26,17 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
+    const prisma = new PrismaClient()
+    const deleteCustomer = prisma.customer.deleteMany()
+    const deleteProject = prisma.project.deleteMany()
+    const deleteTask = prisma.projectTask.deleteMany()
+
+    await prisma.$transaction([
+        deleteTask,
+        deleteProject,
+        deleteCustomer,
+    ])
+    await prisma.$disconnect()
     await app.close()
 })
 
@@ -79,7 +95,7 @@ test('update project - all', async (t) => {
     let projects = response.json<ProjectListType>()
 
     t.equal(projects.length, 1)
-    let expectedResult = [{name: project, type: ProjectType.SLACK_TIME, plannedHours: plannedHours}]
+    let expectedResult: {name: string, type: ProjectType, plannedHours: number}[] = [{name: project, type: ProjectType.SLACK_TIME, plannedHours: plannedHours}]
     t.same(projects, expectedResult)
 
     const newProjectName = 'Test update NEW project all project'
@@ -143,7 +159,7 @@ test('update project - only projectType', async (t) => {
     let projects = response.json<ProjectListType>()
 
     t.equal(projects.length, 1)
-    let expectedResult = [{name: project, type: ProjectType.ABSENCE, plannedHours: 0}]
+    let expectedResult: {name: string, type: ProjectType, plannedHours: number}[] = [{name: project, type: ProjectType.ABSENCE, plannedHours: 0}]
     t.same(projects, expectedResult)
 
     response = await putProject(customer, company, {name: project, type: projectType, plannedHours: 0}, {name: project, type: ProjectType.NON_BILLABLE, plannedHours: 0});
@@ -198,7 +214,7 @@ async function postTask(customer: string, company: string, project: string, proj
         },
         payload: {
             customer: customer,
-            project: {name:project, type: projectType, plannedHours: plannedHours},
+            project: {name: project, type: projectType, plannedHours: plannedHours},
             task: task
         }
     })

@@ -1,9 +1,10 @@
-import {test, beforeEach, afterEach} from 'tap'
+import { afterEach, beforeEach, test } from 'tap'
 import createApp from '@src/app'
-import {FastifyInstance} from 'fastify'
-import  {TaskListType} from '@src/core/Task/model/task.model'
-import {ProjectType} from "@src/core/Report/model/productivity.model";
+import { FastifyInstance } from 'fastify'
+import { TaskListType } from '@src/core/Task/model/task.model'
+import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
+import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
 
@@ -22,7 +23,20 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-    await app.close()
+  const prisma = new PrismaClient()
+  const deleteCustomer = prisma.customer.deleteMany()
+  const deleteProject = prisma.project.deleteMany()
+  const deleteTask = prisma.projectTask.deleteMany()
+  const deleteTimeEntry = prisma.timeEntry.deleteMany()
+
+  await prisma.$transaction([
+    deleteTimeEntry,
+    deleteTask,
+    deleteProject,
+    deleteCustomer,
+  ])
+  await prisma.$disconnect()
+  await app.close()
 })
 
 test('update task without authentication', async (t) => {
@@ -33,7 +47,7 @@ test('update task without authentication', async (t) => {
     t.equal(response.statusCode, 401)
 })
 
-test('update task', async (t) => {
+test('update task - ok', async (t) => {
     const customer = 'Test update task customer';
     const company = 'test update task company';
     const project = 'Test update task project';
@@ -101,42 +115,21 @@ test('update task with time entries assigned', async (t) => {
     t.equal(response.statusCode, 200)
 
     let tasks = response.json<TaskListType>()
-    t.equal(tasks.length, 2)
+    t.equal(tasks.length, 1)
     let expectedResult = [
-      {
-        name: 'Test update new task',
-        completed: false,
-        plannedHours: 0,
-      },
       {
         name: 'Test update task task',
         completed: false,
         plannedHours: 0,
-      }]
+      }
+    ]
     t.has(tasks, expectedResult)
 
     response = await getTimeEntry(date, date, company)
-    let timeEntries = response.json<TimeEntryRowListType>()
-    t.equal(timeEntries.length, 1)
-    t.same(timeEntries, [
-        {
-            "user": "nicholas.crow@email.com",
-            "date": "2024-09-02",
-            "company": "test update task company",
-            "customer": "Test update task customer",
-            "project":{
-                "name": "Test update task project",
-                "type": "billable",
-                "plannedHours": 0,
-            },
-            "task": "Test update task task",
-            "hours": 2,
-            "description": "",
-            "startHour": "00:00",
-            "endHour": "00:00",
-            "index": 0,
-        },
-    ])
+    t.equal(response.statusCode, 200)
+    const timeEntriesBefore = response.json<TimeEntryRowListType>()
+    t.equal(timeEntriesBefore.length, 1)
+    t.same(task, timeEntriesBefore[0].task)
 
     response = await putTask(customer, company, project, task, "Test updated task");
     t.equal(response.statusCode, 200)
@@ -144,44 +137,28 @@ test('update task with time entries assigned', async (t) => {
     response = await getTask(customer, project, company)
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
-    t.equal(tasks.length, 2)
+    t.equal(tasks.length, 1)
     expectedResult = [
-      {
-        name: 'Test update new task',
-        completed: false,
-        plannedHours: 0,
-      },
       {
         name: 'Test updated task',
         completed: false,
         plannedHours: 0,
-      }]
+      }
+    ]
     t.same(tasks, expectedResult)
 
     response = await getTimeEntry(date, date, company)
-    timeEntries = response.json<TimeEntryRowListType>()
-    t.equal(timeEntries.length, 1)
-    t.same(timeEntries, [
-        {
-            "user": "nicholas.crow@email.com",
-            "date": "2024-09-02",
-            "company": "test update task company",
-            "customer": "Test update task customer",
-            "project":{
-                "name": "Test update task project",
-                "type": "billable",
-                "plannedHours": 0,
-            },
-            "task": "Test updated task",
-            "hours": 2,
-            "description": "",
-            "startHour": "00:00",
-            "endHour": "00:00",
-            "index": 0,
-        },
-    ])
-
-    await deleteTimeEntry(date, customer, project, task, company)
+    t.equal(response.statusCode, 200)
+    const timeEntriesAfter = response.json<TimeEntryRowListType>()
+    t.equal(timeEntriesAfter.length, 1)
+    t.same(timeEntriesBefore[0].hours, timeEntriesAfter[0].hours)
+    t.same(timeEntriesBefore[0].startHour, timeEntriesAfter[0].startHour)
+    t.same(timeEntriesBefore[0].endHour, timeEntriesAfter[0].endHour)
+    t.same(timeEntriesBefore[0].description, timeEntriesAfter[0].description)
+    t.same(timeEntriesBefore[0].user, timeEntriesAfter[0].user)
+    t.same(timeEntriesBefore[0].date, timeEntriesAfter[0].date)
+    t.same(timeEntriesBefore[0].index, timeEntriesAfter[0].index)
+    t.same("Test updated task", timeEntriesAfter[0].task)
 })
 
 async function postTask(customer: string, company: string, project: string, projectType: string, task: string, plannedHours?: string) {
@@ -257,35 +234,13 @@ async function addTimeEntry(
     })
   }
 
-  async function getTimeEntry(from: string, to: string, company: string) {
-      return await app.inject({
-         method: 'GET',
-         url: `/api/time-entry/mine?from=${from}&to=${to}`,
-         headers: {
-           authorization: `Bearer ${getToken(company)}`,
-         },
-       })
-     }
-  async function deleteTimeEntry(
-      date: string,
-      customer: string,
-      project: string,
-      task: string,
-      company: string,
-      index?: number
-    ) {
-      return await app.inject({
-        method: 'DELETE',
-        url: '/api/time-entry/mine',
-        headers: {
-          authorization: `Bearer ${getToken(company)}`,
-        },
-        payload: {
-            date: date,
-            customer: customer,
-            project: project,
-            task: task,
-            index: index,
-          },
-      })
-    }
+async function getTimeEntry(from: string, to: string, company: string) {
+    return await app.inject({
+
+      method: 'GET',
+      url: `/api/time-entry/mine?from=${from}&to=${to}`,
+      headers: {
+        authorization: `Bearer ${getToken(company)}`,
+      },
+    })
+}

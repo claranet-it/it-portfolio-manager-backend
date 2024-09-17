@@ -9,3 +9,4 @@ node_modules
 .serverless
 .env.dev
 .env
+prisma/generated

@@ -9,10 +9,15 @@ phases:
       - npm ci --ignore-scripts
       - echo "Installing DynamoDB local..."
       - npm run dynamodb:install
+      - echo "Generating prisma client..."
+      - npx prisma generate
+      - yum install -y docker
   pre_build:
     commands:
       - echo "Running linter..."
       - npm run lint
+      - echo "Starting DB..."
+      - docker run -d -p 3307:3306 -e MARIADB_ROOT_PASSWORD=root -e MARIADB_USER=brickly -e MARIADB_PASSWORD=brickly -e MARIADB_DATABASE=brickly-test mariadb:10.11.8
       - echo "Running tests..."
       - npm run test:ci
   build:
