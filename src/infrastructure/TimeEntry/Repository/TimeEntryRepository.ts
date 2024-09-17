@@ -1,89 +1,128 @@
 import {
-  AttributeValue,
-  DeleteItemCommand,
-  DynamoDBClient,
-  GetItemCommand,
-  QueryCommand,
-  UpdateItemCommand,
-} from '@aws-sdk/client-dynamodb'
-import {
+  CnaReadParamType,
+  deleteTimeEntryWithUserType,
+  TimeEntryReadParamWithCompanyAndCrewType,
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
-  deleteTimeEntryWithUserType,
-  CnaReadParamType,
-  TimeEntryRowWithProjectType,
   TimeEntryRowWithProjectEntityType,
-  TimeEntryReadParamWithCompanyAndCrewType,
+  TimeEntryRowWithProjectType,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
-import { getTableName } from '@src/core/db/TableName'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { invariant } from '@src/helpers/invariant'
 import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
-import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
+import { PrismaClient } from '../../../../prisma/generated'
+import { TaskError } from '@src/core/customExceptions/TaskError'
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 export class TimeEntryRepository implements TimeEntryRepositoryInterface {
-  constructor(
-    private dynamoDBClient: DynamoDBClient,
-    private taskRepository: TaskRepositoryInterface,
-  ) {}
-
   async find(
     params: TimeEntryReadParamWithUserType,
   ): Promise<TimeEntryRowWithProjectEntityType[]> {
-    const command = new QueryCommand({
-      TableName: getTableName('TimeEntry'),
-      KeyConditionExpression:
-        'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
-      ExpressionAttributeValues: {
-        ':uid': { S: params.user },
-        ':from': { S: params.from },
-        ':to': { S: params.to },
+    const prisma = new PrismaClient()
+    const result = await prisma.timeEntry.findMany({
+      where: {
+        email: params.user,
+        time_entry_date: {
+          lte: new Date(params.to),
+          gte: new Date(params.from),
+        },
+      },
+      include: {
+        task: {
+          include: {
+            project: {
+              include: {
+                customer: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
       },
     })
-    const result = await this.dynamoDBClient.send(command)
-    const entries = await Promise.all(
-      result.Items?.map(async (item) => {
-        return await this.getTimeEntryFromDynamoDb(item)
-      }).flat() ?? [],
-    )
-    return entries.flat()
+
+    return result.map((timeEntry) => ({
+      // id: timeEntry.id,
+      user: timeEntry.email,
+      date: timeEntry.time_entry_date.toISOString().substring(0, 10),
+      company: timeEntry.task.project.customer.company_id,
+      customer: timeEntry.task.project.customer.name,
+      project: {
+        name: timeEntry.task.project.name,
+        type: timeEntry.task.project.project_type,
+        plannedHours: timeEntry.task.project.plannedHours,
+      },
+      task: timeEntry.task.name,
+      hours: timeEntry.hours,
+      description: timeEntry.description ?? '',
+      startHour: timeEntry.time_start ?? '',
+      endHour: timeEntry.time_end ?? '',
+      index: timeEntry.id, // TODO: Temporary, when FE is ok we'll switch to id
+    }))
   }
 
   async findTimeEntriesForReport(
     params: TimeEntryReadParamWithCompanyAndCrewType,
   ): Promise<TimeEntryRowWithProjectEntityType[]> {
-    let list: Record<string, AttributeValue>[] = []
-    let lastEvaluatedKey = undefined
-    let result
-    let command
-    do {
-      command = new QueryCommand({
-        TableName: getTableName('TimeEntry'),
-        IndexName: 'companyIndex',
-        KeyConditionExpression:
-          'company = :company AND timeEntryDate BETWEEN :from AND :to',
-        ExpressionAttributeValues: {
-          ':company': { S: params.company },
-          ':from': { S: params.from },
-          ':to': { S: params.to },
+    const prisma = new PrismaClient()
+
+    const result = await prisma.timeEntry.findMany({
+      where: {
+        time_entry_date: {
+          lte: new Date(params.to),
+          gte: new Date(params.from),
         },
-        ExclusiveStartKey: lastEvaluatedKey,
-      })
-      result = await this.dynamoDBClient.send(command)
-      list = list.concat(result.Items ?? [])
-      lastEvaluatedKey = result.LastEvaluatedKey
-    } while (result.Items && result.LastEvaluatedKey)
-    const entries = await Promise.all(
-      list
-        .map(async (item) => {
-          return await this.getTimeEntryFromDynamoDb(item)
-        })
-        .flat() ?? [],
-    )
-    return entries.flat()
+        task: {
+          project: {
+            customer: {
+              company_id: params.company,
+            },
+          },
+        },
+      },
+      include: {
+        task: {
+          include: {
+            project: {
+              include: {
+                customer: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: [
+        {
+          createdAt: 'asc',
+        },
+        {
+          time_entry_date: 'asc',
+        },
+      ],
+    })
+
+    return result.map((timeEntry) => ({
+      // id: timeEntry.id,
+      user: timeEntry.email,
+      date: timeEntry.time_entry_date.toISOString().substring(0, 10),
+      company: timeEntry.task.project.customer.company_id,
+      customer: timeEntry.task.project.customer.name,
+      project: {
+        name: timeEntry.task.project.name,
+        type: timeEntry.task.project.project_type,
+        plannedHours: timeEntry.task.project.plannedHours,
+      },
+      task: timeEntry.task.name,
+      hours: timeEntry.hours,
+      description: timeEntry.description ?? '',
+      startHour: timeEntry.time_start ?? '',
+      endHour: timeEntry.time_end ?? '',
+      index: timeEntry.id, // TODO: Temporary, when FE is ok we'll switch to id
+    }))
   }
 
   async findTimeOffForFlowing(
@@ -94,22 +133,43 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       params.year,
     )
     const users = []
+    const prisma = new PrismaClient()
     for (const user of flowingUsers) {
-      const command = new QueryCommand({
-        TableName: getTableName('TimeEntry'),
-        KeyConditionExpression:
-          'uid = :uid AND timeEntryDate BETWEEN :from AND :to',
-        ExpressionAttributeValues: {
-          ':uid': { S: user },
-          ':from': { S: from },
-          ':to': { S: to },
+      const result = await prisma.timeEntry.findMany({
+        where: {
+          email: user,
+          time_entry_date: {
+            lte: new Date(to),
+            gte: new Date(from),
+          },
+        },
+        include: {
+          task: {
+            include: {
+              project: {
+                include: {
+                  customer: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'asc',
         },
       })
-      const result = await this.dynamoDBClient.send(command)
       users.push(
-        result.Items?.map((item) => {
-          return this.getTimeOff(item)
-        }).flat() ?? [],
+        result.map((timeEntry) => ({
+          user: timeEntry.email,
+          date: timeEntry.time_entry_date.toDateString(),
+          company: timeEntry.task.project.customer.company_id,
+          customer: timeEntry.task.project.customer.name,
+          project: timeEntry.task.project.name,
+          projectType: ProjectType.ABSENCE,
+          task: timeEntry.task.name,
+          hours: timeEntry.hours,
+          timeEntryDate: timeEntry.time_entry_date.toDateString(), // TODO: DUPLICATED
+        })),
       )
     }
     return users.flat()
@@ -122,182 +182,113 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       params.month,
       params.year,
     )
-    const command = new QueryCommand({
-      TableName: getTableName('TimeEntry'),
-      IndexName: 'companyIndex',
-      KeyConditionExpression:
-        'company = :company AND timeEntryDate BETWEEN :from AND :to',
-      ExpressionAttributeValues: {
-        ':company': { S: params.company },
-        ':from': { S: from },
-        ':to': { S: to },
+    const prisma = new PrismaClient()
+    const result = await prisma.timeEntry.findMany({
+      where: {
+        task: {
+          project: {
+            customer: {
+              company_id: params.company,
+            },
+          },
+        },
+        time_entry_date: {
+          lte: new Date(to),
+          gte: new Date(from),
+        },
+        email: { notIn: flowingUsers },
+      },
+      include: {
+        task: {
+          include: {
+            project: {
+              include: {
+                customer: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
       },
     })
-
-    const result = await this.dynamoDBClient.send(command)
-    return (
-      result.Items?.map((item) => {
-        return this.getTimeOff(item)
-      }).flat() ?? []
-    ).filter((profile) => !flowingUsers.includes(profile.user))
+    return result.map((timeEntry) => ({
+      user: timeEntry.email,
+      date: timeEntry.time_entry_date.toISOString(),
+      company: timeEntry.task.project.customer.company_id,
+      customer: timeEntry.task.project.customer.name,
+      project: timeEntry.task.project.name,
+      projectType: ProjectType.ABSENCE,
+      task: timeEntry.task.name,
+      hours: timeEntry.hours,
+      timeEntryDate: timeEntry.time_entry_date.toISOString(), // TODO: DUPLICATED
+    }))
   }
 
   async saveMine(params: TimeEntryRowType): Promise<void> {
-    const timeEntries = await this.find({
-      user: params.user,
-      from: params.date,
-      to: params.date,
-    })
-    const filteredEntries = timeEntries.filter(
-      (entry) =>
-        entry.customer === params.customer &&
-        entry.project.name === params.project &&
-        entry.task === params.task,
-    )
+    const prisma = new PrismaClient()
 
-    if (undefined !== params.index && params.index < filteredEntries.length) {
-      await this.delete(params)
+    if (params.index !== undefined) {
+      await prisma.timeEntry.update({
+        data: {
+          hours: params.hours,
+          description: params.description,
+          time_start: params.startHour,
+          time_end: params.endHour,
+        },
+        where: {
+          id: params.index,
+          email: params.user,
+          time_entry_date: new Date(params.date),
+        },
+      })
+
+      return
     }
 
-    const command = new UpdateItemCommand({
-      TableName: getTableName('TimeEntry'),
-      Key: {
-        uid: { S: params.user },
-        timeEntryDate: { S: params.date },
-      },
-      UpdateExpression: 'SET company = :company ADD tasks :task',
-      ExpressionAttributeValues: {
-        ':company': { S: params.company },
-        ':task': {
-          SS: [
-            `${params.customer}#${params.project}#${params.task}#${params.hours}#${params.description ?? ''}#${params.startHour ?? ''}#${params.endHour ?? ''}`,
-          ],
+    const task = await prisma.projectTask.findFirst({
+      where: {
+        name: params.task,
+        project: {
+          name: params.project,
+          customer: {
+            name: params.customer,
+            company_id: params.company,
+          },
         },
       },
     })
 
-    await this.dynamoDBClient.send(command)
-  }
+    if (!task) {
+      throw new TaskError(`Cannot find task ${params.task}`)
+    }
 
-  async delete(params: deleteTimeEntryWithUserType): Promise<void> {
-    const getItemCommand = new GetItemCommand({
-      TableName: getTableName('TimeEntry'),
-      Key: {
-        uid: { S: params.user },
-        timeEntryDate: { S: params.date },
+    await prisma.timeEntry.create({
+      data: {
+        time_entry_date: new Date(params.date),
+        task_id: task.id,
+        hours: params.hours,
+        description: params.description,
+        time_start: params.startHour,
+        time_end: params.endHour,
+        email: params.user,
       },
     })
-    const timeEntry = await this.dynamoDBClient.send(getItemCommand)
-
-    if (timeEntry.Item?.tasks?.SS) {
-      const tasks = timeEntry.Item.tasks.SS.filter((task) =>
-        task.startsWith(`${params.customer}#${params.project}#${params.task}`),
-      )
-      const task = tasks[params.index ?? 0]
-
-      if (task) {
-        if (timeEntry.Item?.tasks?.SS?.length > 1) {
-          const updateCommand = new UpdateItemCommand({
-            TableName: getTableName('TimeEntry'),
-            Key: {
-              uid: { S: params.user },
-              timeEntryDate: { S: params.date },
-            },
-            UpdateExpression: 'DELETE tasks :task',
-            ExpressionAttributeValues: {
-              ':task': {
-                SS: [task],
-              },
-            },
-          })
-          await this.dynamoDBClient.send(updateCommand)
-        } else {
-          const deleteCommand = new DeleteItemCommand({
-            TableName: getTableName('TimeEntry'),
-            Key: {
-              uid: { S: params.user },
-              timeEntryDate: { S: params.date },
-            },
-          })
-          await this.dynamoDBClient.send(deleteCommand)
-        }
-      }
-    }
   }
 
-  private async getTimeEntryFromDynamoDb(
-    item: Record<string, AttributeValue>,
-  ): Promise<TimeEntryRowWithProjectEntityType[]> {
-    const resultForUser: TimeEntryRowWithProjectEntityType[] = []
-    const indexMap: Record<string, number> = {}
-    if (item.tasks?.SS) {
-      for (const taskItem of item.tasks.SS) {
-        const [
-          customer,
-          project,
-          task,
-          hours,
-          description,
-          startHour,
-          endHour,
-        ] = taskItem.split('#')
-        const tasks = await this.taskRepository.getTasksWithProjectDetails({
-          company: item.company?.S ?? '',
-          project: project,
-          customer: customer,
-        })
-
-        const date = item.timeEntryDate?.S ?? ''
-
-        const indexMapKey = `${date}#${customer}#${project}#${task}`
-        if (!(indexMapKey in indexMap)) {
-          indexMap[indexMapKey] = 0
-        } else {
-          indexMap[indexMapKey]++
-        }
-
-        resultForUser.push({
-          user: item.uid?.S ?? '',
-          date: date,
-          company: item.company?.S ?? '',
-          customer: customer,
-          project: {
-            name: project,
-            type: tasks.projectType,
-            plannedHours: tasks.plannedHours,
-          },
-          task: task,
-          hours: parseFloat(hours),
-          description: description ?? '',
-          startHour: startHour ?? '',
-          endHour: endHour ?? '',
-          index: indexMap[indexMapKey],
-        })
-      }
+  // TODO: Need a big refactor for params because we now need only the ID
+  async delete(params: deleteTimeEntryWithUserType): Promise<void> {
+    if (!params.index) {
+      return
     }
 
-    return resultForUser
-  }
-
-  private getTimeOff(
-    item: Record<string, AttributeValue>,
-  ): TimeEntryRowWithProjectType[] {
-    const resultForCompany: TimeEntryRowWithProjectType[] = []
-    item.tasks?.SS?.forEach((taskItem) => {
-      const [customer, project, task, hours] = taskItem.split('#')
-      resultForCompany.push({
-        user: item.uid?.S ?? '',
-        date: item.timeEntryDate?.S ?? '',
-        company: item.company?.S ?? '',
-        customer: customer,
-        project: project,
-        projectType: ProjectType.ABSENCE,
-        task: task,
-        hours: parseFloat(hours),
-        timeEntryDate: item.timeEntryDate?.S ?? '',
-      })
+    const prisma = new PrismaClient()
+    await prisma.timeEntry.delete({
+      where: {
+        id: params.index,
+      },
     })
-    return resultForCompany.filter((result) => result.project === 'Assenze')
   }
 
   private getPeriodFromMonthAndYear(month: number, year: number) {

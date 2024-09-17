@@ -13,6 +13,8 @@ import { fastifyAwilixPlugin } from '@fastify/awilix'
 import fastifySession from '@fastify/session'
 import { randomBytes } from 'crypto'
 import fastifyCookie from '@fastify/cookie'
+import fastifyEnv from '@fastify/env'
+import * as process from 'node:process'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -58,6 +60,23 @@ export default function createApp(
   })
 
   app.register(swaggerUI)
+
+  const schema = {
+    type: 'object',
+    required: ['DATABASE_URL'],
+    properties: {
+      DATABASE_URL: {
+        type: 'string',
+      },
+    },
+  }
+
+  const options = {
+    schema: schema,
+    dotenv: true,
+  }
+
+  app.register(fastifyEnv, options)
 
   app.register(fastifyCookie)
   app.register(fastifySession, {

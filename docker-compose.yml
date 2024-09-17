@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  mariadb:
+    image: mariadb:10.11.8
+    container_name: brickly-db
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_USER: brickly
+      MARIADB_PASSWORD: brickly
+      MARIADB_DATABASE: brickly-dev
+    ports:
+      - "3306:3306"
+
+  mariadb-test:
+    image: mariadb:10.11.8
+    container_name: brickly-db-test
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_USER: brickly
+      MARIADB_PASSWORD: brickly
+      MARIADB_DATABASE: brickly-test
+    ports:
+      - "3307:3306"

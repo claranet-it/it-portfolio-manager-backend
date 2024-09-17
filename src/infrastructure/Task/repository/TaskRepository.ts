@@ -1,233 +1,176 @@
 import {
-  AttributeValue,
-  DynamoDBClient,
-  QueryCommand,
-  TransactWriteItemsCommand,
-  TransactWriteItemsCommandInput,
-  UpdateItemCommand,
-} from '@aws-sdk/client-dynamodb'
-import {
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
   ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
-  TaskUpdateParamsType,
-  TaskType,
   TaskStructureListType,
+  TaskType,
+  TaskUpdateParamsType,
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
-import { InvalidCharacterError } from '@src/core/customExceptions/InvalidCharacterError'
-import { getTableName } from '@src/core/db/TableName'
-import { TimeEntryRowType } from '@src/core/TimeEntry/model/timeEntry.model'
 import { TaskError } from '@src/core/customExceptions/TaskError'
+import { PrismaClient } from '../../../../prisma/generated'
 
 export class TaskRepository implements TaskRepositoryInterface {
-  constructor(private dynamoDBClient: DynamoDBClient) {}
-
   async getCustomers(company: string): Promise<string[]> {
-    const command = new QueryCommand({
-      TableName: getTableName('Task'),
-      KeyConditionExpression: 'company = :company',
-      FilterExpression: 'inactive = :inactive',
-      ExpressionAttributeValues: {
-        ':company': { S: company },
-        ':inactive': { BOOL: false },
-      },
+    const prima = new PrismaClient()
+    const result = await prima.customer.findMany({
+      where: { company_id: company, inactive: false },
     })
-    const result = await this.dynamoDBClient.send(command)
-    return Array.from(
-      new Set(
-        result.Items?.map(
-          (item) => item.customerProject?.S?.split('#')[0] ?? '',
-        ) ?? [],
-      ),
-    ).sort()
+    return result.map((customer) => customer.name).sort()
   }
 
   async getProjects(params: ProjectReadParamsType): Promise<ProjectListType> {
-    const command = new QueryCommand({
-      TableName: getTableName('Task'),
-      KeyConditionExpression:
-        'company = :company and begins_with(customerProject, :customer)',
-      FilterExpression: 'inactive = :inactive',
-      ExpressionAttributeValues: {
-        ':company': { S: params.company },
-        ':customer': { S: params.customer },
-        ':inactive': { BOOL: false },
+    const prisma = new PrismaClient()
+
+    const result = await prisma.project.findMany({
+      where: {
+        customer: {
+          company_id: params.company,
+          name: params.customer,
+        },
+        is_inactive: false,
+      },
+      orderBy: {
+        name: 'asc',
       },
     })
 
-    const result = await this.dynamoDBClient.send(command)
-    return (
-      result.Items?.map((item) => {
-        if (
-          item.customerProject?.S?.split('#')[1] &&
-          item.customerProject?.S?.split('#')[0] === params.customer
-        ) {
-          return {
-            name: item.customerProject?.S?.split('#')[1],
-            type: item.projectType?.S ?? '',
-            plannedHours: item.plannedHours?.N
-              ? Number(item.plannedHours?.N)
-              : 0,
-          }
-        } else {
-          return {
-            name: '',
-            type: '',
-            plannedHours: 0,
-          }
-        }
-      }).sort() ?? []
-    ).filter((item) => item.name != '')
+    return result.map((project) => ({
+      id: project.id,
+      name: project.name,
+      type: project.project_type,
+      plannedHours: project.plannedHours,
+    }))
   }
 
   async getTasks(params: TaskReadParamsType): Promise<string[]> {
-    const command = new QueryCommand({
-      TableName: getTableName('Task'),
-      KeyConditionExpression:
-        'company = :company and customerProject = :customerProject',
-      FilterExpression: 'inactive = :inactive',
-      ExpressionAttributeValues: {
-        ':company': { S: params.company },
-        ':customerProject': { S: `${params.customer}#${params.project}` },
-        ':inactive': { BOOL: false },
+    const prisma = new PrismaClient()
+
+    const result = await prisma.projectTask.findMany({
+      where: {
+        project: {
+          name: params.project,
+          is_inactive: false,
+          customer: {
+            name: params.customer,
+            company_id: params.company,
+          },
+        },
+      },
+      select: {
+        name: true,
+      },
+      orderBy: {
+        name: 'asc',
       },
     })
-    const result = await this.dynamoDBClient.send(command)
-    return (
-      result.Items?.map((item) => item.tasks?.SS ?? [])
-        .flat()
-        .sort() ?? []
-    )
+    return result.map((task) => task.name)
   }
 
   async getTaskStructure(company: string): Promise<TaskStructureListType> {
-    const command = new QueryCommand({
-      TableName: getTableName('Task'),
-      KeyConditionExpression: 'company = :company',
-      FilterExpression: 'inactive = :inactive',
-      ExpressionAttributeValues: {
-        ':company': { S: company },
-        ':inactive': { BOOL: false },
+    const prisma = new PrismaClient()
+
+    const tasks = await prisma.projectTask.findMany({
+      where: {
+        project: {
+          is_inactive: false,
+          customer: {
+            company_id: company,
+          },
+        },
+      },
+      include: {
+        project: {
+          select: {
+            name: true,
+            customer: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        name: 'asc',
       },
     })
-    const result = await this.dynamoDBClient.send(command)
 
-    if (result.Items == undefined) {
-      return []
-    }
-
-    const taskList: TaskStructureListType = []
-    for (let i = 0; i < result.Items.length; i++) {
-      const item = result.Items[i]
-      const customer = item.customerProject?.S?.split('#')[0] ?? ''
-      const project = item.customerProject?.S?.split('#')[1] ?? ''
-      const tasks = item.tasks?.SS
-      if (tasks == undefined) {
-        continue
-      }
-
-      for (let j = 0; j < tasks.length; j++) {
-        taskList.push({
-          task: tasks[j],
-          customer: customer,
-          project: project,
-        })
-      }
-    }
-
-    return taskList
+    return tasks.map((task) => ({
+      task: task.name,
+      customer: task.project.customer.name,
+      project: task.project.name,
+    }))
   }
 
   async getTasksWithProperties(
     params: TaskReadParamsType,
   ): Promise<TaskType[]> {
-    const tasks = await this.getTasks(params)
+    const prisma = new PrismaClient()
 
-    const propertiesCommand = new QueryCommand({
-      TableName: getTableName('TaskProperties'),
-      KeyConditionExpression: 'projectId = :customerProject',
-      ExpressionAttributeValues: {
-        ':customerProject': {
-          S: `${params.company}#${params.customer}#${params.project}`,
+    const result = await prisma.projectTask.findMany({
+      where: {
+        project: {
+          name: params.project,
+          is_inactive: false,
+          customer: {
+            name: params.customer,
+            company_id: params.company,
+          },
         },
       },
-    })
-    const propertiesResult = await this.dynamoDBClient.send(propertiesCommand)
-    const properties = propertiesResult.Items
-    let filteredProperties: Record<string, AttributeValue>[] = []
-    if (properties && properties.length > 0) {
-      filteredProperties = properties.filter((item) =>
-        tasks.includes(item.task?.S ?? ''),
-      )
-    }
-
-    const mappedProperties = filteredProperties.map((item) => {
-      return {
-        name: item.task.S ?? '',
-        completed: item.completed.BOOL ?? false,
-        plannedHours: parseInt(item.plannedHours.N ?? '0'),
-      }
+      orderBy: {
+        createdAt: 'asc',
+      },
     })
 
-    return tasks.map((task) => {
-      const taskProperties = mappedProperties.filter(
-        (property) => property.name === task,
-      )
-
-      if (!taskProperties || taskProperties.length === 0) {
-        return {
-          name: task,
-          completed: false,
-          plannedHours: 0,
-        }
-      }
-
-      return {
-        name: taskProperties[0].name,
-        completed: taskProperties[0].completed,
-        plannedHours: taskProperties[0].plannedHours,
-      }
-    })
+    return result.map((task) => ({
+      id: task.id,
+      name: task.name,
+      completed: task.is_completed,
+      plannedHours: task.planned_hours,
+    }))
   }
 
   async getTasksWithProjectDetails(
     params: TaskReadParamsType,
   ): Promise<{ tasks: string[]; projectType: string; plannedHours: number }> {
-    const command = new QueryCommand({
-      TableName: getTableName('Task'),
-      KeyConditionExpression:
-        'company = :company and customerProject = :customerProject',
-      FilterExpression: 'inactive = :inactive',
-      ExpressionAttributeValues: {
-        ':company': { S: params.company },
-        ':customerProject': { S: `${params.customer}#${params.project}` },
-        ':inactive': { BOOL: false },
+    const prisma = new PrismaClient()
+
+    const result = await prisma.projectTask.findMany({
+      where: {
+        project: {
+          name: params.project,
+          is_inactive: false,
+          customer: {
+            name: params.customer,
+            company_id: params.company,
+          },
+        },
+      },
+      include: {
+        project: true,
+      },
+      orderBy: {
+        name: 'asc',
       },
     })
-    const result = await this.dynamoDBClient.send(command)
 
-    if (result.Items && result.Items.length > 0) {
-      const tasks =
-        result.Items.map((item) => item.tasks?.SS ?? [])
-          .flat()
-          .sort() ?? []
-      const projectType = result.Items[0].projectType?.S ?? ''
-      const plannedHours = Number(result.Items[0].plannedHours?.N ?? 0)
+    if (result.length == 0) {
       return {
-        tasks,
-        projectType,
-        plannedHours,
+        tasks: [],
+        projectType: '',
+        plannedHours: 0,
       }
     }
 
     return {
-      tasks: [],
-      projectType: '',
-      plannedHours: 0,
+      tasks: result.map((task) => task.name),
+      projectType: result[0].project.project_type,
+      plannedHours: result[0].project.plannedHours,
     }
   }
 
@@ -237,49 +180,88 @@ export class TaskRepository implements TaskRepositoryInterface {
     const customer = params.customer
     const task = params.task
 
-    if (customer.includes('#') || project.name.includes('#')) {
-      throw new InvalidCharacterError(
-        '# is not a valid character for customer or project',
-      )
-    }
-
     if (!params.project.type) {
       throw new TaskError('Project type missing')
     }
 
-    const customerProject = `${customer}#${project.name}`
-    const updateParams = {
-      TableName: getTableName('Task'),
-      Key: {
-        customerProject: { S: customerProject },
-        company: { S: company },
-      },
-      UpdateExpression:
-        'SET projectType = :projectType, inactive = :inactive, plannedHours = :plannedHours ADD tasks :task',
-      ExpressionAttributeValues: {
-        ':task': {
-          SS: [task],
+    const customerObj = await this.findOrCreateCustomer(company, customer)
+    const projectObj = await this.findOrCreateProject(
+      customerObj?.id as string,
+      project.name,
+      project.type,
+      project.plannedHours,
+    )
+
+    await this.findOrCreateProjectTask(projectObj?.id as string, task)
+  }
+
+  async findOrCreateCustomer(companyId: string, customerName: string) {
+    const prisma = new PrismaClient()
+
+    let customer = await prisma.customer.findFirst({
+      where: { company_id: companyId, name: customerName },
+    })
+
+    if (!customer) {
+      customer = await prisma.customer.create({
+        data: {
+          company_id: companyId,
+          name: customerName,
         },
-        ':projectType': { S: project.type },
-        ':plannedHours': { N: project.plannedHours?.toString() ?? '0' },
-        ':inactive': { BOOL: false },
-      },
+      })
     }
-    await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
+
+    return customer
+  }
+
+  async findOrCreateProject(
+    customerId: string,
+    projectName: string,
+    projectType: string,
+    plannedHours: number,
+  ) {
+    const prisma = new PrismaClient()
+
+    let project = await prisma.project.findFirst({
+      where: { customer_id: customerId, name: projectName },
+    })
+
+    if (!project) {
+      project = await prisma.project.create({
+        data: {
+          name: projectName,
+          project_type: projectType,
+          plannedHours: plannedHours,
+          customer_id: customerId,
+        },
+      })
+    }
+
+    return project
+  }
+
+  async findOrCreateProjectTask(projectId: string, taskName: string) {
+    const prisma = new PrismaClient()
+
+    let task = await prisma.projectTask.findFirst({
+      where: { project_id: projectId, name: taskName },
+    })
+
+    if (!task) {
+      task = await prisma.projectTask.create({
+        data: {
+          name: taskName,
+          project_id: projectId,
+        },
+      })
+    }
+
+    return task
   }
 
   async updateCustomerProject(
     params: CustomerProjectUpdateParamsType,
   ): Promise<void> {
-    const company = params.company
-    const project = params.project
-    const customer = params.customer
-
-    let newValue
-    let existingCustomerProject
-    const oldCustomerProject = `${customer}#${project.name}`
-    let newCustomerProject
-
     if (!params.project.name) {
       throw new TaskError('Project name must be valorized')
     }
@@ -290,11 +272,25 @@ export class TaskRepository implements TaskRepositoryInterface {
       )
     }
 
-    if (
-      params.newProject &&
-      params.newProject.name === params.project.name &&
-      (params.newProject.type || params.newProject.plannedHours)
-    ) {
+    if (!params.newCustomer && !params.newProject) {
+      throw new TaskError(
+        'At least one between new customer and new project must be valorized',
+      )
+    }
+
+    const prisma = new PrismaClient()
+
+    if (params.newProject) {
+      const project = await prisma.project.findFirstOrThrow({
+        where: {
+          name: params.project.name,
+          customer: {
+            name: params.customer,
+            company_id: params.company,
+          },
+        },
+      })
+
       const projectType = params.newProject.type
         ? params.newProject.type
         : params.project.type
@@ -303,323 +299,153 @@ export class TaskRepository implements TaskRepositoryInterface {
           ? params.newProject.plannedHours
           : params.project.plannedHours
 
-      const customerProject = `${customer}#${project.name}`
-
-      const updateParams = {
-        TableName: getTableName('Task'),
-        Key: {
-          customerProject: { S: customerProject },
-          company: { S: company },
-        },
-        UpdateExpression:
-          'SET projectType = :projectType, plannedHours = :plannedHours',
-        ExpressionAttributeValues: {
-          ':projectType': {
-            S: projectType,
-          },
-          ':plannedHours': {
-            N: plannedHours?.toString(),
-          },
-        },
-      }
-
-      await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
-    } else {
-      if (params.newCustomer) {
-        newValue = params.newCustomer
-        existingCustomerProject = await this.getTasks({
-          company,
-          project: project.name,
-          customer: newValue,
-        })
-        newCustomerProject = `${newValue}#${project.name}`
-
-        if (newValue.includes('#')) {
-          throw new InvalidCharacterError(
-            '# is not a valid character for a customer',
-          )
-        }
-      } else if (params.newProject) {
-        newValue = params.newProject
-        existingCustomerProject = await this.getTasks({
-          company,
-          project: newValue.name,
-          customer,
-        })
-        newCustomerProject = `${customer}#${newValue.name}`
-
-        if (newValue.name.includes('#')) {
-          throw new InvalidCharacterError(
-            '# is not a valid character for a project',
-          )
-        }
-      } else {
-        throw new TaskError(
-          'At least one between new customer and new project must be valorized',
-        )
-      }
-
-      if (existingCustomerProject.length > 0) {
-        throw new TaskError('Customer project already exists')
-      }
-
-      const command = new QueryCommand({
-        TableName: getTableName('TimeEntry'),
-        IndexName: 'companyIndex',
-        KeyConditionExpression: 'company = :company',
-        ExpressionAttributeValues: {
-          ':company': { S: params.company },
-        },
-      })
-      const result = await this.dynamoDBClient.send(command)
-      const timeEntries =
-        result.Items?.map((item) => {
-          return this.getTimeEntry(item)
-        }).flat() ?? []
-
-      const projectAlreadyAssigned = timeEntries.some(
-        (entry) =>
-          entry.customer === params.customer &&
-          entry.project === params.project.name,
-      )
-      if (projectAlreadyAssigned) {
-        throw new TaskError('Customer project already assigned')
-      }
-
-      const oldTasks = await this.getTasksWithProjectDetails({
-        company,
-        project: project.name,
-        customer,
-      })
-
-      const input: TransactWriteItemsCommandInput = {
-        TransactItems: [
-          {
-            Delete: {
-              Key: {
-                company: { S: params.company },
-                customerProject: { S: oldCustomerProject },
-              },
-              TableName: getTableName('Task'),
+      if (params.newProject.name !== project.name) {
+        const existingProject = await prisma.project.findFirst({
+          where: {
+            name: params.newProject.name,
+            customer: {
+              name: params.customer,
+              company_id: params.company,
             },
           },
-          {
-            Update: {
-              Key: {
-                company: { S: params.company },
-                customerProject: { S: newCustomerProject },
-              },
-              TableName: getTableName('Task'),
-              UpdateExpression:
-                'SET #tasks = :tasks, #projectType = :projectType, #inactive = :inactive, #plannedHours = :plannedHours',
-              ExpressionAttributeNames: {
-                '#tasks': 'tasks',
-                '#projectType': 'projectType',
-                '#inactive': 'inactive',
-                '#plannedHours': 'plannedHours',
-              },
-              ExpressionAttributeValues: {
-                ':tasks': {
-                  SS: oldTasks.tasks,
-                },
-                ':projectType': {
-                  S:
-                    params.newProject && params.newProject.type
-                      ? params.newProject.type
-                      : oldTasks.projectType,
-                },
-                ':inactive': {
-                  BOOL: false,
-                },
-                ':plannedHours': {
-                  N:
-                    params.newProject && params.newProject.plannedHours
-                      ? params.newProject.plannedHours.toString()
-                      : oldTasks.plannedHours
-                        ? oldTasks.plannedHours.toString()
-                        : '0',
-                },
-              },
-            },
-          },
-        ],
+        })
+        if (existingProject) {
+          throw new TaskError('Customer project already exists')
+        }
       }
 
-      const transactCommand = new TransactWriteItemsCommand(input)
-      await this.dynamoDBClient.send(transactCommand)
+      await prisma.project.update({
+        data: {
+          name: params.newProject.name,
+          project_type: projectType,
+          plannedHours: plannedHours,
+        },
+        where: {
+          id: project.id,
+        },
+      })
+    }
+
+    if (params.newCustomer) {
+      const customer = await prisma.customer.findFirstOrThrow({
+        where: {
+          name: params.customer,
+          company_id: params.company,
+        },
+      })
+
+      const existingCustomer = await prisma.customer.findFirst({
+        where: {
+          name: params.newCustomer,
+          company_id: params.company,
+        },
+      })
+
+      if (existingCustomer) {
+        throw new TaskError('Customer already exists')
+      }
+
+      await prisma.customer.update({
+        data: {
+          name: params.newCustomer,
+        },
+        where: {
+          id: customer.id,
+        },
+      })
     }
   }
 
   async updateTask(params: TaskUpdateParamsType): Promise<void> {
-    const company = params.company
-    const project = params.project
-    const customer = params.customer
-
-    const customerProject = `${customer}#${project}`
-
     if (!params.newTask) {
       throw new TaskError('New task must be valorized')
     }
 
-    const oldTasksWithProjectType = await this.getTasksWithProjectDetails({
-      company,
-      project,
-      customer,
-    })
-    const oldTasks = oldTasksWithProjectType.tasks
+    const prisma = new PrismaClient()
 
-    if (oldTasks.includes(params.newTask)) {
+    const existingTask = await prisma.projectTask.findFirst({
+      where: {
+        name: params.newTask,
+      },
+    })
+
+    if (existingTask) {
       throw new TaskError('Task already exists')
     }
 
-    const newTasks = oldTasks.filter((task) => task !== params.task)
-    newTasks.push(params.newTask)
-
-    const updateParams = {
-      TableName: getTableName('Task'),
-      Key: {
-        customerProject: { S: customerProject },
-        company: { S: company },
-      },
-      UpdateExpression: 'SET tasks = :task',
-      ExpressionAttributeValues: {
-        ':task': {
-          SS: newTasks,
+    const oldTask = await prisma.projectTask.findFirst({
+      where: {
+        name: params.task,
+        project: {
+          name: params.project,
+          customer: {
+            name: params.customer,
+            company_id: params.company,
+          },
         },
       },
+    })
+
+    if (!oldTask) {
+      throw new TaskError(`Cannot find task ${params.task}`)
     }
 
-    await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
-
-    const command = new QueryCommand({
-      TableName: getTableName('TimeEntry'),
-      IndexName: 'companyIndex',
-      KeyConditionExpression: 'company = :company',
-      ExpressionAttributeValues: {
-        ':company': { S: params.company },
+    await prisma.projectTask.update({
+      data: {
+        name: params.newTask,
+      },
+      where: {
+        id: oldTask.id,
       },
     })
-    const result = await this.dynamoDBClient.send(command)
-    const timeEntries =
-      result.Items?.map((item) => {
-        return this.getTimeEntry(item)
-      }).flat() ?? []
-
-    const timeEntriesAssigned = timeEntries.filter(
-      (entry) =>
-        entry.customer === params.customer &&
-        entry.project === params.project &&
-        entry.task.includes(params.task),
-    )
-
-    if (timeEntriesAssigned.length > 0) {
-      // (!) Update all the time entries (!)
-      timeEntriesAssigned.forEach(async (entry) => {
-        const deleteEntryCommand = new UpdateItemCommand({
-          TableName: getTableName('TimeEntry'),
-          Key: {
-            uid: { S: entry.user },
-            timeEntryDate: { S: entry.date },
-          },
-          UpdateExpression: 'DELETE tasks :task',
-          ExpressionAttributeValues: {
-            ':task': {
-              SS: [
-                `${entry.customer}#${entry.project}#${entry.task}#${entry.hours}#${entry.description ?? ''}#${entry.startHour?.length > 0 ? entry.startHour : '00:00'}#${entry.endHour?.length > 0 ? entry.endHour : '00:00'}`,
-              ],
-            },
-          },
-        })
-        await this.dynamoDBClient.send(deleteEntryCommand)
-
-        const updateEntryCommand = new UpdateItemCommand({
-          TableName: getTableName('TimeEntry'),
-          Key: {
-            uid: { S: entry.user },
-            timeEntryDate: { S: entry.date },
-          },
-          UpdateExpression: 'ADD tasks :task',
-          ExpressionAttributeValues: {
-            ':task': {
-              SS: [
-                `${entry.customer}#${entry.project}#${params.newTask}#${entry.hours}#${entry.description ?? ''}#${entry.startHour?.length > 0 ? entry.startHour : '00:00'}#${entry.endHour?.length > 0 ? entry.endHour : '00:00'}`,
-              ],
-            },
-          },
-        })
-        await this.dynamoDBClient.send(updateEntryCommand)
-      })
-    }
   }
 
   async deleteCustomerProject(
     params: CustomerProjectDeleteParamsType,
   ): Promise<void> {
     const company = params.company
-    const project = params.project
+    const projectName = params.project
     const customer = params.customer
     const inactive = params.inactive || true
 
-    const customerProject = `${customer}#${project}`
+    const prisma = new PrismaClient()
 
-    const command = new QueryCommand({
-      TableName: getTableName('TimeEntry'),
-      IndexName: 'companyIndex',
-      KeyConditionExpression: 'company = :company',
-      ExpressionAttributeValues: {
-        ':company': { S: company },
+    const project = await prisma.project.findFirst({
+      where: {
+        name: projectName,
+        customer: {
+          name: customer,
+          company_id: company,
+        },
+      },
+      include: {
+        tasks: {
+          include: {
+            time_entries: true,
+          },
+        },
       },
     })
-    const result = await this.dynamoDBClient.send(command)
-    const timeEntries =
-      result.Items?.map((item) => {
-        return this.getTimeEntry(item)
-      }).flat() ?? []
 
-    const projectAlreadyAssigned = timeEntries.some(
-      (entry) =>
-        entry.customer === params.customer && entry.project === params.project,
-    )
-    if (projectAlreadyAssigned) {
+    if (!project) {
+      throw new Error(`Cannot find project ${projectName}`)
+    }
+
+    if (
+      Number(
+        project?.tasks.reduce((acc, task) => acc + task.time_entries.length, 0),
+      ) > 0
+    ) {
       throw new TaskError('Customer project already assigned')
     }
 
-    const updateParams = {
-      TableName: getTableName('Task'),
-      Key: {
-        customerProject: { S: customerProject },
-        company: { S: company },
+    await prisma.project.update({
+      data: {
+        is_inactive: inactive,
       },
-      UpdateExpression: 'SET inactive = :inactive',
-      ExpressionAttributeValues: {
-        ':inactive': {
-          BOOL: inactive,
-        },
+      where: {
+        id: project.id,
       },
-    }
-    await this.dynamoDBClient.send(new UpdateItemCommand(updateParams))
-  }
-
-  private getTimeEntry(
-    item: Record<string, AttributeValue>,
-  ): TimeEntryRowType[] {
-    const resultForCompany: TimeEntryRowType[] = []
-
-    item.tasks?.SS?.forEach((taskItem) => {
-      const [customer, project, task, hours] = taskItem.split('#')
-      resultForCompany.push({
-        user: item.uid?.S ?? '',
-        date: item.timeEntryDate?.S ?? '',
-        company: item.company?.S ?? '',
-        customer: customer,
-        project: project,
-        task: task,
-        hours: parseFloat(hours),
-        description: item.description?.S ?? '',
-        startHour: item.startHour?.S ?? '',
-        endHour: item.endHour?.S ?? '',
-      })
     })
-    return resultForCompany
   }
 }
