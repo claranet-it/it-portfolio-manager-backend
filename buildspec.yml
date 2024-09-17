@@ -1,24 +1,43 @@
 version: 0.2
+
+env:
+  shell: bash
+
 phases:
   install:
     runtime-versions:
       nodejs: 18.x
       java: corretto17
     commands:
+      - apt-get install -y docker
       - echo "Installing dependencies..."
       - npm ci --ignore-scripts
       - echo "Installing DynamoDB local..."
       - npm run dynamodb:install
+      - echo "Generating prisma client..."
+      - npx prisma generate
   pre_build:
     commands:
       - echo "Running linter..."
       - npm run lint
-      - echo "Running tests..."
-      - npm run test:ci
+      - echo "Starting DB..."
+      - docker run -d -p 3307:3306 -e MARIADB_ROOT_PASSWORD=root -e MARIADB_USER=brickly -e MARIADB_PASSWORD=brickly -e MARIADB_DATABASE=brickly-test mariadb:10.11.8
+      - sleep 5
+      - docker ps
   build:
     commands:
+      - echo "TEST DB CONNECTION"
+      - echo "Setting up test db..."
+      - npx dotenv -e .env.test -- prisma migrate dev
+      - echo "Running tests..."
+      - npm run test:ci
       - echo "Deploying to AWS - Stage $STAGE_NAME..."
       - npx serverless deploy --stage $STAGE_NAME
+      - echo "Creating .env.build..."
+      - npm --silent run build:env --buildStage=$STAGE_NAME > .env.build
+      - cat .env.build
+      - echo "Executing migrations..."
+      - npx dotenv -e .env.build -- prisma migrate deploy
   post_build:
     commands:
       - echo "Build completed on `date`"

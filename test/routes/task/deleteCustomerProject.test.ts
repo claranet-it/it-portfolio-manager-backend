@@ -3,6 +3,7 @@ import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
 import {CustomerListType, ProjectListType} from '@src/core/Task/model/task.model'
 import {ProjectType} from "@src/core/Report/model/productivity.model";
+import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
 
@@ -21,6 +22,19 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
+    const prisma = new PrismaClient()
+    const deleteCustomer = prisma.customer.deleteMany()
+    const deleteProject = prisma.project.deleteMany()
+    const deleteTask = prisma.projectTask.deleteMany()
+    const deleteTimeEntries = prisma.timeEntry.deleteMany()
+
+    await prisma.$transaction([
+        deleteTimeEntries,
+        deleteTask,
+        deleteProject,
+        deleteCustomer,
+    ])
+    await prisma.$disconnect()
     await app.close()
 })
 
@@ -97,7 +111,7 @@ test('can\'t delete customer-project if there are time entries', async (t) => {
     response = await getCustomers(company);
     t.equal(response.statusCode, 200)
 
-    let customers = response.json<CustomerListType>()
+    const customers = response.json<CustomerListType>()
     t.equal(customers.length, 1)
     const expectedResult = ['Test delete customer']
     t.same(customers, expectedResult)
@@ -105,7 +119,7 @@ test('can\'t delete customer-project if there are time entries', async (t) => {
     response = await getProjects(company, customer);
     t.equal(response.statusCode, 200)
 
-    const projects = response.json<ProjectListType>()
+    let projects = response.json<ProjectListType>()
     t.equal(projects.length, 1)
     const projExpectedResult = [{ name: "Test delete project", type: "billable", plannedHours: 0 }]
     t.same(projects, projExpectedResult)
@@ -115,9 +129,9 @@ test('can\'t delete customer-project if there are time entries', async (t) => {
 
     response = await getProjects(company, customer);
     t.equal(response.statusCode, 200)
-    customers = response.json<CustomerListType>()
-    t.equal(customers.length, 1)
-    t.same(customers, [{
+    projects = response.json<ProjectListType>()
+    t.equal(projects.length, 1)
+    t.same(projects, [{
       "name": "Test delete project",
       "type": "billable",
       "plannedHours": 0,
