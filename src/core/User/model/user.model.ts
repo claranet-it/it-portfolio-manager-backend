@@ -63,3 +63,12 @@ export const UpdateUserProfile = Type.Object({
 })
 
 export type UpdateUserProfileType = Static<typeof UpdateUserProfile>
+
+export const UserWithCrew = Type.Object({
+  email: Type.String(),
+  id: Type.String(),
+  name: Type.String(),
+  crew: Type.Optional(Type.String()),
+})
+export const UserWithCrewList = Type.Array(UserWithCrew)
+export type UserWithCrewListType = Static<typeof UserWithCrewList>

@@ -1,13 +1,13 @@
 import { FastifyInstance } from 'fastify'
 import {
-  CnaUserProfileList,
-  CnaUserProfileListType,
   CompleteUserProfileType,
+  UserWithCrewList,
+  UserWithCrewListType,
 } from '@src/core/User/model/user.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Reply: CnaUserProfileListType | string
+    Reply: UserWithCrewListType | string
   }>(
     '/list',
     {
@@ -20,7 +20,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: CnaUserProfileList,
+          200: UserWithCrewList,
           401: {
             type: 'null',
             description: 'Unauthorized',
@@ -46,6 +46,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           id: user.uid,
           email: user.uid,
           name: user.name,
+          crew: user.crew,
         }))
       } catch (error) {
         request.log.error(error)
