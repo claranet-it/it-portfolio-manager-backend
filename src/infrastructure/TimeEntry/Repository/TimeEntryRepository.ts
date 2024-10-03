@@ -55,23 +55,33 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   async findTimeEntriesForReport(
     params: TimeEntryReadParamWithCompanyAndCrewType,
   ): Promise<TimeEntryRowWithProjectEntityType[]> {
-    const command = new QueryCommand({
-      TableName: getTableName('TimeEntry'),
-      IndexName: 'companyIndex',
-      KeyConditionExpression:
-        'company = :company AND timeEntryDate BETWEEN :from AND :to',
-      ExpressionAttributeValues: {
-        ':company': { S: params.company },
-        ':from': { S: params.from },
-        ':to': { S: params.to },
-      },
-    })
-
-    const result = await this.dynamoDBClient.send(command)
+    let list: Record<string, AttributeValue>[] = []
+    let lastEvaluatedKey = undefined
+    let result
+    let command
+    do {
+      command = new QueryCommand({
+        TableName: getTableName('TimeEntry'),
+        IndexName: 'companyIndex',
+        KeyConditionExpression:
+          'company = :company AND timeEntryDate BETWEEN :from AND :to',
+        ExpressionAttributeValues: {
+          ':company': { S: params.company },
+          ':from': { S: params.from },
+          ':to': { S: params.to },
+        },
+        ExclusiveStartKey: lastEvaluatedKey,
+      })
+      result = await this.dynamoDBClient.send(command)
+      list = list.concat(result.Items ?? [])
+      lastEvaluatedKey = result.LastEvaluatedKey
+    } while (result.Items && result.LastEvaluatedKey)
     const entries = await Promise.all(
-      result.Items?.map(async (item) => {
-        return await this.getTimeEntryFromDynamoDb(item)
-      }).flat() ?? [],
+      list
+        .map(async (item) => {
+          return await this.getTimeEntryFromDynamoDb(item)
+        })
+        .flat() ?? [],
     )
     return entries.flat()
   }
