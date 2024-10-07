@@ -485,6 +485,47 @@ test('throws error on not existing task', async(t) => {
   );
 })
 
+test('insert time entry with decimal hours', async (t) => {
+  const date = '2024-01-02'
+  const customer = 'Claranet'
+  const project = 'Slack time'
+  const task = 'formazione'
+  const hours = 0.5
+  await postTask(customer, project, task, ProjectType.SLACK_TIME)
+  const addTimeEntryResponse = await addTimeEntry(
+    date,
+    customer,
+    project,
+    task,
+    hours,
+  )
+  t.equal(addTimeEntryResponse.statusCode, 204)
+
+  const getTimeEntryResponse = await app.inject({
+    method: 'GET',
+    url: '/api/time-entry/mine?from=2024-01-02&to=2024-01-05',
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+  })
+  t.equal(getTimeEntryResponse.statusCode, 200)
+  const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
+  t.equal(timeEntry.length, 1)
+  t.same(timeEntry[0], {
+    user: 'nicholas.crow@email.com',
+    company: 'it',
+    date: date,
+    customer: customer,
+    task: task,
+    project: {name: project, type: ProjectType.SLACK_TIME, plannedHours: 0},
+    hours: hours,
+    description: "",
+    startHour: "",
+    endHour: "",
+    index: timeEntry[0].index,
+  })
+})
+
 async function addTimeEntry(
   date: string,
   customer: string,
