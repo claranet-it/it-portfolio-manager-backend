@@ -210,7 +210,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     })
     const result = await this.dynamoDBClient.send(command)
 
-    if (result.Items) {
+    if (result.Items && result.Items.length > 0) {
       const tasks =
         result.Items.map((item) => item.tasks?.SS ?? [])
           .flat()
