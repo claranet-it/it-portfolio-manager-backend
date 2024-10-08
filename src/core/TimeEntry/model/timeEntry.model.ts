@@ -173,3 +173,15 @@ export const DeleteTimeEntryWithUser = Type.Intersect([
 ])
 
 export type deleteTimeEntryWithUserType = Static<typeof DeleteTimeEntryWithUser>
+
+export const CSVImportTimeEntry = Type.Object({
+  data: Type.String(),
+  company: Type.String(),
+})
+
+export type CSVImportTimeEntryType = Static<typeof CSVImportTimeEntry>
+
+export const CSVImportErrors = Type.Object({
+  errors: Type.Array(Type.String()),
+})
+export type CSVImportErrorsType = Static<typeof CSVImportErrors>
