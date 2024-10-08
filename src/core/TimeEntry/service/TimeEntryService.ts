@@ -1,13 +1,15 @@
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import {
-  TimeEntryReadParamWithUserType,
-  TimeEntryRowType,
-  deleteTimeEntryWithUserType,
   CnaReadParamType,
+  CSVImportErrorsType,
+  CSVImportTimeEntryType,
+  deleteTimeEntryWithUserType,
   TimeEntriesForCnaType,
-  TimeEntryRowWithProjectEntityType,
   TimeEntryReadParamWithCompanyAndCrewType,
+  TimeEntryReadParamWithUserType,
   TimeEntryReportType,
+  TimeEntryRowType,
+  TimeEntryRowWithProjectEntityType,
 } from '../model/timeEntry.model'
 import { TimeEntryRepositoryInterface } from '../repository/TimeEntryRepositoryInterface'
 import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
@@ -15,7 +17,7 @@ import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { TimeEntryError } from '@src/core/customExceptions/TimeEntryError'
 import { CompleteUserProfileType } from '@src/core/User/model/user.model'
-import { writeToString } from 'fast-csv'
+import { parseString, writeToString } from 'fast-csv'
 
 export class TimeEntryService {
   constructor(
@@ -143,6 +145,96 @@ export class TimeEntryService {
     }
 
     return await this.timeEntryRepository.saveMine(params)
+  }
+
+  async csvImport(
+    params: CSVImportTimeEntryType,
+  ): Promise<CSVImportErrorsType> {
+    interface CsvRow {
+      customer: string
+      project: string
+      task: string
+      user: string
+      date: string
+      hours: string
+      timeStart: string
+      timeEnd: string
+      description: string
+    }
+
+    const errors: string[] = []
+    const stream = parseString(params.data, {
+      objectMode: true,
+      delimiter: ';',
+      headers: [
+        'customer',
+        'project',
+        'task',
+        'user',
+        'date',
+        'hours',
+        'timeStart',
+        'timeEnd',
+        'description',
+      ],
+      renameHeaders: true,
+      ignoreEmpty: true,
+      trim: true,
+    }).map((row: CsvRow) => ({
+      task: row.task,
+      project: row.project,
+      customer: row.customer,
+      company: params.company,
+      user: row.user,
+      date: row.date,
+      hours: parseFloat(row.hours),
+      startHour: row.timeStart,
+      endHour: row.timeEnd,
+      description: row.description,
+    }))
+    let index = 0
+    for await (const row of stream) {
+      index++
+      const matchedEntries = (
+        await this.find({
+          from: row.date,
+          to: row.date,
+          user: row.user,
+        })
+      ).filter(
+        (entry) =>
+          entry.task == row.task &&
+          entry.project.name == row.project &&
+          entry.customer == row.customer,
+      )
+
+      if (matchedEntries.length > 0) {
+        if (matchedEntries.length == 1) {
+          if (matchedEntries[0].hours == row.hours) {
+            errors.push(`Line ${index}: Time entry already exists`)
+            continue
+          }
+          row.index = matchedEntries[0].index
+        } else {
+          errors.push(`Line ${index}: Time entry already exists multiple times`)
+          continue
+        }
+      }
+
+      try {
+        await this.saveMine(row)
+      } catch (error) {
+        let errorMessage = ''
+        if (
+          error instanceof TaskNotExistsError ||
+          error instanceof TimeEntryError
+        ) {
+          errorMessage = error.message
+        }
+        errors.push(`Line ${index}: ${errorMessage}`)
+      }
+    }
+    return { errors: errors }
   }
 
   async delete(params: deleteTimeEntryWithUserType): Promise<void> {
