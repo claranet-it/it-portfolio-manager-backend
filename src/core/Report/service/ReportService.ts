@@ -8,10 +8,12 @@ import { DateRangeError } from '@src/core/customExceptions/DateRangeError'
 import { CompleteUserProfileType } from '@src/core/User/model/user.model'
 import { FieldsOrderError } from '@src/core/customExceptions/FieldsOrderError'
 import { ProductivityCalculator } from '@src/core/Report/service/ProductivityCalculator'
+import { CrewRepositoryInterface } from '@src/core/Configuration/repository/CrewRepositoryInterface'
 
 export class ReportService {
   constructor(
     private reportRepository: ReportRepositoryInterface,
+    private crewRepository: CrewRepositoryInterface,
     private userProfileRepository: UserProfileRepositoryInterface,
     private productivityCalculator: ProductivityCalculator,
   ) {}
@@ -46,6 +48,8 @@ export class ReportService {
       params.company,
     )
 
+    const crews = await this.crewRepository.findByCompany(params.company)
+
     let allUsersProfiles: CompleteUserProfileType[] =
       await this.userProfileRepository.getByCompany(params.company)
 
@@ -63,7 +67,7 @@ export class ReportService {
       if (filter) {
         return []
       }
-      return await this.emptyWorkedHoursFor(allUsersProfiles)
+      return await this.emptyWorkedHoursFor(allUsersProfiles, crews)
     }
 
     return await Promise.all(
@@ -89,6 +93,8 @@ export class ReportService {
             email: user?.uid ?? '',
             name: user?.name ?? '',
             picture: user?.picture ?? '',
+            crew: user?.crew ?? '',
+            serviceLine: this.getServiceLineFromCrew(crews, user?.crew ?? ''),
           },
           workedHours,
           totalTracked: {
@@ -103,7 +109,7 @@ export class ReportService {
     )
   }
 
-  private async emptyWorkedHoursFor(allUsers: CompleteUserProfileType[]) {
+  private async emptyWorkedHoursFor(allUsers: CompleteUserProfileType[], crews: {name: string, service_line: string}[]) {
     return await Promise.all(
       allUsers.map(async (user) => {
         const userInfo =
@@ -113,6 +119,8 @@ export class ReportService {
             email: userInfo?.uid ?? '',
             name: userInfo?.name ?? '',
             picture: userInfo?.picture ?? '',
+            crew: userInfo?.crew ?? '',
+            serviceLine: this.getServiceLineFromCrew(crews, userInfo?.crew ?? ''),
           },
           workedHours: 0,
           totalTracked: {
@@ -145,5 +153,14 @@ export class ReportService {
     }
 
     return weekdays
+  }
+
+  private getServiceLineFromCrew(crews: {name: string, service_line: string}[], crew: string): string {
+    const result = crews.filter(item => item.name == crew)
+    if (result.length == 0) {
+      return ''
+    }
+
+    return result[0].service_line
   }
 }

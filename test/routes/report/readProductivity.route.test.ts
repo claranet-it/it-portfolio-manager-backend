@@ -69,7 +69,9 @@ test('read productivity report: no working day', async (t) => {
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":0,
             "totalTracked":{
@@ -84,7 +86,9 @@ test('read productivity report: no working day', async (t) => {
             "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "",
             },
             "workedHours":0,
             "totalTracked":{
@@ -99,7 +103,9 @@ test('read productivity report: no working day', async (t) => {
             "user":{
                 "email":"testIt@test.com",
                 "name":"test italian",
-                "picture":""
+                "picture":"",
+                "crew": "bees",
+                "serviceLine": "",
             },
             "workedHours":0,
             "totalTracked":{
@@ -151,7 +157,9 @@ test('read productivity report 1 month', async (t) => {
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":12,
             "totalTracked":{
@@ -166,7 +174,9 @@ test('read productivity report 1 month', async (t) => {
             "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "",
             },
             "workedHours":8,
             "totalTracked":{
@@ -181,7 +191,9 @@ test('read productivity report 1 month', async (t) => {
             "user":{
                 "email":"testIt@test.com",
                 "name":"test italian",
-                "picture":""
+                "picture":"",
+                "crew": "bees",
+                "serviceLine": "",
             },
             "workedHours":0,
             "totalTracked":{
@@ -215,7 +227,9 @@ test('read productivity report 1 week', async (t) => {
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":8,
             "totalTracked":{
@@ -230,7 +244,9 @@ test('read productivity report 1 week', async (t) => {
             "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "",
             },
             "workedHours":8,
             "totalTracked":{
@@ -245,7 +261,9 @@ test('read productivity report 1 week', async (t) => {
             "user":{
                 "email":"testIt@test.com",
                 "name":"test italian",
-                "picture":""
+                "picture":"",
+                "crew": "bees",
+                "serviceLine": "",
             },
             "workedHours":0,
             "totalTracked":{
@@ -279,7 +297,9 @@ test('read productivity report 1 day', async (t) => {
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":8,
             "totalTracked":{
@@ -294,7 +314,9 @@ test('read productivity report 1 day', async (t) => {
             "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "",
             },
             "workedHours":8,
             "totalTracked":{
@@ -309,7 +331,9 @@ test('read productivity report 1 day', async (t) => {
             "user":{
                 "email":"testIt@test.com",
                 "name":"test italian",
-                "picture":""
+                "picture":"",
+                "crew": "bees",
+                "serviceLine": "",
             },
             "workedHours":0,
             "totalTracked":{
@@ -445,7 +469,9 @@ test('read productivity report - customer filter', async (t) => {
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":2,
             "totalTracked":{
@@ -479,7 +505,9 @@ test('read productivity report - customer & project filter', async (t) => {
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":2,
             "totalTracked":{
@@ -494,7 +522,9 @@ test('read productivity report - customer & project filter', async (t) => {
             "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "",
             },
             "workedHours":2,
             "totalTracked":{
@@ -528,7 +558,9 @@ test('read productivity report - customer & project & task filter', async (t) =>
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":2,
             "totalTracked":{
@@ -543,7 +575,9 @@ test('read productivity report - customer & project & task filter', async (t) =>
             "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "",
             },
             "workedHours":2,
             "totalTracked":{
@@ -577,7 +611,9 @@ test('read productivity report - only name filter', async (t) => {
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":8,
             "totalTracked":{
@@ -627,7 +663,9 @@ test('read productivity report - customer & project & task & name filter', async
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":2,
             "totalTracked":{
@@ -661,7 +699,9 @@ test('read productivity report - customer & project & name filter', async (t) =>
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":2,
             "totalTracked":{
@@ -695,7 +735,9 @@ test('read productivity report - name & customer filter', async (t) => {
             "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
-                "picture":"picture-url"
+                "picture":"picture-url",
+                "crew": "sun",
+                "serviceLine": "",
             },
             "workedHours":2,
             "totalTracked":{
