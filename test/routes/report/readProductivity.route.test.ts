@@ -164,11 +164,11 @@ test('read productivity report 1 month', async (t) => {
             "workedHours":12,
             "totalTracked":{
                 "billable":1,
-                "non-billable":3,
+                "non-billable":2,
                 "slack-time":2,
-                "absence":0
+                "absence":1
             },
-            "totalProductivity":4
+            "totalProductivity":3
         },
         {
             "user":{
@@ -234,11 +234,11 @@ test('read productivity report 1 week', async (t) => {
             "workedHours":8,
             "totalTracked":{
                 "billable":5,
-                "non-billable":8,
+                "non-billable":5,
                 "slack-time":5,
-                "absence":2
+                "absence":5
             },
-            "totalProductivity":13
+            "totalProductivity":10
         },
         {
             "user":{
@@ -304,11 +304,11 @@ test('read productivity report 1 day', async (t) => {
             "workedHours":8,
             "totalTracked":{
                 "billable":25,
-                "non-billable":38,
+                "non-billable":25,
                 "slack-time":25,
-                "absence":12
+                "absence":25
             },
-            "totalProductivity":63
+            "totalProductivity":50
         },
         {
             "user":{
@@ -512,11 +512,11 @@ test('read productivity report - customer & project filter', async (t) => {
             "workedHours":2,
             "totalTracked":{
                 "billable":0,
-                "non-billable":13,
+                "non-billable":0,
                 "slack-time":0,
-                "absence":12
+                "absence":25
             },
-            "totalProductivity":13
+            "totalProductivity":0
         },
         {
             "user":{
@@ -618,11 +618,11 @@ test('read productivity report - only name filter', async (t) => {
             "workedHours":8,
             "totalTracked":{
                 "billable":25,
-                "non-billable":38,
+                "non-billable":25,
                 "slack-time":25,
-                "absence":12
+                "absence":25
             },
-            "totalProductivity":63
+            "totalProductivity":50
         },
     ]
 

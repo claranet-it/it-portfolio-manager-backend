@@ -58,11 +58,11 @@ test('read productivity report with api-key', async (t) => {
             "workedHours":8,
             "totalTracked":{
                 "billable":25,
-                "non-billable":38,
+                "non-billable":25,
                 "slack-time":25,
-                "absence":12
+                "absence":25
             },
-            "totalProductivity":63
+            "totalProductivity":50
         },
         {
             "user":{

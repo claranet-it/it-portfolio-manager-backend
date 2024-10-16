@@ -14,7 +14,10 @@ export const TotalTracked = Type.Object({
 })
 
 export const UserProductivity = Type.Object({
-  user: Type.Intersect([User, Type.Object({crew: Type.String(), serviceLine: Type.String()})]),
+  user: Type.Intersect([
+    User,
+    Type.Object({ crew: Type.String(), serviceLine: Type.String() }),
+  ]),
   workedHours: Type.Number(),
   totalTracked: TotalTracked,
   totalProductivity: Type.Number(),

@@ -109,7 +109,10 @@ export class ReportService {
     )
   }
 
-  private async emptyWorkedHoursFor(allUsers: CompleteUserProfileType[], crews: {name: string, service_line: string}[]) {
+  private async emptyWorkedHoursFor(
+    allUsers: CompleteUserProfileType[],
+    crews: { name: string; service_line: string }[],
+  ) {
     return await Promise.all(
       allUsers.map(async (user) => {
         const userInfo =
@@ -120,7 +123,10 @@ export class ReportService {
             name: userInfo?.name ?? '',
             picture: userInfo?.picture ?? '',
             crew: userInfo?.crew ?? '',
-            serviceLine: this.getServiceLineFromCrew(crews, userInfo?.crew ?? ''),
+            serviceLine: this.getServiceLineFromCrew(
+              crews,
+              userInfo?.crew ?? '',
+            ),
           },
           workedHours: 0,
           totalTracked: {
@@ -155,8 +161,11 @@ export class ReportService {
     return weekdays
   }
 
-  private getServiceLineFromCrew(crews: {name: string, service_line: string}[], crew: string): string {
-    const result = crews.filter(item => item.name == crew)
+  private getServiceLineFromCrew(
+    crews: { name: string; service_line: string }[],
+    crew: string,
+  ): string {
+    const result = crews.filter((item) => item.name == crew)
     if (result.length == 0) {
       return ''
     }
