@@ -20,7 +20,6 @@ const resignedPeopleService = new ResignedPeopleService(
 )
 
 export async function handler() {
-  return
   const slackClient = new SlackClient(await ssmClient.getSlackToken())
   await removeResignedPeople(
     userService.getAllUserProfiles.bind(userService),

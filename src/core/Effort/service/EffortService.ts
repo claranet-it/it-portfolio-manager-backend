@@ -20,7 +20,8 @@ export class EffortService {
     params: EffortReadParamsType,
   ): Promise<EffortResponseType> {
     const efforts = await this.effortRepository.getEffort(params)
-    const userProfiles = await this.userProfileService.getAllUserProfiles()
+    const userProfiles =
+      await this.userProfileService.getAllActiveUserProfiles()
     const results = new EffortList([])
     userProfiles.forEach((userProfile) => {
       const effortsOfUser = efforts.filter(
@@ -108,9 +109,11 @@ export class EffortService {
       }
       return [{ uid: params.uid, ...userProfile }]
     } else if (params.company) {
-      return this.userProfileService.getByCompany(params.company)
+      return (
+        await this.userProfileService.getByCompany(params.company)
+      ).filter((user) => !user.disabled)
     }
-    return await this.userProfileService.getAllUserProfiles()
+    return await this.userProfileService.getAllActiveUserProfiles()
   }
 
   async saveEffort(params: EffortRowType): Promise<void> {

@@ -1,10 +1,10 @@
 import {
   AttributeValue,
-  DeleteItemCommand,
   DynamoDBClient,
   PutItemCommand,
   QueryCommand,
   ScanCommand,
+  UpdateItemCommand,
 } from '@aws-sdk/client-dynamodb'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { getTableName } from '@src/core/db/TableName'
@@ -98,6 +98,23 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     return []
   }
 
+  async getAllActiveUserProfiles(): Promise<CompleteUserProfileType[]> {
+    const command = new ScanCommand({
+      TableName: getTableName('UserProfile'),
+      FilterExpression:
+        'disabled = :disabled OR attribute_not_exists(disabled)',
+      ExpressionAttributeValues: { ':disabled': { BOOL: false } },
+    })
+    const result = await this.dynamoDBClient.send(command)
+    if (result?.Items) {
+      return result.Items.map((item) =>
+        this.getCompleteUserProfileFromDynamoItem(item),
+      )
+    }
+
+    return []
+  }
+
   async getClaranetUserProfiles(): Promise<CompleteUserProfileType[]> {
     const command = new QueryCommand({
       TableName: getTableName('UserProfile'),
@@ -176,11 +193,38 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
   }
 
   async delete(uid: string): Promise<void> {
-    const command = new DeleteItemCommand({
+    const command = new UpdateItemCommand({
       TableName: getTableName('UserProfile'),
       Key: { uid: { S: uid } },
+      UpdateExpression: 'SET disabled = :disabled',
+      ExpressionAttributeValues: {
+        ':disabled': {
+          BOOL: true,
+        },
+      },
     })
     await this.dynamoDBClient.send(command)
+  }
+
+  async getDisabled(company: string): Promise<CompleteUserProfileType[]> {
+    const command = new QueryCommand({
+      TableName: getTableName('UserProfile'),
+      IndexName: 'companyIndex',
+      KeyConditionExpression: 'company = :company',
+      FilterExpression: 'disabled = :disabled',
+      ExpressionAttributeValues: {
+        ':company': { S: company },
+        ':disabled': { BOOL: true },
+      },
+    })
+    const result = await this.dynamoDBClient.send(command)
+    if (result?.Items) {
+      return result.Items.map((item) =>
+        this.getCompleteUserProfileFromDynamoItem(item),
+      )
+    }
+
+    return []
   }
 
   private getCompleteUserProfileFromDynamoItem(
@@ -197,6 +241,7 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
       workingExperience: item.workingExperience?.S ?? '',
       education: item.education?.S ?? '',
       certifications: item.certifications?.S ?? '',
+      disabled: item.disabled?.BOOL ?? false,
     }
   }
 }
