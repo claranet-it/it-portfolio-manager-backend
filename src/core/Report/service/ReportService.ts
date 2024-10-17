@@ -1,6 +1,8 @@
 import {
   ProductivityReportReadParamWithCompanyType,
   ProductivityReportResponseType,
+  ProductivityServicelineReportReadParamType,
+  ServiceLineProductivityReportResponseType,
 } from '@src/core/Report/model/productivity.model'
 import { ReportRepositoryInterface } from '@src/core/Report/repository/ReportRepositoryInterface'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
@@ -96,6 +98,89 @@ export class ReportService {
             crew: user?.crew ?? '',
             serviceLine: this.getServiceLineFromCrew(crews, user?.crew ?? ''),
           },
+          workedHours,
+          totalTracked: {
+            billable: billableProductivityPercentage,
+            'non-billable': nonBillableProductivityPercentage,
+            'slack-time': slackTimePercentage,
+            absence: absencePercentage,
+          },
+          totalProductivity: totalProductivityPercentage,
+        }
+      }),
+    )
+  }
+
+  async getServiceLineProductivityReport(
+    company: string,
+    params: ProductivityServicelineReportReadParamType,
+  ): Promise<ServiceLineProductivityReportResponseType> {
+    if (new Date(params.from) > new Date(params.to)) {
+      throw new DateRangeError(params.from, params.to)
+    }
+
+    const companyTimeEntries =
+      await this.reportRepository.getProductivityReport(
+        { company: company, ...params },
+        [],
+      )
+    const projectTypes = await this.reportRepository.getProjectTypes(company)
+    const crews = await this.crewRepository.findByCompany(company)
+    const serviceLines: string[] = []
+    for (const crew of crews) {
+      if (serviceLines.includes(crew.service_line)) {
+        continue
+      }
+      serviceLines.push(crew.service_line)
+    }
+    crews.map((crew) => crew.service_line)
+    const allUsersProfiles: CompleteUserProfileType[] =
+      await this.userProfileRepository.getByCompany(company)
+
+    const totalWorkingDaysInPeriod = this.countWeekdays(params.from, params.to)
+
+    if (totalWorkingDaysInPeriod === 0) {
+      return await Promise.all(
+        serviceLines.map(async (serviceLine) => {
+          return {
+            serviceLine: serviceLine,
+            workedHours: 0,
+            totalTracked: {
+              billable: 0,
+              'non-billable': 0,
+              'slack-time': 0,
+              absence: 0,
+            },
+            totalProductivity: 0,
+          }
+        }),
+      )
+    }
+
+    return await Promise.all(
+      serviceLines.map(async (serviceLine) => {
+        const serviceLineUsers = allUsersProfiles.filter(
+          (u) => this.getServiceLineFromCrew(crews, u.crew) == serviceLine,
+        )
+        const serviceLineTimeEntries = companyTimeEntries.filter(
+          (timeEntry) => {
+            return serviceLineUsers.map((u) => u.uid).includes(timeEntry.user)
+          },
+        )
+        const {
+          workedHours,
+          billableProductivityPercentage,
+          nonBillableProductivityPercentage,
+          slackTimePercentage,
+          absencePercentage,
+          totalProductivityPercentage,
+        } = this.productivityCalculator.calculateByServiceLine(
+          serviceLineTimeEntries,
+          projectTypes,
+        )
+
+        return {
+          serviceLine: serviceLine,
           workedHours,
           totalTracked: {
             billable: billableProductivityPercentage,

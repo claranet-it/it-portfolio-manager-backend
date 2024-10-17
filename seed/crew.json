@@ -6,12 +6,27 @@
     },
     {
         "company": "it",
+        "name": "moon",
+        "serviceLine": "Developer"
+    },
+    {
+        "company": "it",
+        "name": "sun",
+        "serviceLine": "Developer"
+    },
+    {
+        "company": "it",
         "name": "Cloud",
         "serviceLine": "Cloud"
     },
     {
         "company": "it",
         "name": "Bees",
+        "serviceLine": "Developer"
+    },
+    {
+        "company": "it",
+        "name": "bees",
         "serviceLine": "Developer"
     },
     {

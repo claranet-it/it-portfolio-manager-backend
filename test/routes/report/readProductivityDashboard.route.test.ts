@@ -53,7 +53,7 @@ test('read productivity report with api-key', async (t) => {
                 "name":"Micol Panetta",
                 "picture":"picture-url",
                 "crew": "sun",
-                "serviceLine": "",
+                "serviceLine": "Developer",
             },
             "workedHours":8,
             "totalTracked":{
@@ -70,7 +70,7 @@ test('read productivity report with api-key', async (t) => {
                 "name":"Nicholas Crow",
                 "picture":"picture-url",
                 "crew": "moon",
-                "serviceLine": "",
+                "serviceLine": "Developer",
             },
             "workedHours":8,
             "totalTracked":{
@@ -87,7 +87,7 @@ test('read productivity report with api-key', async (t) => {
                 "name":"test italian",
                 "picture":"",
                 "crew": "bees",
-                "serviceLine": "",
+                "serviceLine": "Developer",
             },
             "workedHours":0,
             "totalTracked":{
