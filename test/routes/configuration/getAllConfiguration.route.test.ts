@@ -40,7 +40,7 @@ test('get all configuration', async (t) => {
   t.equal(Object.keys(configuration).includes('skills'), true)
   t.equal(Object.keys(configuration).includes('scoreRange'), true)
   t.equal(Object.keys(configuration).includes('scoreRangeLabels'), true)
-  t.equal(configuration.crews.length, 6)
+  t.equal(configuration.crews.length, 9)
   t.equal(configuration.skills.Developer.length, 13)
   t.equal(configuration.skills.Cloud.length, 15)
   t.equal(configuration.scoreRange.min, 0)
@@ -66,11 +66,23 @@ const inputs = [
         service_line: 'Developer',
       },
       {
+        name: 'moon',
+        service_line: 'Developer',
+      },
+      {
+        name: 'sun',
+        service_line: 'Developer',
+      },
+      {
         name: 'Cloud',
         service_line: 'Cloud',
       },
       {
         name: 'Bees',
+        service_line: 'Developer',
+      },
+      {
+        name: 'bees',
         service_line: 'Developer',
       },
       {
