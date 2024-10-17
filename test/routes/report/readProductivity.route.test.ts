@@ -67,6 +67,23 @@ test('read productivity report: no working day', async (t) => {
     const expected = [
         {
             "user":{
+                "email":"resigned@email.com",
+                "name":"resigned",
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
                 "picture":"picture-url",
@@ -155,6 +172,23 @@ test('read productivity report 1 month', async (t) => {
     const expected = [
         {
             "user":{
+                "email":"resigned@email.com",
+                "name":"resigned",
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
                 "picture":"picture-url",
@@ -225,6 +259,23 @@ test('read productivity report 1 week', async (t) => {
     const expected = [
         {
             "user":{
+                "email":"resigned@email.com",
+                "name":"resigned",
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
                 "picture":"picture-url",
@@ -293,6 +344,23 @@ test('read productivity report 1 day', async (t) => {
     t.equal(response.statusCode, 200)
     const result = response.json<ProductivityReportResponseType>();
     const expected = [
+        {
+            "user":{
+                "email":"resigned@email.com",
+                "name":"resigned",
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
         {
             "user":{
                 "email":"micol.ts@email.com",

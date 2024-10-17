@@ -19,6 +19,8 @@ export interface UserProfileRepositoryInterface {
 
   getAllUserProfiles(): Promise<CompleteUserProfileType[]>
 
+  getAllActiveUserProfiles(): Promise<CompleteUserProfileType[]>
+
   getFlowingUserProfiles(): Promise<CompleteUserProfileType[]>
 
   getClaranetUserProfiles(): Promise<CompleteUserProfileType[]>
@@ -28,4 +30,6 @@ export interface UserProfileRepositoryInterface {
   getByCompany(company: string): Promise<CompleteUserProfileType[]>
 
   delete(uid: string): Promise<void>
+
+  getDisabled(company: string): Promise<CompleteUserProfileType[]>
 }

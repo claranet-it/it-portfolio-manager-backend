@@ -39,6 +39,10 @@ export class UserProfileService {
     return this.userProfileRepository.getAllUserProfiles()
   }
 
+  async getAllActiveUserProfiles(): Promise<CompleteUserProfileType[]> {
+    return this.userProfileRepository.getAllActiveUserProfiles()
+  }
+
   async getByCompany(company: string): Promise<CompleteUserProfileType[]> {
     return this.userProfileRepository.getByCompany(company)
   }
@@ -56,6 +60,7 @@ export class UserProfileService {
     } else {
       usersProfiles = await this.userProfileRepository.getClaranetUserProfiles()
     }
+    usersProfiles = usersProfiles.filter((profile) => !profile.disabled)
 
     return Promise.all(
       usersProfiles.map(async (profile) => {

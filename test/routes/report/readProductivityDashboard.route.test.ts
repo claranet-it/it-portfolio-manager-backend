@@ -49,6 +49,23 @@ test('read productivity report with api-key', async (t) => {
     const expected = [
         {
             "user":{
+                "email":"resigned@email.com",
+                "name":"resigned",
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
                 "picture":"picture-url",

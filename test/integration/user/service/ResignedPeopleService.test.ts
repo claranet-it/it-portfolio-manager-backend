@@ -37,8 +37,8 @@ test('remove user profile', async (t) => {
     certifications: '',
   })
   await service.removeResigned(email)
-  const profile = await userProfileRepository.getUserProfile(email)
-  t.equal(profile, null)
+  const disabeldProfiles = await userProfileRepository.getDisabled('it')
+  t.equal(disabeldProfiles.length, 1)
 })
 
 test('remove skill matrix', async (t) => {

@@ -38,6 +38,7 @@ export const CompleteUserProfile = Type.Intersect([
   UserProfile,
   Type.Object({ uid: Type.String() }),
   Type.Object({ picture: Type.String() }),
+  Type.Object({ disabled: Type.Optional(Type.Boolean({ default: false })) }),
 ])
 
 export const CnaUserProfile = Type.Object({
