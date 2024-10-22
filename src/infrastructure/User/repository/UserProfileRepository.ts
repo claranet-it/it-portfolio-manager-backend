@@ -196,10 +196,13 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     const command = new UpdateItemCommand({
       TableName: getTableName('UserProfile'),
       Key: { uid: { S: uid } },
-      UpdateExpression: 'SET disabled = :disabled',
+      UpdateExpression: 'SET disabled = :disabled, disabledAt = :disabledAt',
       ExpressionAttributeValues: {
         ':disabled': {
           BOOL: true,
+        },
+        ':disabledAt': {
+          S: new Date().toUTCString(),
         },
       },
     })
