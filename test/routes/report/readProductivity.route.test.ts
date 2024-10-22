@@ -255,6 +255,23 @@ test('read productivity report: no working day', async (t) => {
         },
         {
             "user":{
+                "email":"andreas.szekely@claranet.com",
+                "name":"Andreas Szekely",
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
                 "picture":"picture-url",
@@ -272,10 +289,44 @@ test('read productivity report: no working day', async (t) => {
         },
         {
             "user":{
+                "email":"luca.ferri@claranet.com",
+                "name":"Luca Ferri",
+                "picture":"picture-url",
+                "crew": "polaris",
+                "serviceLine": "",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
                 "picture":"picture-url",
                 "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
+                "email":"sun@test.com",
+                "name":"crew sun",
+                "picture":"",
+                "crew": "sun",
                 "serviceLine": "Developer",
             },
             "workedHours":0,
@@ -360,6 +411,23 @@ test('read productivity report 1 month', async (t) => {
         },
         {
             "user":{
+                "email":"andreas.szekely@claranet.com",
+                "name":"Andreas Szekely",
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
                 "picture":"picture-url",
@@ -377,6 +445,23 @@ test('read productivity report 1 month', async (t) => {
         },
         {
             "user":{
+                "email":"luca.ferri@claranet.com",
+                "name":"Luca Ferri",
+                "picture":"picture-url",
+                "crew": "polaris",
+                "serviceLine": "",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
                 "picture":"picture-url",
@@ -391,6 +476,23 @@ test('read productivity report 1 month', async (t) => {
                 "absence":1
             },
             "totalProductivity":1
+        },
+        {
+            "user":{
+                "email":"sun@test.com",
+                "name":"crew sun",
+                "picture":"",
+                "crew": "sun",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
         },
         {
             "user":{
@@ -447,6 +549,23 @@ test('read productivity report 1 week', async (t) => {
         },
         {
             "user":{
+                "email":"andreas.szekely@claranet.com",
+                "name":"Andreas Szekely",
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
                 "picture":"picture-url",
@@ -464,6 +583,23 @@ test('read productivity report 1 week', async (t) => {
         },
         {
             "user":{
+                "email":"luca.ferri@claranet.com",
+                "name":"Luca Ferri",
+                "picture":"picture-url",
+                "crew": "polaris",
+                "serviceLine": "",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
                 "picture":"picture-url",
@@ -478,6 +614,23 @@ test('read productivity report 1 week', async (t) => {
                 "absence":5
             },
             "totalProductivity":5
+        },
+        {
+            "user":{
+                "email":"sun@test.com",
+                "name":"crew sun",
+                "picture":"",
+                "crew": "sun",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
         },
         {
             "user":{
@@ -534,6 +687,23 @@ test('read productivity report 1 day', async (t) => {
         },
         {
             "user":{
+                "email":"andreas.szekely@claranet.com",
+                "name":"Andreas Szekely",
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
                 "picture":"picture-url",
@@ -551,6 +721,23 @@ test('read productivity report 1 day', async (t) => {
         },
         {
             "user":{
+                "email":"luca.ferri@claranet.com",
+                "name":"Luca Ferri",
+                "picture":"picture-url",
+                "crew": "polaris",
+                "serviceLine": "",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
                 "picture":"picture-url",
@@ -565,6 +752,23 @@ test('read productivity report 1 day', async (t) => {
                 "absence":25
             },
             "totalProductivity":25
+        },
+        {
+            "user":{
+                "email":"sun@test.com",
+                "name":"crew sun",
+                "picture":"",
+                "crew": "sun",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
         },
         {
             "user":{

@@ -5,7 +5,10 @@ import {
 } from '@src/core/User/model/user.model'
 
 export interface UserProfileRepositoryInterface {
-  getUserProfile(uid: string): Promise<UserProfileType | null>
+  getUserProfile(
+    uid: string,
+    company: string | undefined,
+  ): Promise<UserProfileType | null>
 
   getCompleteUserProfile(uid: string): Promise<CompleteUserProfileType | null>
 
@@ -32,4 +35,6 @@ export interface UserProfileRepositoryInterface {
   delete(uid: string): Promise<void>
 
   getDisabled(company: string): Promise<CompleteUserProfileType[]>
+
+  getRole(uid: string): Promise<string>
 }

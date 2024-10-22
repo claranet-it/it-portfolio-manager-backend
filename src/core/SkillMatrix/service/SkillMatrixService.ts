@@ -40,18 +40,19 @@ export class SkillMatrixService {
     )
   }
 
-  async saveMineSkillMatrix(
+  async save(
     jwtToken: JwtTokenType,
     skillMatrixUpdateParams: SkillMatrixUpdateParamsType,
   ): Promise<void> {
     const userProfile = await this.userProfileService.getUserProfile(
       jwtToken.email,
+      jwtToken.company,
     )
     if (!userProfile) {
       throw new UserProfileNotInitializedError()
     }
 
-    return await this.skillMatrixRepository.saveMineSkillMatrix(
+    return await this.skillMatrixRepository.save(
       jwtToken.email,
       userProfile,
       skillMatrixUpdateParams,

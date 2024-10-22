@@ -11,15 +11,17 @@ import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { SSMClientInterface } from '@src/core/SSM/SSMClientInterface'
 import { DummySSMClient } from '@src/infrastructure/SSM/DummySSMClient'
 import { SSMClient } from '@src/infrastructure/SSM/SSMClient'
+import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 
 export class AuthService {
   constructor(
     private jwt: JWT,
     private providerResolver: ProviderResolver,
     private companyRepository: CompanyRepositoryInterface,
+    private userProfileRepository: UserProfileRepositoryInterface,
   ) {}
 
-  async signIn(params: verifyJwtParamsType): Promise<string> {
+  async signIn(params: verifyJwtParamsType): Promise<[string, string, string]> {
     const provider = this.providerResolver.resolve(
       Provider[params.provider as keyof typeof Provider],
     )
@@ -35,13 +37,23 @@ export class AuthService {
       console.warn(`Company with id ${authInfo.companyId} not found`)
       throw new UnauthorizedError()
     }
+
+    const userProfile = await this.userProfileRepository.getCompleteUserProfile(
+      authInfo.email,
+    )
+    if (!userProfile) {
+      throw new UnauthorizedError()
+    }
+    const role = await this.userProfileRepository.getRole(authInfo.email)
+
     const user: JwtTokenType = {
       email: authInfo.email,
       name: authInfo.name,
       picture: authInfo.picture,
       company: company.name,
+      role: role,
     }
-    return this.jwt.sign(user, { expiresIn: '30d' })
+    return [this.jwt.sign(user, { expiresIn: '30d' }), role, userProfile.crew]
   }
 
   async checkApiKey(header: { apiKey: string }) {

@@ -19,7 +19,7 @@ export interface SkillMatrixRepositoryInterface {
   getAllSkillMatrixFormattedResponse(
     params: SkillMatrixReadParamsType,
   ): Promise<SkillMatrixResponseType>
-  saveMineSkillMatrix(
+  save(
     uid: string,
     userProfile: UserProfileType,
     skillMatrixUpdateParams: SkillMatrixUpdateParamsType,

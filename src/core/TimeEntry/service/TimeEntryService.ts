@@ -120,7 +120,7 @@ export class TimeEntryService {
       : this.generateCsvFrom(reportData)
   }
 
-  async saveMine(params: TimeEntryRowType): Promise<void> {
+  async save(params: TimeEntryRowType): Promise<void> {
     const tasks = await this.taskRepository.getTasks({
       company: params.company,
       customer: params.customer,
@@ -144,7 +144,7 @@ export class TimeEntryService {
       })
     }
 
-    await this.timeEntryRepository.saveMine(params)
+    await this.timeEntryRepository.save(params)
   }
 
   async csvImport(
@@ -222,7 +222,7 @@ export class TimeEntryService {
       }
 
       try {
-        await this.saveMine(row)
+        await this.save(row)
       } catch (error) {
         let errorMessage = ''
         if (

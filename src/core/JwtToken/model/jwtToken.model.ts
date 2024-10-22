@@ -5,6 +5,7 @@ export const JwtToken = Type.Object({
   name: Type.String(),
   picture: Type.String(),
   company: Type.String(),
+  role: Type.Optional(Type.String()),
 })
 
 export type JwtTokenType = Static<typeof JwtToken>

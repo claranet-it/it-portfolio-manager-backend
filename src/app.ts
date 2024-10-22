@@ -15,6 +15,8 @@ import { randomBytes } from 'crypto'
 import fastifyCookie from '@fastify/cookie'
 import fastifyEnv from '@fastify/env'
 import * as process from 'node:process'
+import fastifyCasbin from 'fastify-casbin'
+import fastifyCasbinRest from 'fastify-casbin-rest'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -89,6 +91,15 @@ export default function createApp(
   app.register(fastifyAwilixPlugin, {
     disposeOnClose: true,
     disposeOnResponse: true,
+  })
+
+  app.register(fastifyCasbin, {
+    model: 'basic_model.conf',
+    adapter: 'basic_policy.csv',
+  })
+
+  app.register(fastifyCasbinRest, {
+    getSub: (r) => r.user.role,
   })
 
   app.register(autoload, {
