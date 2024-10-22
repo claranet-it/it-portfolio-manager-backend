@@ -1,16 +1,187 @@
 import { afterEach, beforeEach, test } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { ProductivityReportResponseType } from '@src/core/Report/model/productivity.model'
+import { ProductivityReportResponseType, ProjectType } from '@src/core/Report/model/productivity.model'
+import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
+const prisma = new PrismaClient()
 
 beforeEach(async () => {
     app = createApp({logger: false})
     await app.ready()
+
+    const claranet = await prisma.customer.create({
+        data: {
+            name: 'Claranet',
+            company_id: 'it',
+        }
+    })
+    const testCustomer = await prisma.customer.create({
+        data: {
+            name: 'test customer',
+            company_id: 'it',
+        }
+    })
+    const assenze = await prisma.project.create({
+        data: {
+            name: 'Assenze',
+            customer_id: claranet.id,
+            project_type: ProjectType.ABSENCE,
+        }
+    })
+    const slackTime = await prisma.project.create({
+        data: {
+            name: 'Slack time',
+            customer_id: claranet.id,
+            project_type: ProjectType.SLACK_TIME,
+        }
+    })
+    const funzionale = await prisma.project.create({
+        data: {
+            name: 'Funzionale',
+            customer_id: claranet.id,
+            project_type: ProjectType.NON_BILLABLE,
+        }
+    })
+    const sorSviluppo = await prisma.project.create({
+        data: {
+            name: 'SOR Sviluppo',
+            customer_id: testCustomer.id,
+            project_type: ProjectType.BILLABLE,
+        }
+    })
+    const festivita = await prisma.projectTask.create({
+        data: {
+            name: 'FESTIVITA',
+            project_id: assenze.id,
+        }
+    })
+    const malattia = await prisma.projectTask.create({
+        data: {
+            name: 'MALATTIA (INVIARE CERTIFICATO MEDICO)',
+            project_id: assenze.id,
+        }
+    })
+    const donazione = await prisma.projectTask.create({
+        data: {
+            name: 'DONAZIONE SANGUE',
+            project_id: assenze.id,
+        }
+    })
+    const portfolio = await prisma.projectTask.create({
+        data: {
+            name: 'Attività di portfolio',
+            project_id: funzionale.id,
+        }
+    })
+    const formazione = await prisma.projectTask.create({
+        data: {
+            name: 'formazione',
+            project_id: slackTime.id,
+        }
+    })
+    const iterazione1 = await prisma.projectTask.create({
+        data: {
+            name: 'Iterazione 1',
+            project_id: sorSviluppo.id,
+        }
+    })
+    await prisma.timeEntry.create({
+        data: {
+            task_id: festivita.id,
+            hours: 1,
+            email: 'micol.ts@email.com',
+            time_entry_date: new Date('2024-01-01'),
+        }
+    })
+    await prisma.timeEntry.create({
+        data: {
+            task_id: malattia.id,
+            hours: 1,
+            email: 'micol.ts@email.com',
+            time_entry_date: new Date('2024-01-01'),
+        }
+    })
+    await prisma.timeEntry.create({
+        data: {
+            task_id: portfolio.id,
+            hours: 2,
+            email: 'micol.ts@email.com',
+            time_entry_date: new Date('2024-01-01'),
+        }
+    })
+    await prisma.timeEntry.create({
+        data: {
+            task_id: formazione.id,
+            hours: 2,
+            email: 'micol.ts@email.com',
+            time_entry_date: new Date('2024-01-01'),
+        }
+    })
+    await prisma.timeEntry.create({
+        data: {
+            task_id: iterazione1.id,
+            hours: 2,
+            email: 'micol.ts@email.com',
+            time_entry_date: new Date('2024-01-01'),
+        }
+    })
+    await prisma.timeEntry.create({
+        data: {
+            task_id: donazione.id,
+            hours: 2,
+            email: 'nicholas.crow@email.com',
+            time_entry_date: new Date('2024-01-01'),
+        }
+    })
+    await prisma.timeEntry.create({
+        data: {
+            task_id: portfolio.id,
+            hours: 2,
+            email: 'nicholas.crow@email.com',
+            time_entry_date: new Date('2024-01-01'),
+        }
+    })
+    await prisma.timeEntry.create({
+        data: {
+            task_id: formazione.id,
+            hours: 4,
+            email: 'nicholas.crow@email.com',
+            time_entry_date: new Date('2024-01-01'),
+        }
+    })
+    await prisma.timeEntry.create({
+        data: {
+            task_id: portfolio.id,
+            hours: 2,
+            email: 'micol.ts@email.com',
+            time_entry_date: new Date('2024-01-31'),
+        }
+    })
+    await prisma.timeEntry.create({
+        data: {
+            task_id: formazione.id,
+            hours: 2,
+            email: 'micol.ts@email.com',
+            time_entry_date: new Date('2024-01-31'),
+        }
+    })
 })
 
 afterEach(async () => {
+    const deleteCustomer = prisma.customer.deleteMany()
+    const deleteProject = prisma.project.deleteMany()
+    const deleteTask = prisma.projectTask.deleteMany()
+    const deleteTimeEntry = prisma.timeEntry.deleteMany()
+
+    await prisma.$transaction([
+        deleteTimeEntry,
+        deleteTask,
+        deleteProject,
+        deleteCustomer,
+    ])
+    await prisma.$disconnect()
     await app.close()
 })
 

@@ -3,8 +3,10 @@ import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
+import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
+const prisma = new PrismaClient()
 
 function getToken(): string {
   return app.createTestJwt({
@@ -18,9 +20,42 @@ function getToken(): string {
 beforeEach(async () => {
   app = createApp({ logger: false })
   await app.ready()
+
+  const claranet = await prisma.customer.create({
+    data: {
+      name: 'Claranet',
+      company_id: 'it',
+    }
+  })
+  const assenze = await prisma.project.create({
+    data: {
+      name: 'Assenze',
+      customer_id: claranet.id,
+      project_type: ProjectType.ABSENCE,
+    }
+  })
+  await prisma.projectTask.create({
+      data: {
+        name: 'ALLATTAMENTO',
+        project_id: assenze.id,
+      }
+    }
+  )
 })
 
 afterEach(async () => {
+  const deleteCustomer = prisma.customer.deleteMany()
+  const deleteProject = prisma.project.deleteMany()
+  const deleteTask = prisma.projectTask.deleteMany()
+  const deleteTimeEntry = prisma.timeEntry.deleteMany()
+
+  await prisma.$transaction([
+    deleteTimeEntry,
+    deleteTask,
+    deleteProject,
+    deleteCustomer,
+  ])
+  await prisma.$disconnect()
   await app.close()
 })
 
@@ -236,12 +271,12 @@ async function deleteTimeEntry(
       authorization: `Bearer ${getToken()}`,
     },
     payload: {
-        date: date,
-        customer: customer,
-        project: project,
-        task: task,
-        index: index,
-      },
+      date: date,
+      customer: customer,
+      project: project,
+      task: task,
+      index: index,
+    },
   })
 }
 
