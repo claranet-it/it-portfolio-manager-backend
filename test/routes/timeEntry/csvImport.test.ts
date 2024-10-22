@@ -13,7 +13,8 @@ function getToken(): string {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it'
+    company: 'it',
+    role: "ADMIN",
   })
 }
 

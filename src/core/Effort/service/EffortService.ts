@@ -103,6 +103,7 @@ export class EffortService {
     if (params.uid) {
       const userProfile = await this.userProfileService.getUserProfile(
         params.uid,
+        params.company,
       )
       if (!userProfile) {
         throw new UserProfileNotInitializedError()
@@ -116,8 +117,14 @@ export class EffortService {
     return await this.userProfileService.getAllActiveUserProfiles()
   }
 
-  async saveEffort(params: EffortRowType): Promise<void> {
-    const userProfile = await this.userProfileService.getUserProfile(params.uid)
+  async saveEffort(
+    params: EffortRowType,
+    company: string | undefined,
+  ): Promise<void> {
+    const userProfile = await this.userProfileService.getUserProfile(
+      params.uid,
+      company,
+    )
     if (!userProfile) {
       throw new UserProfileNotInitializedError()
     }

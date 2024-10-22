@@ -42,7 +42,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         await fastify
           .dependencyInjectionContainer()
           .resolve('effortService')
-          .saveEffort(request.body)
+          .saveEffort(request.body, request.user.company)
 
         reply.code(204).send()
       } catch (error) {

@@ -232,7 +232,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     }))
   }
 
-  async saveMine(params: TimeEntryRowType): Promise<void> {
+  async save(params: TimeEntryRowType): Promise<void> {
     const prisma = new PrismaClient()
 
     if (params.index !== undefined) {

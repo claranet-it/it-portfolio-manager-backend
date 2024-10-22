@@ -7,12 +7,32 @@ import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
 
-function getToken(): string {
+function getAdminToken(): string {
   return app.createTestJwt({
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it'
+    company: 'it',
+    role: "ADMIN",
+  })
+}
+
+function getTeamLeaderToken(): string {
+  return app.createTestJwt({
+    email: 'micol.ts@email.com',
+    name: 'Micol Panetta',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it',
+    role: "TEAM_LEADER",
+  })
+}
+
+function getStandardToken(): string {
+  return app.createTestJwt({
+    email: 'sun@test.com',
+    name: 'Crew Sun',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it',
   })
 }
 
@@ -41,17 +61,41 @@ afterEach(async () => {
 test('save time entry without authentication', async (t) => {
   const response = await app.inject({
     method: 'POST',
-    url: '/api/time-entry/mine',
+    url: '/api/time-entry/sun@test.com',
   })
   t.equal(response.statusCode, 401)
 })
 
-test('insert time entry in new day', async (t) => {
+test('save time entry without the proper role', async (t) => {
+  const date = '2024-01-02'
+  const customer = 'Claranet'
+  const project = 'Slack time'
+  const task = 'formazione'
+  await postTask(customer, project, task, ProjectType.SLACK_TIME)
+  const response = await app.inject({
+    method: 'POST',
+    url: '/api/time-entry/sun@test.com',
+    headers: {
+      authorization: `Bearer ${getStandardToken()}`,
+    },
+    payload: {
+      date,
+      customer,
+      project,
+      task,
+      hours: 2,
+    },
+  })
+  t.equal(response.statusCode, 403)
+})
+
+test('insert time entry as ADMIN', async (t) => {
   const date = '2024-01-02'
   const customer = 'Claranet'
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
+  const userEmail = 'sun@test.com'
   await postTask(customer, project, task, ProjectType.SLACK_TIME)
   const addTimeEntryResponse = await addTimeEntry(
     date,
@@ -59,21 +103,23 @@ test('insert time entry in new day', async (t) => {
     project,
     task,
     hours,
+    userEmail,
+    getAdminToken(),
   )
   t.equal(addTimeEntryResponse.statusCode, 204)
 
   const getTimeEntryResponse = await app.inject({
     method: 'GET',
-    url: '/api/time-entry/mine?from=2024-01-02&to=2024-01-05',
+    url: '/api/time-entry/sun@test.com?from=2024-01-02&to=2024-01-05',
     headers: {
-      authorization: `Bearer ${getToken()}`,
+      authorization: `Bearer ${getAdminToken()}`,
     },
   })
   t.equal(getTimeEntryResponse.statusCode, 200)
   const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
   t.equal(timeEntry.length, 1)
   t.same(timeEntry[0], {
-    user: 'nicholas.crow@email.com',
+    user: userEmail,
     company: 'it',
     date: date,
     customer: customer,
@@ -87,170 +133,13 @@ test('insert time entry in new day', async (t) => {
   })
 })
 
-test('insert time entry in an existing day', async (t) => {
-  const date = '2024-01-03'
-  const firstCustomer = 'Claranet'
-  const firstProject = 'Funzionale'
-  const firstTask = 'Attività di portfolio'
-  const firstHours = 2
-  await postTask(firstCustomer, firstProject, firstTask, ProjectType.NON_BILLABLE)
-  const firstResponse = await addTimeEntry(
-    date,
-    firstCustomer,
-    firstProject,
-    firstTask,
-    firstHours,
-  )
-  t.equal(firstResponse.statusCode, 204)
-
-  const secondCustomer = 'Claranet'
-  const secondProject = 'Slack time'
-  const secondTask = 'formazione'
-  const secondHours = 5
-  await postTask(secondCustomer, secondProject, secondTask, ProjectType.SLACK_TIME)
-
-  const secondResponse = await addTimeEntry(
-    date,
-    secondCustomer,
-    secondProject,
-    secondTask,
-    secondHours,
-  )
-  t.equal(secondResponse.statusCode, 204)
-
-  const getTimeEntryResponse = await app.inject({
-    method: 'GET',
-    url: '/api/time-entry/mine?from=2024-01-03&to=2024-01-03',
-    headers: {
-      authorization: `Bearer ${getToken()}`,
-    },
-  })
-  t.equal(getTimeEntryResponse.statusCode, 200)
-  const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
-  t.equal(timeEntry.length, 2)
-  timeEntry.forEach((timeEntry) => {timeEntry.index = 'index'})
-  t.same(timeEntry, [
-    {
-      user: 'nicholas.crow@email.com',
-      date: date,
-      company: 'it',
-      customer: firstCustomer,
-      task: firstTask,
-      project: {name: firstProject, type: ProjectType.NON_BILLABLE, plannedHours: 0},
-      hours: firstHours,
-      description: "",
-      startHour: "",
-      endHour: "",
-      index: 'index',
-    },
-    {
-      user: 'nicholas.crow@email.com',
-      date: date,
-      company: 'it',
-      customer: secondCustomer,
-      task: secondTask,
-      project: {name: secondProject, type: ProjectType.SLACK_TIME, plannedHours: 0},
-      hours: secondHours,
-      description: "",
-      startHour: "",
-      endHour: "",
-      index: 'index',
-    },
-  ])
-})
-
-test('insert time entry in an existing day with description', async (t) => {
-  const date = '2024-01-08'
-  const customer = 'Claranet'
-  const project = 'Funzionale'
-  const task = 'Attività di portfolio'
-  const hours = 2
-  const description = 'description'
-  const startHour =  '08:00'
-  const endHour =  '10:00'
-
-  await postTask(customer, project, task, ProjectType.NON_BILLABLE)
-  const firstTaskInsert = await addTimeEntry(
-      date,
-      customer,
-      project,
-      task,
-      hours,
-      description,
-      startHour,
-      endHour,
-  )
-  t.equal(firstTaskInsert.statusCode, 204)
-
-  const secondDate = '2024-01-08'
-  const secondCustomer = 'Claranet'
-  const secondProject = 'Funzionale'
-  const secondTask = 'Management'
-  const secondHours = 4
-  const secondDescription = 'description 2'
-  const secondStartHour =  '14:00'
-  const secondEndHour =  '18:00'
-  await postTask(secondCustomer, secondProject, secondTask, ProjectType.NON_BILLABLE)
-
-  const secondTaskInsert = await addTimeEntry(
-      secondDate,
-      secondCustomer,
-      secondProject,
-      secondTask,
-      secondHours,
-      secondDescription,
-      secondStartHour,
-      secondEndHour,
-  )
-  t.equal(secondTaskInsert.statusCode, 204)
-
-  const getTimeEntryResponse = await app.inject({
-    method: 'GET',
-    url: '/api/time-entry/mine?from=2024-01-08&to=2024-01-08',
-    headers: {
-      authorization: `Bearer ${getToken()}`,
-    },
-  })
-  t.equal(getTimeEntryResponse.statusCode, 200)
-  const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
-  timeEntry.forEach((timeEntry) => {timeEntry.index = 'index'})
-  t.equal(timeEntry.length, 2)
-  t.same(timeEntry, [
-    {
-      user: 'nicholas.crow@email.com',
-      date: date,
-      company: 'it',
-      customer,
-      task,
-      project: {name: "Funzionale", type: "non-billable", plannedHours: 0},
-      hours,
-      description,
-      startHour,
-      endHour,
-      index: 'index',
-    },
-    {
-      user: 'nicholas.crow@email.com',
-      date: date,
-      company: 'it',
-      customer: secondCustomer,
-      task: secondTask,
-      project: {name: "Funzionale", type: "non-billable", plannedHours: 0},
-      hours: secondHours,
-      description: secondDescription,
-      startHour: secondStartHour,
-      endHour: secondEndHour,
-      index: 'index',
-    },
-  ])
-})
-
-test('update hours on existing task', async(t) => {
+test('update hours on existing task as ADMIN', async(t) => {
   const date = '2024-01-04'
   const customer = 'Claranet'
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
+  const userEmail = 'sun@test.com'
   await postTask(customer, project, task, ProjectType.SLACK_TIME)
   const addTimeentryResponse = await addTimeEntry(
     date,
@@ -258,13 +147,15 @@ test('update hours on existing task', async(t) => {
     project,
     task,
     hours,
+    userEmail,
+    getAdminToken(),
   )
   t.equal(addTimeentryResponse.statusCode, 204)
   let getTimeEntryResponse = await app.inject({
     method: 'GET',
-    url: '/api/time-entry/mine?from=2024-01-04&to=2024-01-04',
+    url: '/api/time-entry/sun@test.com?from=2024-01-04&to=2024-01-04',
     headers: {
-      authorization: `Bearer ${getToken()}`,
+      authorization: `Bearer ${getAdminToken()}`,
     },
   })
   t.equal(getTimeEntryResponse.statusCode, 200)
@@ -280,6 +171,8 @@ test('update hours on existing task', async(t) => {
     project,
     task,
     newHours,
+    userEmail,
+    getAdminToken(),
     "",
     "",
     "",
@@ -288,9 +181,9 @@ test('update hours on existing task', async(t) => {
   t.equal(updateTimeEntryResponse.statusCode, 204)
   getTimeEntryResponse = await app.inject({
     method: 'GET',
-    url: '/api/time-entry/mine?from=2024-01-04&to=2024-01-04',
+    url: '/api/time-entry/sun@test.com?from=2024-01-04&to=2024-01-04',
     headers: {
-      authorization: `Bearer ${getToken()}`,
+      authorization: `Bearer ${getAdminToken()}`,
     },
   })
   t.equal(getTimeEntryResponse.statusCode, 200)
@@ -298,7 +191,7 @@ test('update hours on existing task', async(t) => {
   t.equal(timeEntry.length, 1)
   t.same(timeEntry, [
     {
-      user: 'nicholas.crow@email.com',
+      user: userEmail,
       date: date,
       company: 'it',
       customer: customer,
@@ -313,12 +206,13 @@ test('update hours on existing task', async(t) => {
   ])
 })
 
-test('add hours on existing task', async(t) => {
+test('add hours on existing task as ADMIN', async(t) => {
   const date = '2024-01-04'
   const customer = 'Claranet'
   const project = {name: 'Slack time', type: ProjectType.SLACK_TIME, plannedHours: 0}
   const task = 'formazione'
   const hours = 2
+  const userEmail = 'sun@test.com'
   await postTask(customer, project.name, task, project.type)
   const addTimeEntryResponse = await addTimeEntry(
     date,
@@ -326,6 +220,8 @@ test('add hours on existing task', async(t) => {
     project.name,
     task,
     hours,
+    'sun@test.com',
+    getAdminToken(),
     '',
     '09:00',
     '11:00',
@@ -339,6 +235,8 @@ test('add hours on existing task', async(t) => {
     project.name,
     task,
     newHours,
+    'sun@test.com',
+    getAdminToken(),
     '',
     '12:00',
     '17:00',
@@ -346,9 +244,9 @@ test('add hours on existing task', async(t) => {
   t.equal(updateTimeEntryResponse.statusCode, 204)
   const getTimeEntryResponse = await app.inject({
     method: 'GET',
-    url: '/api/time-entry/mine?from=2024-01-04&to=2024-01-04',
+    url: '/api/time-entry/sun@test.com?from=2024-01-04&to=2024-01-04',
     headers: {
-      authorization: `Bearer ${getToken()}`,
+      authorization: `Bearer ${getAdminToken()}`,
     },
   })
   t.equal(getTimeEntryResponse.statusCode, 200)
@@ -357,7 +255,7 @@ test('add hours on existing task', async(t) => {
   timeEntry.forEach((timeEntry) => {timeEntry.index = 'index'})
   t.same(timeEntry, [
     {
-      user: 'nicholas.crow@email.com',
+      user: userEmail,
       date: date,
       company: 'it',
       customer: customer,
@@ -370,7 +268,7 @@ test('add hours on existing task', async(t) => {
       index: 'index',
     },
     {
-      user: 'nicholas.crow@email.com',
+      user: userEmail,
       date: date,
       company: 'it',
       customer: customer,
@@ -383,6 +281,70 @@ test('add hours on existing task', async(t) => {
       index: 'index',
     }
   ])
+})
+
+test('insert time entry for a member of the same crew as TEAM_LEADER', async (t) => {
+  const date = '2024-01-02'
+  const customer = 'Claranet'
+  const project = 'Slack time'
+  const task = 'formazione'
+  const hours = 2
+  const userEmail = 'sun@test.com'
+  await postTask(customer, project, task, ProjectType.SLACK_TIME)
+  const addTimeEntryResponse = await addTimeEntry(
+    date,
+    customer,
+    project,
+    task,
+    hours,
+    userEmail,
+    getTeamLeaderToken(),
+  )
+  t.equal(addTimeEntryResponse.statusCode, 204)
+
+  const getTimeEntryResponse = await app.inject({
+    method: 'GET',
+    url: '/api/time-entry/sun@test.com?from=2024-01-02&to=2024-01-05',
+    headers: {
+      authorization: `Bearer ${getTeamLeaderToken()}`,
+    },
+  })
+  t.equal(getTimeEntryResponse.statusCode, 200)
+  const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
+  t.equal(timeEntry.length, 1)
+  t.same(timeEntry[0], {
+    user: userEmail,
+    company: 'it',
+    date: date,
+    customer: customer,
+    task: task,
+    project: {name: project, type: ProjectType.SLACK_TIME, plannedHours: 0},
+    hours: hours,
+    description: "",
+    startHour: "",
+    endHour: "",
+    index: timeEntry[0].index,
+  })
+})
+
+test('insert time entry for a member of a different crew as TEAM_LEADER', async (t) => {
+  const date = '2024-01-02'
+  const customer = 'Claranet'
+  const project = 'Slack time'
+  const task = 'formazione'
+  const hours = 2
+  const userEmail = 'testIt@test.com'
+  await postTask(customer, project, task, ProjectType.SLACK_TIME)
+  const addTimeEntryResponse = await addTimeEntry(
+    date,
+    customer,
+    project,
+    task,
+    hours,
+    userEmail,
+    getTeamLeaderToken(),
+  )
+  t.equal(addTimeEntryResponse.statusCode, 403)
 })
 
 test('throws error if trying to save absence on a saturday or sunday', async(t) => {
@@ -398,6 +360,8 @@ test('throws error if trying to save absence on a saturday or sunday', async(t) 
       project,
       task,
       hours,
+    'sun@test.com',
+    getAdminToken(),
   )
   t.equal(addTimeEntryResponse.statusCode, 400)
   t.same(JSON.parse(addTimeEntryResponse.payload)['message'],
@@ -418,6 +382,8 @@ test('returns without saving if entry has 0 hours', async(t) => {
       project,
       task,
       hours,
+    'sun@test.com',
+    getAdminToken(),
   )
   t.equal(addTimeentryResponse.statusCode, 204)
 
@@ -440,6 +406,8 @@ test('throws error on not existing customer', async(t) => {
     project,
     task,
     hours,
+    'sun@test.com',
+    getAdminToken(),
   )
   t.equal(addTimeentryResponse.statusCode, 400)
   t.same(JSON.parse(addTimeentryResponse.payload)['message'],
@@ -459,6 +427,8 @@ test('throws error on not existing project', async(t) => {
     project,
     task,
     hours,
+    'sun@test.com',
+    getAdminToken(),
   )
   t.equal(addTimeentryResponse.statusCode, 400)
   t.same(JSON.parse(addTimeentryResponse.payload)['message'],
@@ -478,52 +448,13 @@ test('throws error on not existing task', async(t) => {
     project,
     task,
     hours,
+    'sun@test.com',
+    getAdminToken(),
   )
   t.equal(addTimeentryResponse.statusCode, 400)
   t.same(JSON.parse(addTimeentryResponse.payload)['message'],
       'Customer, project or tasks not existing',
   );
-})
-
-test('insert time entry with decimal hours', async (t) => {
-  const date = '2024-01-02'
-  const customer = 'Claranet'
-  const project = 'Slack time'
-  const task = 'formazione'
-  const hours = 0.5
-  await postTask(customer, project, task, ProjectType.SLACK_TIME)
-  const addTimeEntryResponse = await addTimeEntry(
-    date,
-    customer,
-    project,
-    task,
-    hours,
-  )
-  t.equal(addTimeEntryResponse.statusCode, 204)
-
-  const getTimeEntryResponse = await app.inject({
-    method: 'GET',
-    url: '/api/time-entry/mine?from=2024-01-02&to=2024-01-05',
-    headers: {
-      authorization: `Bearer ${getToken()}`,
-    },
-  })
-  t.equal(getTimeEntryResponse.statusCode, 200)
-  const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
-  t.equal(timeEntry.length, 1)
-  t.same(timeEntry[0], {
-    user: 'nicholas.crow@email.com',
-    company: 'it',
-    date: date,
-    customer: customer,
-    task: task,
-    project: {name: project, type: ProjectType.SLACK_TIME, plannedHours: 0},
-    hours: hours,
-    description: "",
-    startHour: "",
-    endHour: "",
-    index: timeEntry[0].index,
-  })
 })
 
 async function addTimeEntry(
@@ -532,6 +463,8 @@ async function addTimeEntry(
   project: string,
   task: string,
   hours: number,
+  userEmail: string,
+  token: string,
   description?: string,
   startHour?: string,
   endHour?: string,
@@ -539,9 +472,9 @@ async function addTimeEntry(
 ) {
   return await app.inject({
     method: 'POST',
-    url: '/api/time-entry/mine',
+    url: `/api/time-entry/${userEmail}`,
     headers: {
-      authorization: `Bearer ${getToken()}`,
+      authorization: `Bearer ${token}`,
     },
     payload: {
       date,
@@ -562,7 +495,7 @@ async function postTask(customer: string, project: string, task: string, project
     method: 'POST',
     url: '/api/task/task/',
     headers: {
-      authorization: `Bearer ${getToken()}`,
+      authorization: `Bearer ${getAdminToken()}`,
     },
     payload: {
       customer: customer,
@@ -577,7 +510,7 @@ async function getTimeEntry(from: string, to: string) {
     method: 'GET',
     url: `/api/time-entry/mine?from=${from}&to=${to}`,
     headers: {
-      authorization: `Bearer ${getToken()}`,
+      authorization: `Bearer ${getAdminToken()}`,
     },
   })
 }

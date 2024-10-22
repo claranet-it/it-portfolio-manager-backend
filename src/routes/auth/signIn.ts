@@ -33,11 +33,11 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        const jwt = await fastify
+        const [jwt, role, crew] = await fastify
           .dependencyInjectionContainer()
           .resolve('authService')
           .signIn(request.body)
-        reply.send({ token: jwt })
+        reply.send({ token: jwt, role: role, crew: crew })
       } catch (error) {
         request.log.error(error)
         let errorMessage = ''

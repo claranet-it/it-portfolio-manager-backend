@@ -8,6 +8,12 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     '/import/csv',
     {
       onRequest: [fastify.authenticate],
+      casbin: {
+        rest: {
+          getObj: 'time_entry',
+          getAct: 'import',
+        },
+      },
       schema: {
         tags: ['Time entry'],
         body: Type.String(),

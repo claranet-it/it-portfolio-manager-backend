@@ -9,8 +9,11 @@ import { UserProfileRepositoryInterface } from '../repository/UserProfileReposit
 export class UserProfileService {
   constructor(private userProfileRepository: UserProfileRepositoryInterface) {}
 
-  async getUserProfile(uid: string): Promise<UserProfileType | null> {
-    return await this.userProfileRepository.getUserProfile(uid)
+  async getUserProfile(
+    uid: string,
+    company: string | undefined = undefined,
+  ): Promise<UserProfileType | null> {
+    return await this.userProfileRepository.getUserProfile(uid, company)
   }
 
   async getCompleteUserProfile(

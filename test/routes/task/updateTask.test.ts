@@ -10,10 +10,11 @@ let app: FastifyInstance
 
 function getToken(company: string): string {
     return app.createTestJwt({
-        email: 'nicholas.crow@email.com',
-        name: 'Nicholas Crow',
-        picture: 'https://test.com/nicholas.crow.jpg',
-        company: company
+      email: 'nicholas.crow@email.com',
+      name: 'Nicholas Crow',
+      picture: 'https://test.com/nicholas.crow.jpg',
+      company: company,
+      role: "ADMIN",
     })
 }
 

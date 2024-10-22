@@ -21,6 +21,6 @@ export interface TimeEntryRepositoryInterface {
   findTimeEntriesForReport(
     params: TimeEntryReadParamWithCompanyAndCrewType,
   ): Promise<TimeEntryRowWithProjectEntityType[]>
-  saveMine(params: TimeEntryRowType): Promise<void>
+  save(params: TimeEntryRowType): Promise<void>
   delete(params: deleteTimeEntryWithUserType): Promise<void>
 }
