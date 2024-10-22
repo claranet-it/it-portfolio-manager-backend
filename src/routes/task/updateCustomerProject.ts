@@ -13,6 +13,12 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     '/customer-project',
     {
       onRequest: [fastify.authenticate],
+      casbin: {
+        rest: {
+          getObj: 'task',
+          getAct: 'write',
+        },
+      },
       schema: {
         tags: ['Task'],
         body: CustomerProjectUpdateQueryParams,

@@ -230,6 +230,22 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     return []
   }
 
+  async getRole(uid: string): Promise<string> {
+    const command = new QueryCommand({
+      TableName: getTableName('UserProfile'),
+      KeyConditionExpression: 'uid = :uid',
+      ExpressionAttributeValues: {
+        ':uid': { S: uid },
+      },
+    })
+    const result = await this.dynamoDBClient.send(command)
+    if (result?.Items && result.Items.length == 1) {
+      return result.Items[0]?.role?.S ?? ''
+    }
+
+    return ''
+  }
+
   private getCompleteUserProfileFromDynamoItem(
     item: Record<string, AttributeValue>,
   ): CompleteUserProfileType {

@@ -69,7 +69,8 @@ function getToken(company: string) {
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
-    company: company
+    company: company,
+    role: "ADMIN",
   })
 }
 
