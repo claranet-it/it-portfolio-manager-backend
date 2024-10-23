@@ -298,9 +298,10 @@ export class TaskRepository implements TaskRepositoryInterface {
       const projectType = params.newProject.type
         ? params.newProject.type
         : params.project.type
-      const plannedHours = params.newProject.plannedHours
-        ? params.newProject.plannedHours
-        : params.project.plannedHours
+      const plannedHours =
+        params.newProject.plannedHours !== undefined
+          ? params.newProject.plannedHours
+          : params.project.plannedHours
 
       const customerProject = `${customer}#${project.name}`
 

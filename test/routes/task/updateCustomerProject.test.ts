@@ -189,6 +189,38 @@ test('update project - only plannedHours', async (t) => {
     t.same(projects, expectedResult)
 })
 
+test('update project - plannedHours = 0', async (t) => {
+    const customer = 'Test update project3 customer';
+    const company = 'Test update project3 company';
+    const project = 'Test update project3 project';
+    const projectType = ProjectType.ABSENCE;
+    const task = 'Test update project3 task';
+
+
+    let response = await postTask(customer, company, project, projectType, task, 300);
+    t.equal(response.statusCode, 200)
+
+    response = await getProjects(company, customer);
+    t.equal(response.statusCode, 200)
+
+    let projects = response.json<ProjectListType>()
+
+    t.equal(projects.length, 1)
+    let expectedResult = [{name: project, type: ProjectType.ABSENCE, plannedHours: 300}]
+    t.same(projects, expectedResult)
+
+    const newPlannedHours = 0
+    response = await putProject(customer, company, {name: project, type: projectType, plannedHours: 300}, {name: project, type: ProjectType.ABSENCE, plannedHours: newPlannedHours});
+    t.equal(response.statusCode, 200)
+
+    response = await getProjects(company, customer);
+    t.equal(response.statusCode, 200)
+    projects = response.json<ProjectListType>()
+    t.equal(projects.length, 1)
+    expectedResult =  [{name: project, type: ProjectType.ABSENCE, plannedHours: newPlannedHours}]
+    t.same(projects, expectedResult)
+})
+
 async function postTask(customer: string, company: string, project: string, projectType: string, task: string, plannedHours?: number) {
     return await app.inject({
         method: 'POST',
