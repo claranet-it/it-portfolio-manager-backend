@@ -10,36 +10,39 @@ export class ProductivityCalculator {
     }[],
     totalWorkingDaysInPeriod: number,
   ) {
-    let billableProductivityHours = 0
-    let nonBillableProductivityHours = 0
-    let slackTimeHours = 0
-    let absenceHours = 0
-    let workedHours = 0
-
-    userTimeEntries.map((timeEntry) => {
-      const projectType = projectTypes.find(
-        (projectType) => projectType.project === timeEntry.project,
-      )?.projectType
-
-      switch (projectType) {
-        case ProjectType.ABSENCE:
-          absenceHours += timeEntry.hours
-          break
-        case ProjectType.BILLABLE:
-          billableProductivityHours += timeEntry.hours
-          break
-        case ProjectType.NON_BILLABLE:
-          nonBillableProductivityHours += timeEntry.hours
-          break
-        case ProjectType.SLACK_TIME:
-          slackTimeHours += timeEntry.hours
-          break
-        default:
-          slackTimeHours += timeEntry.hours
-          break
-      }
-      workedHours += timeEntry.hours
-    })
+    const absenceProjects = projectTypes
+      .filter((projectType) => projectType.projectType == ProjectType.ABSENCE)
+      .map((projectType) => projectType.project)
+    const absenceHours = userTimeEntries
+      .filter((timeEntry) => absenceProjects.includes(timeEntry.project))
+      .reduce((acc, entry) => acc + entry.hours, 0)
+    const billableProjects = projectTypes
+      .filter((projectType) => projectType.projectType == ProjectType.BILLABLE)
+      .map((projectType) => projectType.project)
+    const billableProductivityHours = userTimeEntries
+      .filter((timeEntry) => billableProjects.includes(timeEntry.project))
+      .reduce((acc, entry) => acc + entry.hours, 0)
+    const nonBillableProjects = projectTypes
+      .filter(
+        (projectType) => projectType.projectType == ProjectType.NON_BILLABLE,
+      )
+      .map((projectType) => projectType.project)
+    const nonBillableProductivityHours = userTimeEntries
+      .filter((timeEntry) => nonBillableProjects.includes(timeEntry.project))
+      .reduce((acc, entry) => acc + entry.hours, 0)
+    const slackTimeProjects = projectTypes
+      .filter(
+        (projectType) => projectType.projectType == ProjectType.SLACK_TIME,
+      )
+      .map((projectType) => projectType.project)
+    const slackTimeHours = userTimeEntries
+      .filter((timeEntry) => slackTimeProjects.includes(timeEntry.project))
+      .reduce((acc, entry) => acc + entry.hours, 0)
+    const workedHours =
+      absenceHours +
+      billableProductivityHours +
+      nonBillableProductivityHours +
+      slackTimeHours
 
     const totalHoursInAWorkingDay = 8
     const totalWorkingHoursInPeriod =
