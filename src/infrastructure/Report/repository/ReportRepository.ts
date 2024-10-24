@@ -123,7 +123,7 @@ export class ReportRepository implements ReportRepositoryInterface {
         return uids.some((uid) => uid.email === result.user)
       }
 
-      return resultForCompany
+      return true
     })
   }
 }

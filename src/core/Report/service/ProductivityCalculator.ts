@@ -14,7 +14,6 @@ export class ProductivityCalculator {
     let nonBillableProductivityHours = 0
     let slackTimeHours = 0
     let absenceHours = 0
-    let workedHours = 0
 
     userTimeEntries.map((timeEntry) => {
       const projectType = projectTypes.find(
@@ -38,8 +37,11 @@ export class ProductivityCalculator {
           slackTimeHours += timeEntry.hours
           break
       }
-      workedHours += timeEntry.hours
     })
+    const workedHours = userTimeEntries.reduce(
+      (acc, entry) => acc + entry.hours,
+      0,
+    )
 
     const totalHoursInAWorkingDay = 8
     const totalWorkingHoursInPeriod =
