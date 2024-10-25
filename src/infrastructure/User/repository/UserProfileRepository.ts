@@ -206,7 +206,8 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
         },
       },
     })
-    await this.dynamoDBClient.send(command)
+    const response = await this.dynamoDBClient.send(command)
+    console.warn(response)
   }
 
   async getDisabled(company: string): Promise<CompleteUserProfileType[]> {
