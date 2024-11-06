@@ -41,7 +41,7 @@ export class AuthService {
       picture: authInfo.picture,
       company: company.name,
     }
-    return this.jwt.sign(user, { expiresIn: '1d' })
+    return this.jwt.sign(user, { expiresIn: '30d' })
   }
 
   async checkApiKey(header: { apiKey: string }) {
