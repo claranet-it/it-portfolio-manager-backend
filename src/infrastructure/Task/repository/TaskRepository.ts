@@ -122,9 +122,14 @@ export class TaskRepository implements TaskRepositoryInterface {
           },
         },
       },
-      orderBy: {
-        createdAt: 'asc',
-      },
+      orderBy: [
+        {
+          name: 'asc',
+        },
+        {
+          createdAt: 'asc',
+        },
+      ],
     })
 
     return result.map((task) => ({
