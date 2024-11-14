@@ -134,6 +134,8 @@ package:
     - node_modules/**
     - .serverless/**
     - prisma/generated/**
+    - basic_model.conf
+    - basic_policy.csv
 
 functions:
   app:
