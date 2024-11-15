@@ -142,6 +142,11 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
             lte: new Date(to),
             gte: new Date(from),
           },
+          task: {
+            project: {
+              name: "Assenze"
+            }
+          }
         },
         include: {
           task: {
