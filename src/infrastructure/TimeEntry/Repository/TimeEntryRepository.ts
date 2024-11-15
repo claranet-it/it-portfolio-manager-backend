@@ -187,6 +187,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       where: {
         task: {
           project: {
+            name: "Assenze",
             customer: {
               company_id: params.company,
             },
