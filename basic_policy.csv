@@ -8,7 +8,6 @@ p, ADMIN, time_entry, read
 p, ADMIN, time_entry, write
 p, ADMIN, time_entry, import
 p, ADMIN, skill, write
-p, TEAM_LEADER, task, write
 p, TEAM_LEADER, time_entry, read
 p, TEAM_LEADER, time_entry, write
 p, TEAM_LEADER, skill, write
