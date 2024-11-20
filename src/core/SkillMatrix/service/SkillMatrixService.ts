@@ -32,6 +32,14 @@ export class SkillMatrixService {
     )
   }
 
+  async getUserSkillMatrixFormattedResponse(
+    email: string,
+  ): Promise<SkillMatrixMineResponseType> {
+    return await this.skillMatrixRepository.getMineSkillMatrixFormattedResponse(
+      email,
+    )
+  }
+
   async getAllSkillMatrixFormattedResponse(
     params: SkillMatrixReadParamsType,
   ): Promise<SkillMatrixResponseType> {
