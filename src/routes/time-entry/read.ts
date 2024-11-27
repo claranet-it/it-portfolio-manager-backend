@@ -9,7 +9,7 @@ import {
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: TimeEntryReadParamType
-    Reply: TimeEntryRowWithProjectEntityListType
+    Reply: TimeEntryRowWithProjectEntityListType | string
   }>(
     '/:user',
     {

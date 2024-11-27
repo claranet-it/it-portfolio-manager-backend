@@ -99,7 +99,7 @@ export default function createApp(
   })
 
   app.register(fastifyCasbinRest, {
-    getSub: (r) => r.user.role,
+    getSub: (r) => r.user.role ?? '',
   })
 
   app.register(autoload, {

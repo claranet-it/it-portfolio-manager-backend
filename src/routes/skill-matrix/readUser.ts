@@ -6,7 +6,7 @@ import {
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Reply: SkillMatrixMineResponseType
+    Reply: SkillMatrixMineResponseType | string
   }>(
     '/:uid',
     {
