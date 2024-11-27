@@ -111,7 +111,7 @@ const inputs = [
 ]
 
 inputs.forEach((input) => {
-  test(`get companies for company ${input.company}`, async (t) => {
+  test(`get crews for company ${input.company}`, async (t) => {
     const token = app.createTestJwt({
       email: 'tester@claranet',
       name: 'Tester',
@@ -149,5 +149,95 @@ test('get all configuration without authentication', async t => {
     })
 
     t.equal(response.statusCode, 401)
+  })
+})
+
+const skillsInput = [
+  {
+    company: 'it',
+    expectedSkills: {
+      'Developer': [
+        'PHP',
+        'Frontend (JS/TS)',
+        'NodeJS (JS/TS)',
+        'Native Android',
+        'Native iOS',
+        'Multiplatform Mobile (ionic, react-native, flutter)',
+        'UI Development (HTML/CSS/SCSS)',
+        'C#',
+        'Python',
+        'Java/Kotlin',
+        'Elixir',
+        'Ruby (Rails)',
+        'Rust',
+      ].sort(),
+      'Cloud': [
+        'AWS core',
+        'AWS migration',
+        'AWS monitoring',
+        'AWS cloud governance',
+        'AWS finance',
+        'AWS streaming + IoT',
+        'AWS ECS',
+        'AWS EKS',
+        'AWS Cloudformation',
+        'Terraform',
+        'Data',
+        'Networking',
+        'Security',
+        'Serverless',
+        'ML',
+      ].sort(),
+    },
+  },
+  {
+    company: 'devq',
+    expectedSkills: {
+      'Developer': [
+        'Native Android',
+        'Native iOS',
+        'Angular',
+        '.NET Core',
+        'C++',
+        'Qt',
+        'Python',
+      ].sort(),
+      'Cloud': [
+        'AWS core',
+        'AWS migration',
+        'AWS monitoring',
+        'AWS cloud governance',
+        'AWS finance',
+        'AWS streaming + IoT',
+        'AWS ECS',
+        'AWS EKS',
+        'AWS Cloudformation',
+      ].sort(),
+    }
+  },
+]
+
+skillsInput.forEach((input) => {
+  test(`get skills for company ${input.company}`, async (t) => {
+    const token = app.createTestJwt({
+      email: 'tester@claranet',
+      name: 'Tester',
+      picture: 'https://test.com/test.jpg',
+      company: input.company,
+    })
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/configuration',
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    })
+
+    const configuration = response.json<ConfigurationType>()
+
+    t.equal(response.statusCode, 200)
+
+    t.same(configuration.skills, input.expectedSkills)
   })
 })

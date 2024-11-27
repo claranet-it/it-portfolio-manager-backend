@@ -144,9 +144,9 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
           },
           task: {
             project: {
-              name: "Assenze"
-            }
-          }
+              name: 'Assenze',
+            },
+          },
         },
         include: {
           task: {
@@ -192,7 +192,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       where: {
         task: {
           project: {
-            name: "Assenze",
+            name: 'Assenze',
             customer: {
               company_id: params.company,
             },
