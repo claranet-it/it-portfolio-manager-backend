@@ -35,11 +35,16 @@ export class ClaranetProvider implements ProviderInterface {
       throw new UnauthorizedError()
     }
 
+    let companyId = company.toLowerCase()
+    if (email == 'claudio.ortelli@claranet.com') {
+      companyId = 'claranet italia'
+    }
+
     return {
       email: email.replace(/[a-z]+\.clara\.net/, 'claranet.com').toLowerCase(),
       name,
       picture,
-      companyId: company.toLowerCase(),
+      companyId: companyId,
     }
   }
 
