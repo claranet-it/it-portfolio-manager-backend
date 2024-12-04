@@ -6,3 +6,9 @@ export const Company = Type.Object({
 })
 
 export type CompanyType = Static<typeof Company>
+
+export const CompanyFind = Type.Object({
+  name: Type.String(),
+})
+
+export type CompanyFindType = Static<typeof CompanyFind>
