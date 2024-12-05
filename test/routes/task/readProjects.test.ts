@@ -1,7 +1,7 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import {ProjectListType} from "@src/core/Task/model/task.model";
+import { ProjectListType } from '@src/core/Task/model/task.model'
 import { PrismaClient } from '../../../prisma/generated'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 
@@ -12,17 +12,50 @@ const inputs = [
   {
     company: 'it',
     customer: 'Claranet',
-    expectProjects: [{name: 'Assenze', type: ProjectType.ABSENCE, plannedHours: 0},{name: 'Funzionale', type: ProjectType.NON_BILLABLE, plannedHours: 0},{name: 'Slack time', type: ProjectType.SLACK_TIME, plannedHours: 0}]
+    expectProjects: [
+      {
+        name: 'Assenze',
+        type: ProjectType.ABSENCE,
+        plannedHours: 0,
+        completed: false,
+      },
+      {
+        name: 'Funzionale',
+        type: ProjectType.NON_BILLABLE,
+        plannedHours: 0,
+        completed: false,
+      },
+      {
+        name: 'Slack time',
+        type: ProjectType.SLACK_TIME,
+        plannedHours: 0,
+        completed: false,
+      },
+    ],
   },
   {
     company: 'it',
     customer: 'test customer',
-    expectProjects: [{name: 'SOR Sviluppo', type: ProjectType.BILLABLE, plannedHours: 0}],
+    expectProjects: [
+      {
+        name: 'SOR Sviluppo',
+        type: ProjectType.BILLABLE,
+        plannedHours: 0,
+        completed: false,
+      },
+    ],
   },
   {
-    company: "other company",
+    company: 'other company',
     customer: 'test customer of other company',
-    expectProjects: [{name:'test project of other company', type: ProjectType.BILLABLE, plannedHours: 0}],
+    expectProjects: [
+      {
+        name: 'test project of other company',
+        type: ProjectType.BILLABLE,
+        plannedHours: 0,
+        completed: false,
+      },
+    ],
   },
 ]
 
@@ -33,77 +66,70 @@ beforeEach(async () => {
   const customer = await prisma.customer.create({
     data: {
       name: 'Claranet',
-      company_id: 'it'
-    }
+      company_id: 'it',
+    },
   })
   await prisma.project.createMany({
-      data: [
-        {
-          name: 'Assenze',
-          project_type: ProjectType.ABSENCE,
-          plannedHours: 0,
-          customer_id: customer.id
-        },
-        {
-          name: 'Funzionale',
-          project_type: ProjectType.NON_BILLABLE,
-          plannedHours: 0,
-          customer_id: customer.id
-        },
-        {
-          name: 'Slack time',
-          project_type: ProjectType.SLACK_TIME,
-          plannedHours: 0,
-          customer_id: customer.id
-        },
-      ]
-    }
-  )
+    data: [
+      {
+        name: 'Assenze',
+        project_type: ProjectType.ABSENCE,
+        plannedHours: 0,
+        customer_id: customer.id,
+      },
+      {
+        name: 'Funzionale',
+        project_type: ProjectType.NON_BILLABLE,
+        plannedHours: 0,
+        customer_id: customer.id,
+      },
+      {
+        name: 'Slack time',
+        project_type: ProjectType.SLACK_TIME,
+        plannedHours: 0,
+        customer_id: customer.id,
+      },
+    ],
+  })
   const customer2 = await prisma.customer.create({
     data: {
       name: 'test customer',
-      company_id: 'it'
-    }
+      company_id: 'it',
+    },
   })
   await prisma.project.createMany({
-      data: [
-        {
-          name: 'SOR Sviluppo',
-          project_type: ProjectType.BILLABLE,
-          plannedHours: 0,
-          customer_id: customer2.id
-        }
-      ]
-    }
-  )
+    data: [
+      {
+        name: 'SOR Sviluppo',
+        project_type: ProjectType.BILLABLE,
+        plannedHours: 0,
+        customer_id: customer2.id,
+      },
+    ],
+  })
   const customer3 = await prisma.customer.create({
     data: {
       name: 'test customer of other company',
-      company_id: 'other company'
-    }
+      company_id: 'other company',
+    },
   })
   await prisma.project.createMany({
-      data: [
-        {
-          name: 'test project of other company',
-          project_type: ProjectType.BILLABLE,
-          plannedHours: 0,
-          customer_id: customer3.id
-        }
-      ]
-    }
-  )
-
+    data: [
+      {
+        name: 'test project of other company',
+        project_type: ProjectType.BILLABLE,
+        plannedHours: 0,
+        customer_id: customer3.id,
+      },
+    ],
+  })
 })
 
 afterEach(async () => {
   const deleteCustomer = prisma.customer.deleteMany()
   const deleteProject = prisma.project.deleteMany()
 
-  await prisma.$transaction([
-    deleteProject,
-    deleteCustomer,
-  ])
+  await prisma.$transaction([deleteProject, deleteCustomer])
   await prisma.$disconnect()
   await app.close()
 })
@@ -116,8 +142,6 @@ test('read projects without authentication', async (t) => {
 
   t.equal(response.statusCode, 401)
 })
-
-
 
 inputs.forEach((input) => {
   test(`read projects with company ${input.company} and customer ${input.customer} param`, async (t) => {
