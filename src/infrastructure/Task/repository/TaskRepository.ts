@@ -43,6 +43,7 @@ export class TaskRepository implements TaskRepositoryInterface {
       name: project.name,
       type: project.project_type,
       plannedHours: project.plannedHours,
+      completed: project.completed,
     }))
   }
 
@@ -303,6 +304,11 @@ export class TaskRepository implements TaskRepositoryInterface {
         params.newProject.plannedHours !== undefined
           ? params.newProject.plannedHours
           : params.project.plannedHours
+      const completed =
+        params.newProject !== undefined &&
+        params.newProject.completed !== undefined
+          ? params.newProject.completed
+          : project.completed
 
       if (params.newProject.name !== project.name) {
         const existingProject = await prisma.project.findFirst({
@@ -324,6 +330,7 @@ export class TaskRepository implements TaskRepositoryInterface {
           name: params.newProject.name,
           project_type: projectType,
           plannedHours: plannedHours,
+          completed: completed,
         },
         where: {
           id: project.id,

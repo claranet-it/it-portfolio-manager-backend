@@ -18,7 +18,10 @@ import { flowingUsers } from '@src/core/Configuration/service/ConfigurationServi
 export class UserProfileRepository implements UserProfileRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
 
-  async getUserProfile(uid: string): Promise<UserProfileType | null> {
+  async getUserProfile(
+    uid: string,
+    company: string | undefined,
+  ): Promise<UserProfileType | null> {
     const command = new QueryCommand({
       TableName: getTableName('UserProfile'),
       KeyConditionExpression: 'uid = :uid',
@@ -26,10 +29,18 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     })
 
     const result = await this.dynamoDBClient.send(command)
-    if (
-      result?.Items?.length === 1 &&
-      (result?.Items[0]?.crew?.S || result?.Items[0]?.company?.S)
-    ) {
+
+    if (!result.Items || result.Items.length == 0 || result.Items.length > 1) {
+      return null
+    }
+
+    const userProfile = result.Items[0]
+
+    if (userProfile.crew?.S || userProfile.company?.S) {
+      if (userProfile.company?.S != company) {
+        // Avoid to query for people on different company
+        return null
+      }
       // TODO: (crew || company) or (crew && company) ?
       return this.getCompleteUserProfileFromDynamoItem(result.Items[0])
     }
@@ -229,6 +240,22 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     }
 
     return []
+  }
+
+  async getRole(uid: string): Promise<string> {
+    const command = new QueryCommand({
+      TableName: getTableName('UserProfile'),
+      KeyConditionExpression: 'uid = :uid',
+      ExpressionAttributeValues: {
+        ':uid': { S: uid },
+      },
+    })
+    const result = await this.dynamoDBClient.send(command)
+    if (result?.Items && result.Items.length == 1) {
+      return result.Items[0]?.role?.S ?? ''
+    }
+
+    return ''
   }
 
   private getCompleteUserProfileFromDynamoItem(

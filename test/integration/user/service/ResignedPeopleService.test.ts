@@ -42,7 +42,7 @@ test('remove user profile', async (t) => {
 })
 
 test('remove skill matrix', async (t) => {
-  await skillMatrixRepository.saveMineSkillMatrix(
+  await skillMatrixRepository.save(
     email,
     {
       name: 'resigned',

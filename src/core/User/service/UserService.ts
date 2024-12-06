@@ -8,6 +8,7 @@ export class UserService {
   async getUser(jwtToken: JwtTokenType): Promise<UserWithProfileType> {
     const userProfile = await this.userProfileService.getUserProfile(
       jwtToken.email,
+      jwtToken.company,
     )
     if (!userProfile) {
       return {

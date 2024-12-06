@@ -4,12 +4,20 @@ import {
   SkillMatrixUpdateParamsType,
 } from '@src/core/SkillMatrix/model/skillMatrix.model'
 import { FastifyInstance } from 'fastify'
+import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
+import { UserProfileType } from '@src/core/User/model/user.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.patch<{ Body: SkillMatrixUpdateParamsType }>(
-    '/mine',
+    '/:user',
     {
       onRequest: [fastify.authenticate],
+      casbin: {
+        rest: {
+          getObj: 'skill',
+          getAct: 'write',
+        },
+      },
       schema: {
         tags: ['Skill Matrix'],
         body: SkillMatrixUpdateParams,
@@ -35,6 +43,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             type: 'null',
             description: 'Unauthorized',
           },
+          403: {
+            type: 'null',
+            description: 'Forbidden',
+          },
           500: {
             type: 'null',
             description: 'Internal server error',
@@ -43,11 +55,33 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       },
     },
     async (request, reply) => {
+      const { user } = request.params as { user: string }
+      const userObj: UserProfileType = await fastify
+        .dependencyInjectionContainer()
+        .resolve('userProfileService')
+        .getUserProfile(user, request.user.company)
+      if (!userObj) {
+        return reply.code(404).send(`User ${user} not found`)
+      }
+
+      if (request.user.role == 'TEAM_LEADER') {
+        const teamLeader = await fastify
+          .dependencyInjectionContainer()
+          .resolve('userProfileService')
+          .getUserProfile(request.user.email, request.user.company)
+        if (teamLeader.crew != userObj.crew) {
+          return reply.code(403).send(`Cannot insert skill for user ${user}`)
+        }
+      }
+
       try {
         await fastify
           .dependencyInjectionContainer()
           .resolve('skillMatrixService')
-          .save(request.user, request.body)
+          .save(
+            { ...userObj, email: user, picture: '' } as JwtTokenType,
+            request.body,
+          )
         reply.code(204).send()
       } catch (error) {
         let errorCode = 500

@@ -237,6 +237,23 @@ test('read productivity report with api-key', async (t) => {
         },
         {
             "user":{
+                "email":"andreas.szekely@claranet.com",
+                "name":"Andreas Szekely",
+                "picture":"picture-url",
+                "crew": "moon",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"micol.ts@email.com",
                 "name":"Micol Panetta",
                 "picture":"picture-url",
@@ -254,6 +271,23 @@ test('read productivity report with api-key', async (t) => {
         },
         {
             "user":{
+                "email":"luca.ferri@claranet.com",
+                "name":"Luca Ferri",
+                "picture":"picture-url",
+                "crew": "polaris",
+                "serviceLine": "",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
+        },
+        {
+            "user":{
                 "email":"nicholas.crow@email.com",
                 "name":"Nicholas Crow",
                 "picture":"picture-url",
@@ -268,6 +302,23 @@ test('read productivity report with api-key', async (t) => {
                 "absence":25
             },
             "totalProductivity":25
+        },
+        {
+            "user":{
+                "email":"sun@test.com",
+                "name":"crew sun",
+                "picture":"",
+                "crew": "sun",
+                "serviceLine": "Developer",
+            },
+            "workedHours":0,
+            "totalTracked":{
+                "billable":0,
+                "non-billable":0,
+                "slack-time":0,
+                "absence":0
+            },
+            "totalProductivity":0
         },
         {
             "user":{

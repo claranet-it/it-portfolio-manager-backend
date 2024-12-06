@@ -43,7 +43,7 @@ export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
     return skillMatrixList.toSkillMatrixResponse()
   }
 
-  async saveMineSkillMatrix(
+  async save(
     uid: string,
     userProfile: UserProfileType,
     skillMatrixUpdateParams: SkillMatrixUpdateParamsType,

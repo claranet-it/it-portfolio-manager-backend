@@ -55,6 +55,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
         plannedHours: timeEntry.task.project.plannedHours,
+        completed: timeEntry.task.project.completed,
       },
       task: timeEntry.task.name,
       hours: timeEntry.hours,
@@ -115,6 +116,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
         plannedHours: timeEntry.task.project.plannedHours,
+        completed: timeEntry.task.project.completed,
       },
       task: timeEntry.task.name,
       hours: timeEntry.hours,
@@ -144,9 +146,9 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
           },
           task: {
             project: {
-              name: "Assenze"
-            }
-          }
+              name: 'Assenze',
+            },
+          },
         },
         include: {
           task: {
@@ -192,7 +194,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       where: {
         task: {
           project: {
-            name: "Assenze",
+            name: 'Assenze',
             customer: {
               company_id: params.company,
             },
@@ -232,7 +234,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     }))
   }
 
-  async saveMine(params: TimeEntryRowType): Promise<void> {
+  async save(params: TimeEntryRowType): Promise<void> {
     const prisma = new PrismaClient()
 
     if (params.index !== undefined) {

@@ -181,9 +181,17 @@ test('read next efforts without params', async (t) => {
     t.equal(response.statusCode, 200)
 
     const efforts = response.json<EffortResponseType>()
-    t.equal(efforts.length, 2)
+    t.equal(efforts.length, 3)
 
     const expectedResult = [
+        {
+            'anothercrew@email.com': {
+                crew: 'another',
+                company: 'us',
+                name: 'Another Crew',
+                effort: nextMonthsEmptyEffort(3),
+            },
+        },
         {
             'micol.us@email.com': {
                 crew: 'sun',
@@ -259,6 +267,14 @@ test('read effort with months param', async (t) => {
     t.equal(response.statusCode, 200)
     const expectedResult = [
         {
+            'anothercrew@email.com': {
+                crew: 'another',
+                company: 'us',
+                name: 'Another Crew',
+                effort: nextMonthsEmptyEffort(2),
+            },
+        },
+        {
             'micol.us@email.com': {
                 crew: 'sun',
                 company: 'us',
@@ -283,6 +299,12 @@ const inputs = [
     {
         company: 'us',
         expectedUsers: [
+            {
+                uid: 'anothercrew@email.com',
+                crew: 'another',
+                company: 'us',
+                name: 'Another Crew',
+            },
             {
                 uid: 'george.python@email.com',
                 crew: "sun",
@@ -313,10 +335,28 @@ const inputs = [
                 name: "Nicholas Crow",
             },
             {
+                uid: "sun@test.com",
+                "crew": "sun",
+                "company": "it",
+                "name": "crew sun",
+            },
+            {
                 uid: "testIt@test.com",
                 "crew": "bees",
                 "company": "it",
                 "name": "test italian",
+            },
+            {
+                uid: "luca.ferri@claranet.com",
+                "crew": "polaris",
+                "company": "it",
+                "name": "Luca Ferri",
+            },
+            {
+                uid: "andreas.szekely@claranet.com",
+                "crew": "moon",
+                "company": "it",
+                "name": "Andreas Szekely",
             }
         ]
     },

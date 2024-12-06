@@ -10,9 +10,15 @@ export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post<{
     Body: InsertTimeEntryRowType
   }>(
-    '/mine',
+    '/:user',
     {
       onRequest: [fastify.authenticate],
+      casbin: {
+        rest: {
+          getObj: 'time_entry',
+          getAct: 'write',
+        },
+      },
       schema: {
         tags: ['Time entry'],
         body: InsertTimeEntryRow,
@@ -34,6 +40,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             type: 'null',
             description: 'Unauthorized',
           },
+          403: {
+            type: 'null',
+            description: 'Forbidden',
+          },
           500: {
             type: 'null',
             description: 'Internal server error',
@@ -42,12 +52,33 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       },
     },
     async (request, reply) => {
+      const { user } = request.params as { user: string }
+      const userObj = await fastify
+        .dependencyInjectionContainer()
+        .resolve('userProfileService')
+        .getUserProfile(user, request.user.company)
+      if (!userObj) {
+        return reply.code(404).send(`User ${user} not found`)
+      }
+
+      if (request.user.role == 'TEAM_LEADER') {
+        const teamLeader = await fastify
+          .dependencyInjectionContainer()
+          .resolve('userProfileService')
+          .getUserProfile(request.user.email, request.user.company)
+        if (teamLeader.crew != userObj.crew) {
+          return reply
+            .code(403)
+            .send(`Cannot insert time entry for user ${user}`)
+        }
+      }
+
       try {
         await fastify
           .dependencyInjectionContainer()
           .resolve('timeEntryService')
           .save({
-            user: request.user.email,
+            user: user,
             company: request.user.company,
             ...request.body,
           })
