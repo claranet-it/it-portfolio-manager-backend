@@ -44,6 +44,33 @@ const skills = {
 
 export const skillsList = skills.Developer.concat(skills.Cloud)
 
+const skillsByCompany: { [y: string]: { [p: string]: string[] } } = {
+  it: skills,
+  acme: skills,
+  devq: {
+    [serviceLines[0]]: [
+      'Native Android',
+      'Native iOS',
+      'Angular',
+      '.NET Core',
+      'C++',
+      'Qt',
+      'Python',
+    ].sort(),
+    [serviceLines[1]]: [
+      'AWS core',
+      'AWS migration',
+      'AWS monitoring',
+      'AWS cloud governance',
+      'AWS finance',
+      'AWS streaming + IoT',
+      'AWS ECS',
+      'AWS EKS',
+      'AWS Cloudformation',
+    ].sort(),
+  },
+}
+
 export const flowingUsers = [
   'stefania.ceccacci@claranet.com',
   'manuel.gherardi@claranet.com',
@@ -67,7 +94,7 @@ export class ConfigurationService {
     const crews = await this.crewRepository.findByCompany(company)
     return {
       crews,
-      skills,
+      skills: skillsByCompany[company] ?? skills,
       scoreRange,
       scoreRangeLabels,
     }

@@ -28,6 +28,7 @@ export const Project = Type.Object({
   name: Type.String(),
   type: Type.String(),
   plannedHours: Type.Number(),
+  completed: Type.Boolean(),
 })
 
 export type ProjectDetailsType = Static<typeof Project>
@@ -47,6 +48,7 @@ export const CustomerProjectParams = Type.Object({
   project: Project,
   newCustomer: Type.Optional(Type.String()),
   newProject: Type.Optional(Project),
+  completed: Type.Optional(Type.Boolean()),
 })
 
 export const CustomerProjectUpdateParams = Type.Intersect([
