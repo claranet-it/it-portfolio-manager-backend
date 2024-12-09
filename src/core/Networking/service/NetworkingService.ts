@@ -5,15 +5,15 @@ import {
 } from '@src/core/Networking/model/networking.model'
 import { EffortReadParamsType } from '@src/core/Effort/model/effort'
 import { skillsList } from '@src/core/Configuration/service/ConfigurationService'
+import { CompanyRepositoryInterface } from '@src/core/Company/repository/CompanyRepositoryInterface'
 
 export class NetworkingService {
-  constructor(private networkingRepository: NetworkingRepositoryInterface) {}
+  constructor(private companyRepository: CompanyRepositoryInterface, private networkingRepository: NetworkingRepositoryInterface) {}
 
   async getNetworkingAverageSkillsOf(
     company: string,
   ): Promise<NetworkingSkillsResponseType> {
-    const networkingCompanies =
-      await this.networkingRepository.getNetworkingOf(company)
+    const networkingCompanies = await this.getNetworkingCompanies(company)
 
     return await Promise.all(
       networkingCompanies.map(async (company) => {
@@ -61,9 +61,7 @@ export class NetworkingService {
   async getNetworkingAverageEffortOf(
     params: EffortReadParamsType,
   ): Promise<NetworkingEffortResponseType> {
-    const networkingCompanies = await this.networkingRepository.getNetworkingOf(
-      params.company ?? '',
-    )
+    const networkingCompanies = await this.getNetworkingCompanies(params.company)
 
     const requestedPeriods = this.getRequestedPeriods(params.months)
 
@@ -141,5 +139,9 @@ export class NetworkingService {
       sum = sum + n
     }
     return numbers.length > 0 ? sum / numbers.length : 0
+  }
+
+  private async getNetworkingCompanies(company: string | undefined): Promise<string[]> {
+    return company === 'it' ? (await this.companyRepository.findAll()).map((company) => company.name).filter((name) => name !== 'it') : []
   }
 }

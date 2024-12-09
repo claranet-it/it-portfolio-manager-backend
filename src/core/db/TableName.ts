@@ -4,7 +4,6 @@ export type TableName =
   | 'Effort'
   | 'Task'
   | 'TimeEntry'
-  | 'Company'
   | 'Crew'
   | 'TaskProperties'
 

@@ -1,7 +1,6 @@
 import {
   DynamoDBClient,
   QueryCommand,
-  ScanCommand,
 } from '@aws-sdk/client-dynamodb'
 import { getTableName } from '@src/core/db/TableName'
 import { NetworkingRepositoryInterface } from '@src/core/Networking/repository/NetworkingRepositoryInterface'
@@ -70,22 +69,6 @@ export class NetworkingRepository implements NetworkingRepositoryInterface {
           ? Number(item.tentativeEffort.N)
           : 0,
       }))
-    }
-    return []
-  }
-
-  async getNetworkingOf(company: string): Promise<string[]> {
-    if (company === 'it') {
-      const command = new ScanCommand({
-        TableName: getTableName('Company'),
-      })
-
-      const result = await this.dynamoDBClient.send(command)
-      if (result?.Items) {
-        return result.Items.map((item) => item.name?.S ?? '').filter(
-          (c) => c !== company,
-        )
-      }
     }
     return []
   }

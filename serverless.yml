@@ -124,8 +124,6 @@ custom:
             rawsources: [ ./seed/task-properties.json ]
           - table: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
             rawsources: [ ./seed/time-entry.json ]
-          - table: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
-            sources: ['./seed/company.json']
           - table: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
             sources: ['./seed/crew.json']
 
@@ -326,31 +324,6 @@ resources:
                 KeyType: HASH
               - AttributeName: timeEntryDate
                 KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
-    ItPortfolioManagerCompanies:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
-        AttributeDefinitions:
-          - AttributeName: domain
-            AttributeType: S
-          - AttributeName: name
-            AttributeType: S
-        KeySchema:
-          - AttributeName: domain
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        GlobalSecondaryIndexes:
-          - IndexName: NameIndex
-            KeySchema:
-              - AttributeName: name
-                KeyType: HASH
             Projection:
               ProjectionType: ALL
             ProvisionedThroughput:

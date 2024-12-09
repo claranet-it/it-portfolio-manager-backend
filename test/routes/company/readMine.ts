@@ -2,8 +2,12 @@ import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import { CompanyType } from '@src/core/Company/repository/model/Company'
+import { seedCompany } from '@test/seed/prisma/company'
+import { PrismaClient } from '../../../prisma/generated'
+import { validate } from 'uuid'
 
 let app: FastifyInstance
+const prisma = new PrismaClient()
 
 function getToken(): string {
   return app.createTestJwt({
@@ -17,9 +21,16 @@ function getToken(): string {
 beforeEach(async () => {
   app = createApp({ logger: false })
   await app.ready()
+  await seedCompany()
 })
 
 afterEach(async () => {
+  const deleteCompany = prisma.company.deleteMany()
+
+  await prisma.$transaction([
+    deleteCompany,
+  ])
+  await prisma.$disconnect()
   await app.close()
 })
 
@@ -41,6 +52,7 @@ test('Read mine company', async (t) => {
   })
   t.equal(response.statusCode, 200)
   const result = response.json<CompanyType>()
-  t.equal(result.id, 'claranet italia')
+  t.ok(validate(result.id), 'id should be a valid UUID')
+  t.equal(result.domain, 'claranet italia')
   t.equal(result.name, 'it')
 })
