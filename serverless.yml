@@ -31,7 +31,6 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ], 'index', 'companyIndex' ] ]
-            - "Fn::GetAtt": [ ItPortfolioManagerCompanies, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerCrews, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTaskProperties, Arn ]
         - Effect: "Allow"
