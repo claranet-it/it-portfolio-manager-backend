@@ -4,6 +4,7 @@ p, SUPERADMIN, time_entry, write
 p, SUPERADMIN, time_entry, import
 p, SUPERADMIN, skill, read
 p, SUPERADMIN, skill, write
+p, ADMIN, company, write
 p, ADMIN, task, write
 p, ADMIN, time_entry, read
 p, ADMIN, time_entry, write

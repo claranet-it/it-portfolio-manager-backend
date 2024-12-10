@@ -6,5 +6,4 @@ import {
 export interface NetworkingRepositoryInterface {
   getNetworkingSkillsOf(company: string): Promise<CompanySkillType[]>
   getNetworkingEffortOf(company: string): Promise<CompanyEffortRowType[]>
-  getNetworkingOf(company: string): Promise<string[]>
 }

@@ -1,25 +1,38 @@
-import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb'
 import { CompanyRepositoryInterface } from '@src/core/Company/repository/CompanyRepositoryInterface'
-import { CompanyType } from '@src/core/Company/repository/model/Company'
-import { getTableName } from '@src/core/db/TableName'
+import {
+  CompanyFindType,
+  CompanyType,
+} from '@src/core/Company/model/Company'
+import { PrismaClient } from '../../../../prisma/generated'
 
 export class CompanyRepository implements CompanyRepositoryInterface {
-  constructor(private dynamoDBClient: DynamoDBClient) {}
+  private prismaClient: PrismaClient
+
+  constructor() {
+    this.prismaClient = new PrismaClient()
+  }
 
   async findById(id: string): Promise<CompanyType | null> {
-    const command = new GetItemCommand({
-      TableName: getTableName('Company'),
-      Key: {
-        domain: { S: id },
-      },
-    })
-    const result = await this.dynamoDBClient.send(command)
-    if (result.Item) {
-      return {
-        id: result.Item.domain.S ?? '',
-        name: result.Item.name.S ?? '',
-      }
+    return this.prismaClient.company.findFirst({where: {id: id}})
+  }
+
+  async findOne(find: CompanyFindType): Promise<CompanyType | null> {
+    let where = {}
+    if (find.name) {
+      where = {name: find.name}
     }
-    return null
+    return this.prismaClient.company.findFirst({where: where})
+  }
+
+  async findAll(): Promise<CompanyType[]> {
+    return this.prismaClient.company.findMany({orderBy: {name: 'asc'}})
+  }
+
+  async save(company: CompanyType): Promise<CompanyType> {
+    return this.prismaClient.company.upsert({
+      where: {id: company.id},
+      update: company,
+      create: company,
+    })
   }
 }

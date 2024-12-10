@@ -3,9 +3,12 @@ import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
 import {NetworkingEffortResponseType} from "@src/core/Networking/model/networking.model";
 import sinon from "sinon";
+import { seedCompany } from '@test/seed/prisma/company'
+import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
 let clock: sinon.SinonFakeTimers;
+const prisma = new PrismaClient()
 
 function getToken(company: string): string {
     return app.createTestJwt({
@@ -24,10 +27,17 @@ beforeEach(async () => {
     });
     app = createApp({logger: false})
     await app.ready()
+    await seedCompany()
 })
 
 afterEach(async () => {
     clock.restore();
+    const deleteCompany = prisma.company.deleteMany()
+
+    await prisma.$transaction([
+        deleteCompany,
+    ])
+    await prisma.$disconnect()
     await app.close()
 })
 

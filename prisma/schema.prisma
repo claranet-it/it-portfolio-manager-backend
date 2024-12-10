@@ -15,6 +15,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Company {
+    id          String    @id @default(uuid())
+    domain      String
+    name        String
+    image_url   String?
+}
+
 model Customer {
   id         String    @id @default(uuid())
   company_id String
