@@ -27,4 +27,12 @@ export class CompanyRepository implements CompanyRepositoryInterface {
   async findAll(): Promise<CompanyType[]> {
     return this.prismaClient.company.findMany({orderBy: {name: 'asc'}})
   }
+
+  async save(company: CompanyType): Promise<CompanyType> {
+    return this.prismaClient.company.upsert({
+      where: {id: company.id},
+      update: company,
+      create: company,
+    })
+  }
 }

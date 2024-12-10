@@ -53,7 +53,6 @@ test('Read mine company', async (t) => {
   t.equal(response.statusCode, 200)
   const result = response.json<CompanyType>()
   t.ok(validate(result.id), 'id should be a valid UUID')
-  console.log(result)
   t.equal(result.domain, 'claranet italia')
   t.equal(result.name, 'it')
   t.equal(result.image_url, 'sample_image_url')
