@@ -7,7 +7,8 @@ export async function seedCompany() {
     data: [
       {
         domain: "claranet italia",
-        name: "it"
+        name: "it",
+        image_url: "sample_image_url"
       },
       {
         domain: "claranet us",

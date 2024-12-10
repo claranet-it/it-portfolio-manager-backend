@@ -1,4 +1,4 @@
-import { CompanyFindType, CompanyType } from './model/Company'
+import { CompanyFindType, CompanyType } from '@src/core/Company/model/Company'
 
 export interface CompanyRepositoryInterface {
   findById(id: string): Promise<CompanyType | null>

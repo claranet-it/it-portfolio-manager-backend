@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify'
 import {
   Company,
   CompanyType,
-} from '@src/core/Company/repository/model/Company'
+} from '@src/core/Company/model/Company'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{

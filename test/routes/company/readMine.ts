@@ -1,7 +1,7 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { CompanyType } from '@src/core/Company/repository/model/Company'
+import { CompanyType } from '@src/core/Company/model/Company'
 import { seedCompany } from '@test/seed/prisma/company'
 import { PrismaClient } from '../../../prisma/generated'
 import { validate } from 'uuid'
@@ -53,6 +53,8 @@ test('Read mine company', async (t) => {
   t.equal(response.statusCode, 200)
   const result = response.json<CompanyType>()
   t.ok(validate(result.id), 'id should be a valid UUID')
+  console.log(result)
   t.equal(result.domain, 'claranet italia')
   t.equal(result.name, 'it')
+  t.equal(result.image_url, 'sample_image_url')
 })

@@ -2,7 +2,7 @@ import { CompanyRepositoryInterface } from '@src/core/Company/repository/Company
 import {
   CompanyFindType,
   CompanyType,
-} from '@src/core/Company/repository/model/Company'
+} from '@src/core/Company/model/Company'
 import { PrismaClient } from '../../../../prisma/generated'
 
 export class CompanyRepository implements CompanyRepositoryInterface {

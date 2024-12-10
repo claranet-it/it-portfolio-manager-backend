@@ -16,9 +16,10 @@ datasource db {
 }
 
 model Company {
-    id       String    @id @default(uuid())
-    domain   String
-    name     String
+    id          String    @id @default(uuid())
+    domain      String
+    name        String
+    image_url   String?
 }
 
 model Customer {

@@ -1,6 +1,6 @@
 import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { CompanyRepositoryInterface } from '../repository/CompanyRepositoryInterface'
-import { CompanyType } from '../repository/model/Company'
+import { CompanyType } from '@src/core/Company/model/Company'
 
 export class CompanyService {
   constructor(private companyRepository: CompanyRepositoryInterface) {}

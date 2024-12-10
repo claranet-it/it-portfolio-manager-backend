@@ -4,6 +4,7 @@ export const Company = Type.Object({
   id: Type.String(),
   domain: Type.String(),
   name: Type.String(),
+  image_url: Type.Optional(Type.String())
 })
 
 export type CompanyType = Static<typeof Company>
