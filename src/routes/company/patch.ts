@@ -1,6 +1,12 @@
 import { FastifyInstance } from 'fastify'
-import { CompanyIdQueryString, CompanyIdQueryStringType } from '@src/core/Company/service/dto/CompanyIdQueryString'
-import { CompanyPatchBody, CompanyPatchBodyType } from '@src/core/Company/service/dto/CompanyPatchBody'
+import {
+  CompanyIdQueryString,
+  CompanyIdQueryStringType,
+} from '@src/core/Company/service/dto/CompanyIdQueryString'
+import {
+  CompanyPatchBody,
+  CompanyPatchBodyType,
+} from '@src/core/Company/service/dto/CompanyPatchBody'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
@@ -55,10 +61,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .resolve('companyService')
           .patch(request.user, request.params.id, request.body)
       } catch (error) {
-        if(error instanceof NotFoundException) {
+        if (error instanceof NotFoundException) {
           return reply.code(404).send()
         }
-        if(error instanceof ForbiddenException) {
+        if (error instanceof ForbiddenException) {
           return reply.code(403).send()
         }
         request.log.error(error)

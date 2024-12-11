@@ -1,12 +1,12 @@
 import { FastifyInstance } from 'fastify'
 import {
-  Company,
-  CompanyType,
+  CompanyWithSkills,
+  CompanyWithSkillsType,
 } from '@src/core/Company/model/Company'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Reply: CompanyType
+    Reply: CompanyWithSkillsType
   }>(
     '/mine',
     {
@@ -19,7 +19,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: Company,
+          200: CompanyWithSkills,
           401: {
             type: 'null',
             description: 'Unauthorized',

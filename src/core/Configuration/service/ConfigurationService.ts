@@ -7,7 +7,7 @@ import { CrewRepositoryInterface } from '../repository/CrewRepositoryInterface'
 
 const serviceLines = ['Developer', 'Cloud']
 
-const skills = {
+export const skills = {
   [serviceLines[0]]: [
     'PHP',
     'Frontend (JS/TS)',

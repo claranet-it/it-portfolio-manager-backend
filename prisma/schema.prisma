@@ -16,10 +16,11 @@ datasource db {
 }
 
 model Company {
-    id          String    @id @default(uuid())
-    domain      String
-    name        String
-    image_url   String?
+  id        String  @id @default(uuid())
+  domain    String
+  name      String
+  image_url String?
+  skills    Skill[]
 }
 
 model Customer {
@@ -56,6 +57,15 @@ model ProjectTask {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   time_entries  TimeEntry[]
+}
+
+model Skill {
+  id           Int     @id @default(autoincrement())
+  name         String
+  service_line String
+  visible      Boolean @default(true)
+  company      Company @relation(fields: [company_id], references: [id])
+  company_id   String
 }
 
 model TimeEntry {

@@ -2,6 +2,7 @@ import { CompanyRepositoryInterface } from '@src/core/Company/repository/Company
 import {
   CompanyFindType,
   CompanyType,
+  CompanyWithSkillsType,
 } from '@src/core/Company/model/Company'
 import { PrismaClient } from '../../../../prisma/generated'
 
@@ -12,25 +13,64 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     this.prismaClient = new PrismaClient()
   }
 
-  async findById(id: string): Promise<CompanyType | null> {
-    return this.prismaClient.company.findFirst({where: {id: id}})
+  async findById(
+    id: string,
+    joinSkills: boolean = false,
+  ): Promise<CompanyType | CompanyWithSkillsType | null> {
+    const company = await this.prismaClient.company.findFirst({
+      where: { id: id },
+      include: {
+        ...(joinSkills && { skills: true }),
+      },
+    })
+
+    if (!company) {
+      return null
+    }
+
+    return {
+      ...company,
+      skills: company.skills?.map((skill) => ({
+        id: skill.id,
+        name: skill.name,
+        serviceLine: skill.service_line,
+        visible: skill.visible,
+      })),
+    }
   }
 
-  async findOne(find: CompanyFindType): Promise<CompanyType | null> {
+  async findOne(find: CompanyFindType): Promise<CompanyWithSkillsType | null> {
     let where = {}
     if (find.name) {
-      where = {name: find.name}
+      where = { name: find.name }
     }
-    return this.prismaClient.company.findFirst({where: where})
+    const company = await this.prismaClient.company.findFirst({
+      where: where,
+      include: { skills: true },
+    })
+
+    if (!company) {
+      return null
+    }
+
+    return {
+      ...company,
+      skills: company.skills.map((skill) => ({
+        id: skill.id,
+        name: skill.name,
+        serviceLine: skill.service_line,
+        visible: skill.visible,
+      })),
+    }
   }
 
   async findAll(): Promise<CompanyType[]> {
-    return this.prismaClient.company.findMany({orderBy: {name: 'asc'}})
+    return this.prismaClient.company.findMany({ orderBy: { name: 'asc' } })
   }
 
   async save(company: CompanyType): Promise<CompanyType> {
     return this.prismaClient.company.upsert({
-      where: {id: company.id},
+      where: { id: company.id },
       update: company,
       create: company,
     })

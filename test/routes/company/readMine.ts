@@ -1,7 +1,7 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { CompanyType } from '@src/core/Company/model/Company'
+import { CompanyWithSkillsType } from '@src/core/Company/model/Company'
 import { seedCompany } from '@test/seed/prisma/company'
 import { PrismaClient } from '../../../prisma/generated'
 import { validate } from 'uuid'
@@ -25,9 +25,11 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
+  const deleteSkill = prisma.skill.deleteMany()
   const deleteCompany = prisma.company.deleteMany()
 
   await prisma.$transaction([
+    deleteSkill,
     deleteCompany,
   ])
   await prisma.$disconnect()
@@ -51,9 +53,11 @@ test('Read mine company', async (t) => {
     },
   })
   t.equal(response.statusCode, 200)
-  const result = response.json<CompanyType>()
+  const result = response.json<CompanyWithSkillsType>()
   t.ok(validate(result.id), 'id should be a valid UUID')
   t.equal(result.domain, 'claranet italia')
   t.equal(result.name, 'it')
   t.equal(result.image_url, 'sample_image_url')
+  t.ok(result.skills, 'skills should be defined')
+  t.equal(result.skills?.length, 28, 'skills should have 28 items')
 })
