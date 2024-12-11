@@ -1,33 +1,33 @@
 import { FastifyInstance } from 'fastify'
-import {
-  CompanyIdQueryString,
-  CompanyIdQueryStringType,
-} from '@src/core/Company/service/dto/CompanyIdQueryString'
-import {
-  CompanyPatchBody,
-  CompanyPatchBodyType,
-} from '@src/core/Company/service/dto/CompanyPatchBody'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
+import {
+  SkillIdQueryString,
+  SkillIdQueryStringType,
+} from '@src/core/Skill/service/dto/SkillIdQueryString'
+import {
+  SkillPatchBody,
+  SkillPatchBodyType,
+} from '@src/core/Skill/service/dto/SkillPatchBody'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.patch<{
-    Params: CompanyIdQueryStringType
-    Body: CompanyPatchBodyType
+    Params: SkillIdQueryStringType
+    Body: SkillPatchBodyType
   }>(
     '/:id',
     {
       onRequest: [fastify.authenticate],
       casbin: {
         rest: {
-          getObj: 'company',
+          getObj: 'skill',
           getAct: 'write',
         },
       },
       schema: {
-        tags: ['Company'],
-        params: CompanyIdQueryString,
-        body: CompanyPatchBody,
+        tags: ['Skill'],
+        params: SkillIdQueryString,
+        body: SkillPatchBody,
         security: [
           {
             apiKey: [],
@@ -58,7 +58,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       try {
         return await fastify
           .dependencyInjectionContainer()
-          .resolve('companyService')
+          .resolve('skillService')
           .patch(request.user, request.params.id, request.body)
       } catch (error) {
         if (error instanceof NotFoundException) {

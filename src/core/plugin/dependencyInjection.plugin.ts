@@ -34,6 +34,8 @@ import { ReportService } from '@src/core/Report/service/ReportService'
 import { ProductivityCalculator } from '@src/core/Report/service/ProductivityCalculator'
 import { TaskPropertiesRepository } from '@src/infrastructure/Task/repository/TaskPropertiesRepository'
 import { CompanyService } from '../Company/service/CompanyService'
+import { SkillRepository } from '@src/infrastructure/Skill/Repository/SkillRepository'
+import { SkillService } from '@src/core/Skill/service/SkillService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -188,9 +190,14 @@ async function dependencyInjectionContainerPlugin(
     container.register({
       crewRepository: asClass(CrewRepository),
     })
-
     container.register({
       companyService: asClass(CompanyService),
+    })
+    container.register({
+      skillRepository: asClass(SkillRepository),
+    })
+    container.register({
+      skillService: asClass(SkillService),
     })
 
     return container

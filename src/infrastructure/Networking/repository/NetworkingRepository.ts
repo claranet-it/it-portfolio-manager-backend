@@ -1,7 +1,4 @@
-import {
-  DynamoDBClient,
-  QueryCommand,
-} from '@aws-sdk/client-dynamodb'
+import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb'
 import { getTableName } from '@src/core/db/TableName'
 import { NetworkingRepositoryInterface } from '@src/core/Networking/repository/NetworkingRepositoryInterface'
 import {
