@@ -3,11 +3,12 @@ import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import { seedCompany } from '@test/seed/prisma/company'
 import { PrismaClient } from '../../../prisma/generated'
+import { seedSkill } from '@test/seed/prisma/skill'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
-let itCompanyId = ''
-let testCompanyId = ''
+let skillItId = 0
+let skillUsId = 0
 
 function getToken(): string {
   return app.createTestJwt({
@@ -23,20 +24,13 @@ before(async () => {
   app = createApp({ logger: false })
   await app.ready()
   await seedCompany()
+  await seedSkill()
 
-  const companyIt = await prisma.company.findFirstOrThrow({
-    where: {
-      name: 'it',
-    },
-  })
-  itCompanyId = companyIt.id
+  const firstSkill = await prisma.skill.findFirst({ orderBy: { id: 'asc' } })
+  skillItId = firstSkill!.id
 
-  const companyTest = await prisma.company.findFirstOrThrow({
-    where: {
-      name: 'test company',
-    },
-  })
-  testCompanyId = companyTest.id
+  const lastSkill = await prisma.skill.findFirst({ orderBy: { id: 'desc' } })
+  skillUsId = lastSkill!.id
 })
 
 after(async () => {
@@ -48,18 +42,18 @@ after(async () => {
   await app.close()
 })
 
-test('Patch company without authentication', async (t) => {
+test('Patch skill without authentication', async (t) => {
   const response = await app.inject({
     method: 'PATCH',
-    url: `/api/company/${itCompanyId}`,
+    url: `/api/skill/${skillItId}`,
     body: {
-      image_url: 'test update image of company',
+      visible: false,
     },
   })
   t.equal(response.statusCode, 401)
 })
 
-test('Patch company without ADMIN role', async (t) => {
+test('Patch skill without ADMIN role', async (t) => {
   const tempToken = app.createTestJwt({
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
@@ -69,48 +63,48 @@ test('Patch company without ADMIN role', async (t) => {
 
   const response = await app.inject({
     method: 'PATCH',
-    url: `/api/company/${itCompanyId}`,
+    url: `/api/skill/${skillItId}`,
     headers: {
       authorization: `Bearer ${tempToken}`,
     },
     body: {
-      image_url: 'test update image of company',
+      visible: false,
     },
   })
   t.equal(response.statusCode, 403)
 })
 
-test('Patch company not mine', async (t) => {
+test('Patch skill not mine', async (t) => {
   const response = await app.inject({
     method: 'PATCH',
-    url: `/api/company/${testCompanyId}`,
+    url: `/api/skill/${skillUsId}`,
     headers: {
       authorization: `Bearer ${getToken()}`,
     },
     body: {
-      image_url: 'test update image of company',
+      visible: false,
     },
   })
   t.equal(response.statusCode, 403)
 })
 
-test('Patch company', async (t) => {
+test('Patch skill', async (t) => {
   const response = await app.inject({
     method: 'PATCH',
-    url: `/api/company/${itCompanyId}`,
+    url: `/api/skill/${skillItId}`,
     headers: {
       authorization: `Bearer ${getToken()}`,
     },
     body: {
-      image_url: 'test update image of company',
+      visible: false,
     },
   })
   t.equal(response.statusCode, 200)
 
-  const updatedCompany = await prisma.company.findFirstOrThrow({
+  const updatedSkill = await prisma.skill.findFirstOrThrow({
     where: {
-      id: itCompanyId,
+      id: skillItId,
     },
   })
-  t.equal(updatedCompany.image_url, 'test update image of company')
+  t.equal(updatedSkill.visible, false)
 })

@@ -35,6 +35,7 @@ import { ProductivityCalculator } from '@src/core/Report/service/ProductivityCal
 import { TaskPropertiesRepository } from '@src/infrastructure/Task/repository/TaskPropertiesRepository'
 import { CompanyService } from '../Company/service/CompanyService'
 import { SkillRepository } from '@src/infrastructure/Skill/Repository/SkillRepository'
+import { SkillService } from '@src/core/Skill/service/SkillService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -194,6 +195,9 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       skillRepository: asClass(SkillRepository),
+    })
+    container.register({
+      skillService: asClass(SkillService),
     })
 
     return container
