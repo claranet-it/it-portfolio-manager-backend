@@ -32,7 +32,9 @@ export class AuthService {
       console.log(error)
       throw new UnauthorizedError()
     }
-    const company = await this.companyRepository.findById(authInfo.companyId)
+    const company = await this.companyRepository.findOne({
+      domain: authInfo.companyId,
+    })
     if (!company) {
       console.warn(`Company with id ${authInfo.companyId} not found`)
       throw new UnauthorizedError()

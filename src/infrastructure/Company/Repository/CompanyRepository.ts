@@ -44,6 +44,9 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     if (find.name) {
       where = { name: find.name }
     }
+    if (find.domain) {
+      where = { domain: find.domain }
+    }
     const company = await this.prismaClient.company.findFirst({
       where: where,
       include: { skills: true },
