@@ -20,7 +20,8 @@ export const CompanyWithSkills = Type.Intersect([
 export type CompanyWithSkillsType = Static<typeof CompanyWithSkills>
 
 export const CompanyFind = Type.Object({
-  name: Type.String(),
+  domain: Type.Optional(Type.String()),
+  name: Type.Optional(Type.String()),
 })
 
 export type CompanyFindType = Static<typeof CompanyFind>
