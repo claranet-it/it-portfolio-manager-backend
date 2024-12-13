@@ -74,19 +74,19 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     name: string,
     company: string,
     picture: string,
-    userProfile: UpdateUserProfileType,
+    userProfile?: UpdateUserProfileType,
   ): Promise<void> {
     const item = {
       uid: { S: uid },
       name: { S: name },
-      crew: { S: userProfile.crew },
+      crew: { S: userProfile?.crew || '' },
       company: { S: company },
       picture: { S: picture },
-      crewLeader: { BOOL: userProfile.crewLeader || false },
-      place: { S: userProfile.place || '' },
-      workingExperience: { S: userProfile.workingExperience || '' },
-      education: { S: userProfile.education || '' },
-      certifications: { S: userProfile.certifications || '' },
+      crewLeader: { BOOL: userProfile?.crewLeader || false },
+      place: { S: userProfile?.place || '' },
+      workingExperience: { S: userProfile?.workingExperience || '' },
+      education: { S: userProfile?.education || '' },
+      certifications: { S: userProfile?.certifications || '' },
     }
     const putItemCommand = new PutItemCommand({
       TableName: getTableName('UserProfile'),
