@@ -17,7 +17,7 @@ export interface UserProfileRepositoryInterface {
     name: string,
     company: string,
     picture: string,
-    userProfile: UpdateUserProfileType,
+    userProfile?: UpdateUserProfileType,
   ): Promise<void>
 
   getAllUserProfiles(): Promise<CompleteUserProfileType[]>
