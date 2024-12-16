@@ -38,7 +38,10 @@ export const CompleteUserProfile = Type.Intersect([
   UserProfile,
   Type.Object({ uid: Type.String() }),
   Type.Object({ picture: Type.String() }),
-  Type.Object({ disabled: Type.Optional(Type.Boolean({ default: false })) }),
+  Type.Object({
+    disabled: Type.Optional(Type.Boolean({ default: false })),
+    disabledAt: Type.Optional(Type.String()),
+  }),
 ])
 
 export const CnaUserProfile = Type.Object({
@@ -70,6 +73,8 @@ export const UserWithCrew = Type.Object({
   id: Type.String(),
   name: Type.String(),
   crew: Type.Optional(Type.String()),
+  disabled: Type.Optional(Type.Boolean({ default: false })),
+  disabledAt: Type.Optional(Type.String()),
 })
 export const UserWithCrewList = Type.Array(UserWithCrew)
 export type UserWithCrewListType = Static<typeof UserWithCrewList>
