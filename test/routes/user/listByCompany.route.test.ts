@@ -35,13 +35,18 @@ test('list by company', async (t) => {
   })
 
   t.equal(response.statusCode, 200)
-  response.json().forEach((user: object) => {
+  const users = response.json()
+  users.forEach((user: object) => {
     t.hasProp(user, 'id')
     t.hasProp(user, 'name')
     t.hasProp(user, 'email')
     t.hasProp(user, 'crew')
   })
 
+  const user = users.find((user: { id: string }) => user.id === 'sun@test.com')
+  t.ok(user, 'User with id "sun@test.com" should exist')
+  t.equal(user.disabled, true, 'User should be disabled')
+  t.ok(user.disabledAt, 'disabledAt should be set')
 })
 
 test('list by company without authentication', async (t) => {

@@ -273,6 +273,7 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
       education: item.education?.S ?? '',
       certifications: item.certifications?.S ?? '',
       disabled: item.disabled?.BOOL ?? false,
+      disabledAt: item.disabledAt?.S ?? '',
     }
   }
 }

@@ -50,7 +50,7 @@ export class UserProfileService {
     return this.userProfileRepository.getByCompany(company)
   }
 
-  async delete(uid: string) {
+  async delete(uid: string): Promise<void> {
     await this.userProfileRepository.delete(uid)
   }
 

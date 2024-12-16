@@ -47,6 +47,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           email: user.uid,
           name: user.name,
           crew: user.crew,
+          disabled: user.disabled,
+          disabledAt: user.disabledAt,
         }))
       } catch (error) {
         request.log.error(error)
