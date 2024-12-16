@@ -54,6 +54,10 @@ export class UserProfileService {
     await this.userProfileRepository.delete(uid)
   }
 
+  async reactivateUser(uid: string): Promise<void> {
+    await this.userProfileRepository.reactivateUser(uid)
+  }
+
   async getUsersForCna(
     params: UserCompanyType,
   ): Promise<CnaUserProfileListType> {

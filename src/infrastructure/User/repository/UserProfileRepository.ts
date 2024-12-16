@@ -221,6 +221,24 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     console.warn(response)
   }
 
+  async reactivateUser(uid: string): Promise<void> {
+    const command = new UpdateItemCommand({
+      TableName: getTableName('UserProfile'),
+      Key: { uid: { S: uid } },
+      UpdateExpression: 'SET disabled = :disabled, disabledAt = :disabledAt',
+      ExpressionAttributeValues: {
+        ':disabled': {
+          BOOL: false,
+        },
+        ':disabledAt': {
+          S: '',
+        },
+      },
+    })
+    const response = await this.dynamoDBClient.send(command)
+    console.warn(response)
+  }
+
   async getDisabled(company: string): Promise<CompleteUserProfileType[]> {
     const command = new QueryCommand({
       TableName: getTableName('UserProfile'),

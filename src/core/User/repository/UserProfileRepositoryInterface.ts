@@ -34,6 +34,8 @@ export interface UserProfileRepositoryInterface {
 
   delete(uid: string): Promise<void>
 
+  reactivateUser(uid: string): Promise<void>
+
   getDisabled(company: string): Promise<CompleteUserProfileType[]>
 
   getRole(uid: string): Promise<string>
