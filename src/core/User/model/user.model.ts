@@ -21,6 +21,8 @@ export const UserProfile = Type.Object({
   workingExperience: Type.String(),
   education: Type.String(),
   certifications: Type.String(),
+  picture: Type.Optional(Type.String()),
+  role: Type.Optional(Type.String()),
 })
 
 export type UserProfileType = Static<typeof UserProfile>
@@ -78,3 +80,16 @@ export const UserWithCrew = Type.Object({
 })
 export const UserWithCrewList = Type.Array(UserWithCrew)
 export type UserWithCrewListType = Static<typeof UserWithCrewList>
+
+const PatchRole = Type.Union([
+  Type.Literal('ADMIN'),
+  Type.Literal('TEAM_LEADER'),
+  Type.Literal(''),
+])
+
+export const PatchUserProfile = Type.Object({
+  crew: Type.Optional(Type.String()),
+  role: Type.Optional(PatchRole),
+})
+
+export type PatchUserProfileType = Static<typeof PatchUserProfile>

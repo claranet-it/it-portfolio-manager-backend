@@ -5,6 +5,8 @@ import {
 } from '@src/core/User/model/user.model'
 
 export interface UserProfileRepositoryInterface {
+  getUserProfileById(uid: string): Promise<CompleteUserProfileType | null>
+
   getUserProfile(
     uid: string,
     company: string | undefined,
@@ -39,4 +41,6 @@ export interface UserProfileRepositoryInterface {
   getDisabled(company: string): Promise<CompleteUserProfileType[]>
 
   getRole(uid: string): Promise<string>
+
+  save(uid: string, userProfile: UserProfileType): Promise<void>
 }
