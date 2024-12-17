@@ -3,6 +3,7 @@ import {
   CompleteUserProfileType,
   UserWithCrewList,
   UserWithCrewListType,
+  UserWithCrewType,
 } from '@src/core/User/model/user.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
@@ -42,14 +43,25 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .dependencyInjectionContainer()
           .resolve('userProfileService')
           .getByCompany(request.user.company)
-        return users.map((user: CompleteUserProfileType) => ({
-          id: user.uid,
-          email: user.uid,
-          name: user.name,
-          crew: user.crew,
-          disabled: user.disabled,
-          disabledAt: user.disabledAt,
-        }))
+        return users.map((user: CompleteUserProfileType) => {
+          let userResponse: UserWithCrewType = {
+            id: user.uid,
+            email: user.uid,
+            name: user.name,
+            crew: user.crew,
+            disabled: user.disabled,
+            disabledAt: user.disabledAt,
+          }
+
+          if (['ADMIN', 'SUPERADMIN'].includes(request.user.role!)) {
+            userResponse = {
+              ...userResponse,
+              role: user.role,
+            }
+          }
+
+          return userResponse
+        })
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

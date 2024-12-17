@@ -75,9 +75,12 @@ export const UserWithCrew = Type.Object({
   id: Type.String(),
   name: Type.String(),
   crew: Type.Optional(Type.String()),
+  role: Type.Optional(Type.String()),
   disabled: Type.Optional(Type.Boolean({ default: false })),
   disabledAt: Type.Optional(Type.String()),
 })
+export type UserWithCrewType = Static<typeof UserWithCrew>
+
 export const UserWithCrewList = Type.Array(UserWithCrew)
 export type UserWithCrewListType = Static<typeof UserWithCrewList>
 
