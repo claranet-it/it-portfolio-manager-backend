@@ -1,6 +1,9 @@
 import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { CompanyRepositoryInterface } from '../repository/CompanyRepositoryInterface'
-import { CompanyWithSkillsType } from '@src/core/Company/model/Company'
+import {
+  CompanyType,
+  CompanyWithSkillsType,
+} from '@src/core/Company/model/Company'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { CompanyPatchBodyType } from '@src/core/Company/service/dto/CompanyPatchBody'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
@@ -14,10 +17,25 @@ export class CompanyService {
     private skillRepository: SkillRepository,
   ) {}
 
-  async getMine(jwtToken: JwtTokenType): Promise<CompanyWithSkillsType | null> {
+  async networkingFindAll(jwtToken: JwtTokenType): Promise<CompanyType[]> {
     const company = await this.companyRepository.findOne({
       name: jwtToken.company,
     })
+
+    if (!company) {
+      throw new NotFoundException('Company not found')
+    }
+
+    return this.companyRepository.findAll(company.id)
+  }
+
+  async getMine(jwtToken: JwtTokenType): Promise<CompanyWithSkillsType | null> {
+    const company = await this.companyRepository.findOne(
+      {
+        name: jwtToken.company,
+      },
+      true,
+    )
 
     if (!company) {
       throw new NotFoundException('Company not found')

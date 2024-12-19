@@ -9,7 +9,10 @@ export interface CompanyRepositoryInterface {
     id: string,
     joinSkills?: boolean,
   ): Promise<CompanyType | CompanyWithSkillsType | null>
-  findOne(find: CompanyFindType): Promise<CompanyWithSkillsType | null>
-  findAll(): Promise<CompanyType[]>
+  findOne(
+    find: CompanyFindType,
+    includeSkills?: boolean,
+  ): Promise<CompanyWithSkillsType | null>
+  findAll(idToExclude?: string): Promise<CompanyType[]>
   save(company: CompanyType): Promise<CompanyType>
 }
