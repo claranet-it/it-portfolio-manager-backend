@@ -10,6 +10,10 @@ export const Company = Type.Object({
 
 export type CompanyType = Static<typeof Company>
 
+export const CompaniesArray = Type.Array(Company)
+
+export type CompaniesArrayType = Static<typeof CompaniesArray>
+
 export const CompanyWithSkills = Type.Intersect([
   Company,
   Type.Object({

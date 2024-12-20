@@ -4,7 +4,7 @@ import {
   CompanyType,
   CompanyWithSkillsType,
 } from '@src/core/Company/model/Company'
-import { PrismaClient } from '../../../../prisma/generated'
+import { Prisma, PrismaClient } from '../../../../prisma/generated'
 
 export class CompanyRepository implements CompanyRepositoryInterface {
   private prismaClient: PrismaClient
@@ -39,7 +39,10 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     }
   }
 
-  async findOne(find: CompanyFindType): Promise<CompanyWithSkillsType | null> {
+  async findOne(
+    find: CompanyFindType,
+    includeSkills: boolean = false,
+  ): Promise<CompanyWithSkillsType | CompanyType | null> {
     let where = {}
     if (find.name) {
       where = { name: find.name }
@@ -49,7 +52,7 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     }
     const company = await this.prismaClient.company.findFirst({
       where: where,
-      include: { skills: true },
+      include: { skills: includeSkills },
     })
 
     if (!company) {
@@ -58,17 +61,47 @@ export class CompanyRepository implements CompanyRepositoryInterface {
 
     return {
       ...company,
-      skills: company.skills.map((skill) => ({
-        id: skill.id,
-        name: skill.name,
-        serviceLine: skill.service_line,
-        visible: skill.visible,
-      })),
+      ...(includeSkills && {
+        skills: company.skills.map((skill) => ({
+          id: skill.id,
+          name: skill.name,
+          serviceLine: skill.service_line,
+          visible: skill.visible,
+        })),
+      }),
     }
   }
 
-  async findAll(): Promise<CompanyType[]> {
-    return this.prismaClient.company.findMany({ orderBy: { name: 'asc' } })
+  async findAll(
+    idToExclude?: string,
+    excludeConnectedCompanies?: boolean,
+  ): Promise<CompanyType[]> {
+    const where: Prisma.CompanyWhereInput = {}
+    if (idToExclude) {
+      where.NOT = { id: idToExclude }
+    }
+    if (excludeConnectedCompanies && idToExclude) {
+      where.NOT = {
+        OR: [
+          { id: idToExclude },
+          {
+            requestedConnections: {
+              some: { correspondent_company_id: idToExclude },
+            },
+          },
+          {
+            correspondentConnections: {
+              some: { requester_company_id: idToExclude },
+            },
+          },
+        ],
+      }
+    }
+
+    return this.prismaClient.company.findMany({
+      where: where,
+      orderBy: { name: 'asc' },
+    })
   }
 
   async save(company: CompanyType): Promise<CompanyType> {
