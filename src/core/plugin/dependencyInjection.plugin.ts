@@ -36,6 +36,8 @@ import { TaskPropertiesRepository } from '@src/infrastructure/Task/repository/Ta
 import { CompanyService } from '../Company/service/CompanyService'
 import { SkillRepository } from '@src/infrastructure/Skill/Repository/SkillRepository'
 import { SkillService } from '@src/core/Skill/service/SkillService'
+import { CompanyConnectionsRepository } from '@src/infrastructure/CompanyConnections/Repository/CompanyConnectionsRepository'
+import { CompanyConnectionsService } from '@src/core/CompanyConnections/service/CompanyConnectionsService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -198,6 +200,12 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       skillService: asClass(SkillService),
+    })
+    container.register({
+      companyConnectionsRepository: asClass(CompanyConnectionsRepository),
+    })
+    container.register({
+      companyConnectionsService: asClass(CompanyConnectionsService),
     })
 
     return container
