@@ -1,4 +1,5 @@
 p, SUPERADMIN, companyConnections, read
+p, SUPERADMIN, companyConnections, write
 p, SUPERADMIN, task, write
 p, SUPERADMIN, time_entry, read
 p, SUPERADMIN, time_entry, write

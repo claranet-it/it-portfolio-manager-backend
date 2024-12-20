@@ -3,6 +3,9 @@ import { CompanyConnectionsRepositoryInterface } from '../repository/CompanyConn
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { CompanyRepositoryInterface } from '@src/core/Company/repository/CompanyRepositoryInterface'
 import { CompanyType } from '@src/core/Company/model/Company'
+import { CompanyConnectionsPostBodyType } from '@src/core/CompanyConnections/service/dto/CompanyConnectionsPostBody'
+import { UniqueConstraintViolationException } from '@src/shared/exceptions/UniqueConstraintViolationException'
+import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 
 export class CompanyConnectionsService {
   constructor(
@@ -24,5 +27,33 @@ export class CompanyConnectionsService {
     )
 
     return connections.map((connection) => connection.correspondent)
+  }
+
+  async create(body: CompanyConnectionsPostBodyType): Promise<void> {
+    const requester = await this.companyRepository.findById(body.requesterId)
+
+    if (!requester) {
+      throw new NotFoundException('Requester not found')
+    }
+
+    const correspondent = await this.companyRepository.findById(
+      body.correspondentId,
+    )
+
+    if (!correspondent) {
+      throw new NotFoundException('Correspondent not found')
+    }
+
+    try {
+      await this.companyConnectionsRepository.create(
+        requester.id,
+        correspondent.id,
+      )
+    } catch (error) {
+      if (error instanceof UniqueConstraintViolationException) {
+        throw new BadRequestException('Connection already exists')
+      }
+      throw error
+    }
   }
 }
