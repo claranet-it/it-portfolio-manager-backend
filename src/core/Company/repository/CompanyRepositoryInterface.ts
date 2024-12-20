@@ -13,6 +13,9 @@ export interface CompanyRepositoryInterface {
     find: CompanyFindType,
     includeSkills?: boolean,
   ): Promise<CompanyWithSkillsType | null>
-  findAll(idToExclude?: string): Promise<CompanyType[]>
+  findAll(
+    idToExclude?: string,
+    excludeConnectedCompanies?: boolean,
+  ): Promise<CompanyType[]>
   save(company: CompanyType): Promise<CompanyType>
 }

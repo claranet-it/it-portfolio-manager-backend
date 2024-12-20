@@ -16,11 +16,22 @@ datasource db {
 }
 
 model Company {
-  id        String  @id @default(uuid())
-  domain    String
-  name      String
-  image_url String?
-  skills    Skill[]
+  id                       String               @id @default(uuid())
+  domain                   String
+  name                     String
+  image_url                String?
+  skills                   Skill[]
+  requestedConnections     CompanyConnections[] @relation("RequesterCompany")
+  correspondentConnections CompanyConnections[] @relation("CorrespondentCompany")
+}
+
+model CompanyConnections {
+  requester                Company @relation("RequesterCompany", fields: [requester_company_id], references: [id])
+  requester_company_id     String
+  correspondent            Company @relation("CorrespondentCompany", fields: [correspondent_company_id], references: [id])
+  correspondent_company_id String
+
+  @@unique([requester_company_id, correspondent_company_id])
 }
 
 model Customer {

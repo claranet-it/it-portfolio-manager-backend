@@ -4,7 +4,7 @@ import {
   CompanyType,
   CompanyWithSkillsType,
 } from '@src/core/Company/model/Company'
-import { PrismaClient } from '../../../../prisma/generated'
+import { Prisma, PrismaClient } from '../../../../prisma/generated'
 
 export class CompanyRepository implements CompanyRepositoryInterface {
   private prismaClient: PrismaClient
@@ -72,13 +72,29 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     }
   }
 
-  async findAll(idToExclude?: string): Promise<CompanyType[]> {
-    let where = {}
+  async findAll(
+    idToExclude?: string,
+    excludeConnectedCompanies?: boolean,
+  ): Promise<CompanyType[]> {
+    const where: Prisma.CompanyWhereInput = {}
     if (idToExclude) {
-      where = {
-        NOT: {
-          id: idToExclude,
-        },
+      where.NOT = { id: idToExclude }
+    }
+    if (excludeConnectedCompanies && idToExclude) {
+      where.NOT = {
+        OR: [
+          { id: idToExclude },
+          {
+            requestedConnections: {
+              some: { correspondent_company_id: idToExclude },
+            },
+          },
+          {
+            correspondentConnections: {
+              some: { requester_company_id: idToExclude },
+            },
+          },
+        ],
       }
     }
 

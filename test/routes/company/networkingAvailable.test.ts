@@ -3,6 +3,7 @@ import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import { seedCompany } from '@test/seed/prisma/company'
 import { PrismaClient } from '../../../prisma/generated'
+import { seedCompanyConnections } from '@test/seed/prisma/companyConnections'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
@@ -21,12 +22,14 @@ before(async () => {
   app = createApp({ logger: false })
   await app.ready()
   await seedCompany()
+  await seedCompanyConnections()
 })
 
 after(async () => {
+  const deleteCompanyConnections = prisma.companyConnections.deleteMany()
   const deleteCompany = prisma.company.deleteMany()
 
-  await prisma.$transaction([deleteCompany])
+  await prisma.$transaction([deleteCompanyConnections, deleteCompany])
   await prisma.$disconnect()
   await app.close()
 })
@@ -66,5 +69,5 @@ test('GET available company for networking', async (t) => {
     },
   })
   t.equal(response.statusCode, 200)
-  t.equal(response.json().length, 3)
+  t.equal(response.json().length, 2)
 })

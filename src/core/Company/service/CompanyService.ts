@@ -26,7 +26,7 @@ export class CompanyService {
       throw new NotFoundException('Company not found')
     }
 
-    return this.companyRepository.findAll(company.id)
+    return this.companyRepository.findAll(company.id, true)
   }
 
   async getMine(jwtToken: JwtTokenType): Promise<CompanyWithSkillsType | null> {
