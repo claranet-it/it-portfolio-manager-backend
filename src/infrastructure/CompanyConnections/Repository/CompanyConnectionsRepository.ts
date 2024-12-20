@@ -49,4 +49,13 @@ export class CompanyConnectionsRepository
       }
     }
   }
+
+  async delete(requesterId: string, correspondentId: string): Promise<void> {
+    await this.prismaClient.companyConnections.deleteMany({
+      where: {
+        requester_company_id: requesterId,
+        correspondent_company_id: correspondentId,
+      },
+    })
+  }
 }

@@ -9,7 +9,6 @@ let app: FastifyInstance
 const prisma = new PrismaClient()
 let it
 let us
-let cna
 
 function getToken(): string {
   return app.createTestJwt({
@@ -29,7 +28,6 @@ before(async () => {
 
   it = await prisma.company.findFirst({ where: { name: 'it' } })
   us = await prisma.company.findFirst({ where: { name: 'us' } })
-  cna = await prisma.company.findFirst({ where: { name: 'cna test' } })
 })
 
 after(async () => {
@@ -41,9 +39,9 @@ after(async () => {
   await app.close()
 })
 
-test('POST create connection without authentication', async (t) => {
+test('DELETE remove connection without authentication', async (t) => {
   const response = await app.inject({
-    method: 'POST',
+    method: 'DELETE',
     url: `/api/companyConnections`,
     body: {
       requesterId: it!.id,
@@ -53,7 +51,7 @@ test('POST create connection without authentication', async (t) => {
   t.equal(response.statusCode, 401)
 })
 
-test('POST create connection without SUPERADMIN role', async (t) => {
+test('DELETE remove connection without SUPERADMIN role', async (t) => {
   const tempToken = app.createTestJwt({
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
@@ -62,7 +60,7 @@ test('POST create connection without SUPERADMIN role', async (t) => {
   })
 
   const response = await app.inject({
-    method: 'POST',
+    method: 'DELETE',
     url: `/api/companyConnections`,
     headers: {
       authorization: `Bearer ${tempToken}`,
@@ -75,9 +73,9 @@ test('POST create connection without SUPERADMIN role', async (t) => {
   t.equal(response.statusCode, 403)
 })
 
-test('POST create connection existing on DB', async (t) => {
+test('DELETE remove connection', async (t) => {
   const response = await app.inject({
-    method: 'POST',
+    method: 'DELETE',
     url: `/api/companyConnections`,
     headers: {
       authorization: `Bearer ${getToken()}`,
@@ -87,22 +85,8 @@ test('POST create connection existing on DB', async (t) => {
       correspondentId: us!.id,
     },
   })
-  t.equal(response.statusCode, 400)
-})
-
-test('POST create connection', async (t) => {
-  const response = await app.inject({
-    method: 'POST',
-    url: `/api/companyConnections`,
-    headers: {
-      authorization: `Bearer ${getToken()}`,
-    },
-    body: {
-      requesterId: it!.id,
-      correspondentId: cna!.id,
-    },
-  })
   t.equal(response.statusCode, 204)
+
   const connections = await prisma.companyConnections.findMany()
-  t.equal(connections.length, 2)
+  t.equal(connections.length, 0)
 })
