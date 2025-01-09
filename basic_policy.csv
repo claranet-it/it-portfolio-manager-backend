@@ -1,3 +1,4 @@
+p, SUPERADMIN, company, read
 p, SUPERADMIN, companyConnections, read
 p, SUPERADMIN, companyConnections, write
 p, SUPERADMIN, task, write

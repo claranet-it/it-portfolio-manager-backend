@@ -29,6 +29,10 @@ export class CompanyService {
     return this.companyRepository.findAll(company.id, true)
   }
 
+  async getAll(): Promise<CompanyType[]> {
+    return await this.companyRepository.findAll()
+  }
+
   async getMine(jwtToken: JwtTokenType): Promise<CompanyWithSkillsType | null> {
     const company = await this.companyRepository.findOne(
       {
