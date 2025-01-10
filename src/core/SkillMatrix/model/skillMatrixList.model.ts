@@ -41,8 +41,8 @@ export class SkillMatrixList {
 
         if (!skillMatrixRowPerUid) {
           const skillsDefault: SkillMatrixSkillsType = {}
-          skillsList.map((skill: string) => {
-            skillsDefault[skill] = 0
+          skillsList.map((skill) => {
+            skillsDefault[skill.name] = 0
           })
 
           skillMatrixRowPerUid = {

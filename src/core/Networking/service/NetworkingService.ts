@@ -6,6 +6,7 @@ import {
 import { EffortReadParamsType } from '@src/core/Effort/model/effort'
 import { skillsList } from '@src/core/Configuration/service/ConfigurationService'
 import { CompanyRepositoryInterface } from '@src/core/Company/repository/CompanyRepositoryInterface'
+import { SkillType } from '@src/core/Configuration/model/configuration.model'
 
 export class NetworkingService {
   constructor(
@@ -25,7 +26,7 @@ export class NetworkingService {
 
         const averageCompanySkills = skillsList.reduce((acc, skill) => {
           const peopleSkill = availableCompanyPeopleSkills.filter(
-            (peopleSkill) => peopleSkill.skill === skill,
+            (peopleSkill) => peopleSkill.skill === skill.name,
           )
           const peopleCount = peopleSkill.length
           const peopleScores = peopleSkill.map(
@@ -35,7 +36,7 @@ export class NetworkingService {
           if (peopleCount === 0) {
             return {
               ...acc,
-              [skill]: {
+              [skill.name]: {
                 averageScore: 0,
                 people: 0,
               },
@@ -43,7 +44,7 @@ export class NetworkingService {
           } else {
             return {
               ...acc,
-              [skill]: {
+              [skill.name]: {
                 averageScore: this.average(peopleScores),
                 people: peopleCount,
               },
@@ -77,9 +78,9 @@ export class NetworkingService {
         const availableCompanyPeopleEfforts =
           await this.networkingRepository.getNetworkingEffortOf(company)
 
-        const companySkillEfforts = skillsList.map((skill) => {
+        const companySkillEfforts = skillsList.map((skill: SkillType) => {
           const peopleSkill = availableCompanyPeopleSkills.filter(
-            (peopleSkill) => peopleSkill.skill === skill,
+            (peopleSkill) => peopleSkill.skill === skill.name,
           )
 
           const peopleUids = peopleSkill.map((personSkill) => personSkill.uid)
@@ -115,7 +116,7 @@ export class NetworkingService {
               totalEffort: averageTotalEffort,
             }
           })
-          return { skill, name: company, effort: companyEfforts }
+          return { skill: skill.name, name: company, effort: companyEfforts }
         })
         return { [company]: companySkillEfforts }
       }),

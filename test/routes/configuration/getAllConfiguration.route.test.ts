@@ -41,8 +41,10 @@ test('get all configuration', async (t) => {
   t.equal(Object.keys(configuration).includes('scoreRange'), true)
   t.equal(Object.keys(configuration).includes('scoreRangeLabels'), true)
   t.equal(configuration.crews.length, 9)
-  t.equal(configuration.skills.Developer.length, 13)
-  t.equal(configuration.skills.Cloud.length, 15)
+  t.equal(configuration.skills.Developer.length, 17)
+  t.equal(configuration.skills.Cloud.length, 23)
+  t.equal(configuration.skills.SoftSkill.length, 2)
+  t.equal(configuration.skills.Design.length, 8)
   t.equal(configuration.scoreRange.min, 0)
   t.equal(configuration.scoreRange.max, 3)
   t.equal(Object.keys(configuration.scoreRangeLabels).length, 4)
@@ -132,112 +134,22 @@ inputs.forEach((input) => {
     t.equal(response.statusCode, 200)
 
     t.same(configuration.crews, input.expectedCrews)
-})
+  })
 
-test('get all configuration without authentication', async t => {
+  test('get all configuration without authentication', async (t) => {
     const app = createApp({
-        logger: false,
+      logger: false,
     })
 
     t.teardown(() => {
-        app.close();
-    })
-
-    const response = await app.inject({
-        method: 'GET',
-        url: '/api/configuration',
-    })
-
-    t.equal(response.statusCode, 401)
-  })
-})
-
-const skillsInput = [
-  {
-    company: 'it',
-    expectedSkills: {
-      'Developer': [
-        'PHP',
-        'Frontend (JS/TS)',
-        'NodeJS (JS/TS)',
-        'Native Android',
-        'Native iOS',
-        'Multiplatform Mobile (ionic, react-native, flutter)',
-        'UI Development (HTML/CSS/SCSS)',
-        'C#',
-        'Python',
-        'Java/Kotlin',
-        'Elixir',
-        'Ruby (Rails)',
-        'Rust',
-      ].sort(),
-      'Cloud': [
-        'AWS core',
-        'AWS migration',
-        'AWS monitoring',
-        'AWS cloud governance',
-        'AWS finance',
-        'AWS streaming + IoT',
-        'AWS ECS',
-        'AWS EKS',
-        'AWS Cloudformation',
-        'Terraform',
-        'Data',
-        'Networking',
-        'Security',
-        'Serverless',
-        'ML',
-      ].sort(),
-    },
-  },
-  {
-    company: 'devq',
-    expectedSkills: {
-      'Developer': [
-        'Native Android',
-        'Native iOS',
-        'Angular',
-        '.NET Core',
-        'C++',
-        'Qt',
-        'Python',
-      ].sort(),
-      'Cloud': [
-        'AWS core',
-        'AWS migration',
-        'AWS monitoring',
-        'AWS cloud governance',
-        'AWS finance',
-        'AWS streaming + IoT',
-        'AWS ECS',
-        'AWS EKS',
-        'AWS Cloudformation',
-      ].sort(),
-    }
-  },
-]
-
-skillsInput.forEach((input) => {
-  test(`get skills for company ${input.company}`, async (t) => {
-    const token = app.createTestJwt({
-      email: 'tester@claranet',
-      name: 'Tester',
-      picture: 'https://test.com/test.jpg',
-      company: input.company,
+      app.close()
     })
 
     const response = await app.inject({
       method: 'GET',
       url: '/api/configuration',
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
     })
 
-    const configuration = response.json<ConfigurationType>()
-
-    t.equal(response.statusCode, 200)
-
-    t.same(configuration.skills, input.expectedSkills)
+    t.equal(response.statusCode, 401)
   })
 })

@@ -10,6 +10,7 @@ import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 import { skills } from '@src/core/Configuration/service/ConfigurationService'
 import { SkillWithCompanyType } from '@src/core/Skill/model/Skill'
 import { SkillRepository } from '@src/infrastructure/Skill/Repository/SkillRepository'
+import { SkillType } from '@src/core/Configuration/model/configuration.model'
 
 export class CompanyService {
   constructor(
@@ -75,10 +76,10 @@ export class CompanyService {
   ): Promise<CompanyWithSkillsType> {
     if (company.skills?.length === 0) {
       const skillsToCreate: SkillWithCompanyType[] = []
-      Object.keys(skills).forEach((serviceLine) => {
-        skills[serviceLine].forEach((skill) => {
+      Object.keys(skills).forEach((serviceLine: string) => {
+        skills[serviceLine].forEach((skill: SkillType) => {
           skillsToCreate.push({
-            name: skill,
+            name: skill.name,
             serviceLine: serviceLine,
             visible: true,
             company: company,
