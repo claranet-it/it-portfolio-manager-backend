@@ -47,11 +47,9 @@ test('read all skill matrix without params', async (t) => {
   })
 
   t.equal(response.statusCode, 200)
-
 })
 
 test('read all skill matrix with empty param', async (t) => {
-
   const response = await app.inject({
     method: 'GET',
     url: '/api/skill-matrix?company=',
@@ -64,7 +62,6 @@ test('read all skill matrix with empty param', async (t) => {
 })
 
 test('read all skill matrix with company param', async (t) => {
-
   const response = await app.inject({
     method: 'GET',
     url: '/api/skill-matrix?company=it',
@@ -82,34 +79,56 @@ test('read all skill matrix with company param', async (t) => {
       company: 'it',
       crew: 'moon',
       skills: {
-        PHP: 3,
+        'C#': 0,
+        Docker: 0,
+        Elixir: 0,
         'Frontend (JS/TS)': 0,
-        'NodeJS (JS/TS)': 0,
+        'Headless CMS': 0,
+        'Java/Kotlin': 3,
+        'Multiplatform Mobile': 0,
         'Native Android': 0,
         'Native iOS': 0,
-        'Multiplatform Mobile (ionic, react-native, flutter)': 0,
-        'UI Development (HTML/CSS/SCSS)': 0,
-        'C#': 0,
+        'NodeJS (JS/TS)': 0,
+        NoSQL: 0,
+        PHP: 3,
         Python: 0,
-        'Java/Kotlin': 3,
-        Elixir: 0,
-        'Ruby (Rails)': 0,
+        Ruby: 0,
         Rust: 0,
-        Serverless: 0,
-        Data: 0,
-        Networking: 0,
-        Security: 0,
-        ML: 0,
-        'AWS Cloudformation': 0,
-        'AWS ECS': 0,
-        'AWS EKS': 0,
-        'AWS cloud governance': 0,
+        SQL: 0,
+        'UI Development': 0,
+        'AWS CloudFormation / Azure Resource Manager': 0,
+        'AWS ECS / Azure Kubernetes Service / Azure Container Instances': 0,
+        'AWS EC2 / Azure Virtual Machines': 0,
+        'AWS EKS / Azure Kubernetes Service': 0,
+        'AWS Lambda / Azure functions': 0,
+        'AWS cloud governance / Azure Policy / Azure Blueprints': 0,
         'AWS core': 0,
-        'AWS finance': 0,
-        'AWS migration': 0,
-        'AWS monitoring': 0,
-        'AWS streaming + IoT': 0,
+        'AWS finance / Azure Policy / Azure Blueprints': 0,
+        'AWS migration / Azure Migrate': 0,
+        'AWS monitoring / Azure Monitor': 0,
+        'AWS streaming + IoT / Azure IoT Hub / Azure Stream Analytics / Azure Event Hubs': 0,
+        Cognito: 0,
+        DB: 0,
+        Data: 0,
+        ML: 0,
+        Networking: 0,
+        Openshift: 0,
+        'S3 / Blob': 0,
+        SQS: 0,
+        Security: 0,
+        Serverless: 0,
         Terraform: 0,
+        VM: 0,
+        Agile: 0,
+        'Gestione progetto': 0,
+        Animation: 0,
+        'Design systems': 0,
+        'Mobile app': 0,
+        Prototyping: 0,
+        'User Experience': 0,
+        'Ux Writing': 0,
+        Visual: 0,
+        'Web app': 0,
       },
     },
   }
@@ -118,5 +137,4 @@ test('read all skill matrix with company param', async (t) => {
     userSkillMatrix.find((res) => Object.keys(res)[0] === 'Nicholas Crow'),
     nicolasCrowExpected,
   )
-
 })

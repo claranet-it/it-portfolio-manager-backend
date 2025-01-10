@@ -28,10 +28,7 @@ afterEach(async () => {
   const deleteSkill = prisma.skill.deleteMany()
   const deleteCompany = prisma.company.deleteMany()
 
-  await prisma.$transaction([
-    deleteSkill,
-    deleteCompany,
-  ])
+  await prisma.$transaction([deleteSkill, deleteCompany])
   await prisma.$disconnect()
   await app.close()
 })
@@ -59,5 +56,5 @@ test('Read mine company', async (t) => {
   t.equal(result.name, 'it')
   t.equal(result.image_url, 'sample_image_url')
   t.ok(result.skills, 'skills should be defined')
-  t.equal(result.skills?.length, 28, 'skills should have 28 items')
+  t.equal(result.skills?.length, 50, 'skills should have 50 items')
 })
