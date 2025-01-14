@@ -14,8 +14,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       onRequest: [fastify.authenticate],
       casbin: {
         rest: {
-          getObj: 'company',
-          getAct: 'write',
+          getObj: 'companyAvailable',
+          getAct: 'read',
         },
       },
       schema: {
