@@ -1,4 +1,5 @@
 p, SUPERADMIN, company, read
+p, SUPERADMIN, companyAvailable, read
 p, SUPERADMIN, companyConnections, read
 p, SUPERADMIN, companyConnections, write
 p, SUPERADMIN, task, write
@@ -9,6 +10,7 @@ p, SUPERADMIN, skill, read
 p, SUPERADMIN, skill, write
 p, SUPERADMIN, user, write
 p, SUPERADMIN, user, delete
+p, ADMIN, companyAvailable, read
 p, ADMIN, company, write
 p, ADMIN, companyConnections, read
 p, ADMIN, task, write
