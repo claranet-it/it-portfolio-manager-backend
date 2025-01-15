@@ -9,10 +9,16 @@ export const ConfigurationCrews = Type.Array(
 
 export type ConfigurationCrewsType = Static<typeof ConfigurationCrews>
 
-const ConfigurationSkills = Type.Record(
-  Type.String(),
-  Type.Array(Type.String()),
-)
+export const Skill = Type.Object({
+  name: Type.String(),
+  description: Type.String(),
+})
+
+export type SkillType = Static<typeof Skill>
+
+const ConfigurationSkills = Type.Record(Type.String(), Type.Array(Skill))
+
+export type ConfigurationSkillsType = Static<typeof ConfigurationSkills>
 
 const ScoreRangeLabels = Type.Object({
   0: Type.String(),

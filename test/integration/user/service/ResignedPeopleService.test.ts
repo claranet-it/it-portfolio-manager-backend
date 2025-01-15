@@ -28,17 +28,23 @@ beforeEach(() => {
 })
 
 test('remove user profile', async (t) => {
-  await userProfileRepository.saveUserProfile(email, 'resigned', 'it', 'picture-url', {
-    crew: 'moon',
-    crewLeader: true,
-    place: 'Jesi',
-    workingExperience: '',
-    education: 'University',
-    certifications: '',
-  })
+  await userProfileRepository.saveUserProfile(
+    email,
+    'resigned',
+    'it',
+    'picture-url',
+    {
+      crew: 'moon',
+      crewLeader: true,
+      place: 'Jesi',
+      workingExperience: '',
+      education: 'University',
+      certifications: '',
+    },
+  )
   await service.removeResigned(email)
   const disabeldProfiles = await userProfileRepository.getDisabled('it')
-  t.equal(disabeldProfiles.length, 1)
+  t.equal(disabeldProfiles.length, 2)
 })
 
 test('remove skill matrix', async (t) => {

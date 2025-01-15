@@ -21,6 +21,8 @@ export const UserProfile = Type.Object({
   workingExperience: Type.String(),
   education: Type.String(),
   certifications: Type.String(),
+  picture: Type.Optional(Type.String()),
+  role: Type.Optional(Type.String()),
 })
 
 export type UserProfileType = Static<typeof UserProfile>
@@ -38,7 +40,10 @@ export const CompleteUserProfile = Type.Intersect([
   UserProfile,
   Type.Object({ uid: Type.String() }),
   Type.Object({ picture: Type.String() }),
-  Type.Object({ disabled: Type.Optional(Type.Boolean({ default: false })) }),
+  Type.Object({
+    disabled: Type.Optional(Type.Boolean({ default: false })),
+    disabledAt: Type.Optional(Type.String()),
+  }),
 ])
 
 export const CnaUserProfile = Type.Object({
@@ -70,6 +75,24 @@ export const UserWithCrew = Type.Object({
   id: Type.String(),
   name: Type.String(),
   crew: Type.Optional(Type.String()),
+  role: Type.Optional(Type.String()),
+  disabled: Type.Optional(Type.Boolean({ default: false })),
+  disabledAt: Type.Optional(Type.String()),
 })
+export type UserWithCrewType = Static<typeof UserWithCrew>
+
 export const UserWithCrewList = Type.Array(UserWithCrew)
 export type UserWithCrewListType = Static<typeof UserWithCrewList>
+
+const PatchRole = Type.Union([
+  Type.Literal('ADMIN'),
+  Type.Literal('TEAM_LEADER'),
+  Type.Literal(''),
+])
+
+export const PatchUserProfile = Type.Object({
+  crew: Type.Optional(Type.String()),
+  role: Type.Optional(PatchRole),
+})
+
+export type PatchUserProfileType = Static<typeof PatchUserProfile>

@@ -1,10 +1,14 @@
 import {
   CnaUserProfileListType,
   CompleteUserProfileType,
+  PatchUserProfileType,
   UserCompanyType,
   UserProfileType,
 } from '../model/user.model'
 import { UserProfileRepositoryInterface } from '../repository/UserProfileRepositoryInterface'
+import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
+import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
+import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
 export class UserProfileService {
   constructor(private userProfileRepository: UserProfileRepositoryInterface) {}
@@ -50,8 +54,12 @@ export class UserProfileService {
     return this.userProfileRepository.getByCompany(company)
   }
 
-  async delete(uid: string) {
+  async delete(uid: string): Promise<void> {
     await this.userProfileRepository.delete(uid)
+  }
+
+  async reactivateUser(uid: string): Promise<void> {
+    await this.userProfileRepository.reactivateUser(uid)
   }
 
   async getUsersForCna(
@@ -82,5 +90,43 @@ export class UserProfileService {
         }
       }),
     )
+  }
+
+  async patch(
+    role: string,
+    id: string,
+    patchUserProfile: PatchUserProfileType,
+  ): Promise<void> {
+    const userProfile = await this.userProfileRepository.getUserProfileById(id)
+
+    if (!userProfile) {
+      throw new NotFoundException('Not found')
+    }
+
+    if (patchUserProfile.crew) {
+      userProfile.crew = patchUserProfile.crew
+    }
+
+    if (patchUserProfile.role !== undefined) {
+      if (!this.checkPatchableRole(role, patchUserProfile.role)) {
+        throw new ForbiddenException('Forbidden')
+      }
+      userProfile.role = patchUserProfile.role
+    }
+
+    return this.userProfileRepository.save(id, userProfile)
+  }
+
+  private checkPatchableRole(currentRole: string, targetRole: string): boolean {
+    const roleHierarchy = ['', 'TEAM_LEADER', 'ADMIN', 'SUPERADMIN']
+
+    const currentRoleIndex = roleHierarchy.indexOf(currentRole)
+    const targetRoleIndex = roleHierarchy.indexOf(targetRole)
+
+    if (currentRoleIndex === -1 || targetRoleIndex === -1) {
+      throw new BadRequestException('Invalid role')
+    }
+
+    return currentRoleIndex > targetRoleIndex
   }
 }

@@ -47,7 +47,9 @@
     "uid": "sun@test.com",
     "crew": "sun",
     "company": "it",
-    "name" : "crew sun"
+    "name" : "crew sun",
+    "disabled": true,
+    "disabledAt": "2024-12-31T10:59:59.999Z"
   },
   {
     "uid": "micol.ts@email.com",

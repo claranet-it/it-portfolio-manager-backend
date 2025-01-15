@@ -32,18 +32,32 @@ export class AuthService {
       console.log(error)
       throw new UnauthorizedError()
     }
-    const company = await this.companyRepository.findById(authInfo.companyId)
+    const company = await this.companyRepository.findOne({
+      domain: authInfo.companyId,
+    })
     if (!company) {
       console.warn(`Company with id ${authInfo.companyId} not found`)
       throw new UnauthorizedError()
     }
 
-    const userProfile = await this.userProfileRepository.getCompleteUserProfile(
+    let userProfile = await this.userProfileRepository.getCompleteUserProfile(
+      authInfo.email,
+    )
+    if (!userProfile) {
+      await this.userProfileRepository.saveUserProfile(
+        authInfo.email,
+        authInfo.name,
+        company.name,
+        authInfo.picture,
+      )
+    }
+    userProfile = await this.userProfileRepository.getCompleteUserProfile(
       authInfo.email,
     )
     if (!userProfile) {
       throw new UnauthorizedError()
     }
+
     const role = await this.userProfileRepository.getRole(authInfo.email)
 
     const user: JwtTokenType = {

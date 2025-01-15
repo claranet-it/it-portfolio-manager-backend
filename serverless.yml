@@ -31,7 +31,6 @@ provider:
             - "Fn::GetAtt": [ ItPortfolioManagerTasks, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ]
             - "Fn::Join": [ '/', [ "Fn::GetAtt": [ ItPortfolioManagerTimeEntry, Arn ], 'index', 'companyIndex' ] ]
-            - "Fn::GetAtt": [ ItPortfolioManagerCompanies, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerCrews, Arn ]
             - "Fn::GetAtt": [ ItPortfolioManagerTaskProperties, Arn ]
         - Effect: "Allow"
@@ -124,8 +123,6 @@ custom:
             rawsources: [ ./seed/task-properties.json ]
           - table: "ItPortfolioManager-TimeEntry-${opt:stage, 'dev'}"
             rawsources: [ ./seed/time-entry.json ]
-          - table: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
-            sources: ['./seed/company.json']
           - table: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
             sources: ['./seed/crew.json']
 
@@ -331,19 +328,6 @@ resources:
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
-    ItPortfolioManagerCompanies:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: "ItPortfolioManager-Company-${opt:stage, 'dev'}"
-        AttributeDefinitions:
-          - AttributeName: domain
-            AttributeType: S
-        KeySchema:
-          - AttributeName: domain
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
     ItPortfolioManagerCrews:
       Type: AWS::DynamoDB::Table
       Properties:

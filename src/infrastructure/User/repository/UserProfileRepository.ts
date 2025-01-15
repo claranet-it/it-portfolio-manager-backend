@@ -18,6 +18,24 @@ import { flowingUsers } from '@src/core/Configuration/service/ConfigurationServi
 export class UserProfileRepository implements UserProfileRepositoryInterface {
   constructor(private dynamoDBClient: DynamoDBClient) {}
 
+  async getUserProfileById(
+    uid: string,
+  ): Promise<CompleteUserProfileType | null> {
+    const command = new QueryCommand({
+      TableName: getTableName('UserProfile'),
+      KeyConditionExpression: 'uid = :uid',
+      ExpressionAttributeValues: { ':uid': { S: uid } },
+    })
+
+    const result = await this.dynamoDBClient.send(command)
+
+    if (!result.Items || result.Items.length == 0 || result.Items.length > 1) {
+      return null
+    }
+
+    return this.getCompleteUserProfileFromDynamoItem(result.Items[0])
+  }
+
   async getUserProfile(
     uid: string,
     company: string | undefined,
@@ -74,19 +92,19 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     name: string,
     company: string,
     picture: string,
-    userProfile: UpdateUserProfileType,
+    userProfile?: UpdateUserProfileType,
   ): Promise<void> {
     const item = {
       uid: { S: uid },
       name: { S: name },
-      crew: { S: userProfile.crew },
+      crew: { S: userProfile?.crew || '' },
       company: { S: company },
       picture: { S: picture },
-      crewLeader: { BOOL: userProfile.crewLeader || false },
-      place: { S: userProfile.place || '' },
-      workingExperience: { S: userProfile.workingExperience || '' },
-      education: { S: userProfile.education || '' },
-      certifications: { S: userProfile.certifications || '' },
+      crewLeader: { BOOL: userProfile?.crewLeader || false },
+      place: { S: userProfile?.place || '' },
+      workingExperience: { S: userProfile?.workingExperience || '' },
+      education: { S: userProfile?.education || '' },
+      certifications: { S: userProfile?.certifications || '' },
     }
     const putItemCommand = new PutItemCommand({
       TableName: getTableName('UserProfile'),
@@ -221,6 +239,24 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     console.warn(response)
   }
 
+  async reactivateUser(uid: string): Promise<void> {
+    const command = new UpdateItemCommand({
+      TableName: getTableName('UserProfile'),
+      Key: { uid: { S: uid } },
+      UpdateExpression: 'SET disabled = :disabled, disabledAt = :disabledAt',
+      ExpressionAttributeValues: {
+        ':disabled': {
+          BOOL: false,
+        },
+        ':disabledAt': {
+          S: '',
+        },
+      },
+    })
+    const response = await this.dynamoDBClient.send(command)
+    console.warn(response)
+  }
+
   async getDisabled(company: string): Promise<CompleteUserProfileType[]> {
     const command = new QueryCommand({
       TableName: getTableName('UserProfile'),
@@ -273,6 +309,33 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
       education: item.education?.S ?? '',
       certifications: item.certifications?.S ?? '',
       disabled: item.disabled?.BOOL ?? false,
+      disabledAt: item.disabledAt?.S ?? '',
+      role: item.role?.S ?? '',
     }
+  }
+
+  async save(uid: string, userProfile: UserProfileType): Promise<void> {
+    const item: Record<string, AttributeValue> = {
+      uid: { S: uid },
+      name: { S: userProfile.name || '' },
+      crew: { S: userProfile.crew || '' },
+      company: { S: userProfile.company || '' },
+      picture: { S: userProfile.picture || '' },
+      crewLeader: {
+        BOOL:
+          userProfile.crewLeader !== undefined ? userProfile.crewLeader : false,
+      },
+      place: { S: userProfile.place || '' },
+      workingExperience: { S: userProfile.workingExperience || '' },
+      education: { S: userProfile.education || '' },
+      certifications: { S: userProfile.certifications || '' },
+      role: { S: userProfile.role || '' },
+    }
+
+    const putItemCommand = new PutItemCommand({
+      TableName: getTableName('UserProfile'),
+      Item: item,
+    })
+    await this.dynamoDBClient.send(putItemCommand)
   }
 }

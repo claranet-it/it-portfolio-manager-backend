@@ -15,6 +15,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Company {
+  id                       String               @id @default(uuid())
+  domain                   String
+  name                     String
+  image_url                String?
+  skills                   Skill[]
+  requestedConnections     CompanyConnections[] @relation("RequesterCompany")
+  correspondentConnections CompanyConnections[] @relation("CorrespondentCompany")
+}
+
+model CompanyConnections {
+  requester                Company @relation("RequesterCompany", fields: [requester_company_id], references: [id])
+  requester_company_id     String
+  correspondent            Company @relation("CorrespondentCompany", fields: [correspondent_company_id], references: [id])
+  correspondent_company_id String
+
+  @@unique([requester_company_id, correspondent_company_id])
+}
+
 model Customer {
   id         String    @id @default(uuid())
   company_id String
@@ -49,6 +68,15 @@ model ProjectTask {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   time_entries  TimeEntry[]
+}
+
+model Skill {
+  id           Int     @id @default(autoincrement())
+  name         String
+  service_line String
+  visible      Boolean @default(true)
+  company      Company @relation(fields: [company_id], references: [id])
+  company_id   String
 }
 
 model TimeEntry {
