@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import {
+  EffortQueryParams,
   EffortQueryParamsType,
-  EffortReadParams,
   EffortResponse,
   EffortResponseType,
 } from '@src/core/Effort/model/effort'
@@ -16,7 +16,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Effort'],
-        querystring: EffortReadParams,
+        querystring: EffortQueryParams,
         security: [
           {
             apiKey: [],

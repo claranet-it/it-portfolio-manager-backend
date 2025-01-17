@@ -1,0 +1,1706 @@
+[
+  {
+    "it": [
+      {
+        "skill": "C#",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Docker",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Elixir",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Frontend (JS/TS)",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Headless CMS",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Java/Kotlin",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 1,
+            "confirmedEffort": 50,
+            "tentativeEffort": 0,
+            "totalEffort": 50
+          },
+          {
+            "month_year": "02_23",
+            "people": 1,
+            "confirmedEffort": 50,
+            "tentativeEffort": 30,
+            "totalEffort": 80
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Multiplatform Mobile",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Native Android",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Native iOS",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "NodeJS (JS/TS)",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "NoSQL",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "PHP",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 2,
+            "confirmedEffort": 50,
+            "tentativeEffort": 5,
+            "totalEffort": 55
+          },
+          {
+            "month_year": "02_23",
+            "people": 2,
+            "confirmedEffort": 37.5,
+            "tentativeEffort": 52.5,
+            "totalEffort": 90
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Python",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 1,
+            "confirmedEffort": 50,
+            "tentativeEffort": 10,
+            "totalEffort": 60
+          },
+          {
+            "month_year": "02_23",
+            "people": 1,
+            "confirmedEffort": 25,
+            "tentativeEffort": 75,
+            "totalEffort": 100
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Ruby",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Rust",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "SQL",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "UI Development",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS CloudFormation / Azure Resource Manager",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS ECS / Azure Kubernetes Service / Azure Container Instances",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS EC2 / Azure Virtual Machines",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS EKS / Azure Kubernetes Service",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS Lambda / Azure functions",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS cloud governance / Azure Policy / Azure Blueprints",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS core",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS finance / Azure Policy / Azure Blueprints",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS migration / Azure Migrate",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS monitoring / Azure Monitor",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "AWS streaming + IoT / Azure IoT Hub / Azure Stream Analytics / Azure Event Hubs",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Cognito",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "DB",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Data",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "ML",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Networking",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Openshift",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "S3 / Blob",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "SQS",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Security",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Serverless",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Terraform",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "VM",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Agile",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Gestione progetto",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Animation",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Design systems",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Mobile app",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Prototyping",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "User Experience",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Ux Writing",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Visual",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      },
+      {
+        "skill": "Web app",
+        "name": "it",
+        "effort": [
+          {
+            "month_year": "01_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "02_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "03_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          },
+          {
+            "month_year": "04_23",
+            "people": 0,
+            "confirmedEffort": 0,
+            "tentativeEffort": 0,
+            "totalEffort": 0
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -69,5 +69,5 @@ test('GET available company for networking', async (t) => {
     },
   })
   t.equal(response.statusCode, 200)
-  t.equal(response.json().length, 2)
+  t.equal(response.json().length, 1)
 })

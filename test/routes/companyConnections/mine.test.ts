@@ -69,5 +69,5 @@ test('GET connected companies', async (t) => {
     },
   })
   t.equal(response.statusCode, 200)
-  t.equal(response.json().length, 1)
+  t.equal(response.json().length, 2)
 })
