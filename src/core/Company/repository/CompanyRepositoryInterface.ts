@@ -16,6 +16,7 @@ export interface CompanyRepositoryInterface {
   findAll(
     idToExclude?: string,
     excludeConnectedCompanies?: boolean,
+    excludeUnconnectedCompanies?: boolean,
   ): Promise<CompanyType[]>
   save(company: CompanyType): Promise<CompanyType>
 }

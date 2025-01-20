@@ -44,7 +44,7 @@ export type EffortQueryParamsType = Static<typeof EffortQueryParams>
 
 export const EffortReadParams = Type.Intersect([
   EffortQueryParams,
-  Type.Object({ company: Type.Optional(Type.String()) }),
+  Type.Object({ company: Type.String() }),
 ])
 
 export type EffortReadParamsType = Static<typeof EffortReadParams>

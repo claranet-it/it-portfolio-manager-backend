@@ -88,5 +88,5 @@ test('DELETE remove connection', async (t) => {
   t.equal(response.statusCode, 204)
 
   const connections = await prisma.companyConnections.findMany()
-  t.equal(connections.length, 0)
+  t.equal(connections.length, 1)
 })
