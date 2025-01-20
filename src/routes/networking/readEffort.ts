@@ -4,8 +4,8 @@ import {
   NetworkingEffortResponseType,
 } from '@src/core/Networking/model/networking.model'
 import {
+  EffortQueryParams,
   EffortQueryParamsType,
-  EffortReadParams,
 } from '@src/core/Effort/model/effort'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
@@ -18,7 +18,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Networking Effort'],
-        querystring: EffortReadParams,
+        querystring: EffortQueryParams,
         security: [
           {
             apiKey: [],
@@ -51,7 +51,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             company: request.user.company,
           })
       } catch (error) {
-        request.log.error(error)
+        console.log(error)
         return reply.code(500).send()
       }
     },

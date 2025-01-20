@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, test } from 'tap'
+import { after, before, test } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import { NetworkingSkillsResponseType } from '@src/core/Networking/model/networking.model'
@@ -19,13 +19,13 @@ function getToken(company: string): string {
   })
 }
 
-beforeEach(async () => {
+before(async () => {
   app = createApp({ logger: false })
   await app.ready()
   await seedCompany()
 })
 
-afterEach(async () => {
+after(async () => {
   const deleteCompany = prisma.company.deleteMany()
 
   await prisma.$transaction([deleteCompany])
@@ -43,8 +43,7 @@ test('read networking skills without authentication', async (t) => {
 })
 
 test('read company networking skills of it', async (t) => {
-  const company = 'it'
-  const token = getToken(company)
+  const token = getToken('it')
   const response = await app.inject({
     method: 'GET',
     url: '/api/networking/skills',

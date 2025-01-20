@@ -75,8 +75,9 @@ export class CompanyRepository implements CompanyRepositoryInterface {
   async findAll(
     idToExclude?: string,
     excludeConnectedCompanies?: boolean,
+    excludeUnconnectedCompanies?: boolean,
   ): Promise<CompanyType[]> {
-    const where: Prisma.CompanyWhereInput = {}
+    let where: Prisma.CompanyWhereInput = {}
     if (idToExclude) {
       where.NOT = { id: idToExclude }
     }
@@ -84,6 +85,23 @@ export class CompanyRepository implements CompanyRepositoryInterface {
       where.NOT = {
         OR: [
           { id: idToExclude },
+          {
+            requestedConnections: {
+              some: { correspondent_company_id: idToExclude },
+            },
+          },
+          {
+            correspondentConnections: {
+              some: { requester_company_id: idToExclude },
+            },
+          },
+        ],
+      }
+    }
+
+    if (excludeUnconnectedCompanies && idToExclude) {
+      where = {
+        OR: [
           {
             requestedConnections: {
               some: { correspondent_company_id: idToExclude },

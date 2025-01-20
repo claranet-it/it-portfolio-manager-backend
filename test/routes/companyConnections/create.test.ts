@@ -9,7 +9,7 @@ let app: FastifyInstance
 const prisma = new PrismaClient()
 let it
 let us
-let cna
+let testCompany
 
 function getToken(): string {
   return app.createTestJwt({
@@ -29,7 +29,9 @@ before(async () => {
 
   it = await prisma.company.findFirst({ where: { name: 'it' } })
   us = await prisma.company.findFirst({ where: { name: 'us' } })
-  cna = await prisma.company.findFirst({ where: { name: 'cna test' } })
+  testCompany = await prisma.company.findFirst({
+    where: { name: 'test company' },
+  })
 })
 
 after(async () => {
@@ -99,10 +101,10 @@ test('POST create connection', async (t) => {
     },
     body: {
       requesterId: it!.id,
-      correspondentId: cna!.id,
+      correspondentId: testCompany!.id,
     },
   })
   t.equal(response.statusCode, 204)
   const connections = await prisma.companyConnections.findMany()
-  t.equal(connections.length, 2)
+  t.equal(connections.length, 3)
 })

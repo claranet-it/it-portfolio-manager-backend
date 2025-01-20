@@ -147,16 +147,16 @@ export class NetworkingService {
     return numbers.length > 0 ? sum / numbers.length : 0
   }
 
-  private async getNetworkingCompanies(
-    company: string | undefined,
-  ): Promise<string[]> {
-    if (company === 'it') {
-      const company = await this.companyRepository.findOne({ name: 'it' })
-      if (company) {
-        return (await this.companyRepository.findAll(company.id)).map(
-          (company) => company.name,
+  private async getNetworkingCompanies(companyName: string): Promise<string[]> {
+    const company = await this.companyRepository.findOne({ name: companyName })
+    if (company) {
+      return (
+        await this.companyRepository.findAll(
+          company.id,
+          false,
+          companyName !== 'it',
         )
-      }
+      ).map((company) => company.name)
     }
 
     return []
