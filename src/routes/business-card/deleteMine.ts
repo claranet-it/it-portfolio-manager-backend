@@ -1,18 +1,14 @@
 import { FastifyInstance } from 'fastify'
-import { DeleteBusinessCard, DeleteBusinessCardType } from '@src/core/BusinessCard/model'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.delete<{
-    Body: DeleteBusinessCardType
-  }>(
+  fastify.delete(
     '/',
     {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Business card'],
-        body: DeleteBusinessCard,
         security: [
           {
             apiKey: [],
@@ -44,8 +40,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .dependencyInjectionContainer()
           .resolve('businessCardService')
           .delete({
-            userEmail: request.user.email,
-            ...request.body
+            email: request.user.email,
           })
         reply.code(204).send()
       } catch (error) {

@@ -1,4 +1,4 @@
-import { BusinessCardType, DeleteBusinessCardType } from '@src/core/BusinessCard/model';
+import { BusinessCardType } from '@src/core/BusinessCard/model';
 import { FastifyInstance } from 'fastify';
 
 export async function addBusinessCard(app: FastifyInstance, token: string, payload: BusinessCardType) {
@@ -12,14 +12,13 @@ export async function addBusinessCard(app: FastifyInstance, token: string, paylo
   })
 }
 
-export async function deleteBusinessCard(app: FastifyInstance, token: string, payload: DeleteBusinessCardType) {
+export async function deleteOwnBusinessCard(app: FastifyInstance, token: string) {
   return await app.inject({
     method: 'DELETE',
     url: '/api/business-card',
     headers: {
       authorization: `Bearer ${token}`,
     },
-    payload,
   })
 }
 

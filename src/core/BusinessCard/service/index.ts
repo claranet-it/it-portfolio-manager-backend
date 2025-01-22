@@ -1,5 +1,5 @@
 import { BusinessCardRepositoryInterface } from '../repository'
-import { BusinessCardType, BusinessCardWithUserEmailType, DeleteBusinessCardWithUserEmailType } from '../model'
+import { BusinessCardType, BusinessCardWithUserEmailType, DeleteBusinessCardType, GetBusinessCardType } from '../model'
 
 export class BusinessCardService {
   constructor(
@@ -14,15 +14,11 @@ export class BusinessCardService {
     await this.businessCardRepository.save(paramsWithoutUserEmail)
   }
 
-  async delete(params: DeleteBusinessCardWithUserEmailType): Promise<void> {
-    if (params.email !== params.userEmail) {
-      throw new Error('Can\'t delete business card for another user')
-    }
-    const { userEmail, ...paramsWithoutUserEmail } = params; // eslint-disable-line @typescript-eslint/no-unused-vars
-    await this.businessCardRepository.delete(paramsWithoutUserEmail)
+  async delete(params: DeleteBusinessCardType): Promise<void> {
+    await this.businessCardRepository.delete(params)
   }
 
-  async get(params: { email: string }): Promise<BusinessCardType> {
+  async get(params: GetBusinessCardType): Promise<BusinessCardType> {
     return await this.businessCardRepository.get(params)
   }
 }

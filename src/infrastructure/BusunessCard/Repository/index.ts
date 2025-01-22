@@ -1,6 +1,6 @@
 import { PrismaClient } from '../../../../prisma/generated'
 import { BusinessCardRepositoryInterface } from '@src/core/BusinessCard/repository'
-import { BusinessCardType, DeleteBusinessCardType } from '@src/core/BusinessCard/model'
+import { BusinessCardType, DeleteBusinessCardType, GetBusinessCardType } from '@src/core/BusinessCard/model'
 
 export class BusinessCardRepository implements BusinessCardRepositoryInterface {
 
@@ -35,7 +35,7 @@ export class BusinessCardRepository implements BusinessCardRepositoryInterface {
     });
   }
 
-  async get(params: { email: string }): Promise<BusinessCardType> {
+  async get(params: GetBusinessCardType): Promise<BusinessCardType> {
     const prisma = new PrismaClient()
 
     const businessCard = await prisma.businessCard.findUnique({

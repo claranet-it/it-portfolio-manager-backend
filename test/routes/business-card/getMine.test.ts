@@ -43,4 +43,6 @@ test('should get own business card', async (t) => {
   const getResponseData = getResponse.json()
   t.equal(getResponse.statusCode, 200)
   t.same(getResponseData, FAKE_BUSINESS_CARD_DATA)
+
+  await prisma.businessCard.delete({where: {email: FAKE_EMAIL}})
 })

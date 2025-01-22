@@ -42,6 +42,8 @@ test('should save business card', async (t) => {
 
   const bc = await prisma.businessCard.findUnique({where: {email: FAKE_EMAIL}})
   t.equal(bc?.name, FAKE_BUSINESS_CARD_DATA.name)
+
+  await prisma.businessCard.delete({where: {email: FAKE_EMAIL}})
 })
 
 test('should return 500 if user email is different from business card email', async (t) => {
@@ -62,4 +64,6 @@ test('should update business card', async (t) => {
 
   const updatedBc = await prisma.businessCard.findUnique({where: {email: FAKE_EMAIL}})
   t.equal(updatedBc?.name, newName)
+
+  await prisma.businessCard.delete({where: {email: FAKE_EMAIL}})
 })

@@ -18,14 +18,11 @@ export const DeleteBusinessCard = Type.Object({
   email: Type.String(),
 })
 
-export const DeleteBusinessCardWithUserEmail = Type.Intersect([
-  DeleteBusinessCard,
-  Type.Object({
-    userEmail: Type.String(),
-  }),
-])
-  
+export const GetBusinessCard = Type.Object({
+  email: Type.String(),
+})
+
 export type BusinessCardType = Static<typeof BusinessCard>
 export type BusinessCardWithUserEmailType = Static<typeof BusinessCardWithUserEmail>
 export type DeleteBusinessCardType = Static<typeof DeleteBusinessCard>
-export type DeleteBusinessCardWithUserEmailType = Static<typeof DeleteBusinessCardWithUserEmail>
+export type GetBusinessCardType = Static<typeof GetBusinessCard>

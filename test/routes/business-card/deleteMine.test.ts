@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify'
 import { test, before, after } from 'tap'
 import createApp from '@src/app'
 import { PrismaClient } from '../../../prisma/generated'
-import { addBusinessCard, deleteBusinessCard } from '@test/utils/business-card'
+import { addBusinessCard, deleteOwnBusinessCard } from '@test/utils/business-card'
 import { getToken } from '@test/utils/token'
 
 let app: FastifyInstance
@@ -36,15 +36,9 @@ test('should return 401 deleting business card without authentication', async (t
 })
 
 test('should return 500 deleting non existing business card', async (t) => {
-  const response = await deleteBusinessCard(app, getToken(app, FAKE_EMAIL), {email: FAKE_EMAIL})
+  const response = await deleteOwnBusinessCard(app, getToken(app, FAKE_EMAIL))
   t.equal(response.statusCode, 500)
 })
-
-test('should return 500 if user email is different from business card email', async (t) => {
-  const response = await deleteBusinessCard(app, getToken(app, FAKE_EMAIL), {email: 'another@email.com'})
-  t.equal(response.statusCode, 500)
-})
-  
 
 test('should delete business card', async (t) => {
   const response = await addBusinessCard(app, getToken(app, FAKE_EMAIL), FAKE_BUSINESS_CARD_DATA)
@@ -53,7 +47,7 @@ test('should delete business card', async (t) => {
   const bc = await prisma.businessCard.findUnique({where: {email: FAKE_EMAIL}})
   t.equal(bc?.name, FAKE_BUSINESS_CARD_DATA.name)
 
-  const deleteResponse = await deleteBusinessCard(app, getToken(app, FAKE_EMAIL), {email: FAKE_EMAIL})
+  const deleteResponse = await deleteOwnBusinessCard(app, getToken(app, FAKE_EMAIL))
   t.equal(deleteResponse.statusCode, 204)
     
   const deletedBc = await prisma.businessCard.findUnique({ where: { email: FAKE_EMAIL } })
