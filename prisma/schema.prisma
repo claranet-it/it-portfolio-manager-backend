@@ -92,3 +92,13 @@ model TimeEntry {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }
+
+model BusinessCard {
+  id         String   @id @default(uuid())
+  name       String
+  role       String?
+  email      String   @unique
+  mobile     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
