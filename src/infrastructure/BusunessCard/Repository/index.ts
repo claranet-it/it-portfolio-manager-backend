@@ -1,6 +1,6 @@
 import { PrismaClient } from '../../../../prisma/generated'
 import { BusinessCardRepositoryInterface } from '@src/core/BusinessCard/repository'
-import { BusinessCardType } from '@src/core/BusinessCard/model'
+import { BusinessCardType, DeleteBusinessCardType } from '@src/core/BusinessCard/model'
 
 export class BusinessCardRepository implements BusinessCardRepositoryInterface {
 
@@ -21,6 +21,16 @@ export class BusinessCardRepository implements BusinessCardRepositoryInterface {
         email: params.email,
         role: params.role,
         mobile: params.mobile,
+      },
+    });
+  }
+
+  async delete(params: DeleteBusinessCardType): Promise<void> {
+    const prisma = new PrismaClient()
+
+    await prisma.businessCard.delete({
+      where: {
+        email: params.email,
       },
     });
   }
