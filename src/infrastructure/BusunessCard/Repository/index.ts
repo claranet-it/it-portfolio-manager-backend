@@ -35,4 +35,25 @@ export class BusinessCardRepository implements BusinessCardRepositoryInterface {
     });
   }
 
+  async get(params: { email: string }): Promise<BusinessCardType> {
+    const prisma = new PrismaClient()
+
+    const businessCard = await prisma.businessCard.findUnique({
+      where: {
+        email: params.email,
+      },
+    });
+
+    if (!businessCard) {
+      throw new Error('Business card not found')
+    }
+
+    return {
+      name: businessCard.name,
+      email: businessCard.email,
+      role: businessCard.role || undefined,
+      mobile: businessCard.mobile || undefined,
+    }
+  }
+
 }

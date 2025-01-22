@@ -1,5 +1,5 @@
 import { BusinessCardRepositoryInterface } from '../repository'
-import { BusinessCardWithUserEmailType, DeleteBusinessCardWithUserEmailType } from '../model'
+import { BusinessCardType, BusinessCardWithUserEmailType, DeleteBusinessCardWithUserEmailType } from '../model'
 
 export class BusinessCardService {
   constructor(
@@ -22,4 +22,7 @@ export class BusinessCardService {
     await this.businessCardRepository.delete(paramsWithoutUserEmail)
   }
 
+  async get(params: { email: string }): Promise<BusinessCardType> {
+    return await this.businessCardRepository.get(params)
+  }
 }

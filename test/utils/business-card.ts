@@ -23,3 +23,13 @@ export async function deleteBusinessCard(app: FastifyInstance, token: string, pa
   })
 }
 
+export async function getOwnBusinessCard(app: FastifyInstance, token: string) {
+  return await app.inject({
+    method: 'GET',
+    url: '/api/business-card',
+    headers: {
+      authorization: `Bearer ${token}`,
+    }
+  })
+}
+
