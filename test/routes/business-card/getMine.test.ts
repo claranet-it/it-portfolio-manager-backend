@@ -35,6 +35,13 @@ test('should return 401 getting business card without authentication', async (t)
   t.equal(response.statusCode, 401)
 })
 
+test('should return empty object if business card is not present', async (t) => {
+  const response = await getOwnBusinessCard(app, getToken(app, FAKE_EMAIL))
+  const responseData = response.json()
+  t.equal(response.statusCode, 200)
+  t.same(responseData, {})
+})
+
 test('should get own business card', async (t) => {
   const response = await addBusinessCard(app, getToken(app, FAKE_EMAIL), FAKE_BUSINESS_CARD_DATA)
   t.equal(response.statusCode, 204)

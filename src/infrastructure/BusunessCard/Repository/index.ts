@@ -35,7 +35,7 @@ export class BusinessCardRepository implements BusinessCardRepositoryInterface {
     });
   }
 
-  async get(params: GetBusinessCardType): Promise<BusinessCardType> {
+  async get(params: GetBusinessCardType): Promise<BusinessCardType | null> {
     const prisma = new PrismaClient()
 
     const businessCard = await prisma.businessCard.findUnique({
@@ -45,7 +45,7 @@ export class BusinessCardRepository implements BusinessCardRepositoryInterface {
     });
 
     if (!businessCard) {
-      throw new Error('Business card not found')
+      return null
     }
 
     return {

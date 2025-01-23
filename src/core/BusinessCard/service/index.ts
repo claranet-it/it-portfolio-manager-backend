@@ -18,7 +18,7 @@ export class BusinessCardService {
     await this.businessCardRepository.delete(params)
   }
 
-  async get(params: GetBusinessCardType): Promise<BusinessCardType> {
+  async get(params: GetBusinessCardType): Promise<BusinessCardType | null> {
     return await this.businessCardRepository.get(params)
   }
 }
