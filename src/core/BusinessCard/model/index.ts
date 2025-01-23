@@ -3,7 +3,7 @@ import { Static, Type } from '@sinclair/typebox'
 export const BusinessCard = Type.Object({
   name: Type.String(),
   role: Type.Optional(Type.String()),
-  email: Type.String(),
+  email: Type.String({ format: "email" }),
   mobile: Type.Optional(Type.String()),
 })
 
@@ -15,11 +15,11 @@ export const BusinessCardWithUserEmail = Type.Intersect([
 ])
 
 export const DeleteBusinessCard = Type.Object({
-  email: Type.String(),
+  email: Type.String({ format: "email" }),
 })
 
 export const GetBusinessCard = Type.Object({
-  email: Type.String(),
+  email: Type.String({ format: "email" }),
 })
 
 export type BusinessCardType = Static<typeof BusinessCard>

@@ -35,7 +35,6 @@ test('should return 401 saving business card without authentication', async (t) 
   t.equal(response.statusCode, 401)
 })
 
-
 test('should save business card', async (t) => {
   const response = await addBusinessCard(app, getToken(app, FAKE_EMAIL), FAKE_BUSINESS_CARD_DATA)
   t.equal(response.statusCode, 204)
@@ -44,6 +43,12 @@ test('should save business card', async (t) => {
   t.equal(bc?.name, FAKE_BUSINESS_CARD_DATA.name)
 
   await prisma.businessCard.delete({where: {email: FAKE_EMAIL}})
+})
+
+test('should return 400 if email is not valid', async (t) => {
+  const notValidEmail = 'notvalidemail.com'
+  const response = await addBusinessCard(app, getToken(app, notValidEmail), {...FAKE_BUSINESS_CARD_DATA, email: notValidEmail})
+  t.equal(response.statusCode, 400)
 })
 
 test('should return 500 if user email is different from business card email', async (t) => {
