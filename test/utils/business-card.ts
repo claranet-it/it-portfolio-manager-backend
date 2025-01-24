@@ -32,3 +32,10 @@ export async function getOwnBusinessCard(app: FastifyInstance, token: string) {
   })
 }
 
+export async function getBusinessCard(app: FastifyInstance, email: string) {
+  return await app.inject({
+    method: 'GET',
+    url: `/api/business-card/${email}`,
+  })
+}
+
