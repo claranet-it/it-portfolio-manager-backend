@@ -55,10 +55,19 @@ Launch tests with coverage
 npm run test:coverage
 ```
 
-Launch tests with filter
+Launch specific tests
 
 ```bash
-npm run test:filter --filter=<filter>
+npm run test --path="test/routes/business-card/getMine.test.ts" # run single test
+npm run test --path="test/routes/business-card" # run all tests of the folder
+```
+
+Run tests with server running locally
+
+```bash
+npm run test:execute # run all tests
+npm run test:execute --path="test/routes/business-card/getMine.test.ts" # run single test
+npm run test:execute --path="test/routes/business-card" # run all tests of the folder
 ```
 
 ### Linting and Formatting

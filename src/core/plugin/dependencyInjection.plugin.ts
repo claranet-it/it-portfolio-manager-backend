@@ -38,6 +38,8 @@ import { SkillRepository } from '@src/infrastructure/Skill/Repository/SkillRepos
 import { SkillService } from '@src/core/Skill/service/SkillService'
 import { CompanyConnectionsRepository } from '@src/infrastructure/CompanyConnections/Repository/CompanyConnectionsRepository'
 import { CompanyConnectionsService } from '@src/core/CompanyConnections/service/CompanyConnectionsService'
+import { BusinessCardService } from '../BusinessCard/service'
+import { BusinessCardRepository } from '@src/infrastructure/BusunessCard/Repository'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -206,6 +208,14 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       companyConnectionsService: asClass(CompanyConnectionsService),
+    })
+
+    container.register({
+      businessCardService: asClass(BusinessCardService),
+    })
+
+    container.register({
+      businessCardRepository: asClass(BusinessCardRepository),
     })
 
     return container
