@@ -48,6 +48,62 @@ test('update task without authentication', async (t) => {
   t.equal(response.statusCode, 401)
 })
 
+test('update task - exists task name with same name of another task on another project', async (t) => {
+  const customer = 'Test update task customer'
+  const company = 'test update task company'
+  const project = 'Test update task project'
+  const projectType = ProjectType.BILLABLE
+  const task = 'Test update task task'
+
+  let response = await postTask(
+    customer,
+    company,
+    'Another project',
+    projectType,
+    'Test update new task',
+  )
+  t.equal(response.statusCode, 200)
+
+  response = await postTask(customer, company, project, projectType, task)
+  t.equal(response.statusCode, 200)
+
+  response = await getTask(customer, project, company)
+  t.equal(response.statusCode, 200)
+
+  let tasks = response.json<TaskListType>()
+  t.equal(tasks.length, 1)
+  let expectedResult = [
+    {
+      name: 'Test update task task',
+      completed: false,
+      plannedHours: 0,
+    },
+  ]
+  t.same(tasks, expectedResult)
+
+  response = await putTask(
+    customer,
+    company,
+    project,
+    task,
+    'Test update new task',
+  )
+  t.equal(response.statusCode, 200)
+
+  response = await getTask(customer, project, company)
+  t.equal(response.statusCode, 200)
+  tasks = response.json<TaskListType>()
+  t.equal(tasks.length, 1)
+  expectedResult = [
+    {
+      name: 'Test update new task',
+      completed: false,
+      plannedHours: 0,
+    },
+  ]
+  t.same(tasks, expectedResult)
+})
+
 test('update task - ok', async (t) => {
   const customer = 'Test update task customer'
   const company = 'test update task company'
