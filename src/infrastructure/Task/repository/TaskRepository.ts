@@ -375,16 +375,6 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     const prisma = new PrismaClient()
 
-    const existingTask = await prisma.projectTask.findFirst({
-      where: {
-        name: params.newTask,
-      },
-    })
-
-    if (existingTask) {
-      throw new TaskError('Task already exists')
-    }
-
     const oldTask = await prisma.projectTask.findFirst({
       where: {
         name: params.task,
@@ -400,6 +390,23 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     if (!oldTask) {
       throw new TaskError(`Cannot find task ${params.task}`)
+    }
+
+    const existingTask = await prisma.projectTask.findFirst({
+      where: {
+        name: params.newTask,
+        project: {
+          name: params.project,
+          customer: {
+            name: params.customer,
+            company_id: params.company,
+          },
+        },
+      },
+    })
+
+    if (existingTask) {
+      throw new TaskError('Task already exists')
     }
 
     await prisma.projectTask.update({
