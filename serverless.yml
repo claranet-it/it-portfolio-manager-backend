@@ -108,7 +108,7 @@ custom:
     msalTenantId:
         dev: ${env:MSAL_TENANT_ID, ''}
         test: ${env:MSAL_TENANT_ID, ''}
-        stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-idmsal-tenant-id
+        stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-id
         prod: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-id
 
     apiBaseUrl:
