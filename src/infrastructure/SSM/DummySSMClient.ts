@@ -1,4 +1,5 @@
 import { SSMClientInterface } from '@src/core/SSM/SSMClientInterface'
+import * as process from 'node:process'
 
 export class DummySSMClient implements SSMClientInterface {
   getJwtPrivateKey(): Promise<string> {
@@ -21,5 +22,21 @@ export class DummySSMClient implements SSMClientInterface {
   }
   async getBricklyApiKey(): Promise<string> {
     return Promise.resolve('1234')
+  }
+
+  async getMsalClientId(): Promise<string> {
+    return Promise.resolve(process.env.MSAL_CLIENT_ID ?? '')
+  }
+
+  async getMsalClientSecret(): Promise<string> {
+    return Promise.resolve(process.env.MSAL_CLIENT_SECRET ?? '')
+  }
+
+  async getMsalCloudInstance(): Promise<string> {
+    return Promise.resolve(process.env.MSAL_CLOUD_INSTANCE ?? '')
+  }
+
+  async getMsalTenantId(): Promise<string> {
+    return Promise.resolve(process.env.MSAL_TENANT_ID ?? '')
   }
 }

@@ -1,4 +1,8 @@
-import { BusinessCardType, DeleteBusinessCardType, GetBusinessCardType } from "../model";
+import {
+  BusinessCardType,
+  DeleteBusinessCardType,
+  GetBusinessCardType,
+} from '../model'
 
 export interface BusinessCardRepositoryInterface {
   save(params: BusinessCardType): Promise<void>

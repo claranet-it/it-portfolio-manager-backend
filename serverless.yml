@@ -90,12 +90,32 @@ custom:
       test: ${env:GOOGLE_CLIENT_SECRET, ''}
       stage: /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
       prod:  /it-portfolio-manager/${opt:stage, 'dev'}/google-client-secret
+    msalClientId:
+      dev: ${env:MSAL_CLIENT_ID, ''}
+      test: ${env:MSAL_CLIENT_ID, ''}
+      stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-client-id
+      prod: /it-portfolio-manager/${opt:stage, 'dev'}/msal-client-id
+    msalClientSecret:
+      dev: ${env:MSAL_CLIENT_SECRET, ''}
+      test: ${env:MSAL_CLIENT_SECRET, ''}
+      stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-client-secret
+      prod: /it-portfolio-manager/${opt:stage, 'dev'}/msal-client-secret
+    msalCloudInstance:
+      dev: ${env:MSAL_CLOUD_INSTANCE, ''}
+      test: ${env:MSAL_CLOUD_INSTANCE, ''}
+      stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-cloud-instance
+      prod: /it-portfolio-manager/${opt:stage, 'dev'}/msal-cloud-instance
+    msalTenantId:
+        dev: ${env:MSAL_TENANT_ID, ''}
+        test: ${env:MSAL_TENANT_ID, ''}
+        stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-id
+        prod: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-id
 
     apiBaseUrl:
       dev: http://localhost:3000
       test: http://localhost:3000
-      stage: 'https://6w09n1v47j.execute-api.eu-south-1.amazonaws.com'
-      prod: 'https://8sl94yg50l.execute-api.eu-south-1.amazonaws.com'
+      stage: 'https://api-stg.brickly.me'
+      prod: 'https://api-prod.brickly.me'
   serverless-dynamodb:
     stages:
       - dev
@@ -145,6 +165,11 @@ functions:
       GOOGLE_CLIENT_ID_ARN: ${self:custom.variables.googleClientId.${opt:stage, 'dev'}}
       GOOGLE_CLIENT_SECRET_ARN: ${self:custom.variables.googleClientSecret.${opt:stage, 'dev'}}
       GOOGLE_CALLBACK_URL: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}/${opt:stage, 'dev'}/api/auth/google/oauthCallback
+      MSAL_CLIENT_ID_ARN: ${self:custom.variables.msalClientId.${opt:stage, 'dev'}}
+      MSAL_CLIENT_SECRET_ARN: ${self:custom.variables.msalClientSecret.${opt:stage, 'dev'}}
+      MSAL_CLOUD_INSTANCE: ${self:custom.variables.msalCloudInstance.${opt:stage, 'dev'}}
+      MSAL_TENANT_ID: ${self:custom.variables.msalTenantId.${opt:stage, 'dev'}}
+      MSAL_CALLBACK_URL: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}/${opt:stage, 'dev'}/api/auth/microsoft/msalCallback
       JWT_PRIVATE_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-private-key
       JWT_PUBLIC_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-public-key
       DATABASE_URL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/database-url}

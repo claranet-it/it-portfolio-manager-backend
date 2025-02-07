@@ -1,9 +1,12 @@
 import { PrismaClient } from '../../../../prisma/generated'
 import { BusinessCardRepositoryInterface } from '@src/core/BusinessCard/repository'
-import { BusinessCardType, DeleteBusinessCardType, GetBusinessCardType } from '@src/core/BusinessCard/model'
+import {
+  BusinessCardType,
+  DeleteBusinessCardType,
+  GetBusinessCardType,
+} from '@src/core/BusinessCard/model'
 
 export class BusinessCardRepository implements BusinessCardRepositoryInterface {
-
   async save(params: BusinessCardType): Promise<void> {
     const prisma = new PrismaClient()
 
@@ -22,7 +25,7 @@ export class BusinessCardRepository implements BusinessCardRepositoryInterface {
         role: params.role,
         mobile: params.mobile,
       },
-    });
+    })
   }
 
   async delete(params: DeleteBusinessCardType): Promise<void> {
@@ -32,7 +35,7 @@ export class BusinessCardRepository implements BusinessCardRepositoryInterface {
       where: {
         email: params.email,
       },
-    });
+    })
   }
 
   async get(params: GetBusinessCardType): Promise<BusinessCardType | null> {
@@ -42,7 +45,7 @@ export class BusinessCardRepository implements BusinessCardRepositoryInterface {
       where: {
         email: params.email,
       },
-    });
+    })
 
     if (!businessCard) {
       return null
@@ -55,5 +58,4 @@ export class BusinessCardRepository implements BusinessCardRepositoryInterface {
       mobile: businessCard.mobile || undefined,
     }
   }
-
 }

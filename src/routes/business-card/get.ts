@@ -1,5 +1,9 @@
 import { FastifyInstance } from 'fastify'
-import { BusinessCard, GetBusinessCard, GetBusinessCardType } from '@src/core/BusinessCard/model'
+import {
+  BusinessCard,
+  GetBusinessCard,
+  GetBusinessCardType,
+} from '@src/core/BusinessCard/model'
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
@@ -36,7 +40,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .dependencyInjectionContainer()
           .resolve('businessCardService')
           .get({
-            email
+            email,
           })
       } catch (error) {
         request.log.error(error)

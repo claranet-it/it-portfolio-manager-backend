@@ -6,4 +6,8 @@ export interface SSMClientInterface {
   getGoogleSecret(): Promise<string>
   getJwtPrivateKey(): Promise<string>
   getJWTPublicKey(): Promise<string>
+  getMsalClientId(): Promise<string>
+  getMsalCloudInstance(): Promise<string>
+  getMsalTenantId(): Promise<string>
+  getMsalClientSecret(): Promise<string>
 }
