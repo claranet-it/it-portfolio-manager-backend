@@ -108,7 +108,7 @@ custom:
     msalTenantId:
         dev: ${env:MSAL_TENANT_ID, ''}
         test: ${env:MSAL_TENANT_ID, ''}
-        stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-id
+        stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-idmsal-tenant-id
         prod: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-id
 
     apiBaseUrl:
@@ -167,8 +167,8 @@ functions:
       GOOGLE_CALLBACK_URL: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}/${opt:stage, 'dev'}/api/auth/google/oauthCallback
       MSAL_CLIENT_ID_ARN: ${self:custom.variables.msalClientId.${opt:stage, 'dev'}}
       MSAL_CLIENT_SECRET_ARN: ${self:custom.variables.msalClientSecret.${opt:stage, 'dev'}}
-      MSAL_CLOUD_INSTANCE: ${self:custom.variables.msalCloudInstance.${opt:stage, 'dev'}}
-      MSAL_TENANT_ID: ${self:custom.variables.msalTenantId.${opt:stage, 'dev'}}
+      MSAL_CLOUD_INSTANCE_ARN: ${self:custom.variables.msalCloudInstance.${opt:stage, 'dev'}}
+      MSAL_TENANT_ID_ARN: ${self:custom.variables.msalTenantId.${opt:stage, 'dev'}}
       MSAL_CALLBACK_URL: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}/${opt:stage, 'dev'}/api/auth/microsoft/msalCallback
       JWT_PRIVATE_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-private-key
       JWT_PUBLIC_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-public-key
