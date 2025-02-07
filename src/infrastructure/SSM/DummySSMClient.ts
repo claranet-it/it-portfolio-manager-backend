@@ -25,18 +25,18 @@ export class DummySSMClient implements SSMClientInterface {
   }
 
   async getMsalClientId(): Promise<string> {
-    return Promise.resolve(process.env.MSAL_CLIENT_ID ?? '')
+    return Promise.resolve(process.env.MSAL_CLIENT_ID ?? '1234')
   }
 
   async getMsalClientSecret(): Promise<string> {
-    return Promise.resolve(process.env.MSAL_CLIENT_SECRET ?? '')
+    return Promise.resolve(process.env.MSAL_CLIENT_SECRET ?? '1234')
   }
 
   async getMsalCloudInstance(): Promise<string> {
-    return Promise.resolve(process.env.MSAL_CLOUD_INSTANCE ?? '')
+    return Promise.resolve(process.env.MSAL_CLOUD_INSTANCE ?? '1234')
   }
 
   async getMsalTenantId(): Promise<string> {
-    return Promise.resolve(process.env.MSAL_TENANT_ID ?? '')
+    return Promise.resolve(process.env.MSAL_TENANT_ID ?? '1234')
   }
 }
