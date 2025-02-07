@@ -88,7 +88,7 @@ export class SSMClient implements SSMClientInterface {
 
   async getMsalClientId(): Promise<string> {
     const key = await this.ssm.getParameter({
-      Name: process.env.MSAL_CLIENT_ID,
+      Name: process.env.MSAL_CLIENT_ID_ARN,
       WithDecryption: true,
     })
     if (!key.Parameter || !key.Parameter.Value) {
@@ -99,7 +99,7 @@ export class SSMClient implements SSMClientInterface {
 
   async getMsalClientSecret(): Promise<string> {
     const key = await this.ssm.getParameter({
-      Name: process.env.MSAL_CLIENT_SECRET,
+      Name: process.env.MSAL_CLIENT_SECRET_ARN,
       WithDecryption: true,
     })
     if (!key.Parameter || !key.Parameter.Value) {
@@ -110,7 +110,7 @@ export class SSMClient implements SSMClientInterface {
 
   async getMsalCloudInstance(): Promise<string> {
     const key = await this.ssm.getParameter({
-      Name: process.env.MSAL_CLOUD_INSTANCE,
+      Name: process.env.MSAL_CLOUD_INSTANCE_ARN,
       WithDecryption: true,
     })
     if (!key.Parameter || !key.Parameter.Value) {
@@ -121,7 +121,7 @@ export class SSMClient implements SSMClientInterface {
 
   async getMsalTenantId(): Promise<string> {
     const key = await this.ssm.getParameter({
-      Name: process.env.MSAL_TENANT_ID,
+      Name: process.env.MSAL_TENANT_ID_ARN,
       WithDecryption: true,
     })
     if (!key.Parameter || !key.Parameter.Value) {
