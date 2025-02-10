@@ -17,8 +17,16 @@ export class MicrosoftProvider implements ProviderInterface {
 
     const displayName = graphResponse.data.displayName
     const email = graphResponse.data.mail
-    const companyId =
-      organizationResponse.data.value[0].displayName.toLowerCase()
+    let companyId = organizationResponse.data.value[0].displayName.toLowerCase()
+
+    console.log('MSAL LOG - companyId : ' + companyId)
+
+    if (!companyId) {
+      companyId = email.split('@')[1]
+      console.log(
+        'MSAL LOG - companyId not found, companyId from email : ' + companyId,
+      )
+    }
 
     return Promise.resolve({
       email: email,
