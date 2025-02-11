@@ -25,13 +25,14 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       },
     },
     async (request, reply) => {
-      request.session.state = randomBytes(32).toString('hex')
+      const state = randomBytes(32).toString('hex')
+      request.session.state = state
       request.session.referer = request.headers.referer ?? ''
 
       const redirectUrl = await fastify
         .dependencyInjectionContainer()
         .resolve('msalService')
-        .generateRedirectUrl()
+        .generateRedirectUrl(state)
 
       reply.redirect(redirectUrl)
     },
