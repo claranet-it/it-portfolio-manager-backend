@@ -45,6 +45,9 @@ export default async function (fastify: FastifyInstance): Promise<void> {
 
         console.log('Token: ' + token.accessToken)
 
+        console.log('request.session.state: ' + request.session.state)
+        console.log('query.session_state: ' + query.session_state)
+        console.log('query.state: ' + query.state)
         console.log('request.session.referer: ' + request.session.referer)
 
         reply.redirect(`${request.session.referer}?token=${token.accessToken}`)
