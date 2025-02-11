@@ -47,8 +47,16 @@ plugins:
   - serverless-tscpaths
   - serverless-dynamodb
   - serverless-offline
+  - serverless-domain-manager
 
 custom:
+  customDomain:
+    domainName: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}
+    basePath: ''
+    stage: ${opt:stage, 'dev'}
+    createRoute53Record: false
+    endpointType: 'REGIONAL'
+    certificateArn: ${self:custom.variables.certificateArn.${opt:stage, 'dev'}}
   vpc:
     dev:
       subnetIds:
@@ -75,6 +83,11 @@ custom:
       securityGroupIds:
         - sg-05b4669bc61b06099
   variables:
+    certificateArn:
+      dev: ''
+      test: ''
+      stage: arn:aws:acm:${self:provider.region}:755827290206:certificate/c55bbed7-49f0-4347-9b24-e65f9a969665
+      prod: arn:aws:acm:${self:provider.region}:755827290206:certificate/814018b3-7fb2-4e9c-b8f5-26e53ee55a0a
     stages:
       - dev
       - prod
@@ -106,16 +119,17 @@ custom:
       stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-cloud-instance
       prod: /it-portfolio-manager/${opt:stage, 'dev'}/msal-cloud-instance
     msalTenantId:
-        dev: ${env:MSAL_TENANT_ID, ''}
-        test: ${env:MSAL_TENANT_ID, ''}
-        stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-id
-        prod: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-id
+      dev: ${env:MSAL_TENANT_ID, ''}
+      test: ${env:MSAL_TENANT_ID, ''}
+      stage: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-id
+      prod: /it-portfolio-manager/${opt:stage, 'dev'}/msal-tenant-id
 
     apiBaseUrl:
       dev: http://localhost:3000
       test: http://localhost:3000
       stage: 'https://api-stg.brickly.me'
       prod: 'https://api-prod.brickly.me'
+
   serverless-dynamodb:
     stages:
       - dev
