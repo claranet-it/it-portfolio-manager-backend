@@ -51,7 +51,7 @@ plugins:
 
 custom:
   customDomain:
-    domainName: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}
+    domainName: ${self:custom.variables.cdm.${opt:stage, 'dev'}}
     basePath: ''
     stage: ${opt:stage, 'dev'}
     createRoute53Record: false
@@ -84,10 +84,15 @@ custom:
         - sg-05b4669bc61b06099
   variables:
     certificateArn:
+      dev: 'localhost:3000'
+      test: 'localhost:3000'
+      stage: arn:aws:acm:${self:provider.region}:755827290206:certificate/d0c7c2a1-e136-48b3-b269-1354a876b1f2
+      prod: arn:aws:acm:${self:provider.region}:755827290206:certificate/4a4b2cef-a3b9-4ee0-b0b3-3d67dc3989db
+    cdm:
       dev: ''
       test: ''
-      stage: arn:aws:acm:${self:provider.region}:755827290206:certificate/c55bbed7-49f0-4347-9b24-e65f9a969665
-      prod: arn:aws:acm:${self:provider.region}:755827290206:certificate/814018b3-7fb2-4e9c-b8f5-26e53ee55a0a
+      stage: 'api-stg.brickly.me'
+      prod: 'api-prod.brickly.me'
     stages:
       - dev
       - prod
