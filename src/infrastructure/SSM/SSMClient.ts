@@ -1,5 +1,6 @@
 import { SSM } from '@aws-sdk/client-ssm'
 import { SSMClientInterface } from '@src/core/SSM/SSMClientInterface'
+import * as process from 'node:process'
 
 export class SSMClient implements SSMClientInterface {
   ssm: SSM
@@ -81,6 +82,50 @@ export class SSMClient implements SSMClientInterface {
     })
     if (!key.Parameter || !key.Parameter.Value) {
       throw new Error('Api key not found')
+    }
+    return key.Parameter.Value
+  }
+
+  async getMsalClientId(): Promise<string> {
+    const key = await this.ssm.getParameter({
+      Name: process.env.MSAL_CLIENT_ID_ARN,
+      WithDecryption: true,
+    })
+    if (!key.Parameter || !key.Parameter.Value) {
+      throw new Error('Msal client id not found')
+    }
+    return key.Parameter.Value
+  }
+
+  async getMsalClientSecret(): Promise<string> {
+    const key = await this.ssm.getParameter({
+      Name: process.env.MSAL_CLIENT_SECRET_ARN,
+      WithDecryption: true,
+    })
+    if (!key.Parameter || !key.Parameter.Value) {
+      throw new Error('Msal client secret not found')
+    }
+    return key.Parameter.Value
+  }
+
+  async getMsalCloudInstance(): Promise<string> {
+    const key = await this.ssm.getParameter({
+      Name: process.env.MSAL_CLOUD_INSTANCE_ARN,
+      WithDecryption: true,
+    })
+    if (!key.Parameter || !key.Parameter.Value) {
+      throw new Error('Msal cloud instance not found')
+    }
+    return key.Parameter.Value
+  }
+
+  async getMsalTenantId(): Promise<string> {
+    const key = await this.ssm.getParameter({
+      Name: process.env.MSAL_TENANT_ID_ARN,
+      WithDecryption: true,
+    })
+    if (!key.Parameter || !key.Parameter.Value) {
+      throw new Error('Msal tenant id not found')
     }
     return key.Parameter.Value
   }

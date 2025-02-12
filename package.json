@@ -42,6 +42,7 @@
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "prisma": "^5.19.1",
+    "serverless-domain-manager": "^8.0.0",
     "serverless-dynamodb": "^0.2.43",
     "serverless-offline": "^12.0.4",
     "serverless-plugin-typescript": "^2.1.5",
@@ -52,6 +53,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@azure/msal-node": "^3.2.1",
     "@fastify/autoload": "^5.7.1",
     "@fastify/awilix": "^4.0.0",
     "@fastify/aws-lambda": "^3.3.0",
@@ -66,6 +68,7 @@
     "@sinclair/typebox": "^0.31.2",
     "@slack/web-api": "^7.0.2",
     "awilix": "^9.0.0",
+    "axios": "^1.7.9",
     "casbin": "^5.32.0",
     "casbin-prisma-adapter": "^1.5.0",
     "crypto": "^1.0.1",
