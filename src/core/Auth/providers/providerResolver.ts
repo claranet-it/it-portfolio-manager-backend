@@ -12,6 +12,8 @@ export class ProviderResolver {
         return this.container.resolve('claranetProvider')
       case Provider.Google:
         return this.container.resolve('googleProvider')
+      case Provider.Microsoft:
+        return this.container.resolve('microsoftProvider')
       default:
         throw new Error('unknown provider')
     }

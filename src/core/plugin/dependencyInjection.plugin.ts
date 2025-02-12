@@ -40,6 +40,9 @@ import { CompanyConnectionsRepository } from '@src/infrastructure/CompanyConnect
 import { CompanyConnectionsService } from '@src/core/CompanyConnections/service/CompanyConnectionsService'
 import { BusinessCardService } from '../BusinessCard/service'
 import { BusinessCardRepository } from '@src/infrastructure/BusunessCard/Repository'
+import * as msal from '@azure/msal-node'
+import { MsalService } from '@src/core/Auth/service/MsalService'
+import { MicrosoftProvider } from '@src/core/Auth/providers/MicrosoftProvider'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -56,6 +59,11 @@ async function dependencyInjectionContainerPlugin(
   const openAIClient = OpenAiClient.getClient(await ssmClient.getOpenAIkey())
   const googleClientId = await ssmClient.getGoogleClientId()
   const googleClientSecret = await ssmClient.getGoogleSecret()
+  const msalClientId = await ssmClient.getMsalClientId()
+  const msalCloudInstance = await ssmClient.getMsalCloudInstance()
+  const msalTenantId = await ssmClient.getMsalTenantId()
+  const msalClientSecret = await ssmClient.getMsalClientSecret()
+
   const dependencyInjectionContainer = (): AwilixContainer => {
     const container = awilix.createContainer({
       injectionMode: awilix.InjectionMode.CLASSIC,
@@ -162,6 +170,18 @@ async function dependencyInjectionContainerPlugin(
     })
 
     container.register({
+      msalClient: awilix.asValue(
+        new msal.ConfidentialClientApplication({
+          auth: {
+            clientId: msalClientId,
+            authority: msalCloudInstance + msalTenantId,
+            clientSecret: msalClientSecret,
+          },
+        }),
+      ),
+    })
+
+    container.register({
       providerResolver: asClass(ProviderResolver).inject(() => ({
         container: container,
       })),
@@ -187,6 +207,9 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       googleProvider: asClass(GoogleProvider),
+    })
+    container.register({
+      microsoftProvider: asClass(MicrosoftProvider),
     })
     container.register({
       companyRepository: asClass(CompanyRepository),
@@ -216,6 +239,10 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       businessCardRepository: asClass(BusinessCardRepository),
+    })
+
+    container.register({
+      msalService: asClass(MsalService),
     })
 
     return container

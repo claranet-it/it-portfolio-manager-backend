@@ -45,7 +45,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .resolve('businessCardService')
           .save({
             userEmail: request.user.email,
-            ...request.body
+            ...request.body,
           })
         reply.code(204).send()
       } catch (error) {

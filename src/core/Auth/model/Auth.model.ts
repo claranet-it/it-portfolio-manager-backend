@@ -3,6 +3,7 @@ import { Static, Type } from '@sinclair/typebox'
 export enum Provider {
   'Claranet',
   'Google',
+  'Microsoft',
 }
 
 export const verifyJwtParams = Type.Object({
