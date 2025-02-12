@@ -177,15 +177,6 @@ async function dependencyInjectionContainerPlugin(
             authority: msalCloudInstance + msalTenantId,
             clientSecret: msalClientSecret,
           },
-          system: {
-            loggerOptions: {
-              loggerCallback(loglevel, message) {
-                console.error('MSAL ERROR : ' + message)
-              },
-              piiLoggingEnabled: false,
-              logLevel: 3,
-            },
-          },
         }),
       ),
     })

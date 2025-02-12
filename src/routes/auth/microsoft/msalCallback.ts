@@ -30,25 +30,20 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     async (request, reply) => {
       const query = request.query
 
+      if (request.session.state !== query.state) {
+        throw new Error('invalid state')
+      }
+
       try {
         const msalClient = fastify
           .dependencyInjectionContainer()
           .resolve('msalClient') as ConfidentialClientApplication
-
-        console.log('code : ' + query.code)
 
         const token = await msalClient.acquireTokenByCode({
           code: query.code,
           redirectUri: process.env.MSAL_CALLBACK_URL!,
           scopes: ['User.Read'],
         })
-
-        console.log('Token: ' + token.accessToken)
-
-        console.log('request.session.state: ' + request.session.state)
-        console.log('query.session_state: ' + query.session_state)
-        console.log('query.state: ' + query.state)
-        console.log('request.session.referer: ' + request.session.referer)
 
         reply.redirect(`${request.session.referer}?token=${token.accessToken}`)
       } catch (error) {
