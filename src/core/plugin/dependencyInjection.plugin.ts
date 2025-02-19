@@ -40,6 +40,7 @@ import { CompanyConnectionsRepository } from '@src/infrastructure/CompanyConnect
 import { CompanyConnectionsService } from '@src/core/CompanyConnections/service/CompanyConnectionsService'
 import { BusinessCardService } from '../BusinessCard/service'
 import { BusinessCardRepository } from '@src/infrastructure/BusunessCard/Repository'
+import { WallpaperTemplateService } from '../WallpaperTemplate//service'
 import * as msal from '@azure/msal-node'
 import { MsalService } from '@src/core/Auth/service/MsalService'
 import { MicrosoftProvider } from '@src/core/Auth/providers/MicrosoftProvider'
@@ -236,13 +237,17 @@ async function dependencyInjectionContainerPlugin(
     container.register({
       businessCardService: asClass(BusinessCardService),
     })
-
+    
     container.register({
       businessCardRepository: asClass(BusinessCardRepository),
     })
-
+    
     container.register({
       msalService: asClass(MsalService),
+    })
+
+    container.register({
+      wallpaperTemplateService: asClass(WallpaperTemplateService),
     })
 
     return container

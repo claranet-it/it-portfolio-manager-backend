@@ -38,6 +38,18 @@ provider:
             - "ssm:GetParameter"
           Resource:
             - arn:aws:ssm:${self:provider.region}:*:parameter/it-portfolio-manager/${opt:stage, 'dev'}/*
+        - Effect: "Allow"
+          Action:
+            - s3:GetObject
+            - s3:ListBucket
+          Resource:
+            - arn:aws:s3:::755827290206-prod-brickly-background-images
+            - arn:aws:s3:::755827290206-prod-brickly-background-images/*
+        - Effect: "Allow"
+          Action:
+            - kms:Decrypt
+          Resource:
+            - arn:aws:kms:eu-south-1:755827290206:key/3ffc4341-f95c-43cf-aeba-da53557f0d4b
   stackTags:
     Owner: 'Massimo Biagioli'
     Destroy: 'false'
