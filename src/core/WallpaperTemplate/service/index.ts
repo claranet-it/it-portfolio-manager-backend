@@ -1,16 +1,22 @@
 import { WallpaperTemplateListType } from '../model';
 import {
+  GetObjectCommand,
   ListObjectsCommand,
+  NoSuchKey,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { BadRequestException } from '@src/shared/exceptions/BadRequestException';
 
 export class WallpaperTemplateService {
-  constructor() {}
+  s3Client: S3Client;
+  constructor() {
+    this.s3Client = new S3Client();
+  }
 
   async getAll(): Promise<WallpaperTemplateListType> {
-    const client = new S3Client();
     const command = new ListObjectsCommand({ Bucket: process.env.WALLPAPER_TEMPLATES_BUCKET });
-    const data = await client.send(command);
+    const data = await this.s3Client.send(command);
     const folderMap = {} as WallpaperTemplateListType;
 
     data.Contents?.forEach((file) => {
@@ -28,7 +34,25 @@ export class WallpaperTemplateService {
       folderMap[folderName].push({ key: file.Key, name: fileName });
     });
 
-
     return folderMap;
+  }
+
+  async getSignedUrl(key: string): Promise<string> {
+    if (!key) {
+      throw new Error('Key is required');
+    }
+    try {
+      const command = new GetObjectCommand({ Bucket: process.env.WALLPAPER_TEMPLATES_BUCKET, Key: key });
+      await this.s3Client.send(command);
+      const url = await getSignedUrl(this.s3Client, command);
+      return url;
+    } catch (error) {
+      if (error instanceof NoSuchKey) {
+        throw new BadRequestException('Key not found');
+      } else {
+        throw new Error('Error getting signed url');
+      }
+    }
+
   }
 }
