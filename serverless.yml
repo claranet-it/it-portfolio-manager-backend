@@ -204,7 +204,7 @@ functions:
       JWT_PRIVATE_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-private-key
       JWT_PUBLIC_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-public-key
       DATABASE_URL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/database-url}
-      WALLPAPER_TEMPLATES_BUCKET: ${ssm:/it-portfolio-manager/${opt:stage, 'stage'}/wallpaper-templates-bucket, ''}
+      WALLPAPER_TEMPLATES_BUCKET: ${ssm:/it-portfolio-manager/${opt:stage, 'stage'}/wallpaper-templates-bucket}
       FIND_TEAM_OPENAI_PROMPT: "  Given the SKILL data:
 
       [[SKILL]]
