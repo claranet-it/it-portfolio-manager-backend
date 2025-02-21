@@ -26,9 +26,9 @@ phases:
       - docker ps
       - echo "Starting DynamoDB..."
       - npm run dynamodb:start:test
-      - sleep 5
-      - echo "Checking if DynamoDB is running on port 8002..."
-      - curl -s http://localhost:8002 || { echo 'DynamoDB is not running on port 8002'; exit 1; }
+      - sleep 60
+      - echo "Checking if DynamoDB is running..."
+      - if ss -tuln | grep ':8000'; then echo 'DynamoDB is running on port 8000'; elif ss -tuln | grep ':8002'; then echo 'DynamoDB is running on port 8002'; else echo 'DynamoDB is not running on expected ports'; exit 1; fi
   build:
     commands:
       - echo "TEST DB CONNECTION"
