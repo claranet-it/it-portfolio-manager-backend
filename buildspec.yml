@@ -24,11 +24,6 @@ phases:
       - docker run -d -p 3307:3306 -e MARIADB_ROOT_PASSWORD=root -e MARIADB_USER=brickly -e MARIADB_PASSWORD=brickly -e MARIADB_DATABASE=brickly-test mariadb:10.11.8
       - sleep 5
       - docker ps
-      - echo "Starting DynamoDB..."
-      - npm run dynamodb:start:test
-      - sleep 60
-      - echo "Checking if DynamoDB is running..."
-      - if ss -tuln | grep ':8000'; then echo 'DynamoDB is running on port 8000'; elif ss -tuln | grep ':8002'; then echo 'DynamoDB is running on port 8002'; else echo 'DynamoDB is not running on expected ports'; exit 1; fi
   build:
     commands:
       - echo "TEST DB CONNECTION"
