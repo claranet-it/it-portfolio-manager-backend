@@ -61,7 +61,6 @@ async function dependencyInjectionContainerPlugin(
   const googleClientSecret = await ssmClient.getGoogleSecret()
   const msalClientId = await ssmClient.getMsalClientId()
   const msalCloudInstance = await ssmClient.getMsalCloudInstance()
-  const msalTenantId = await ssmClient.getMsalTenantId()
   const msalClientSecret = await ssmClient.getMsalClientSecret()
 
   const dependencyInjectionContainer = (): AwilixContainer => {
