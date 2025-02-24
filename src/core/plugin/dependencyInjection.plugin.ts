@@ -244,10 +244,6 @@ async function dependencyInjectionContainerPlugin(
       msalService: asClass(MsalService),
     })
 
-    container.register({
-      wallpaperTemplateService: asClass(WallpaperTemplateService),
-    })
-
     return container
   }
 
