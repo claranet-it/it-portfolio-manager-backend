@@ -174,7 +174,7 @@ async function dependencyInjectionContainerPlugin(
         new msal.ConfidentialClientApplication({
           auth: {
             clientId: msalClientId,
-            authority: msalCloudInstance + msalTenantId,
+            authority: msalCloudInstance + 'common',
             clientSecret: msalClientSecret,
           },
         }),
@@ -243,6 +243,10 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       msalService: asClass(MsalService),
+    })
+
+    container.register({
+      wallpaperTemplateService: asClass(WallpaperTemplateService),
     })
 
     return container
