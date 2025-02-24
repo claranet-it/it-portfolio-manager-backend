@@ -175,7 +175,7 @@ async function dependencyInjectionContainerPlugin(
         new msal.ConfidentialClientApplication({
           auth: {
             clientId: msalClientId,
-            authority: msalCloudInstance + msalTenantId,
+            authority: msalCloudInstance + 'common',
             clientSecret: msalClientSecret,
           },
         }),
@@ -237,11 +237,11 @@ async function dependencyInjectionContainerPlugin(
     container.register({
       businessCardService: asClass(BusinessCardService),
     })
-    
+
     container.register({
       businessCardRepository: asClass(BusinessCardRepository),
     })
-    
+
     container.register({
       msalService: asClass(MsalService),
     })
