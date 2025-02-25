@@ -1,20 +1,20 @@
 import { GetObjectCommand, ListObjectsCommand, NoSuchKey, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { WallpaperTemplateListType } from '@src/core/WallpaperTemplate/model';
-import { WallpaperTemplatesBucketInterface } from '@src/core/WallpaperTemplate/wallpaperTemplateBucketInterface';
+import { BackgroundTemplateListType } from '@src/core/BackgroundTemplate/model';
+import { BackgroundTemplatesBucketInterface } from '@src/core/BackgroundTemplate/backgroundTemplateBucketInterface';
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException';
 
-export class WallpaperTemplatesBucket implements WallpaperTemplatesBucketInterface {
+export class BackgroundTemplatesBucket implements BackgroundTemplatesBucketInterface {
 
   s3Client: S3Client;
   constructor() {
     this.s3Client = new S3Client();
   }
 
-  async getAll(): Promise<WallpaperTemplateListType> {
-    const command = new ListObjectsCommand({ Bucket: process.env.WALLPAPER_TEMPLATES_BUCKET });
+  async getAll(): Promise<BackgroundTemplateListType> {
+    const command = new ListObjectsCommand({ Bucket: process.env.BACKGROUND_TEMPLATES_BUCKET });
     const data = await this.s3Client.send(command);
-    const folderMap = {} as WallpaperTemplateListType;
+    const folderMap = {} as BackgroundTemplateListType;
 
     data.Contents?.forEach((file) => {
       if (!file.Key) return;
@@ -36,7 +36,7 @@ export class WallpaperTemplatesBucket implements WallpaperTemplatesBucketInterfa
 
   async getSignedUrl(key: string): Promise<string> {
     try {
-      const command = new GetObjectCommand({ Bucket: process.env.WALLPAPER_TEMPLATES_BUCKET, Key: key });
+      const command = new GetObjectCommand({ Bucket: process.env.BACKGROUND_TEMPLATES_BUCKET, Key: key });
       await this.s3Client.send(command);
       const url = await getSignedUrl(this.s3Client, command);
       return url;

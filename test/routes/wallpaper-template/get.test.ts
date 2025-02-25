@@ -18,7 +18,7 @@ after(async () => {
 test('should return 401 without authentication', async (t) => {
   const response = await app.inject({
     method: 'GET',
-    url: '/api/wallpaper-template/fakeKey',
+    url: '/api/background-template/fakeKey',
   })
   t.equal(response.statusCode, 401)
 })
@@ -27,7 +27,7 @@ test('should return 200 with valid key', async (t) => {
   const token = getToken(app, FAKE_EMAIL)
   const getAllResponse = await app.inject({
     method: 'GET',
-    url: '/api/wallpaper-template',
+    url: '/api/background-template',
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -39,7 +39,7 @@ test('should return 200 with valid key', async (t) => {
 
   const getResponse = await app.inject({
     method: 'GET',
-    url: `/api/wallpaper-template/${encodeURIComponent(key)}`,
+    url: `/api/background-template/${encodeURIComponent(key)}`,
     headers: {
       Authorization: `Bearer ${token}`,
     },

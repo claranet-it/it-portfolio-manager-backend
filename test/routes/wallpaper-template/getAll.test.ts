@@ -18,7 +18,7 @@ after(async () => {
 test('should return 401 without authentication', async (t) => {
   const response = await app.inject({
     method: 'GET',
-    url: '/api/wallpaper-template',
+    url: '/api/background-template',
   })
   t.equal(response.statusCode, 401)
 })
@@ -27,7 +27,7 @@ test('should return 200', async (t) => {
   const token = getToken(app, FAKE_EMAIL)
   const response = await app.inject({
     method: 'GET',
-    url: '/api/wallpaper-template',
+    url: '/api/background-template',
     headers: {
       Authorization: `Bearer ${token}`,
     },
