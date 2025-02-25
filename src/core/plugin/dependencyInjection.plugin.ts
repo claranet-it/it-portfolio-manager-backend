@@ -39,7 +39,8 @@ import { SkillService } from '@src/core/Skill/service/SkillService'
 import { CompanyConnectionsRepository } from '@src/infrastructure/CompanyConnections/Repository/CompanyConnectionsRepository'
 import { CompanyConnectionsService } from '@src/core/CompanyConnections/service/CompanyConnectionsService'
 import { BusinessCardService } from '../BusinessCard/service'
-import { BusinessCardRepository } from '@src/infrastructure/BusunessCard/Repository'
+import { BusinessCardRepository } from '@src/infrastructure/BusinessCard/Repository'
+import { BackgroundTemplateService } from '../BackgroundTemplate//service'
 import * as msal from '@azure/msal-node'
 import { MsalService } from '@src/core/Auth/service/MsalService'
 import { MicrosoftProvider } from '@src/core/Auth/providers/MicrosoftProvider'
@@ -242,6 +243,10 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       msalService: asClass(MsalService),
+    })
+
+    container.register({
+      backgroundTemplateService: asClass(BackgroundTemplateService),
     })
 
     return container
