@@ -22,7 +22,7 @@ export class WallpaperTemplatesBucket implements WallpaperTemplatesBucketInterfa
       if (parts.length < 2) return; // skip first level files
 
       const folderName = parts[0];
-      const fileName = parts.slice(1).join('/');
+      const fileName = parts.slice(1).join('/').replace(/\.[^/.]+$/, '');
 
       if (!folderMap[folderName]) {
         folderMap[folderName] = [];
