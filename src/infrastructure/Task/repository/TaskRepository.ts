@@ -114,6 +114,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     const result = await prisma.projectTask.findMany({
       where: {
+        is_completed: params.completed,
         project: {
           name: params.project,
           is_inactive: false,
