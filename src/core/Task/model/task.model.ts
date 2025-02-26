@@ -2,6 +2,7 @@ import { Static, Type } from '@sinclair/typebox'
 
 export const ProjectQueryParam = Type.Object({
   customer: Type.String(),
+  completed: Type.Optional(Type.Boolean()),
 })
 
 export type ProjectQueryParamType = Static<typeof ProjectQueryParam>
