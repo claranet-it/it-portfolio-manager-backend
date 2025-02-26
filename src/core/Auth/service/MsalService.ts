@@ -5,7 +5,7 @@ export class MsalService {
 
   async generateRedirectUrl(state: string): Promise<string> {
     return await this.msalClient.getAuthCodeUrl({
-      scopes: [],
+      scopes: ['User.Read'],
       redirectUri: process.env.MSAL_CALLBACK_URL!,
       state: state,
     })
