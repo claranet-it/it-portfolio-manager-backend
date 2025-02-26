@@ -16,6 +16,7 @@ export type ProjectReadParamsType = Static<typeof ProjectReadParams>
 export const TaskReadQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
+  completed: Type.Optional(Type.Boolean()),
 })
 
 export const ProjectOpt = Type.Object({
