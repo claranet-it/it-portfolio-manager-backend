@@ -31,6 +31,7 @@ export class TaskRepository implements TaskRepositoryInterface {
           company_id: params.company,
           name: params.customer,
         },
+        completed: params.completed,
         is_inactive: false,
       },
       orderBy: {
@@ -307,7 +308,7 @@ export class TaskRepository implements TaskRepositoryInterface {
           : params.project.plannedHours
       const completed =
         params.newProject !== undefined &&
-        params.newProject.completed !== undefined
+          params.newProject.completed !== undefined
           ? params.newProject.completed
           : project.completed
 
