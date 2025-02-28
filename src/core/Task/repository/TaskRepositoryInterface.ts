@@ -11,7 +11,7 @@ import {
 } from '../model/task.model'
 
 export interface TaskRepositoryInterface {
-  getCustomers(company: string): Promise<string[]>
+  getCustomers(company: string, completed?: boolean): Promise<string[]>
   getProjects(params: ProjectReadParamsType): Promise<ProjectListType>
   getTasks(params: TaskReadParamsType): Promise<string[]>
   getTaskStructure(company: string): Promise<TaskStructureListType>

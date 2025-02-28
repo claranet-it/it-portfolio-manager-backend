@@ -20,8 +20,8 @@ export class TaskService {
     private taskPropertiesRepository: TaskPropertiesRepositoryInterface,
   ) {}
 
-  async getCustomers(company: string): Promise<string[]> {
-    return this.taskRepository.getCustomers(company)
+  async getCustomers(company: string, completed?: boolean): Promise<string[]> {
+    return this.taskRepository.getCustomers(company, completed)
   }
 
   async getProjects(params: ProjectReadParamsType): Promise<ProjectListType> {

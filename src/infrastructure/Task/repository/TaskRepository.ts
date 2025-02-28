@@ -14,11 +14,22 @@ import { TaskError } from '@src/core/customExceptions/TaskError'
 import { PrismaClient } from '../../../../prisma/generated'
 
 export class TaskRepository implements TaskRepositoryInterface {
-  async getCustomers(company: string): Promise<string[]> {
+  async getCustomers(company: string, completed?: boolean): Promise<string[]> {
     const prima = new PrismaClient()
     const result = await prima.customer.findMany({
-      where: { company_id: company, inactive: false },
-    })
+      where: {
+        company_id: company,
+        inactive: false,
+        ...(completed !== undefined && {
+          projects: {
+            some: completed === true
+              ? { completed: true }
+              : { OR: [{ completed: false }, { completed: undefined }] },
+          },
+        }),
+      },
+    });
+
     return result.map((customer) => customer.name).sort()
   }
 

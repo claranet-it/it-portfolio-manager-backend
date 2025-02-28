@@ -7,6 +7,12 @@ export const ProjectQueryParam = Type.Object({
 
 export type ProjectQueryParamType = Static<typeof ProjectQueryParam>
 
+export const CustomerQueryParam = Type.Object({
+  completed: Type.Optional(Type.Boolean()),
+})
+
+export type CustomerQueryParamType = Static<typeof CustomerQueryParam>
+
 export const ProjectReadParams = Type.Intersect([
   ProjectQueryParam,
   Type.Object({ company: Type.String() }),
