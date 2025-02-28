@@ -8,10 +8,11 @@ import {
   TaskUpdateParamsType,
   TaskType,
   TaskStructureListType,
+  CustomerReadParamsType,
 } from '../model/task.model'
 
 export interface TaskRepositoryInterface {
-  getCustomers(company: string, completed?: boolean): Promise<string[]>
+  getCustomers(params: CustomerReadParamsType): Promise<string[]>
   getProjects(params: ProjectReadParamsType): Promise<ProjectListType>
   getTasks(params: TaskReadParamsType): Promise<string[]>
   getTaskStructure(company: string): Promise<TaskStructureListType>

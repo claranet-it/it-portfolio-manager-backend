@@ -38,7 +38,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('taskService')
-          .getCustomers(request.user.company, request.query.completed)
+          .getCustomers({company: request.user.company, completed: request.query.completed})
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()

@@ -20,6 +20,13 @@ export const ProjectReadParams = Type.Intersect([
 
 export type ProjectReadParamsType = Static<typeof ProjectReadParams>
 
+export const CustomerReadParams = Type.Object({
+  completed: Type.Optional(Type.Boolean()),
+  company: Type.String(),
+})
+
+export type CustomerReadParamsType = Static<typeof CustomerReadParams>
+
 export const TaskReadQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),

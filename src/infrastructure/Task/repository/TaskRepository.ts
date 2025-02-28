@@ -1,6 +1,7 @@
 import {
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
+  CustomerReadParamsType,
   ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
@@ -14,15 +15,15 @@ import { TaskError } from '@src/core/customExceptions/TaskError'
 import { PrismaClient } from '../../../../prisma/generated'
 
 export class TaskRepository implements TaskRepositoryInterface {
-  async getCustomers(company: string, completed?: boolean): Promise<string[]> {
+  async getCustomers(params: CustomerReadParamsType): Promise<string[]> {
     const prima = new PrismaClient()
     const result = await prima.customer.findMany({
       where: {
-        company_id: company,
+        company_id: params.company,
         inactive: false,
-        ...(completed !== undefined && {
+        ...(params.completed !== undefined && {
           projects: {
-            some: completed === true
+            some: params.completed === true
               ? { completed: true }
               : { OR: [{ completed: false }, { completed: undefined }] },
           },
