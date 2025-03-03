@@ -17,7 +17,7 @@ const inputs = [
         name: 'Assenze',
         type: ProjectType.ABSENCE,
         plannedHours: 0,
-        completed: false,
+        completed: true,
       },
       {
         name: 'Funzionale',
@@ -76,6 +76,7 @@ beforeEach(async () => {
         project_type: ProjectType.ABSENCE,
         plannedHours: 0,
         customer_id: customer.id,
+        completed: true,
       },
       {
         name: 'Funzionale',
@@ -167,4 +168,49 @@ inputs.forEach((input) => {
 
     t.same(projects, input.expectProjects)
   })
+})
+
+test(`read not completed projects`, async (t) => {
+  const token = app.createTestJwt({
+    email: 'nicholas.crow@email.com',
+    name: 'Nicholas Crow',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it',
+  })
+
+  const response = await app.inject({
+    method: 'GET',
+    url: `/api/task/project/?customer=Claranet&completed=false`,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
+
+  t.equal(response.statusCode, 200)
+
+  const projects = response.json<ProjectListType>()
+  t.equal(projects.length, 2)
+})
+
+
+test(`read completed projects`, async (t) => {
+  const token = app.createTestJwt({
+    email: 'nicholas.crow@email.com',
+    name: 'Nicholas Crow',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it',
+  })
+
+  const response = await app.inject({
+    method: 'GET',
+    url: `/api/task/project/?customer=Claranet&completed=true`,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
+
+  t.equal(response.statusCode, 200)
+
+  const projects = response.json<ProjectListType>()
+  t.equal(projects.length, 1)
 })

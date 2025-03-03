@@ -2,9 +2,16 @@ import { Static, Type } from '@sinclair/typebox'
 
 export const ProjectQueryParam = Type.Object({
   customer: Type.String(),
+  completed: Type.Optional(Type.Boolean()),
 })
 
 export type ProjectQueryParamType = Static<typeof ProjectQueryParam>
+
+export const CustomerQueryParam = Type.Object({
+  completed: Type.Optional(Type.Boolean()),
+})
+
+export type CustomerQueryParamType = Static<typeof CustomerQueryParam>
 
 export const ProjectReadParams = Type.Intersect([
   ProjectQueryParam,
@@ -13,9 +20,17 @@ export const ProjectReadParams = Type.Intersect([
 
 export type ProjectReadParamsType = Static<typeof ProjectReadParams>
 
+export const CustomerReadParams = Type.Object({
+  completed: Type.Optional(Type.Boolean()),
+  company: Type.String(),
+})
+
+export type CustomerReadParamsType = Static<typeof CustomerReadParams>
+
 export const TaskReadQueryParams = Type.Object({
   customer: Type.String(),
   project: Type.String(),
+  completed: Type.Optional(Type.Boolean()),
 })
 
 export const ProjectOpt = Type.Object({
