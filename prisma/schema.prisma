@@ -102,3 +102,43 @@ model BusinessCard {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
+
+model CurriculumVitae {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  role        String
+  email       String   @unique
+  summary		  String?
+  main_skills String?
+  education	  Education[]
+  work		    Work[]  
+}
+
+model Education {
+  id                String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  curriculum_vitae  CurriculumVitae @relation(fields: [curriculum_id], references: [id])
+  curriculum_id     String
+  note              String?
+  year_start        Int
+  year_end	        Int? 
+  institution       String
+  current           Boolean?
+}
+
+model Work {
+  id                String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  curriculum_vitae  CurriculumVitae @relation(fields: [curriculum_id], references: [id])
+  curriculum_id     String 
+  note              String?
+  year_start        Int
+  year_end	        Int? 
+  institution       String
+  role		          String?
+  current           Boolean?
+}
