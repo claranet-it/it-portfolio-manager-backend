@@ -43,9 +43,26 @@ export const DeleteItemCurriculum = Type.Object({
     id: Type.String(),
 })
 
+export const CurriculumUpdate = Type.Object({
+    role: Type.Optional(Type.String()),
+    summary: Type.Optional(Type.String()),
+    main_skills: Type.Optional(Type.String()),
+})
+
+export const CurriculumUpdateWithUserEmail = Type.Intersect([
+    CurriculumUpdate,
+    Type.Object({
+        userEmail: Type.String(),
+    }),
+])
+
 export type DeleteItemCurriculumType = Static<typeof DeleteItemCurriculum>
 export type CurriculumType = Static<typeof Curriculum>
 export type CurriculumWithUserEmailType = Static<
     typeof CurriculumWithUserEmail
 >
 export type GetCurriculumByEmailType = Static<typeof GetCurriculumByEmail>
+export type CurriculumUpdateType = Static<typeof CurriculumUpdate>
+export type CurriculumUpdateWithUserEmailType = Static<
+    typeof CurriculumUpdateWithUserEmail
+>

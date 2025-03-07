@@ -2,6 +2,7 @@ import { CurriculumRepositoryInterface } from '../repository'
 
 import {
     CurriculumType,
+    CurriculumUpdateWithUserEmailType,
     CurriculumWithUserEmailType,
     GetCurriculumByEmailType,
 } from '../model'
@@ -28,5 +29,9 @@ export class CurriculumService {
     }
     async deleteEducation(id: string): Promise<void> {
         await this.curriculumRepository.deleteEducation(id)
+    }
+
+    async updateCurriculum(params: CurriculumUpdateWithUserEmailType): Promise<void> {
+        await this.curriculumRepository.updateCurriculum(params)
     }
 }

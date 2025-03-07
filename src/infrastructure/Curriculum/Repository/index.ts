@@ -1,6 +1,6 @@
 import { CurriculumRepositoryInterface } from '@src/core/Curriculum/repository'
 import { PrismaClient } from '../../../../prisma/generated'
-import { CurriculumType, GetCurriculumByEmailType } from '@src/core/Curriculum/model'
+import { CurriculumType, CurriculumUpdateWithUserEmailType, GetCurriculumByEmailType } from '@src/core/Curriculum/model'
 
 
 export class CurriculumRepository implements CurriculumRepositoryInterface {
@@ -17,6 +17,21 @@ export class CurriculumRepository implements CurriculumRepositoryInterface {
                 main_skills: params.main_skills,
                 work: { createMany: { data: params.work } },
                 education: { createMany: { data: params.education } }
+            }
+        })
+    }
+
+    async updateCurriculum(params: CurriculumUpdateWithUserEmailType): Promise<void> {
+        const prisma = new PrismaClient()
+
+        await prisma.curriculumVitae.update({
+            where: {
+                email: params.userEmail
+            },
+            data: {
+                role: params.role,
+                summary: params.summary,
+                main_skills: params.main_skills,
             }
         })
     }

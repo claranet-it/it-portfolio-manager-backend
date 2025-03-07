@@ -1,4 +1,4 @@
-import { CurriculumType, DeleteItemCurriculumType } from '@src/core/Curriculum/model';
+import { CurriculumType, CurriculumUpdateType } from '@src/core/Curriculum/model';
 import { FastifyInstance } from 'fastify';
 
 export async function createCurriculum(app: FastifyInstance, token: string, payload: CurriculumType) {
@@ -51,3 +51,13 @@ export async function getCurriculumByEmail(app: FastifyInstance, email: string) 
   })
 }
 
+export async function updateCurriculum(app: FastifyInstance, token: string, payload: CurriculumUpdateType) {
+  return await app.inject({
+    method: 'PATCH',
+    url: '/api/curriculum/',
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+    payload,
+  })
+}
