@@ -88,22 +88,24 @@ after(async () => {
 test('should return 401 deleting business card without authentication', async (t) => {
   const response = await app.inject({
     method: 'DELETE',
-    url: '/api/curriculum/education',
+    url: '/api/curriculum/education/id',
   })
   t.equal(response.statusCode, 401)
 })
 
 test('should return 500 deleting non existing item in curriculum work array', async (t) => {
-  const response = await deleteEducationItem(app, getToken(app, FAKE_EMAIL), { id: 'not_valid_id' })
+  const response = await deleteEducationItem(app, getToken(app, FAKE_EMAIL), 'not_valid_id')
   t.equal(response.statusCode, 500)
 })
 
 test('should delete work item in curriculum', async (t) => {
-  const response = await deleteEducationItem(app, getToken(app, FAKE_EMAIL), { id: 'delete' })
+  const response = await deleteEducationItem(app, getToken(app, FAKE_EMAIL), 'delete')
   t.equal(response.statusCode, 204)
 
   const getResponse = await getCurriculum(app, getToken(app, FAKE_EMAIL))
   const getResponseData = getResponse.json()
-  t.strictSame(getResponseData, FAKE_CURRICULUM_DATA_EDUCATION_DELETED)
+  t.equal(getResponseData.education.length, 0)
+  t.equal(getResponseData.email, FAKE_CURRICULUM_DATA_EDUCATION_DELETED.email)
+  t.equal(getResponseData.name, FAKE_CURRICULUM_DATA_EDUCATION_DELETED.name)
 })
 

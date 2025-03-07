@@ -1,17 +1,18 @@
 import { FastifyInstance } from 'fastify'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
-import { DeleteItemCurriculumType } from '@src/core/Curriculum/model'
+import { DeleteItemCurriculum, DeleteItemCurriculumType } from '@src/core/Curriculum/model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
     fastify.delete<{
-        Body: DeleteItemCurriculumType
+        Params: DeleteItemCurriculumType
     }>(
-        '/work',
+        '/work/:id',
         {
             onRequest: [fastify.authenticate],
             schema: {
                 tags: ['Curriculum'],
+                params: DeleteItemCurriculum,
                 security: [
                     {
                         apiKey: [],
@@ -42,7 +43,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
                 await fastify
                     .dependencyInjectionContainer()
                     .resolve('curriculumService')
-                    .deleteWork(request.body)
+                    .deleteWork(request.params.id)
                 return reply.code(204).send()
             } catch (error) {
                 request.log.error(error)
