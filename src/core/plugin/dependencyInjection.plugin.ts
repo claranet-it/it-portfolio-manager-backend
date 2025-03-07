@@ -44,6 +44,8 @@ import { BackgroundTemplateService } from '../BackgroundTemplate//service'
 import * as msal from '@azure/msal-node'
 import { MsalService } from '@src/core/Auth/service/MsalService'
 import { MicrosoftProvider } from '@src/core/Auth/providers/MicrosoftProvider'
+import { CurriculumService } from '../Curriculum/service'
+import { CurriculumRepository } from '@src/infrastructure/Curriculum/Repository'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -247,6 +249,14 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       backgroundTemplateService: asClass(BackgroundTemplateService),
+    })
+
+    container.register({
+      curriculumService: asClass(CurriculumService),
+    })
+
+    container.register({
+      curriculumRepository: asClass(CurriculumRepository),
     })
 
     return container
