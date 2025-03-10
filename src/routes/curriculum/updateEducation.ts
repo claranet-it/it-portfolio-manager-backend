@@ -1,19 +1,20 @@
 import { FastifyInstance } from 'fastify'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
-import { CurriculumUpdate, CurriculumUpdateType } from '@src/core/Curriculum/model'
+import { EducationUpdate, EducationUpdateType, IdQueryStringType } from '@src/core/Curriculum/model'
 
 
 export default async function (fastify: FastifyInstance): Promise<void> {
     fastify.patch<{
-        Body: CurriculumUpdateType
+        Params: IdQueryStringType
+        Body: EducationUpdateType
     }>(
-        '/',
+        '/education/:id',
         {
             onRequest: [fastify.authenticate],
             schema: {
                 tags: ['Curriculum'],
-                body: CurriculumUpdate,
+                body: EducationUpdate,
                 security: [
                     {
                         apiKey: [],
@@ -45,7 +46,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
                 return await fastify
                     .dependencyInjectionContainer()
                     .resolve('curriculumService')
-                    .updateCurriculum({ userEmail: request.user.email, ...request.body })
+                    .updateEducation(request.params.id, request.body)
             } catch (error) {
                 request.log.error(error)
                 if (error instanceof NotFoundException) {

@@ -3,17 +3,21 @@ import { test, before, after } from 'tap'
 import createApp from '@src/app'
 import { PrismaClient } from '../../../prisma/generated'
 import { getToken } from '@test/utils/token'
-import { getCurriculum, updateCurriculum } from '@test/utils/curriculum'
+import { updateWork } from '@test/utils/curriculum'
 
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
 
-const FAKE_EMAIL = 'TEST_UPDATECURRICULUM@email.com'
+const FAKE_EMAIL = 'TEST_UPDATEEDUCATION@email.com'
 
-const UPDATE_STRING_1 = "UPDATE FIELD STRING 1"
+const FAKE_ID = 'UPDATE_ID'
 
-const UPDATE_STRING_2 = "UPDATE FIELD STRING 2"
+const UPDATE_STRING = "UPDATE FIELD STRING"
+
+const UPDATE_NUMBER = 2030
+
+const UPDATE_BOOLEAN = true
 
 before(async () => {
     app = createApp({ logger: false })
@@ -31,6 +35,7 @@ before(async () => {
     })
     await prisma.education.create({
         data: {
+
             note: 'Master\'s degree',
             institution: 'University',
             year_start: 2015,
@@ -42,6 +47,7 @@ before(async () => {
 
     await prisma.work.create({
         data: {
+            id: FAKE_ID,
             note: 'R&D',
             role: 'developer',
             institution: 'Company',
@@ -82,51 +88,20 @@ after(async () => {
 test('should return 401 update curriculum without authentication', async (t) => {
     const response = await app.inject({
         method: 'PATCH',
-        url: '/api/curriculum',
+        url: '/api/curriculum/work/id',
     })
     t.equal(response.statusCode, 401)
 })
 
-/* test('should not update name or email curriculum', async (t) => {
 
-    await updateCurriculum(app, getToken(app, FAKE_EMAIL), { email: "Marytex" })
-    const getResponse = await getCurriculum(app, getToken(app, FAKE_EMAIL))
-    const getResponseData = getResponse.json()
-    t.equal(getResponse.statusCode, 200)
-
-    t.equal(getResponseData.email, FAKE_EMAIL)
-}) */
-
-test('should update one item of my curriculum', async (t) => {
-    {
-        await updateCurriculum(app, getToken(app, FAKE_EMAIL), { role: UPDATE_STRING_1 })
-        const getResponse = await getCurriculum(app, getToken(app, FAKE_EMAIL))
-        const getResponseData = getResponse.json()
-        t.equal(getResponse.statusCode, 200)
-
-        t.equal(getResponseData.role, UPDATE_STRING_1)
-    }
-
-    {
-        await updateCurriculum(app, getToken(app, FAKE_EMAIL), { summary: UPDATE_STRING_2 })
-        const getResponse = await getCurriculum(app, getToken(app, FAKE_EMAIL))
-        const getResponseData = getResponse.json()
-        t.equal(getResponse.statusCode, 200)
-
-        t.equal(getResponseData.summary, UPDATE_STRING_2)
-    }
+test('should update work element of my curriculum', async (t) => {
+    await updateWork(app, getToken(app, FAKE_EMAIL), FAKE_ID, { role: UPDATE_STRING, year_start: UPDATE_NUMBER, current: UPDATE_BOOLEAN })
+    const updatedWork = await prisma.work.findUnique({ where: { id: FAKE_ID } })
+    t.equal(updatedWork?.role, UPDATE_STRING)
+    t.equal(updatedWork?.year_start, UPDATE_NUMBER)
+    t.equal(updatedWork?.current, UPDATE_BOOLEAN)
 })
 
-test('should update more item of my curriculum', async (t) => {
-
-    await updateCurriculum(app, getToken(app, FAKE_EMAIL), { role: UPDATE_STRING_1, summary: UPDATE_STRING_2 })
-    const getResponse = await getCurriculum(app, getToken(app, FAKE_EMAIL))
-    const getResponseData = getResponse.json()
-    t.equal(getResponse.statusCode, 200)
-
-    t.equal(getResponseData.role, UPDATE_STRING_1)
-    t.equal(getResponseData.summary, UPDATE_STRING_2)
-})
 
 
 
