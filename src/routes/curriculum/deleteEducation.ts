@@ -1,18 +1,18 @@
 import { FastifyInstance } from 'fastify'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
-import { DeleteItemCurriculum, DeleteItemCurriculumType } from '@src/core/Curriculum/model'
+import { IdQueryString, IdQueryStringType } from '@src/core/Curriculum/model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
     fastify.delete<{
-        Params: DeleteItemCurriculumType
+        Params: IdQueryStringType
     }>(
         '/education/:id',
         {
             onRequest: [fastify.authenticate],
             schema: {
                 tags: ['Curriculum'],
-                params: DeleteItemCurriculum,
+                params: IdQueryString,
                 security: [
                     {
                         apiKey: [],

@@ -1,22 +1,22 @@
 import { Static, Type } from '@sinclair/typebox'
 
-
-const Education = Type.Object({
+const Experience = Type.Object({
     note: Type.Optional(Type.Union([Type.String(), Type.Null()])),
     year_start: Type.Integer(),
     year_end: Type.Optional(Type.Union([Type.Integer(), Type.Null()])),
     institution: Type.String(),
     current: Type.Optional(Type.Union([Type.Boolean(), Type.Null()])),
+    id: Type.Optional(Type.String()),
 })
 
-const Work = Type.Object({
-    note: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-    year_start: Type.Integer(),
-    year_end: Type.Optional(Type.Union([Type.Integer(), Type.Null()])),
-    institution: Type.String(),
-    current: Type.Optional(Type.Union([Type.Boolean(), Type.Null()])),
-    role: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-})
+const Education = Experience
+
+const Work = Type.Intersect([
+    Experience,
+    Type.Object({
+        role: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+    }),
+])
 
 export const Curriculum = Type.Object({
     name: Type.String(),
@@ -35,12 +35,12 @@ export const CurriculumWithUserEmail = Type.Intersect([
     }),
 ])
 
-export const GetCurriculumByEmail = Type.Object({
-    email: Type.String({ format: 'email' }),
+export const IdQueryString = Type.Object({
+    id: Type.String(),
 })
 
-export const DeleteItemCurriculum = Type.Object({
-    id: Type.String(),
+export const GetCurriculumByEmail = Type.Object({
+    email: Type.String({ format: 'email' }),
 })
 
 export const CurriculumUpdate = Type.Object({
@@ -56,7 +56,23 @@ export const CurriculumUpdateWithUserEmail = Type.Intersect([
     }),
 ])
 
-export type DeleteItemCurriculumType = Static<typeof DeleteItemCurriculum>
+const ExperienceUpdate = Type.Object({
+    note: Type.Optional(Type.String()),
+    year_start: Type.Optional(Type.Integer()),
+    year_end: Type.Optional(Type.Integer()),
+    institution: Type.Optional(Type.String()),
+    current: Type.Optional(Type.Boolean()),
+})
+
+export const EducationUpdate = ExperienceUpdate
+
+export const WorkUpdate = Type.Intersect([
+    ExperienceUpdate, Type.Object({
+        role: Type.Optional(Type.String()),
+    })
+])
+
+export type IdQueryStringType = Static<typeof IdQueryString>
 export type CurriculumType = Static<typeof Curriculum>
 export type CurriculumWithUserEmailType = Static<
     typeof CurriculumWithUserEmail
@@ -66,3 +82,6 @@ export type CurriculumUpdateType = Static<typeof CurriculumUpdate>
 export type CurriculumUpdateWithUserEmailType = Static<
     typeof CurriculumUpdateWithUserEmail
 >
+
+export type EducationUpdateType = Static<typeof EducationUpdate>
+export type WorkUpdateType = Static<typeof WorkUpdate>
