@@ -1,38 +1,35 @@
 import { FastifyInstance } from 'fastify'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
-import { IdQueryStringType, WorkUpdate, WorkUpdateType } from '@src/core/Curriculum/model'
-
+import { IdQueryString, IdQueryStringType } from '@src/shared/common.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-    fastify.patch<{
+    fastify.delete<{
         Params: IdQueryStringType
-        Body: WorkUpdateType
     }>(
-        '/work/:id',
+        '/:id',
         {
             onRequest: [fastify.authenticate],
             schema: {
                 tags: ['Curriculum'],
-                body: WorkUpdate,
+                params: IdQueryString,
                 security: [
                     {
                         apiKey: [],
                     },
                 ],
                 response: {
-                    204: { type: 'null', description: 'No Content' },
+                    204: {
+                        type: 'null',
+                        description: 'Work item deleted successfully',
+                    },
+                    400: {
+                        type: 'null',
+                        description: 'bad request',
+                    },
                     401: {
                         type: 'null',
                         description: 'Unauthorized',
-                    },
-                    403: {
-                        type: 'null',
-                        description: 'Forbidden',
-                    },
-                    404: {
-                        type: 'null',
-                        description: 'Not Found',
                     },
                     500: {
                         type: 'null',
@@ -43,10 +40,11 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         },
         async (request, reply) => {
             try {
-                return await fastify
+                await fastify
                     .dependencyInjectionContainer()
-                    .resolve('curriculumService')
-                    .updateWork(request.params.id, request.body)
+                    .resolve('workService')
+                    .deleteWork(request.params.id)
+                return reply.code(204).send()
             } catch (error) {
                 request.log.error(error)
                 if (error instanceof NotFoundException) {

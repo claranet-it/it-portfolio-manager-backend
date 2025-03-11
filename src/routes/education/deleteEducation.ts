@@ -1,13 +1,13 @@
 import { FastifyInstance } from 'fastify'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
-import { IdQueryString, IdQueryStringType } from '@src/core/Curriculum/model'
+import { IdQueryString, IdQueryStringType } from '@src/shared/common.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
     fastify.delete<{
         Params: IdQueryStringType
     }>(
-        '/work/:id',
+        '/:id',
         {
             onRequest: [fastify.authenticate],
             schema: {
@@ -21,7 +21,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
                 response: {
                     204: {
                         type: 'null',
-                        description: 'Work item deleted successfully',
+                        description: 'Education item deleted successfully',
                     },
                     400: {
                         type: 'null',
@@ -42,8 +42,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             try {
                 await fastify
                     .dependencyInjectionContainer()
-                    .resolve('curriculumService')
-                    .deleteWork(request.params.id)
+                    .resolve('educationService')
+                    .deleteEducation(request.params.id)
                 return reply.code(204).send()
             } catch (error) {
                 request.log.error(error)

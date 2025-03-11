@@ -1,6 +1,6 @@
 import { CurriculumRepositoryInterface } from '@src/core/Curriculum/repository'
 import { PrismaClient } from '../../../../prisma/generated'
-import { CurriculumType, CurriculumUpdateWithUserEmailType, EducationUpdateType, GetCurriculumByEmailType, WorkUpdateType } from '@src/core/Curriculum/model'
+import { CurriculumType, CurriculumUpdateWithUserEmailType, GetCurriculumByEmailType } from '@src/core/Curriculum/model'
 
 
 export class CurriculumRepository implements CurriculumRepositoryInterface {
@@ -36,41 +36,6 @@ export class CurriculumRepository implements CurriculumRepositoryInterface {
         })
     }
 
-    async updateEducation(id: string, params: EducationUpdateType): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.education.update({
-            where: {
-                id
-            },
-            data: {
-                note: params.note,
-                year_start: params.year_start,
-                year_end: params.year_end,
-                institution: params.institution,
-                current: params.current
-            }
-        })
-    }
-
-    async updateWork(id: string, params: WorkUpdateType): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.work.update({
-            where: {
-                id
-            },
-            data: {
-                note: params.note,
-                role: params.role,
-                year_start: params.year_start,
-                year_end: params.year_end,
-                institution: params.institution,
-                current: params.current
-            }
-        })
-    }
-
     async get(params: GetCurriculumByEmailType): Promise<CurriculumType | null> {
         const prisma = new PrismaClient()
 
@@ -97,27 +62,6 @@ export class CurriculumRepository implements CurriculumRepositoryInterface {
             education: curriculum.education,
             work: curriculum.work,
         }
-    }
-
-    /* PASSA SOLO GLI ID */
-    async deleteWork(id: string): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.work.delete({
-            where: {
-                id,
-            },
-        })
-    }
-
-    async deleteEducation(id: string): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.education.delete({
-            where: {
-                id,
-            },
-        })
     }
 
 }

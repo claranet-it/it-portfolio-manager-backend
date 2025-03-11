@@ -87,7 +87,7 @@ test('should return 401 update curriculum without authentication', async (t) => 
     t.equal(response.statusCode, 401)
 })
 
-/* test('should not update name or email curriculum', async (t) => {
+test('should not update name or email curriculum', async (t) => {
 
     await updateCurriculum(app, getToken(app, FAKE_EMAIL), { email: "Marytex" })
     const getResponse = await getCurriculum(app, getToken(app, FAKE_EMAIL))
@@ -95,7 +95,7 @@ test('should return 401 update curriculum without authentication', async (t) => 
     t.equal(getResponse.statusCode, 200)
 
     t.equal(getResponseData.email, FAKE_EMAIL)
-}) */
+})
 
 test('should update one item of my curriculum', async (t) => {
     {

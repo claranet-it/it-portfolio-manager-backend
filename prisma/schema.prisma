@@ -117,9 +117,9 @@ model CurriculumVitae {
 }
 
 model Education {
-  id                String   @id @default(uuid())
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                String          @id @default(uuid())
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
   curriculum_vitae  CurriculumVitae @relation(fields: [curriculum_id], references: [id])
   curriculum_id     String
   note              String?
@@ -130,9 +130,9 @@ model Education {
 }
 
 model Work {
-  id                String   @id @default(uuid())
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                String          @id @default(uuid())
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
   curriculum_vitae  CurriculumVitae @relation(fields: [curriculum_id], references: [id])
   curriculum_id     String 
   note              String?

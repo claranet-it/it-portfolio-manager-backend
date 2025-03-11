@@ -88,7 +88,7 @@ after(async () => {
 test('should return 401 deleting business card without authentication', async (t) => {
   const response = await app.inject({
     method: 'DELETE',
-    url: '/api/curriculum/education/id',
+    url: '/api/education/id',
   })
   t.equal(response.statusCode, 401)
 })

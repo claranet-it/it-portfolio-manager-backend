@@ -3,7 +3,7 @@ import { test, before, after } from 'tap'
 import createApp from '@src/app'
 import { PrismaClient } from '../../../prisma/generated'
 import { getToken } from '@test/utils/token'
-import { updateWork } from '@test/utils/curriculum'
+import { updateEducation } from '@test/utils/curriculum'
 
 
 let app: FastifyInstance
@@ -35,7 +35,7 @@ before(async () => {
     })
     await prisma.education.create({
         data: {
-
+            id: FAKE_ID,
             note: 'Master\'s degree',
             institution: 'University',
             year_start: 2015,
@@ -47,7 +47,6 @@ before(async () => {
 
     await prisma.work.create({
         data: {
-            id: FAKE_ID,
             note: 'R&D',
             role: 'developer',
             institution: 'Company',
@@ -88,18 +87,18 @@ after(async () => {
 test('should return 401 update curriculum without authentication', async (t) => {
     const response = await app.inject({
         method: 'PATCH',
-        url: '/api/curriculum/work/id',
+        url: '/api/education/id',
     })
     t.equal(response.statusCode, 401)
 })
 
 
-test('should update work element of my curriculum', async (t) => {
-    await updateWork(app, getToken(app, FAKE_EMAIL), FAKE_ID, { role: UPDATE_STRING, year_start: UPDATE_NUMBER, current: UPDATE_BOOLEAN })
-    const updatedWork = await prisma.work.findUnique({ where: { id: FAKE_ID } })
-    t.equal(updatedWork?.role, UPDATE_STRING)
-    t.equal(updatedWork?.year_start, UPDATE_NUMBER)
-    t.equal(updatedWork?.current, UPDATE_BOOLEAN)
+test('should update education element of my curriculum', async (t) => {
+    await updateEducation(app, getToken(app, FAKE_EMAIL), FAKE_ID, { note: UPDATE_STRING, year_start: UPDATE_NUMBER, current: UPDATE_BOOLEAN })
+    const updatedEducation = await prisma.education.findUnique({ where: { id: FAKE_ID } })
+    t.equal(updatedEducation?.note, UPDATE_STRING)
+    t.equal(updatedEducation?.year_start, UPDATE_NUMBER)
+    t.equal(updatedEducation?.current, UPDATE_BOOLEAN)
 })
 
 

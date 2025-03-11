@@ -4,9 +4,7 @@ import {
     CurriculumType,
     CurriculumUpdateWithUserEmailType,
     CurriculumWithUserEmailType,
-    EducationUpdateType,
     GetCurriculumByEmailType,
-    WorkUpdateType,
 } from '../model'
 
 export class CurriculumService {
@@ -26,22 +24,8 @@ export class CurriculumService {
         await this.curriculumRepository.create(paramsWithoutUserEmail)
     }
 
-    async deleteWork(id: string): Promise<void> {
-        await this.curriculumRepository.deleteWork(id)
-    }
-    async deleteEducation(id: string): Promise<void> {
-        await this.curriculumRepository.deleteEducation(id)
-    }
-
     async updateCurriculum(params: CurriculumUpdateWithUserEmailType): Promise<void> {
         await this.curriculumRepository.updateCurriculum(params)
     }
 
-    async updateEducation(id: string, params: EducationUpdateType): Promise<void> {
-        await this.curriculumRepository.updateEducation(id, params)
-    }
-
-    async updateWork(id: string, params: WorkUpdateType): Promise<void> {
-        await this.curriculumRepository.updateWork(id, params)
-    }
 }

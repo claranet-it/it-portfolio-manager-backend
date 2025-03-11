@@ -1,13 +1,5 @@
 import { Static, Type } from '@sinclair/typebox'
-
-const Experience = Type.Object({
-    note: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-    year_start: Type.Integer(),
-    year_end: Type.Optional(Type.Union([Type.Integer(), Type.Null()])),
-    institution: Type.String(),
-    current: Type.Optional(Type.Union([Type.Boolean(), Type.Null()])),
-    id: Type.Optional(Type.String()),
-})
+import { Experience } from '@src/shared/experience.model'
 
 const Education = Experience
 
@@ -35,10 +27,6 @@ export const CurriculumWithUserEmail = Type.Intersect([
     }),
 ])
 
-export const IdQueryString = Type.Object({
-    id: Type.String(),
-})
-
 export const GetCurriculumByEmail = Type.Object({
     email: Type.String({ format: 'email' }),
 })
@@ -56,23 +44,6 @@ export const CurriculumUpdateWithUserEmail = Type.Intersect([
     }),
 ])
 
-const ExperienceUpdate = Type.Object({
-    note: Type.Optional(Type.String()),
-    year_start: Type.Optional(Type.Integer()),
-    year_end: Type.Optional(Type.Integer()),
-    institution: Type.Optional(Type.String()),
-    current: Type.Optional(Type.Boolean()),
-})
-
-export const EducationUpdate = ExperienceUpdate
-
-export const WorkUpdate = Type.Intersect([
-    ExperienceUpdate, Type.Object({
-        role: Type.Optional(Type.String()),
-    })
-])
-
-export type IdQueryStringType = Static<typeof IdQueryString>
 export type CurriculumType = Static<typeof Curriculum>
 export type CurriculumWithUserEmailType = Static<
     typeof CurriculumWithUserEmail
@@ -82,6 +53,3 @@ export type CurriculumUpdateType = Static<typeof CurriculumUpdate>
 export type CurriculumUpdateWithUserEmailType = Static<
     typeof CurriculumUpdateWithUserEmail
 >
-
-export type EducationUpdateType = Static<typeof EducationUpdate>
-export type WorkUpdateType = Static<typeof WorkUpdate>

@@ -46,6 +46,10 @@ import { MsalService } from '@src/core/Auth/service/MsalService'
 import { MicrosoftProvider } from '@src/core/Auth/providers/MicrosoftProvider'
 import { CurriculumService } from '../Curriculum/service'
 import { CurriculumRepository } from '@src/infrastructure/Curriculum/Repository'
+import { EducationRepository } from '@src/infrastructure/Education/Repository'
+import { EducationService } from '../Education/service'
+import { WorkService } from '../Work/service'
+import { WorkRepository } from '@src/infrastructure/Work/Repository'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -257,6 +261,22 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       curriculumRepository: asClass(CurriculumRepository),
+    })
+
+    container.register({
+      educationService: asClass(EducationService),
+    })
+
+    container.register({
+      educationRepository: asClass(EducationRepository),
+    })
+
+    container.register({
+      workService: asClass(WorkService),
+    })
+
+    container.register({
+      workRepository: asClass(WorkRepository),
     })
 
     return container
