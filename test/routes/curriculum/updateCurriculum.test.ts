@@ -88,7 +88,7 @@ test('should return 401 update curriculum without authentication', async (t) => 
 })
 
 test('should not update name or email curriculum', async (t) => {
-
+    // @ts-expect-error test email not change
     await updateCurriculum(app, getToken(app, FAKE_EMAIL), { email: "Marytex" })
     const getResponse = await getCurriculum(app, getToken(app, FAKE_EMAIL))
     const getResponseData = getResponse.json()
