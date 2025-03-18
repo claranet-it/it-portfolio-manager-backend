@@ -1,6 +1,6 @@
 import { Type } from '@sinclair/typebox'
 
-export const Experience = Type.Object({
+const Experience = Type.Object({
     note: Type.Optional(Type.Union([Type.String(), Type.Null()])),
     year_start: Type.Integer(),
     year_end: Type.Optional(Type.Union([Type.Integer(), Type.Null()])),
@@ -16,3 +16,12 @@ export const ExperienceUpdate = Type.Object({
     institution: Type.Optional(Type.String()),
     current: Type.Optional(Type.Boolean()),
 })
+
+export const Education = Experience
+
+export const Work = Type.Intersect([
+    Experience,
+    Type.Object({
+        role: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+    }),
+])

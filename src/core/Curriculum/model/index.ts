@@ -1,14 +1,5 @@
 import { Static, Type } from '@sinclair/typebox'
-import { Experience } from '@src/shared/experience.model'
-
-const Education = Experience
-
-const Work = Type.Intersect([
-    Experience,
-    Type.Object({
-        role: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-    }),
-])
+import { Education, Work } from '@src/shared/experience.model'
 
 export const Curriculum = Type.Object({
     name: Type.String(),
