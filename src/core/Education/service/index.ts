@@ -2,6 +2,7 @@ import { EducationRepositoryInterface } from '../repository'
 
 import {
     EducationUpdateType,
+    EducationCreateWithUserEmailType,
 } from '../model'
 
 export class EducationService {
@@ -15,6 +16,10 @@ export class EducationService {
 
     async updateEducation(id: string, params: EducationUpdateType): Promise<void> {
         await this.educationRepository.updateEducation(id, params)
+    }
+
+    async addEducation(params: EducationCreateWithUserEmailType): Promise<void> {
+        await this.educationRepository.addEducation(params)
     }
 
 }

@@ -1,6 +1,6 @@
 import { CurriculumType, CurriculumUpdateType } from '@src/core/Curriculum/model';
-import { EducationUpdateType } from '@src/core/Education/model';
-import { WorkUpdateType } from '@src/core/Work/model';
+import { EducationCreateType, EducationUpdateType } from '@src/core/Education/model';
+import { WorkCreateType, WorkUpdateType } from '@src/core/Work/model';
 import { FastifyInstance } from 'fastify';
 
 export async function createCurriculum(app: FastifyInstance, token: string, payload: CurriculumType) {
@@ -81,5 +81,27 @@ export async function deleteEducationItem(app: FastifyInstance, token: string, i
     headers: {
       authorization: `Bearer ${token}`,
     }
+  })
+}
+
+export async function addEducation(app: FastifyInstance, token: string, payload: EducationCreateType) {
+  return await app.inject({
+    method: 'POST',
+    url: '/api/education',
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+    payload,
+  })
+}
+
+export async function addWork(app: FastifyInstance, token: string, payload: WorkCreateType) {
+  return await app.inject({
+    method: 'POST',
+    url: '/api/work',
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+    payload,
   })
 }
