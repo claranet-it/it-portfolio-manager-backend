@@ -12,6 +12,13 @@ export type CompanyType = Static<typeof Company>
 
 export const CompaniesArray = Type.Array(Company)
 
+export type CompaniesConnectionType = {requester: CompanyType, correspondent: CompanyType}[]
+
+export const CompaniesConnections = Type.Array(Type.Object({
+  requester: Company,
+  correspondent: Company,
+}));
+
 export type CompaniesArrayType = Static<typeof CompaniesArray>
 
 export const CompanyWithSkills = Type.Intersect([
