@@ -27,7 +27,10 @@ export class CompanyConnectionsService {
       company.id,
     )
 
-    return connections
+    return connections.map(({ requester, correspondent }) => ({
+      requester,
+      correspondent
+    }));
   }
 
   async create(body: CompanyConnectionsPostBodyType): Promise<void> {
