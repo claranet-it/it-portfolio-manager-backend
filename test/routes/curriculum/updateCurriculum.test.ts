@@ -15,6 +15,8 @@ const UPDATE_STRING_1 = "UPDATE FIELD STRING 1"
 
 const UPDATE_STRING_2 = "UPDATE FIELD STRING 2"
 
+const UPDATE_STRING_1000 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eget diam molestie, porta est sit amet, finibus enim. Integer mattis feugiat sem at ornare. In mi magna, auctor nec accumsan laoreet, laoreet ac ante. Phasellus fermentum est sed arcu mollis blandit. Nunc efficitur sapien et est molestie dictum. Nulla bibendum faucibus vestibulum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.Nam nec sapien quis lacus placerat porttitor euismod ut diam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec libero dui, venenatis nec lacus non, tempor pulvinar mauris. Cras nec enim ex. Donec in facilisis urna, et iaculis mauris. Proin dignissim accumsan elit ut mollis. Donec et felis eget nunc commodo consectetur vel at metus. Phasellus convallis, risus maximus venenatis pellentesque, nunc nunc convallis ipsum, eget dignissim neque ante eu urna. Class aptent taciti sociosqu ad litora torquent per at."
+
 before(async () => {
     app = createApp({ logger: false })
     await app.ready()
@@ -128,6 +130,14 @@ test('should update more item of my curriculum', async (t) => {
     t.equal(getResponseData.summary, UPDATE_STRING_2)
 })
 
+test('should update description with more than 191 char', async (t) => {
+    await updateCurriculum(app, getToken(app, FAKE_EMAIL), { main_skills: UPDATE_STRING_1000, summary: UPDATE_STRING_1000 })
+    const getResponse = await getCurriculum(app, getToken(app, FAKE_EMAIL))
+    const getResponseData = getResponse.json()
+    t.equal(getResponse.statusCode, 200)
+    t.equal(getResponseData.summary, UPDATE_STRING_1000)
+    t.equal(getResponseData.main_skills, UPDATE_STRING_1000)
+})
 
 
 

@@ -19,6 +19,8 @@ const UPDATE_NUMBER = 2030
 
 const UPDATE_BOOLEAN = true
 
+const UPDATE_STRING_1000 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eget diam molestie, porta est sit amet, finibus enim. Integer mattis feugiat sem at ornare. In mi magna, auctor nec accumsan laoreet, laoreet ac ante. Phasellus fermentum est sed arcu mollis blandit. Nunc efficitur sapien et est molestie dictum. Nulla bibendum faucibus vestibulum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.Nam nec sapien quis lacus placerat porttitor euismod ut diam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec libero dui, venenatis nec lacus non, tempor pulvinar mauris. Cras nec enim ex. Donec in facilisis urna, et iaculis mauris. Proin dignissim accumsan elit ut mollis. Donec et felis eget nunc commodo consectetur vel at metus. Phasellus convallis, risus maximus venenatis pellentesque, nunc nunc convallis ipsum, eget dignissim neque ante eu urna. Class aptent taciti sociosqu ad litora torquent per at."
+
 before(async () => {
     app = createApp({ logger: false })
     await app.ready()
@@ -100,6 +102,12 @@ test('should update work element of my curriculum', async (t) => {
     t.equal(updatedWork?.role, UPDATE_STRING)
     t.equal(updatedWork?.year_start, UPDATE_NUMBER)
     t.equal(updatedWork?.current, UPDATE_BOOLEAN)
+})
+
+test('should update description with more than 191 char', async (t) => {
+    await updateWork(app, getToken(app, FAKE_EMAIL), FAKE_ID, { note: UPDATE_STRING_1000 })
+    const updatedWork = await prisma.work.findUnique({ where: { id: FAKE_ID } })
+    t.equal(updatedWork?.note, UPDATE_STRING_1000)
 })
 
 
