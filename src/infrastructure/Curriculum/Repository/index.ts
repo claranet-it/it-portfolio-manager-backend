@@ -53,14 +53,18 @@ export class CurriculumRepository implements CurriculumRepositoryInterface {
             return null
         }
 
+        const sortedEducation = curriculum.education.sort((a, b) => b.year_start - a.year_start)
+        const sortedWork = curriculum.work.sort((a, b) => b.year_start - a.year_start)
+
+
         return {
             name: curriculum.name,
             email: curriculum.email,
             role: curriculum.role,
             summary: curriculum.summary ?? undefined,
             main_skills: curriculum.main_skills ?? undefined,
-            education: curriculum.education,
-            work: curriculum.work,
+            education: sortedEducation,
+            work: sortedWork,
         }
     }
 
