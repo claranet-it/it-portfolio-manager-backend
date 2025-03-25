@@ -110,8 +110,8 @@ model CurriculumVitae {
   name        String
   role        String
   email       String   @unique
-  summary		  String?
-  main_skills String?
+  summary		  String?  @db.VarChar(1000)
+  main_skills String?  @db.VarChar(1000)
   education	  Education[]
   work		    Work[]  
 }
@@ -122,7 +122,7 @@ model Education {
   updatedAt         DateTime        @updatedAt
   curriculum_vitae  CurriculumVitae @relation(fields: [curriculum_id], references: [id])
   curriculum_id     String
-  note              String?
+  note              String?         @db.VarChar(1000)
   year_start        Int
   year_end	        Int? 
   institution       String
@@ -135,7 +135,7 @@ model Work {
   updatedAt         DateTime        @updatedAt
   curriculum_vitae  CurriculumVitae @relation(fields: [curriculum_id], references: [id])
   curriculum_id     String 
-  note              String?
+  note              String?         @db.VarChar(1000)
   year_start        Int
   year_end	        Int? 
   institution       String

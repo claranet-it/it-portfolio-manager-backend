@@ -44,8 +44,16 @@ export class CurriculumRepository implements CurriculumRepositoryInterface {
                 email: params.email,
             },
             include: {
-                education: true,
-                work: true,
+                education: {
+                    orderBy: {
+                        year_start: 'desc',
+                    },
+                },
+                work: {
+                    orderBy: {
+                        year_start: 'desc',
+                    },
+                },
             },
         })
 
