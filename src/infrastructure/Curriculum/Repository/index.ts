@@ -44,8 +44,16 @@ export class CurriculumRepository implements CurriculumRepositoryInterface {
                 email: params.email,
             },
             include: {
-                education: true,
-                work: true,
+                education: {
+                    orderBy: {
+                        year_start: 'desc',
+                    },
+                },
+                work: {
+                    orderBy: {
+                        year_start: 'desc',
+                    },
+                },
             },
         })
 
@@ -53,18 +61,14 @@ export class CurriculumRepository implements CurriculumRepositoryInterface {
             return null
         }
 
-        const sortedEducation = curriculum.education.sort((a, b) => b.year_start - a.year_start)
-        const sortedWork = curriculum.work.sort((a, b) => b.year_start - a.year_start)
-
-
         return {
             name: curriculum.name,
             email: curriculum.email,
             role: curriculum.role,
             summary: curriculum.summary ?? undefined,
             main_skills: curriculum.main_skills ?? undefined,
-            education: sortedEducation,
-            work: sortedWork,
+            education: curriculum.education,
+            work: curriculum.work,
         }
     }
 
