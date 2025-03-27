@@ -16,7 +16,7 @@ export class CompanyConnectionsRepository
     const where: Prisma.CompanyConnectionsWhereInput = {}
 
     if (requesterId) {
-      where.requester_company_id = requesterId
+      where.OR = [{ requester_company_id: requesterId }, { correspondent_company_id: requesterId }]
     }
 
     return this.prismaClient.companyConnections.findMany({

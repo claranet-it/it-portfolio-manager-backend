@@ -1,27 +1,22 @@
 import { FastifyInstance } from 'fastify'
-import { CustomerList, CustomerListType, CustomerQueryParamType } from '@src/core/Task/model/task.model'
+import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
+import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
+import { Curriculum } from '@src/core/Curriculum/model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
-  fastify.get<{
-    Querystring: CustomerQueryParamType
-    Reply: CustomerListType
-  }>(
-    '/customer',
+  fastify.get(
+    '/',
     {
       onRequest: [fastify.authenticate],
       schema: {
-        tags: ['Task', 'Customer'],
+        tags: ['Curriculum'],
         security: [
           {
             apiKey: [],
           },
         ],
         response: {
-          200: CustomerList,
-          400: {
-            type: 'null',
-            description: 'Bad request',
-          },
+          200: Curriculum,
           401: {
             type: 'null',
             description: 'Unauthorized',
@@ -37,10 +32,18 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       try {
         return await fastify
           .dependencyInjectionContainer()
-          .resolve('taskService')
-          .getCustomers({company: request.user.company, completed: request.query.completed})
+          .resolve('curriculumService')
+          .get({
+            email: request.user.email,
+          })
       } catch (error) {
         request.log.error(error)
+        if (error instanceof NotFoundException) {
+          return reply.code(404).send()
+        }
+        if (error instanceof ForbiddenException) {
+          return reply.code(403).send()
+        }
         return reply.code(500).send()
       }
     },

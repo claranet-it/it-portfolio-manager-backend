@@ -2,6 +2,7 @@ import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositor
 import {
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
+  CustomerReadParamsType,
   ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
@@ -20,8 +21,8 @@ export class TaskService {
     private taskPropertiesRepository: TaskPropertiesRepositoryInterface,
   ) {}
 
-  async getCustomers(company: string): Promise<string[]> {
-    return this.taskRepository.getCustomers(company)
+  async getCustomers(params: CustomerReadParamsType): Promise<string[]> {
+    return this.taskRepository.getCustomers(params)
   }
 
   async getProjects(params: ProjectReadParamsType): Promise<ProjectListType> {

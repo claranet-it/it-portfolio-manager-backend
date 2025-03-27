@@ -2,7 +2,7 @@ import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { CompanyConnectionsRepositoryInterface } from '../repository/CompanyConnectionsRepositoryInterface'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { CompanyRepositoryInterface } from '@src/core/Company/repository/CompanyRepositoryInterface'
-import { CompanyType } from '@src/core/Company/model/Company'
+import { CompaniesConnectionType } from '@src/core/Company/model/Company'
 import { CompanyConnectionsPostBodyType } from '@src/core/CompanyConnections/service/dto/CompanyConnectionsPostBody'
 import { UniqueConstraintViolationException } from '@src/shared/exceptions/UniqueConstraintViolationException'
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
@@ -14,7 +14,7 @@ export class CompanyConnectionsService {
     private companyConnectionsRepository: CompanyConnectionsRepositoryInterface,
   ) {}
 
-  async getMine(jwtToken: JwtTokenType): Promise<CompanyType[]> {
+  async getMine(jwtToken: JwtTokenType): Promise<CompaniesConnectionType> {
     const company = await this.companyRepository.findOne({
       name: jwtToken.company,
     })
@@ -27,7 +27,10 @@ export class CompanyConnectionsService {
       company.id,
     )
 
-    return connections.map((connection) => connection.correspondent)
+    return connections.map(({ requester, correspondent }) => ({
+      requester,
+      correspondent
+    }));
   }
 
   async create(body: CompanyConnectionsPostBodyType): Promise<void> {
