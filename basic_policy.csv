@@ -1,4 +1,5 @@
 p, SUPERADMIN, company, read
+p, SUPERADMIN, company, write
 p, SUPERADMIN, companyAvailable, read
 p, SUPERADMIN, companyConnections, read
 p, SUPERADMIN, companyConnections, write
