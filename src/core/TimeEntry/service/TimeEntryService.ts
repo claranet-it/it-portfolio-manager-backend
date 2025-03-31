@@ -264,15 +264,19 @@ export class TimeEntryService {
   }
 
   async getReportProjectsFilterBy(
-    body: ReportProjectsWithCompanyType,
+    params: ReportProjectsWithCompanyType,
   ): Promise<TimeEntryReportType[] | string> {
-    const timeEntries = await this.timeEntryRepository.getTimeEntriesFilterBy(body)
-    const users = await this.userProfileRepository.getByCompany(body.company)
-    const filteredUsers = body.crew
-      ? users.filter((profile) => profile.crew === body.crew)
-      : users
 
-    let reportData =
+    const users = await this.userProfileRepository.getByCompany(params.company)
+    const filteredUsers = params.crew
+      ? users.filter((profile) => profile.crew === params.crew)
+      : users
+    if (params.crew) {
+      params.user = filteredUsers.map(user => user.uid)
+    }
+    const timeEntries = await this.timeEntryRepository.getTimeEntriesFilterBy(params)
+
+    const reportData =
       timeEntries.length > 0
         ? await Promise.all(
           timeEntries.map(async (entry) => {
@@ -297,11 +301,7 @@ export class TimeEntryService {
         )
         : []
 
-    if (body.crew) {
-      reportData = reportData.filter((data) => data.crew === body.crew)
-    }
-
-    return body.format === 'json'
+    return params.format === 'json'
       ? reportData
       : this.generateCsvFrom(reportData)
   }

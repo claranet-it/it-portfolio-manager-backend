@@ -579,7 +579,7 @@ test('Generate time entries report filter by project - json', async (t) => {
     t.same(result, expected)
 })
 
-test('Generate time entries report filter by more than one customer - json', async (t) => {
+test('Generate time entries report filter by customer - json', async (t) => {
     const response = await app.inject({
         method: 'POST',
         url: '/api/report/projects',
@@ -758,6 +758,79 @@ test('Generate time entries report filter by more than one customer - json', asy
             "startHour": "",
             "endHour": ""
         }
+    ]
+
+    t.same(result, expected)
+})
+
+test('Generate time entries report filter by user - json', async (t) => {
+    const response = await app.inject({
+        method: 'POST',
+        url: '/api/report/projects',
+        headers: {
+            authorization: `Bearer ${getToken()}`,
+        },
+        body: {
+            from: '2024-01-01',
+            to: '2024-12-31',
+            format: 'json',
+            user: ['nicholas.crow@email.com'],
+        }
+    })
+    t.equal(response.statusCode, 200)
+    const result = response.json<TimeEntryReportListType>()
+    t.equal(result.length, 3)
+
+    const expected = [
+        {
+            "date": "2024-01-06",
+            "email": "nicholas.crow@email.com",
+            "name": "Nicholas Crow",
+            "company": "it",
+            "crew": "moon",
+            "customer": "Claranet",
+            "project": "Assenze",
+            "task": "DONAZIONE SANGUE",
+            "projectType": "absence",
+            "plannedHours": 0,
+            "hours": 2,
+            "description": "",
+            "startHour": "",
+            "endHour": ""
+        },
+        {
+            "date": "2024-01-07",
+            "email": "nicholas.crow@email.com",
+            "name": "Nicholas Crow",
+            "company": "it",
+            "crew": "moon",
+            "customer": "Claranet",
+            "project": "Funzionale",
+            "task": "Attività di portfolio",
+            "projectType": "non-billable",
+            "plannedHours": 0,
+            "hours": 2,
+            "description": "",
+            "startHour": "",
+            "endHour": ""
+        },
+        {
+            "date": "2024-01-08",
+            "email": "nicholas.crow@email.com",
+            "name": "Nicholas Crow",
+            "company": "it",
+            "crew": "moon",
+            "customer": "Claranet",
+            "project": "Slack time",
+            "task": "formazione",
+            "projectType": "slack-time",
+            "plannedHours": 0,
+            "hours": 4,
+            "description": "",
+            "startHour": "",
+            "endHour": ""
+        },
+
     ]
 
     t.same(result, expected)

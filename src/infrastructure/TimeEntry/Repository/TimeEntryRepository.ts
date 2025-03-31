@@ -321,32 +321,32 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   }
 
   async getTimeEntriesFilterBy(
-    body: ReportProjectsWithCompanyType,
+    params: ReportProjectsWithCompanyType,
   ): Promise<TimeEntryRowWithProjectEntityType[]> {
     const prisma = new PrismaClient()
 
     const result = await prisma.timeEntry.findMany({
       where: {
         time_entry_date: {
-          lte: new Date(body.to),
-          gte: new Date(body.from),
+          lte: new Date(params.to),
+          gte: new Date(params.from),
         },
         email: {
-          in: body.user
+          in: params.user
         },
         task: {
           name: {
-            in: body.task
+            in: params.task
           },
           project: {
             name: {
-              in: body.project
+              in: params.project
             },
             customer: {
               name: {
-                in: body.customer
+                in: params.customer
               },
-              company_id: body.company,
+              company_id: params.company,
             },
           },
         },

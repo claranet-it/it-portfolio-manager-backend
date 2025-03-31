@@ -24,6 +24,6 @@ export interface TimeEntryRepositoryInterface {
   ): Promise<TimeEntryRowWithProjectEntityType[]>
   save(params: TimeEntryRowType): Promise<void>
   delete(params: deleteTimeEntryWithUserType): Promise<void>
-  getTimeEntriesFilterBy(body: ReportProjectsWithCompanyType,
+  getTimeEntriesFilterBy(params: ReportProjectsWithCompanyType,
   ): Promise<TimeEntryRowWithProjectEntityType[]>
 }
