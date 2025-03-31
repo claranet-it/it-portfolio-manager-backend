@@ -1,3 +1,4 @@
+import { ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
 import {
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
@@ -23,4 +24,6 @@ export interface TimeEntryRepositoryInterface {
   ): Promise<TimeEntryRowWithProjectEntityType[]>
   save(params: TimeEntryRowType): Promise<void>
   delete(params: deleteTimeEntryWithUserType): Promise<void>
+  getTimeEntriesFilterBy(body: ReportProjectsWithCompanyType,
+  ): Promise<TimeEntryRowWithProjectEntityType[]>
 }
