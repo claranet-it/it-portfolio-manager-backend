@@ -266,37 +266,51 @@ export class TimeEntryService {
   async getReportProjectsFilterBy(
     params: ReportProjectsWithCompanyType,
   ): Promise<TimeEntryReportType[] | string> {
+    const userProfileCache = new Map();
+    let filteredUsers: CompleteUserProfileType[] = []
 
-    const users = await this.userProfileRepository.getByCompany(params.company)
-    const filteredUsers = params.crew
-      ? users.filter((profile) => profile.crew === params.crew)
-      : users
+    const getUserProfile = async (userId: string): Promise<CompleteUserProfileType | null> => {
+      if (userProfileCache.has(userId)) {
+        return userProfileCache.get(userId);
+      } else {
+        const userProfile = await this.userProfileRepository.getUserProfileById(userId);
+        userProfileCache.set(userId, userProfile);
+        return userProfile;
+      }
+    };
+
     if (params.crew) {
+      const users = await this.userProfileRepository.getByCompany(params.company)
+      filteredUsers = params.crew
+        ? users.filter((profile) => profile.crew === params.crew)
+        : users
       params.user = filteredUsers.map(user => user.uid)
     }
+
     const timeEntries = await this.timeEntryRepository.getTimeEntriesFilterBy(params)
 
     const reportData =
       timeEntries.length > 0
-        ? timeEntries.map((entry) => {
-          const user = filteredUsers.find((user) => user.uid === entry.user)
-          return {
-            date: entry.date,
-            email: user?.uid ?? '',
-            name: user?.name ?? '',
-            company: user?.company ?? '',
-            crew: user?.crew ?? '',
-            customer: entry.customer,
-            project: entry.project.name,
-            task: entry.task,
-            projectType: entry.project.type,
-            plannedHours: entry.project.plannedHours,
-            hours: entry.hours,
-            description: entry.description,
-            startHour: entry.startHour,
-            endHour: entry.endHour,
-          }
-        })
+        ? await Promise.all(
+          timeEntries.map(async (entry) => {
+            const user: CompleteUserProfileType | null = filteredUsers.find((user) => user.uid === entry.user) || await getUserProfile(entry.user);
+            return {
+              date: entry.date,
+              email: user?.uid ?? '',
+              name: user?.name ?? '',
+              company: user?.company ?? '',
+              crew: user?.crew ?? '',
+              customer: entry.customer,
+              project: entry.project.name,
+              task: entry.task,
+              projectType: entry.project.type,
+              plannedHours: entry.project.plannedHours,
+              hours: entry.hours,
+              description: entry.description,
+              startHour: entry.startHour,
+              endHour: entry.endHour,
+            }
+          }))
         : []
 
     return params.format === 'json'
