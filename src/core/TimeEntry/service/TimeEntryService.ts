@@ -278,27 +278,25 @@ export class TimeEntryService {
 
     const reportData =
       timeEntries.length > 0
-        ? await Promise.all(
-          timeEntries.map(async (entry) => {
-            const user = filteredUsers.find((user) => user.uid === entry.user)
-            return {
-              date: entry.date,
-              email: user?.uid ?? '',
-              name: user?.name ?? '',
-              company: user?.company ?? '',
-              crew: user?.crew ?? '',
-              customer: entry.customer,
-              project: entry.project.name,
-              task: entry.task,
-              projectType: entry.project.type,
-              plannedHours: entry.project.plannedHours,
-              hours: entry.hours,
-              description: entry.description,
-              startHour: entry.startHour,
-              endHour: entry.endHour,
-            }
-          }),
-        )
+        ? timeEntries.map((entry) => {
+          const user = filteredUsers.find((user) => user.uid === entry.user)
+          return {
+            date: entry.date,
+            email: user?.uid ?? '',
+            name: user?.name ?? '',
+            company: user?.company ?? '',
+            crew: user?.crew ?? '',
+            customer: entry.customer,
+            project: entry.project.name,
+            task: entry.task,
+            projectType: entry.project.type,
+            plannedHours: entry.project.plannedHours,
+            hours: entry.hours,
+            description: entry.description,
+            startHour: entry.startHour,
+            endHour: entry.endHour,
+          }
+        })
         : []
 
     return params.format === 'json'
