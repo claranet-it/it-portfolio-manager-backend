@@ -59,7 +59,37 @@ test('Patch company without authentication', async (t) => {
   t.equal(response.statusCode, 401)
 })
 
-test('Patch company without ADMIN role', async (t) => {
+test('Patch company with SUPERADMIN role', async (t) => {
+  const tempToken = app.createTestJwt({
+    email: 'nicholas.crow@email.com',
+    name: 'Nicholas Crow',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it',
+    role: 'SUPERADMIN'
+  })
+
+  const response = await app.inject({
+    method: 'PATCH',
+    url: `/api/company/${itCompanyId}`,
+    headers: {
+      authorization: `Bearer ${tempToken}`,
+    },
+    body: {
+      image_url: 'test update image of company',
+    },
+  })
+  t.equal(response.statusCode, 200)
+
+
+  const updatedCompany = await prisma.company.findFirstOrThrow({
+    where: {
+      id: itCompanyId,
+    },
+  })
+  t.equal(updatedCompany.image_url, 'test update image of company')
+})
+
+test('Patch company without ADMIN/SUPERADMIN role', async (t) => {
   const tempToken = app.createTestJwt({
     email: 'nicholas.crow@email.com',
     name: 'Nicholas Crow',
@@ -114,3 +144,4 @@ test('Patch company', async (t) => {
   })
   t.equal(updatedCompany.image_url, 'test update image of company')
 })
+
