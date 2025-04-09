@@ -6,13 +6,14 @@ export const Company = Type.Object({
   domain: Type.String(),
   name: Type.String(),
   image_url: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  primary_contact: Type.String(),
 })
 
 export type CompanyType = Static<typeof Company>
 
 export const CompaniesArray = Type.Array(Company)
 
-export type CompaniesConnectionType = {requester: CompanyType, correspondent: CompanyType}[]
+export type CompaniesConnectionType = { requester: CompanyType, correspondent: CompanyType }[]
 
 export const CompaniesConnections = Type.Array(Type.Object({
   requester: Company,
