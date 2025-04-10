@@ -9,4 +9,5 @@ node_modules
 .serverless
 .env.dev
 .env
+.env.local
 prisma/generated
