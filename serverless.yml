@@ -308,9 +308,6 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
     ItPortfolioManagerEffort:
       Type: AWS::DynamoDB::Table
       Properties:
