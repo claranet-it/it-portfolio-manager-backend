@@ -72,7 +72,7 @@
     "@sinclair/typebox": "^0.31.2",
     "@slack/web-api": "^7.0.2",
     "awilix": "^9.0.0",
-    "axios": "^1.7.9",
+    "axios": "1.8.2",
     "casbin": "^5.32.0",
     "casbin-prisma-adapter": "^1.5.0",
     "crypto": "^1.0.1",

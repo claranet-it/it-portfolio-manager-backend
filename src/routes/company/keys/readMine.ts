@@ -5,9 +5,9 @@ export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Reply: { privateKey: string, symmetricKey: string }
   }>(
-    '/:companyId',
+    '/',
     {
-      //onRequest: [fastify.authenticate],
+      onRequest: [fastify.authenticate],
       schema: {
         tags: ['Company'],
         security: [
@@ -17,8 +17,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         ],
         response: {
           200: Type.Object({
-            privateKey: Type.String(),
-            symmetricKey: Type.String(),
+            encryptedPrivateKey: Type.String(),
+            encryptedAESKey: Type.String(),
           }),
           401: {
             type: 'null',
@@ -33,8 +33,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        console.log(request.params)
-        return { privateKey: 'pk', symmetricKey: 'sk' }
+        return await fastify
+          .dependencyInjectionContainer()
+          .resolve('companyService')
+          .getKeys(request.user)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
