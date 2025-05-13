@@ -1,10 +1,9 @@
 import { FastifyInstance } from 'fastify'
-import { BusinessCard, BusinessCardType } from '@src/core/BusinessCard/model'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
-import { CompanyKeysType } from '@src/core/Company/model/CompanyKeys'
-import { Type } from '@sinclair/typebox'
+import { CompanyKeys, CompanyKeysType } from '@src/core/Company/model/CompanyKeys'
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
+import { Value } from '@sinclair/typebox/value'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post<{
@@ -15,6 +14,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Company'],
+        body: CompanyKeys,
         security: [
           {
             apiKey: [],
@@ -46,13 +46,16 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
+        console.log(request.body)
+        const result = Value.Check(CompanyKeys, request.body);
+        console.log("Risultato Type Chekc: ",  result)
         await fastify
           .dependencyInjectionContainer()
           .resolve('companyService')
-          .saveKeys({
-            userEmail: request.user,
-            ...request.body,
-          })
+          .saveKeys(
+            request.user,
+            request.body,
+          )
         reply.code(201).send()
       } catch (error) {
         request.log.error(error)

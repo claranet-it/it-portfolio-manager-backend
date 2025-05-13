@@ -144,7 +144,5 @@ export class CompanyService {
       encryptedPrivateKey: body.encryptedPrivateKey,
       encryptedAESKey: body.encryptedAESKey
     })
-
-    console.log("ARRIVA QUI 4")
   }
 }
