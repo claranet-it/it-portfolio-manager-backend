@@ -3,7 +3,6 @@ import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 import { CompanyKeys, CompanyKeysType } from '@src/core/Company/model/CompanyKeys'
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
-import { Value } from '@sinclair/typebox/value'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.post<{
@@ -46,9 +45,6 @@ export default async function (fastify: FastifyInstance): Promise<void> {
     },
     async (request, reply) => {
       try {
-        console.log(request.body)
-        const result = Value.Check(CompanyKeys, request.body);
-        console.log("Risultato Type Chekc: ",  result)
         await fastify
           .dependencyInjectionContainer()
           .resolve('companyService')

@@ -33,6 +33,14 @@ afterEach(async () => {
   await app.close()
 })
 
+test('Read company keys without authentication', async (t) => {
+  const response = await app.inject({
+    method: 'GET',
+    url: '/api/company/keys',
+  })
+  t.equal(response.statusCode, 401)
+})
+
 test('Read mine company keys', async (t) => {
   const response = await app.inject({
     method: 'GET',
@@ -43,4 +51,17 @@ test('Read mine company keys', async (t) => {
   })
 
   t.equal(response.statusCode, 200)
+})
+
+test('Read not existing company keys', async (t) => {
+  await prisma.companyKeys.deleteMany()
+  const response = await app.inject({
+    method: 'GET',
+    url: `/api/company/keys`,
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+  })
+
+  t.equal(response.statusCode, 404)
 })

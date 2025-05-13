@@ -1,5 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { Type } from '@sinclair/typebox'
+import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
+import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
@@ -39,6 +41,12 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           .getKeys(request.user)
       } catch (error) {
         request.log.error(error)
+        if (error instanceof NotFoundException) {
+          return reply.code(404).send()
+        }
+        if (error instanceof ForbiddenException) {
+          return reply.code(403).send()
+        }
         return reply.code(500).send()
       }
     },
