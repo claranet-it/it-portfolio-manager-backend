@@ -3,6 +3,7 @@ import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import { seedCompany } from '@test/seed/prisma/company'
 import { PrismaClient } from '../../../../prisma/generated'
+import { seedCompanyKeys } from '@test/seed/prisma/companyKeys'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
@@ -20,21 +21,19 @@ beforeEach(async () => {
   app = createApp({ logger: false })
   await app.ready()
   await seedCompany()
+  await seedCompanyKeys()
 })
 
 afterEach(async () => {
-  const deleteSkill = prisma.skill.deleteMany()
+  const deleteKeys = prisma.companyKeys.deleteMany()
   const deleteCompany = prisma.company.deleteMany()
 
-  await prisma.$transaction([deleteSkill, deleteCompany])
+  await prisma.$transaction([deleteKeys, deleteCompany])
   await prisma.$disconnect()
   await app.close()
 })
 
 test('Read mine company keys', async (t) => {
-  const token = getToken()
-  console.log("Token:   ", token)
-
   const response = await app.inject({
     method: 'GET',
     url: `/api/company/keys`,
@@ -42,8 +41,6 @@ test('Read mine company keys', async (t) => {
       authorization: `Bearer ${getToken()}`,
     },
   })
-
-  console.log(response)
 
   t.equal(response.statusCode, 200)
 })
