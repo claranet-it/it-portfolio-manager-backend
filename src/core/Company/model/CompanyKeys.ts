@@ -7,3 +7,12 @@ export const CompanyKeys = Type.Object({
 })
 
 export type CompanyKeysType = Static<typeof CompanyKeys>
+
+export const CreateCompanyKeys = Type.Object({
+  company_id: Type.String(),
+  encryptedPrivateKey: Type.String(),
+  encryptedAESKey: Type.String(),
+  publicKey: Type.String(),
+})
+
+export type CreateCompanyKeysType = Static<typeof CreateCompanyKeys>

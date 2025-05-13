@@ -6,7 +6,7 @@ import {
 } from '@src/core/Company/model/Company'
 import { Prisma, PrismaClient } from '../../../../prisma/generated'
 import { CompanyKeysRepositoryInterface } from '@src/core/Company/repository/CompanyKeysRepositoryInterface'
-import { CompanyKeysType } from '@src/core/Company/model/CompanyKeys'
+import { CompanyKeysType, CreateCompanyKeysType } from '@src/core/Company/model/CompanyKeys'
 
 export class CompanyKeysRepository implements CompanyKeysRepositoryInterface {
   private prismaClient: PrismaClient
@@ -31,5 +31,16 @@ export class CompanyKeysRepository implements CompanyKeysRepositoryInterface {
       encryptedAESKey: companyKeys.encryptedAESKey,
       publicKey: companyKeys.publicKey,
     }
+  }
+
+  async save(companyKeys: CreateCompanyKeysType): Promise<void> {
+    await this.prismaClient.companyKeys.create({
+      data: {
+        company_id: companyKeys.company_id,
+        encryptedPrivateKey: companyKeys.encryptedPrivateKey,
+        encryptedAESKey: companyKeys.encryptedAESKey,
+        publicKey: companyKeys.publicKey,
+      },
+    })
   }
 }
