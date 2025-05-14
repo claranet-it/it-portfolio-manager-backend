@@ -14,7 +14,7 @@ export class EffortService {
   constructor(
     private effortRepository: EffortRepositoryInterface,
     private userProfileService: UserProfileService,
-  ) {}
+  ) { }
 
   async getEffortFormattedResponse(
     params: EffortReadParamsType,
@@ -137,5 +137,12 @@ export class EffortService {
 
   async delete(uid: string) {
     await this.effortRepository.delete(uid)
+  }
+
+  async deleteEffortByCompany(companyDomain: string) {
+    const allUsersCompany = await this.userProfileService.getByCompany(companyDomain)
+    for (const user of allUsersCompany) {
+      await this.effortRepository.delete(user.uid)
+    }
   }
 }
