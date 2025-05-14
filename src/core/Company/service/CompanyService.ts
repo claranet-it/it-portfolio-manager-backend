@@ -13,10 +13,11 @@ import { SkillRepository } from '@src/infrastructure/Skill/Repository/SkillRepos
 import { SkillType } from '@src/core/Configuration/model/configuration.model'
 
 export class CompanyService {
+
   constructor(
     private companyRepository: CompanyRepositoryInterface,
     private skillRepository: SkillRepository,
-  ) {}
+  ) { }
 
   async networkingFindAll(jwtToken: JwtTokenType): Promise<CompanyType[]> {
     const company = await this.companyRepository.findOne({
@@ -99,5 +100,9 @@ export class CompanyService {
       return updatedCompany
     }
     return company
+  }
+
+  async deleteCompany(idCompany: string): Promise<void> {
+    await this.companyRepository.deleteCompany(idCompany)
   }
 }
