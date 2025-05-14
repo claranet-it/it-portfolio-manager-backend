@@ -1,5 +1,6 @@
 import {
   AttributeValue,
+  DeleteItemCommand,
   DynamoDBClient,
   PutItemCommand,
   QueryCommand,
@@ -16,7 +17,7 @@ import {
 import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
 
 export class UserProfileRepository implements UserProfileRepositoryInterface {
-  constructor(private dynamoDBClient: DynamoDBClient) {}
+  constructor(private dynamoDBClient: DynamoDBClient) { }
 
   async getUserProfileById(
     uid: string,
@@ -338,4 +339,16 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     })
     await this.dynamoDBClient.send(putItemCommand)
   }
+
+  async removeUser(uid: string): Promise<void> {
+    const command = new DeleteItemCommand({
+      TableName: getTableName('UserProfile'),
+      Key: {
+        uid: { S: uid }
+      }
+    });
+
+    await this.dynamoDBClient.send(command);
+  }
 }
+
