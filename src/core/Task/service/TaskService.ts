@@ -19,7 +19,7 @@ export class TaskService {
   constructor(
     private taskRepository: TaskRepositoryInterface,
     private taskPropertiesRepository: TaskPropertiesRepositoryInterface,
-  ) {}
+  ) { }
 
   async getCustomers(params: CustomerReadParamsType): Promise<string[]> {
     return this.taskRepository.getCustomers(params)
@@ -70,5 +70,9 @@ export class TaskService {
     params: CustomerProjectDeleteParamsType,
   ): Promise<void> {
     return this.taskRepository.deleteCustomerProject(params)
+  }
+
+  async deleteCustomersAndRelatedDataByCompanyId(id: string): Promise<void> {
+    return this.taskRepository.deleteCustomersAndRelatedDataByCompanyId(id)
   }
 }

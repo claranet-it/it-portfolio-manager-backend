@@ -481,4 +481,46 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
   }
+
+  async deleteCustomersAndRelatedDataByCompanyId(id: string): Promise<void> {
+    const prisma = new PrismaClient()
+
+    const deleteTimeEntries = prisma.timeEntry.deleteMany({
+      where: {
+        task: {
+          project: {
+            customer: {
+              company_id: id
+            }
+          }
+        }
+      },
+    })
+
+    const deleteTasks = prisma.projectTask.deleteMany({
+      where: {
+        project: {
+          customer: {
+            company_id: id
+          }
+        }
+      },
+    })
+
+    const deleteProjects = prisma.project.deleteMany({
+      where: {
+        customer: {
+          company_id: id
+        }
+      },
+    })
+
+    const deleteCustomers = prisma.customer.deleteMany({
+      where: {
+        company_id: id
+      },
+    })
+
+    await prisma.$transaction([deleteTimeEntries, deleteTasks, deleteProjects, deleteCustomers])
+  }
 }
