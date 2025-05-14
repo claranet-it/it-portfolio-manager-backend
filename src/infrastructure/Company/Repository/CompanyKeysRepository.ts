@@ -1,10 +1,4 @@
-import { CompanyRepositoryInterface } from '@src/core/Company/repository/CompanyRepositoryInterface'
-import {
-  CompanyFindType,
-  CompanyType,
-  CompanyWithSkillsType,
-} from '@src/core/Company/model/Company'
-import { Prisma, PrismaClient } from '../../../../prisma/generated'
+import { PrismaClient } from '../../../../prisma/generated'
 import { CompanyKeysRepositoryInterface } from '@src/core/Company/repository/CompanyKeysRepositoryInterface'
 import { CompanyKeysType, CreateCompanyKeysType } from '@src/core/Company/model/CompanyKeys'
 

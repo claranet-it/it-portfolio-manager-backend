@@ -36,7 +36,7 @@ export default function createApp(
     ignoreTrailingSlash: true,
   }
 
-  const app = fastify({ ...defaultOptions, ...opts, ajv: { customOptions: {coerceTypes: false} } })
+  const app = fastify({ ...defaultOptions, ...opts })
 
   app.register(swagger, {
     swagger: {
