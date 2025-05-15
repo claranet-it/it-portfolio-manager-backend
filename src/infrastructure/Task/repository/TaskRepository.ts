@@ -482,7 +482,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     })
   }
 
-  async deleteCustomersAndRelatedDataByCompanyId(id: string): Promise<void> {
+  async deleteCustomersAndRelatedDataByCompany(id: string): Promise<void> {
     const prisma = new PrismaClient()
 
     const deleteTimeEntries = prisma.timeEntry.deleteMany({

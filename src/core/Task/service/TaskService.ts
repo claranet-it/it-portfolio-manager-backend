@@ -72,7 +72,7 @@ export class TaskService {
     return this.taskRepository.deleteCustomerProject(params)
   }
 
-  async deleteCustomersAndRelatedDataByCompanyId(id: string): Promise<void> {
-    return this.taskRepository.deleteCustomersAndRelatedDataByCompanyId(id)
+  async deleteCustomersAndRelatedDataByCompany(id: string): Promise<void> {
+    return this.taskRepository.deleteCustomersAndRelatedDataByCompany(id)
   }
 }

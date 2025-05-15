@@ -50,6 +50,7 @@ import { EducationRepository } from '@src/infrastructure/Education/Repository'
 import { EducationService } from '../Education/service'
 import { WorkService } from '../Work/service'
 import { WorkRepository } from '@src/infrastructure/Work/Repository'
+import { UnsubscribeService } from '../Unsubscribe/service'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -154,6 +155,11 @@ async function dependencyInjectionContainerPlugin(
     container.register({
       timeEntryService: asClass(TimeEntryService),
     })
+
+    container.register({
+      unsubscribeService: asClass(UnsubscribeService),
+    })
+
     container.register({
       jwt: awilix.asValue(fastify.jwt),
     })

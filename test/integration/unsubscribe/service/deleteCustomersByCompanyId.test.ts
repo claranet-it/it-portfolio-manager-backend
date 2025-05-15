@@ -118,7 +118,7 @@ after(async () => {
 })
 
 test('Delete all customers and related data by company id', async (t) => {
-    await taskService.deleteCustomersAndRelatedDataByCompanyId(MY_COMPANY_ID)
+    await taskService.deleteCustomersAndRelatedDataByCompany(MY_COMPANY_ID)
     const responseCustomer = await prisma.customer.findMany()
     const responseProj = await prisma.project.findMany()
     const responseTask = await prisma.projectTask.findMany()
