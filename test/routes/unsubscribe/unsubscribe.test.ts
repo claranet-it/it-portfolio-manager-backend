@@ -16,6 +16,7 @@ let originalSkill: ScanCommandOutput
 let originalUser: ScanCommandOutput
 
 const FAKE_EMAIL = 'TEST_USUBSCRIBE@email.com'
+const MY_COMPANY = 'it'
 
 before(async () => {
     app = createApp({ logger: false })
@@ -103,7 +104,7 @@ test('should return 500 deleting not existing company', async (t) => {
         email: FAKE_EMAIL,
         name: 'Marytex',
         picture: 'https://test.com/marytex.jpg',
-        company: 'it',
+        company: MY_COMPANY,
         role: 'ADMIN',
     })
 
@@ -121,7 +122,7 @@ test('should return 403 deleting other company', async (t) => {
         role: 'ADMIN',
     })
 
-    const it = await prisma.company.findFirst({ where: { name: 'it' } })
+    const it = await prisma.company.findFirst({ where: { name: MY_COMPANY } })
     if (it) {
         const response = await unsubscribe(app, token, it.id)
         t.equal(response.statusCode, 403)
@@ -134,11 +135,11 @@ test('should return 403 deleting company without ADMIN role', async (t) => {
         email: FAKE_EMAIL,
         name: 'Marytex',
         picture: 'https://test.com/marytex.jpg',
-        company: 'it',
+        company: MY_COMPANY,
         role: 'USER',
     })
 
-    const it = await prisma.company.findFirst({ where: { name: 'it' } })
+    const it = await prisma.company.findFirst({ where: { name: MY_COMPANY } })
     if (it) {
         const response = await unsubscribe(app, token, it.id)
         t.equal(response.statusCode, 403)
@@ -152,11 +153,11 @@ test('should delete all data of company', async (t) => {
         email: FAKE_EMAIL,
         name: 'Marytex',
         picture: 'https://test.com/marytex.jpg',
-        company: 'it',
+        company: MY_COMPANY,
         role: 'SUPERADMIN',
     })
 
-    const it = await prisma.company.findFirst({ where: { name: 'it' } })
+    const it = await prisma.company.findFirst({ where: { name: MY_COMPANY } })
     if (it) {
         const response = await unsubscribe(app, token, it.id)
         t.equal(response.statusCode, 200)
