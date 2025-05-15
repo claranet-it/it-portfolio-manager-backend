@@ -43,4 +43,6 @@ export interface UserProfileRepositoryInterface {
   getRole(uid: string): Promise<string>
 
   save(uid: string, userProfile: UserProfileType): Promise<void>
+
+  removeUser(uid: string): Promise<void>
 }

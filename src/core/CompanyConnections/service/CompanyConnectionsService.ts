@@ -12,7 +12,7 @@ export class CompanyConnectionsService {
   constructor(
     private companyRepository: CompanyRepositoryInterface,
     private companyConnectionsRepository: CompanyConnectionsRepositoryInterface,
-  ) {}
+  ) { }
 
   async getMine(jwtToken: JwtTokenType): Promise<CompaniesConnectionType> {
     const company = await this.companyRepository.findOne({
@@ -80,5 +80,9 @@ export class CompanyConnectionsService {
       requester.id,
       correspondent.id,
     )
+  }
+
+  async deleteConnections(idCompany: string): Promise<void> {
+    await this.companyConnectionsRepository.deleteConnections(idCompany)
   }
 }

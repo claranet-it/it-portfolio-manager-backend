@@ -11,7 +11,7 @@ import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
 export class UserProfileService {
-  constructor(private userProfileRepository: UserProfileRepositoryInterface) {}
+  constructor(private userProfileRepository: UserProfileRepositoryInterface) { }
 
   async getUserProfile(
     uid: string,
@@ -128,5 +128,12 @@ export class UserProfileService {
     }
 
     return currentRoleIndex > targetRoleIndex
+  }
+
+  async deleteUsersByCompany(companyDomain: string): Promise<void> {
+    const allUsersCompany = await this.getByCompany(companyDomain)
+    for (const user of allUsersCompany) {
+      await this.userProfileRepository.removeUser(user.uid)
+    }
   }
 }
