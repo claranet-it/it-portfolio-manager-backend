@@ -1,9 +1,8 @@
 import { test, before, after } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { ScanCommand } from '@aws-sdk/client-dynamodb'
+import { PutItemCommand, ScanCommand, ScanCommandOutput } from '@aws-sdk/client-dynamodb'
 import { getTableName } from '@src/core/db/TableName'
-import { PrismaClient } from 'prisma/generated'
 import { UserProfileService } from '@src/core/User/service/UserProfileService'
 import { UserProfileRepository } from '@src/infrastructure/User/repository/UserProfileRepository'
 import { DynamoDBConnection } from '@src/infrastructure/db/DynamoDBConnection'
@@ -11,9 +10,10 @@ import { EffortService } from '@src/core/Effort/service/EffortService'
 import { EffortRepository } from '@src/infrastructure/Effort/repository/EffortRepository'
 
 let app: FastifyInstance
-const prisma = new PrismaClient()
 
 let effortService: EffortService
+let originalSeed: ScanCommandOutput
+
 before(async () => {
     app = createApp({ logger: false })
     await app.ready()
@@ -22,10 +22,26 @@ before(async () => {
     const userProfileService = new UserProfileService(userRepository)
     const effortRepository = new EffortRepository(dynamo, true)
     effortService = new EffortService(effortRepository, userProfileService)
+
+    originalSeed = await app.dynamoDBClient.send(
+        new ScanCommand({
+            TableName: getTableName('Effort'),
+        }),
+    )
 })
 
 after(async () => {
-    await prisma.$disconnect()
+    if (originalSeed?.Items) {
+        for (const item of originalSeed.Items) {
+            await app.dynamoDBClient.send(
+                new PutItemCommand({
+                    TableName: getTableName('Effort'),
+                    Item: item,
+                })
+            );
+        }
+    }
+
     await app.close()
 })
 

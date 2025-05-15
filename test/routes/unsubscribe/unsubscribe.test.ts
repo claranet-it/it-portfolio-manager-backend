@@ -6,11 +6,14 @@ import { unsubscribe } from '@test/utils/unsubscribe'
 import { seedCompany } from '@test/seed/prisma/company'
 import { seedSkill } from '@test/seed/prisma/skill'
 import { seedCompanyConnections } from '@test/seed/prisma/companyConnections'
-import { ScanCommand } from '@aws-sdk/client-dynamodb'
+import { PutItemCommand, ScanCommand, ScanCommandOutput } from '@aws-sdk/client-dynamodb'
 import { getTableName } from '@src/core/db/TableName'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
+let originalEffort: ScanCommandOutput
+let originalSkill: ScanCommandOutput
+let originalUser: ScanCommandOutput
 
 const FAKE_EMAIL = 'TEST_USUBSCRIBE@email.com'
 
@@ -20,6 +23,25 @@ before(async () => {
     await seedCompany()
     await seedSkill()
     await seedCompanyConnections()
+
+    originalEffort = await app.dynamoDBClient.send(
+        new ScanCommand({
+            TableName: getTableName('Effort'),
+        }),
+    )
+
+    originalSkill = await app.dynamoDBClient.send(
+        new ScanCommand({
+            TableName: getTableName('SkillMatrix'),
+        }),
+    )
+
+    originalUser = await app.dynamoDBClient.send(
+        new ScanCommand({
+            TableName: getTableName('UserProfile'),
+        }),
+    )
+
 })
 
 after(async () => {
@@ -30,6 +52,40 @@ after(async () => {
     await prisma.$transaction([
         deleteConnections, deleteSkill, deleteCompany
     ])
+
+    if (originalEffort?.Items) {
+        for (const item of originalEffort.Items) {
+            await app.dynamoDBClient.send(
+                new PutItemCommand({
+                    TableName: getTableName('Effort'),
+                    Item: item,
+                })
+            );
+        }
+    }
+
+    if (originalSkill?.Items) {
+        for (const item of originalSkill.Items) {
+            await app.dynamoDBClient.send(
+                new PutItemCommand({
+                    TableName: getTableName('SkillMatrix'),
+                    Item: item,
+                })
+            );
+        }
+    }
+
+    if (originalUser?.Items) {
+        for (const item of originalUser.Items) {
+            await app.dynamoDBClient.send(
+                new PutItemCommand({
+                    TableName: getTableName('UserProfile'),
+                    Item: item,
+                })
+            );
+        }
+    }
+
     prisma.$disconnect()
     await app.close()
 })
