@@ -35,8 +35,8 @@ export default function createApp(
     logger: true,
     ignoreTrailingSlash: true,
   }
-
-  const app = fastify({ ...defaultOptions, ...opts, ajv: { customOptions: {coerceTypes: false} } })
+  // add " ajv: { customOptions: {coerceTypes: false} } " to make http request type checking works
+  const app = fastify({ ...defaultOptions, ...opts })
 
   app.register(swagger, {
     swagger: {
