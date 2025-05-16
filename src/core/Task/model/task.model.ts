@@ -145,7 +145,16 @@ export const CustomerList = Type.Array(Type.String())
 
 export type CustomerListType = Static<typeof CustomerList>
 
+export const Customer = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+  inactive: Type.Boolean(),
+})
+
+export type CustomerType = Static<typeof Customer>;
+
 export const Task = Type.Object({
+  id: Type.String(),
   name: Type.String(),
   completed: Type.Boolean(),
   plannedHours: Type.Number(),
@@ -183,3 +192,11 @@ export const TaskStructure = Type.Object({
 export type TaskStructureType = Static<typeof TaskStructure>
 export const TaskStructureList = Type.Array(TaskStructure)
 export type TaskStructureListType = Static<typeof TaskStructureList>
+
+export const ProjectToEncrypt = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+  projectType: Type.String(),
+})
+
+export type ProjectToEncryptType = Static<typeof ProjectToEncrypt>
