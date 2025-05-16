@@ -21,14 +21,24 @@ export class EncryptionService {
 
     //const customers = await this.taskRepository.getCustomersByCompany(company.id);
     //const projects = await this.taskRepository.getProjectsByCompany(company.id);
-    const tasks: TaskType[] = await this.taskRepository.getTasksByCompany(company.id);
+    const tasks: TaskType[] = await this.taskRepository.getTasksByCompany(company.name);
+
+    console.log(tasks);
+
     return this.aggregateDataToEncrypt(tasks);
   }
 
   private aggregateDataToEncrypt(tasks: TaskType[]): any {
-    return tasks.map((t) => ({
-      id: t.id,
-      name: t.name,
-    }))
+    return {
+      tasks: tasks.map((t) => ({
+        id: t.id,
+        name: t.name,
+      })),
+      customers: [],
+      projects: [],
+    }
+
+
+
   }
 }
