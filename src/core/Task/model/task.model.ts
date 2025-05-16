@@ -146,6 +146,7 @@ export const CustomerList = Type.Array(Type.String())
 export type CustomerListType = Static<typeof CustomerList>
 
 export const Task = Type.Object({
+  id: Type.String(),
   name: Type.String(),
   completed: Type.Boolean(),
   plannedHours: Type.Number(),

@@ -481,4 +481,33 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
   }
+
+  /*async getCustomersByCompany(company: string): Promise<CustomerType[]> {
+    return Promise.resolve(undefined)
+  }
+
+  async getProjectsByCompany(company: string): Promise<ProjectType[]> {
+    return Promise.resolve(undefined)
+  }*/
+
+  async getTasksByCompany(company: string): Promise<TaskType[]> {
+    const prisma = new PrismaClient()
+
+    const result = await prisma.projectTask.findMany({
+      where: {
+        project: {
+          customer: {
+            company_id: company,
+          },
+        },
+      },
+    })
+
+    return result.map((task) => ({
+      id: task.id,
+      name: task.name,
+      completed: task.is_completed,
+      plannedHours: task.planned_hours,
+    }))
+  }
 }

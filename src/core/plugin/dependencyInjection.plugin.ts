@@ -51,6 +51,7 @@ import { EducationService } from '../Education/service'
 import { WorkService } from '../Work/service'
 import { WorkRepository } from '@src/infrastructure/Work/Repository'
 import { CompanyKeysRepository } from '@src/infrastructure/Company/Repository/CompanyKeysRepository'
+import { EncryptionService } from '@src/core/Encryption/service/encryptionService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -97,6 +98,10 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       networkingService: asClass(NetworkingService),
+    })
+
+    container.register({
+      encryptionService: asClass(EncryptionService),
     })
 
     container.register({
