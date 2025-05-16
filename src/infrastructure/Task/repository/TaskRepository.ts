@@ -1,7 +1,7 @@
 import {
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
-  CustomerReadParamsType,
+  CustomerReadParamsType, CustomerType,
   ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
@@ -482,22 +482,34 @@ export class TaskRepository implements TaskRepositoryInterface {
     })
   }
 
-  /*async getCustomersByCompany(company: string): Promise<CustomerType[]> {
-    return Promise.resolve(undefined)
+  async getCustomersByCompany(companyName: string): Promise<CustomerType[]> {
+    const prisma = new PrismaClient()
+
+    const result = await prisma.customer.findMany({
+      where: {
+        company_id: companyName,
+      },
+    })
+
+    return result.map((customer) => ({
+      id: customer.id,
+      name: customer.name,
+      inactive: customer.inactive,
+    }))
   }
 
-  async getProjectsByCompany(company: string): Promise<ProjectType[]> {
+  /*async getProjectsByCompany(company: string): Promise<ProjectType[]> {
     return Promise.resolve(undefined)
   }*/
 
-  async getTasksByCompany(company: string): Promise<TaskType[]> {
+  async getTasksByCompany(companyName: string): Promise<TaskType[]> {
     const prisma = new PrismaClient()
 
     const result = await prisma.projectTask.findMany({
       where: {
         project: {
           customer: {
-            company_id: company,
+            company_id: companyName,
           },
         },
       },

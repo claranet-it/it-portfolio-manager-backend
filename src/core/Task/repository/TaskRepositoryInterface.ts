@@ -8,7 +8,7 @@ import {
   TaskUpdateParamsType,
   TaskType,
   TaskStructureListType,
-  CustomerReadParamsType,
+  CustomerReadParamsType, CustomerListType, CustomerType,
 } from '../model/task.model'
 
 export interface TaskRepositoryInterface {
@@ -25,7 +25,7 @@ export interface TaskRepositoryInterface {
   updateTask(params: TaskUpdateParamsType): Promise<void>
   deleteCustomerProject(params: CustomerProjectDeleteParamsType): Promise<void>
 
-  //getCustomersByCompany(company: string): Promise<CustomerListType>
-  getTasksByCompany(company: string): Promise<TaskType[]>
-  //getProjectsByCompany(company: string): Promise<ProjectListType>
+  getCustomersByCompany(companyName: string): Promise<CustomerType[]>
+  getTasksByCompany(companyName: string): Promise<TaskType[]>
+  //getProjectsByCompany(companyName: string): Promise<ProjectListType>
 }
