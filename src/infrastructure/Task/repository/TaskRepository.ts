@@ -8,7 +8,7 @@ import {
   TaskReadParamsType,
   TaskStructureListType,
   TaskType,
-  TaskUpdateParamsType,
+  TaskUpdateParamsType, ProjectToEncryptType,
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import { TaskError } from '@src/core/customExceptions/TaskError'
@@ -498,9 +498,23 @@ export class TaskRepository implements TaskRepositoryInterface {
     }))
   }
 
-  /*async getProjectsByCompany(company: string): Promise<ProjectType[]> {
-    return Promise.resolve(undefined)
-  }*/
+  async getProjectsByCompany(companyName: string): Promise<ProjectToEncryptType[]> {
+    const prisma = new PrismaClient()
+
+    const result = await prisma.project.findMany({
+      where: {
+        customer: {
+          company_id: companyName,
+        },
+      },
+    })
+
+    return result.map((task) => ({
+      id: task.id,
+      name: task.name,
+      projectType: task.project_type,
+    }))
+  }
 
   async getTasksByCompany(companyName: string): Promise<TaskType[]> {
     const prisma = new PrismaClient()

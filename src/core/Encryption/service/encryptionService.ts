@@ -2,7 +2,7 @@ import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositor
 import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { CompanyRepositoryInterface } from '@src/core/Company/repository/CompanyRepositoryInterface'
-import { CustomerType, TaskType } from '@src/core/Task/model/task.model'
+import { CustomerType, ProjectToEncryptType, TaskType } from '@src/core/Task/model/task.model'
 
 export class EncryptionService {
   constructor(
@@ -20,15 +20,13 @@ export class EncryptionService {
     }
 
     const customers: CustomerType[] = await this.taskRepository.getCustomersByCompany(company.name);
-    //const projects = await this.taskRepository.getProjectsByCompany(company.id);
+    const projects = await this.taskRepository.getProjectsByCompany(company.id);
     const tasks: TaskType[] = await this.taskRepository.getTasksByCompany(company.name);
 
-    console.log(tasks);
-
-    return this.aggregateDataToEncrypt(tasks, customers);
+    return this.aggregateDataToEncrypt(tasks, customers, projects);
   }
 
-  private aggregateDataToEncrypt(tasks: TaskType[], customers: CustomerType[]): any {
+  private aggregateDataToEncrypt(tasks: TaskType[], customers: CustomerType[], projects: ProjectToEncryptType[]): any {
     return {
       tasks: tasks.map((t) => ({
         id: t.id,
@@ -38,10 +36,7 @@ export class EncryptionService {
         id: c.id,
         name: c.name,
       })),
-      projects: [],
+      projects: projects.map((p) => ({ id: p.id, name: p.name })),
     }
-
-
-
   }
 }
