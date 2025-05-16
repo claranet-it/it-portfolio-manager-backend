@@ -24,4 +24,8 @@ export interface TaskRepositoryInterface {
   updateCustomerProject(params: CustomerProjectUpdateParamsType): Promise<void>
   updateTask(params: TaskUpdateParamsType): Promise<void>
   deleteCustomerProject(params: CustomerProjectDeleteParamsType): Promise<void>
+
+  //getCustomersByCompany(company: string): Promise<CustomerListType>
+  getTasksByCompany(company: string): Promise<TaskType[]>
+  //getProjectsByCompany(company: string): Promise<ProjectListType>
 }
