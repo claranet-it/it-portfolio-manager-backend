@@ -23,7 +23,7 @@ export class EncryptionService {
     }
 
     const customers: CustomerType[] = await this.taskRepository.getCustomersByCompany(company.name);
-    const projects = await this.taskRepository.getProjectsByCompany(company.id);
+    const projects = await this.taskRepository.getProjectsByCompany(company.name);
     const tasks: TaskType[] = await this.taskRepository.getTasksByCompany(company.name);
     const timeEntries = await this.timeEntryRepository.getTimeEntriesByCompany(company.name);
 

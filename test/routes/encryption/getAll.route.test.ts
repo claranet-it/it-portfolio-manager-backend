@@ -6,6 +6,7 @@ import { PrismaClient } from '../../../prisma/generated'
 import { seedCustomers } from '@test/seed/prisma/customers'
 import { seedProjects } from '@test/seed/prisma/projects'
 import { seedTasks } from '@test/seed/prisma/tasks'
+import { seedEntries } from '@test/seed/prisma/seedEntries'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
@@ -47,15 +48,31 @@ beforeEach(async () => {
   })).map((project) => project.id)
 
   await seedTasks(projects);
+
+  const tasks: string[] = (await prisma.projectTask.findMany({
+    where: {
+      project: {
+        customer_id: {
+          in: customers
+        }
+      }
+    },
+    select: {
+      id: true
+    }
+  })).map((task) => task.id)
+
+  await seedEntries(tasks);
 });
 
 afterEach(async () => {
+  const deleteTimeEntries = prisma.timeEntry.deleteMany()
   const deleteTasks = prisma.projectTask.deleteMany()
   const deleteProjects = prisma.project.deleteMany()
   const deleteCustomers = prisma.customer.deleteMany()
   const deleteCompany = prisma.company.deleteMany()
 
-  await prisma.$transaction([deleteTasks, deleteProjects, deleteCustomers, deleteCompany])
+  await prisma.$transaction([deleteTimeEntries, deleteTasks, deleteProjects, deleteCustomers, deleteCompany])
   await prisma.$disconnect()
   await app.close()
 })
