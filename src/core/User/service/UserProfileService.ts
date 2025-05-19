@@ -10,6 +10,7 @@ import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
+
 export class UserProfileService {
   constructor(private userProfileRepository: UserProfileRepositoryInterface) { }
 
@@ -131,9 +132,7 @@ export class UserProfileService {
   }
 
   async deleteUsersByCompany(companyDomain: string): Promise<void> {
-    const allUsersCompany = await this.getByCompany(companyDomain)
-    for (const user of allUsersCompany) {
-      await this.userProfileRepository.removeUser(user.uid)
-    }
+    this.userProfileRepository.removeAllUsersOfCompany(companyDomain)
+
   }
 }

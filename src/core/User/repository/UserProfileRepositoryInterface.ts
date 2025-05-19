@@ -44,5 +44,5 @@ export interface UserProfileRepositoryInterface {
 
   save(uid: string, userProfile: UserProfileType): Promise<void>
 
-  removeUser(uid: string): Promise<void>
+  removeAllUsersOfCompany(uid: string): Promise<void>
 }

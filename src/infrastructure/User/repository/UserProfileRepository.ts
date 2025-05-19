@@ -1,10 +1,11 @@
 import {
   AttributeValue,
-  DeleteItemCommand,
   DynamoDBClient,
   PutItemCommand,
   QueryCommand,
   ScanCommand,
+  TransactWriteItem,
+  TransactWriteItemsCommand,
   UpdateItemCommand,
 } from '@aws-sdk/client-dynamodb'
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
@@ -340,15 +341,33 @@ export class UserProfileRepository implements UserProfileRepositoryInterface {
     await this.dynamoDBClient.send(putItemCommand)
   }
 
-  async removeUser(uid: string): Promise<void> {
-    const command = new DeleteItemCommand({
-      TableName: getTableName('UserProfile'),
-      Key: {
-        uid: { S: uid }
+  private removeUserCommand(uid: string): TransactWriteItem {
+    const command = {
+      Delete: {
+        TableName: getTableName('UserProfile'),
+        Key: {
+          uid: { S: uid }
+        }
       }
-    });
+    };
 
-    await this.dynamoDBClient.send(command);
+    return command;
+  }
+
+  async removeAllUsersOfCompany(companyDomain: string): Promise<void> {
+    const allUsersCompany = await this.getByCompany(companyDomain)
+    const transactItems = []
+    for (const user of allUsersCompany) {
+      transactItems.push(this.removeUserCommand(user.uid))
+    }
+
+    if (transactItems.length > 0) {
+      const transactCommand = new TransactWriteItemsCommand({
+        TransactItems: transactItems,
+      });
+      await this.dynamoDBClient.send(transactCommand);
+
+    }
   }
 }
 
