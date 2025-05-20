@@ -20,7 +20,7 @@ export class EffortRepository implements EffortRepositoryInterface {
   ) {}
 
   async getEffort(params: GetEffortParamsType): Promise<EffortRowType[]> {
-    let command = null
+    let command;
     if (params.uid) {
       command = this.createQueryCommand(params)
     } else {
@@ -104,5 +104,28 @@ export class EffortRepository implements EffortRepositoryInterface {
     return new ScanCommand({
       TableName: getTableName('Effort'),
     })
+  }
+
+  async getEffortByCompany(users: string[]): Promise<EffortRowType[]> {
+    const command = this.createScanCommand();
+    const result = await this.dynamoDBClient.send(command);
+
+    if (!result?.Items) {
+      return [];
+    }
+
+    return result.Items.filter((item) => {
+      return users.includes(item.uid?.S ?? '');
+    }).map((item) => ({
+      uid: item.uid?.S ?? '',
+      month_year: item.month_year?.S ?? '',
+      confirmedEffort: item.confirmedEffort.N
+        ? Number(item.confirmedEffort.N)
+        : 0,
+      tentativeEffort: item.tentativeEffort.N
+        ? Number(item.tentativeEffort.N)
+        : 0,
+      notes: item.notes?.S ?? '',
+    }));
   }
 }

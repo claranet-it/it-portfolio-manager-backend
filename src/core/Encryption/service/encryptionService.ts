@@ -5,11 +5,16 @@ import { CompanyRepositoryInterface } from '@src/core/Company/repository/Company
 import { CustomerType, ProjectToEncryptType, TaskType } from '@src/core/Task/model/task.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
 import { TimeEntriesToEncryptType } from '@src/core/TimeEntry/model/timeEntry.model'
+import { EffortRepositoryInterface } from '@src/core/Effort/repository/EffortRepositoryInterface'
+import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
+import { EffortRowType } from '@src/core/Effort/model/effort'
 
 export class EncryptionService {
   constructor(
     private taskRepository: TaskRepositoryInterface,
     private timeEntryRepository: TimeEntryRepositoryInterface,
+    private effortRepository: EffortRepositoryInterface,
+    private userRepository: UserProfileRepositoryInterface,
     private companyRepository: CompanyRepositoryInterface
   ) {}
 
@@ -27,14 +32,19 @@ export class EncryptionService {
     const tasks: TaskType[] = await this.taskRepository.getTasksByCompany(company.name);
     const timeEntries = await this.timeEntryRepository.getTimeEntriesByCompany(company.name);
 
-    return this.aggregateDataToEncrypt(tasks, customers, projects, timeEntries);
+
+    const users = (await this.userRepository.getByCompany(company.name)).map((u) => u.uid)
+    const effort = await this.effortRepository.getEffortByCompany(users);
+
+    return this.aggregateDataToEncrypt(tasks, customers, projects, timeEntries, effort);
   }
 
   private aggregateDataToEncrypt(
     tasks: TaskType[],
     customers: CustomerType[],
     projects: ProjectToEncryptType[],
-    timeEntries: TimeEntriesToEncryptType[]
+    timeEntries: TimeEntriesToEncryptType[],
+    effort: EffortRowType[]
   ): any {
     return {
       tasks: tasks.map((t) => ({
@@ -47,6 +57,10 @@ export class EncryptionService {
       })),
       projects: projects.map((p) => ({ id: p.id, name: p.name })),
       timeEntries: timeEntries,
+      effort: effort.map((e) => ({
+        id: e.uid,
+        notes: e.notes,
+      }))
     }
   }
 }

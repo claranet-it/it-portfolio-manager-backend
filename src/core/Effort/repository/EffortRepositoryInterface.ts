@@ -6,4 +6,6 @@ export interface EffortRepositoryInterface {
   saveEffort(params: EffortRowType): Promise<void>
 
   delete(uid: string): Promise<void>
+
+  getEffortByCompany(users: string[]): Promise<EffortRowType[]>
 }
