@@ -140,9 +140,20 @@ export class EffortService {
   }
 
   async deleteEffortByCompany(companyDomain: string) {
-    const allUsersCompany = await this.userProfileService.getByCompany(companyDomain)
-    for (const user of allUsersCompany) {
-      await this.effortRepository.delete(user.uid)
+    const originalData = await this.effortRepository.getData()
+    if (originalData?.length) {
+      const allUsersCompany = await this.userProfileService.getByCompany(companyDomain)
+      for (const user of allUsersCompany) {
+        try {
+          await this.effortRepository.delete(user.uid)
+        } catch (error) {
+          console.error("Error: delete all users of a company", error)
+          for (const item of originalData) {
+            this.effortRepository.restoreData(item)
+          }
+          break;
+        }
+      }
     }
   }
 }

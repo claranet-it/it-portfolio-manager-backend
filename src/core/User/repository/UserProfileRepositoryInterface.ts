@@ -1,3 +1,4 @@
+import { AttributeValue } from '@aws-sdk/client-dynamodb'
 import {
   CompleteUserProfileType,
   UpdateUserProfileType,
@@ -44,5 +45,10 @@ export interface UserProfileRepositoryInterface {
 
   save(uid: string, userProfile: UserProfileType): Promise<void>
 
-  removeAllUsersOfCompany(uid: string): Promise<void>
+  removeUser(uid: string): Promise<void>
+
+  getData(): Promise<Record<string, AttributeValue>[] | undefined>
+
+  restoreData(item: Record<string, AttributeValue>): Promise<void>
+
 }

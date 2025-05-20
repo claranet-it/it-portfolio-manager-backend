@@ -1,4 +1,5 @@
 import {
+  AttributeValue,
   BatchWriteItemCommand,
   DynamoDBClient,
   PutItemCommand,
@@ -17,7 +18,7 @@ export class EffortRepository implements EffortRepositoryInterface {
   constructor(
     private dynamoDBClient: DynamoDBClient,
     private isTest: boolean,
-  ) {}
+  ) { }
 
   async getEffort(params: GetEffortParamsType): Promise<EffortRowType[]> {
     let command = null
@@ -104,5 +105,23 @@ export class EffortRepository implements EffortRepositoryInterface {
     return new ScanCommand({
       TableName: getTableName('Effort'),
     })
+  }
+
+  async getData(): Promise<Record<string, AttributeValue>[] | undefined> {
+    const originalResponse = await this.dynamoDBClient.send(
+      new ScanCommand({
+        TableName: getTableName('Effort'),
+      }),
+    )
+    return originalResponse.Items;
+  }
+
+  async restoreData(item: Record<string, AttributeValue>): Promise<void> {
+    await this.dynamoDBClient.send(
+      new PutItemCommand({
+        TableName: getTableName('Effort'),
+        Item: item,
+      })
+    );
   }
 }

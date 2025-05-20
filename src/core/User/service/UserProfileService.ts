@@ -132,7 +132,20 @@ export class UserProfileService {
   }
 
   async deleteUsersByCompany(companyDomain: string): Promise<void> {
-    this.userProfileRepository.removeAllUsersOfCompany(companyDomain)
-
+    const originalData = await this.userProfileRepository.getData()
+    if (originalData?.length) {
+      const allUsersCompany = await this.getByCompany(companyDomain)
+      for (const user of allUsersCompany) {
+        try {
+          await this.userProfileRepository.removeUser(user.uid)
+        } catch (error) {
+          console.error("Error: delete all users of a company", error)
+          for (const item of originalData) {
+            this.userProfileRepository.restoreData(item)
+          }
+          break;
+        }
+      }
+    }
   }
 }
