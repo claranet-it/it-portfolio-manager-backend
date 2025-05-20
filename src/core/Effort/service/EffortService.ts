@@ -147,7 +147,7 @@ export class EffortService {
         try {
           await this.effortRepository.delete(user.uid)
         } catch (error) {
-          console.error("Error: delete all users of a company", error)
+          console.error("Error: delete effort of a company", error)
           for (const item of originalData) {
             this.effortRepository.restoreData(item)
           }

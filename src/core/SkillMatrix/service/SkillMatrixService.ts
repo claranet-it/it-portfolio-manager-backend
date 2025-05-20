@@ -87,7 +87,7 @@ export class SkillMatrixService {
         try {
           await this.skillMatrixRepository.delete(user.uid)
         } catch (error) {
-          console.error("Error: delete all users of a company", error)
+          console.error("Error: delete skillMatrix of a company", error)
           for (const item of originalData) {
             this.skillMatrixRepository.restoreData(item)
           }
