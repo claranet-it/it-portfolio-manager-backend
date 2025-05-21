@@ -12,6 +12,7 @@ import { DynamoDBConnection } from '@src/infrastructure/db/DynamoDBConnection'
 import { GetDataToEncryptReturnType } from '@src/core/Encryption/model/dataToEncrypt'
 import { PrismaClient } from '../../../../prisma/generated'
 import { CompanyKeysRepositoryInterface } from '@src/core/Company/repository/CompanyKeysRepositoryInterface'
+import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 
 export class EncryptionService {
   constructor(
@@ -52,12 +53,24 @@ export class EncryptionService {
       throw new NotFoundException('Company not found')
     }
 
+    const companyKeys = await this.companyKeysRepository.findByCompany(company.id);
+
+    if (!companyKeys) {
+      throw new NotFoundException('Company keys not found')
+    }
+
+    if (companyKeys.encryptionCompleted) {
+      throw new BadRequestException('Encryption already completed')
+    }
+
     const prisma = new PrismaClient();
 
     const companyUsers: string[] = (await this.userRepository.getByCompany(company.name)).map((u) => u.uid);
     const previuoseEffort = await this.effortRepository.getEffortsByUids(companyUsers);
 
     try {
+      await this.companyKeysRepository.updateEncryptionStatus(company.id, true);
+
       for (const effort of dataToEncrypt.efforts) {
         await this.effortRepository.saveEffort({
           uid: effort.id,
@@ -118,13 +131,13 @@ export class EncryptionService {
 
 
       await prisma.$transaction([...customers, ...projects, ...tasks, ...timeEntries]);
-      await this.companyKeysRepository.updateEncryptionStatus(company.id, true);
     } catch (error) {
       console.log(error);
       console.log('Error encrypting data. Start rolling back dynamoDB table');
       for (const effort of previuoseEffort) {
         await this.effortRepository.saveEffort(effort);
       }
+      await this.companyKeysRepository.updateEncryptionStatus(company.id, false);
       throw error;
     }
 

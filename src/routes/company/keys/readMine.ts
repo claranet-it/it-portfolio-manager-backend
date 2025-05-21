@@ -21,6 +21,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           200: Type.Object({
             encryptedPrivateKey: Type.String(),
             encryptedAESKey: Type.String(),
+            encryptionCompleted: Type.Boolean(),
           }),
           401: {
             type: 'null',
