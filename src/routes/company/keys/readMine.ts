@@ -5,7 +5,7 @@ import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Reply: { privateKey: string, symmetricKey: string }
+    Reply: { privateKey: string, symmetricKey: string, encryptionCompleted: boolean }
   }>(
     '/',
     {

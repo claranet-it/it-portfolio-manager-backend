@@ -24,6 +24,7 @@ export class CompanyKeysRepository implements CompanyKeysRepositoryInterface {
       encryptedPrivateKey: companyKeys.encryptedPrivateKey,
       encryptedAESKey: companyKeys.encryptedAESKey,
       publicKey: companyKeys.publicKey,
+      encryptionCompleted: companyKeys.encryptionCompleted
     }
   }
 
@@ -34,6 +35,7 @@ export class CompanyKeysRepository implements CompanyKeysRepositoryInterface {
         encryptedPrivateKey: companyKeys.encryptedPrivateKey,
         encryptedAESKey: companyKeys.encryptedAESKey,
         publicKey: companyKeys.publicKey,
+        encryptionCompleted: companyKeys.encryptionCompleted
       },
     })
   }
