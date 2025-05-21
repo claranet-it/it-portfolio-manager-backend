@@ -33,6 +33,7 @@ model CompanyKeys {
   encryptedPrivateKey String  @db.Text
   encryptedAESKey     String  @db.Text
   publicKey           String  @db.Text
+  encryptionCompleted Boolean @default(false)
 
   @@unique([company_id])
 }
