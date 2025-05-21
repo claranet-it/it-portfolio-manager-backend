@@ -5,8 +5,6 @@ import { CompanyRepositoryInterface } from '@src/core/Company/repository/Company
 import { CustomerType, ProjectToEncryptType, TaskType } from '@src/core/Task/model/task.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
 import { TimeEntriesToEncryptType } from '@src/core/TimeEntry/model/timeEntry.model'
-import { EffortRepositoryInterface } from '@src/core/Effort/repository/EffortRepositoryInterface'
-import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { EffortRowType } from '@src/core/Effort/model/effort'
 import { UserProfileRepository } from '@src/infrastructure/User/repository/UserProfileRepository'
 import { EffortRepository } from '@src/infrastructure/Effort/repository/EffortRepository'
@@ -36,7 +34,6 @@ export class EncryptionService {
     const timeEntries = await this.timeEntryRepository.getTimeEntriesByCompany(company.name);
 
     const companyUsers: string[] = (await this.userRepository.getByCompany(company.name)).map((u) => u.uid);
-    console.log('companyUsers', companyUsers)
     const efforts = await this.effortRepository.getEffortsByUids(companyUsers);
 
     return this.aggregateDataToEncrypt(tasks, customers, projects, timeEntries, efforts);

@@ -5,7 +5,7 @@ import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Reply: { customers: any[], projects: any[], tasks: any[] }
+    Reply: { customers: any[], projects: any[], tasks: any[], efforts: any[], timeEntries: any[] }
   }>(
     '/to-be-encrypted',
     {
@@ -22,7 +22,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             customers: Type.Array(Type.Any()),
             projects: Type.Array(Type.Any()),
             tasks: Type.Array(Type.Any()),
-            effort: Type.Array(Type.Any()),
+            efforts: Type.Array(Type.Any()),
             timeEntries: Type.Array(Type.Any()),
           }),
           401: {
