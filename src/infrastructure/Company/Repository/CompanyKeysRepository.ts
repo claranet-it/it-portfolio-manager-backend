@@ -35,8 +35,18 @@ export class CompanyKeysRepository implements CompanyKeysRepositoryInterface {
         encryptedPrivateKey: companyKeys.encryptedPrivateKey,
         encryptedAESKey: companyKeys.encryptedAESKey,
         publicKey: companyKeys.publicKey,
-        encryptionCompleted: companyKeys.encryptionCompleted
       },
+    })
+  }
+
+  async updateEncryptionStatus(companyId: string, encryptionCompleted: boolean): Promise<void> {
+    await this.prismaClient.companyKeys.update({
+      where: {
+        company_id: companyId
+      },
+      data: {
+        encryptionCompleted: encryptionCompleted
+      }
     })
   }
 }
