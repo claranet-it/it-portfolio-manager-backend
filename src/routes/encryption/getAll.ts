@@ -22,6 +22,8 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             customers: Type.Array(Type.Any()),
             projects: Type.Array(Type.Any()),
             tasks: Type.Array(Type.Any()),
+            effort: Type.Array(Type.Any()),
+            timeEntries: Type.Array(Type.Any()),
           }),
           401: {
             type: 'null',
