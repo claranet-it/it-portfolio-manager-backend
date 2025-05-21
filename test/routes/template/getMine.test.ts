@@ -91,7 +91,7 @@ test('should return 401 getting templates without authentication', async (t) => 
     t.equal(response.statusCode, 401)
 })
 
-test('should return my templates', async (t) => {
+test('should return only my templates', async (t) => {
     const response = await getMyTemplates(app, getToken(app, My_EMAIL))
     const responseData = response.json()
     t.equal(response.statusCode, 200)

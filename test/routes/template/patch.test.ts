@@ -51,7 +51,7 @@ after(async () => {
     ])
 })
 
-test('should return 401 update curriculum without authentication', async (t) => {
+test('should return 401 update template without authentication', async (t) => {
     const response = await app.inject({
         method: 'PATCH',
         url: '/api/template/id',
@@ -59,7 +59,7 @@ test('should return 401 update curriculum without authentication', async (t) => 
     t.equal(response.statusCode, 401)
 })
 
-test('should not update name or email curriculum', async (t) => {
+test('should not update email in template', async (t) => {
     const seed = await prisma.template.findFirst({ where: { email: FAKE_EMAIL } })
     if (seed) {
         // @ts-expect-error test email not change
@@ -69,7 +69,7 @@ test('should not update name or email curriculum', async (t) => {
     }
 })
 
-test('should update one item of my curriculum', async (t) => {
+test('should update items of my template', async (t) => {
     const seed = await prisma.template.findFirst({ where: { email: FAKE_EMAIL } })
     if (seed) {
         await updateTemplate(app, getToken(app, FAKE_EMAIL), seed.id, {

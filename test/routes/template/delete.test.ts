@@ -60,7 +60,7 @@ test('should return 401 deleting template without authentication', async (t) => 
     t.equal(response.statusCode, 401)
 })
 
-test('should return 500 deleting non existing template', async (t) => {
+test('should return 500 deleting not existing template', async (t) => {
     const seed = await prisma.template.findFirst({ where: { email: My_EMAIL } })
     if (seed) {
         const response = await deleteTemplate(app, getToken(app, My_EMAIL), "not_valid_id")

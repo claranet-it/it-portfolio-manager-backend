@@ -42,7 +42,7 @@ test('should return 401 saving templates without authentication', async (t) => {
     t.equal(response.statusCode, 401)
 })
 
-test('should return my templates', async (t) => {
+test('should save my template', async (t) => {
     const payload = {
         timehours: 8,
         daytime: [1, 3, 5],
