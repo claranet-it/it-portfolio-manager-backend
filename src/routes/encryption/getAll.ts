@@ -5,7 +5,12 @@ import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Reply: { customers: any[], projects: any[], tasks: any[], efforts: any[], timeEntries: any[] }
+    Reply: {
+      customers: { id: string, name: string }[],
+      projects: { id: string, name: string }[],
+      tasks: { id: string, name: string }[],
+      efforts: { id: string, notes: string }[],
+      timeEntries: { id: string, description: string }[] }
   }>(
     '/to-be-encrypted',
     {
@@ -19,11 +24,36 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         ],
         response: {
           200: Type.Object({
-            customers: Type.Array(Type.Any()),
-            projects: Type.Array(Type.Any()),
-            tasks: Type.Array(Type.Any()),
-            efforts: Type.Array(Type.Any()),
-            timeEntries: Type.Array(Type.Any()),
+            tasks: Type.Array(
+              Type.Object({
+                id: Type.String(),
+                name: Type.String(),
+              }),
+            ),
+            customers: Type.Array(
+              Type.Object({
+                id: Type.String(),
+                name: Type.String(),
+              }),
+            ),
+            projects: Type.Array(
+              Type.Object({
+                id: Type.String(),
+                name: Type.String(),
+              }),
+            ),
+            timeEntries: Type.Array(
+              Type.Object({
+                id: Type.String(),
+                description: Type.String(),
+              }),
+            ),
+            efforts: Type.Array(
+              Type.Object({
+                id: Type.String(),
+                notes: Type.String(),
+              }),
+            ),
           }),
           401: {
             type: 'null',

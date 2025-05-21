@@ -9,6 +9,7 @@ import { EffortRowType } from '@src/core/Effort/model/effort'
 import { UserProfileRepository } from '@src/infrastructure/User/repository/UserProfileRepository'
 import { EffortRepository } from '@src/infrastructure/Effort/repository/EffortRepository'
 import { DynamoDBConnection } from '@src/infrastructure/db/DynamoDBConnection'
+import { GetDataToEncryptReturnType } from '@src/core/Encryption/model/dataToEncrypt'
 
 export class EncryptionService {
   constructor(
@@ -45,7 +46,7 @@ export class EncryptionService {
     projects: ProjectToEncryptType[],
     timeEntries: TimeEntriesToEncryptType[],
     efforts: EffortRowType[]
-  ): any {
+  ): GetDataToEncryptReturnType {
     return {
       tasks: tasks.map((t) => ({
         id: t.id,
