@@ -50,6 +50,8 @@ import { EducationRepository } from '@src/infrastructure/Education/Repository'
 import { EducationService } from '../Education/service'
 import { WorkService } from '../Work/service'
 import { WorkRepository } from '@src/infrastructure/Work/Repository'
+import { TemplateService } from '../Template/service'
+import { TemplateRepository } from '@src/infrastructure/Template/Repository'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -277,6 +279,14 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       workRepository: asClass(WorkRepository),
+    })
+
+    container.register({
+      templateService: asClass(TemplateService),
+    })
+
+    container.register({
+      templateRepository: asClass(TemplateRepository),
     })
 
     return container

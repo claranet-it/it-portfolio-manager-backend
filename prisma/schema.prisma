@@ -142,3 +142,18 @@ model Work {
   role		          String?
   current           Boolean?
 }
+
+
+model Template {
+  id            String        @id @default(uuid())
+  email         String        
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  customer_id   String
+  project_id    String
+  task_id       String?
+  timehours     Float         @default(0)
+  daytime       String
+  date_start    DateTime
+  date_end	    DateTime
+}
