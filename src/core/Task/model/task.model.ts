@@ -141,9 +141,12 @@ export const TaskCreateReadParams = Type.Intersect([
 
 export type TaskCreateReadParamsType = Static<typeof TaskCreateReadParams>
 
-export const CustomerList = Type.Array(Type.String())
+export const Customer = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+});
 
-export type CustomerListType = Static<typeof CustomerList>
+export type CustomerType = Static<typeof Customer>
 
 export const Task = Type.Object({
   name: Type.String(),

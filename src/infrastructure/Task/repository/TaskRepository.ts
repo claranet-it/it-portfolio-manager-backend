@@ -1,7 +1,7 @@
 import {
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
-  CustomerReadParamsType,
+  CustomerReadParamsType, CustomerType,
   ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
@@ -15,7 +15,7 @@ import { TaskError } from '@src/core/customExceptions/TaskError'
 import { PrismaClient } from '../../../../prisma/generated'
 
 export class TaskRepository implements TaskRepositoryInterface {
-  async getCustomers(params: CustomerReadParamsType): Promise<string[]> {
+  async getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]> {
     const prima = new PrismaClient()
     const result = await prima.customer.findMany({
       where: {
@@ -31,7 +31,10 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     });
 
-    return result.map((customer) => customer.name).sort()
+    return result.map((customer) => ({
+      id: customer.id,
+      name: customer.name,
+    })).sort((a, b) => a.name.localeCompare(b.name));
   }
 
   async getProjects(params: ProjectReadParamsType): Promise<ProjectListType> {

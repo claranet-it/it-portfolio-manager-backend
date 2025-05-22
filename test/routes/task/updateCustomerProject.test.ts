@@ -2,7 +2,7 @@ import { afterEach, beforeEach, test } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import {
-  CustomerListType,
+  CustomerType,
   ProjectDetailsType,
   ProjectListType,
 } from '@src/core/Task/model/task.model'
@@ -58,11 +58,11 @@ test('update customer', async (t) => {
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerListType>()
+  let customers = response.json<CustomerType[]>()
 
   t.equal(customers.length, 1)
   let expectedResult = ['Test update customer']
-  t.same(customers, expectedResult)
+  t.same(customers.map((customer) => customer.name), expectedResult)
 
   response = await putCustomer(
     customer,
@@ -74,10 +74,10 @@ test('update customer', async (t) => {
 
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
-  customers = response.json<CustomerListType>()
+  customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
   expectedResult = ['Test update new customer']
-  t.same(customers, expectedResult)
+  t.same(customers.map((customer) => customer.name), expectedResult)
 })
 
 test('update project - all', async (t) => {

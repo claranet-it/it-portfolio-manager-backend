@@ -2,7 +2,7 @@ import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import {
-  CustomerListType,
+  CustomerType,
   ProjectListType,
 } from '@src/core/Task/model/task.model'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
@@ -63,10 +63,10 @@ test('delete customer-project', async (t) => {
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerListType>()
+  let customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
   const expectedResult = ['Test delete customer']
-  t.same(customers, expectedResult)
+  t.same(customers.map((customer) => customer.name), expectedResult)
 
   response = await getProjects(company, customer)
   t.equal(response.statusCode, 200)
@@ -88,7 +88,7 @@ test('delete customer-project', async (t) => {
 
   response = await getProjects(company, customer)
   t.equal(response.statusCode, 200)
-  customers = response.json<CustomerListType>()
+  customers = response.json<CustomerType[]>()
   t.equal(customers.length, 0)
   t.same(customers, [])
 })
@@ -122,10 +122,10 @@ test("can't delete customer-project if there are time entries", async (t) => {
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
 
-  const customers = response.json<CustomerListType>()
+  const customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
   const expectedResult = ['Test delete customer']
-  t.same(customers, expectedResult)
+  t.same(customers.map((customer) => customer.name), expectedResult)
 
   response = await getProjects(company, customer)
   t.equal(response.statusCode, 200)
