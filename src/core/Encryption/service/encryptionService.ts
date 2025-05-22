@@ -10,9 +10,10 @@ import { UserProfileRepository } from '@src/infrastructure/User/repository/UserP
 import { EffortRepository } from '@src/infrastructure/Effort/repository/EffortRepository'
 import { DynamoDBConnection } from '@src/infrastructure/db/DynamoDBConnection'
 import { GetDataToEncryptReturnType } from '@src/core/Encryption/model/dataToEncrypt'
-import { PrismaClient } from '../../../../prisma/generated'
+import { Prisma, PrismaClient } from '../../../../prisma/generated'
 import { CompanyKeysRepositoryInterface } from '@src/core/Company/repository/CompanyKeysRepositoryInterface'
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
+import { DefaultArgs } from 'prisma/generated/runtime/library'
 
 export class EncryptionService {
   constructor(
@@ -21,8 +22,9 @@ export class EncryptionService {
     private companyRepository: CompanyRepositoryInterface,
     private effortRepository: EffortRepository = new EffortRepository(DynamoDBConnection.getClient(), false),
     private userRepository: UserProfileRepository = new UserProfileRepository(DynamoDBConnection.getClient()),
-    private companyKeysRepository: CompanyKeysRepositoryInterface
-  ) {}
+    private companyKeysRepository: CompanyKeysRepositoryInterface,
+  ) {
+  }
 
   async getDataToEncrypt(jwtToken: JwtTokenType) {
     const company = await this.companyRepository.findOne({
@@ -33,15 +35,15 @@ export class EncryptionService {
       throw new NotFoundException('Company not found')
     }
 
-    const customers: CustomerType[] = await this.taskRepository.getCustomersByCompany(company.name);
-    const projects = await this.taskRepository.getProjectsByCompany(company.name);
-    const tasks: TaskType[] = await this.taskRepository.getTasksByCompany(company.name);
-    const timeEntries = await this.timeEntryRepository.getTimeEntriesByCompany(company.name);
+    const customers: CustomerType[] = await this.taskRepository.getCustomersByCompany(company.name)
+    const projects = await this.taskRepository.getProjectsByCompany(company.name)
+    const tasks: TaskType[] = await this.taskRepository.getTasksByCompany(company.name)
+    const timeEntries = await this.timeEntryRepository.getTimeEntriesByCompany(company.name)
 
-    const companyUsers: string[] = (await this.userRepository.getByCompany(company.name)).map((u) => u.uid);
-    const efforts = await this.effortRepository.getEffortsByUids(companyUsers);
+    const companyUsers: string[] = (await this.userRepository.getByCompany(company.name)).map((u) => u.uid)
+    const efforts = await this.effortRepository.getEffortsByUids(companyUsers)
 
-    return this.aggregateDataToEncrypt(tasks, customers, projects, timeEntries, efforts);
+    return this.aggregateDataToEncrypt(tasks, customers, projects, timeEntries, efforts)
   }
 
   async encryptData(jwtToken: JwtTokenType, dataToEncrypt: GetDataToEncryptReturnType) {
@@ -53,7 +55,7 @@ export class EncryptionService {
       throw new NotFoundException('Company not found')
     }
 
-    const companyKeys = await this.companyKeysRepository.findByCompany(company.id);
+    const companyKeys = await this.companyKeysRepository.findByCompany(company.id)
 
     if (!companyKeys) {
       throw new NotFoundException('Company keys not found')
@@ -63,13 +65,13 @@ export class EncryptionService {
       throw new BadRequestException('Encryption already completed')
     }
 
-    const prisma = new PrismaClient();
+    const prisma = new PrismaClient()
 
-    const companyUsers: string[] = (await this.userRepository.getByCompany(company.name)).map((u) => u.uid);
-    const previuoseEffort = await this.effortRepository.getEffortsByUids(companyUsers);
+    const companyUsers: string[] = (await this.userRepository.getByCompany(company.name)).map((u) => u.uid)
+    const previuoseEffort = await this.effortRepository.getEffortsByUids(companyUsers)
 
     try {
-      await this.companyKeysRepository.updateEncryptionStatus(company.id, true);
+      await this.companyKeysRepository.updateEncryptionStatus(company.id, true)
 
       for (const effort of dataToEncrypt.efforts) {
         await this.effortRepository.saveEffort({
@@ -77,23 +79,23 @@ export class EncryptionService {
           month_year: effort.month_year,
           confirmedEffort: effort.confirmedEffort,
           tentativeEffort: effort.tentativeEffort,
-          notes: effort.notes
+          notes: effort.notes,
         })
       }
 
-      const customers: any[] = [];
-      dataToEncrypt.customers.forEach( (object) => {
+      const customers: Prisma.Prisma__CustomerClient<{ id: string; company_id: string; name: string; inactive: boolean; createdAt: Date; updatedAt: Date }, never, DefaultArgs>[] = []
+      dataToEncrypt.customers.forEach((object) => {
         customers.push(prisma.customer.update({
           where: {
-            id: object.id
+            id: object.id,
           },
           data: {
-            name: object.name
-          }
-        }));
+            name: object.name,
+          },
+        }))
       })
 
-      const projects: any[] = [];
+      const projects: Prisma.Prisma__ProjectClient<{ id: string; customer_id: string; name: string; project_type: string; is_inactive: boolean; plannedHours: number; createdAt: Date; updatedAt: Date; completed: boolean }, never, DefaultArgs>[] = [];
       dataToEncrypt.projects.forEach( (object) => {
         projects.push(prisma.project.update({
           where: {
@@ -105,7 +107,7 @@ export class EncryptionService {
         }));
       })
 
-      const tasks: any[] = [];
+      const tasks: Prisma.Prisma__ProjectTaskClient<{ id: string; project_id: string; name: string; is_completed: boolean; planned_hours: number; createdAt: Date; updatedAt: Date }, never, DefaultArgs>[] = [];
       dataToEncrypt.tasks.forEach( (object) => {
         tasks.push(prisma.projectTask.update({
           where: {
@@ -117,7 +119,7 @@ export class EncryptionService {
         }));
       })
 
-      const timeEntries: any[] = [];
+      const timeEntries: Prisma.Prisma__TimeEntryClient<{ id: string; time_entry_date: Date; task_id: string; hours: number; description: string | null; time_start: string | null; time_end: string | null; email: string; createdAt: Date; updatedAt: Date }, never, DefaultArgs>[] = [];
       dataToEncrypt.timeEntries.forEach( (object) => {
         timeEntries.push(prisma.timeEntry.update({
           where: {

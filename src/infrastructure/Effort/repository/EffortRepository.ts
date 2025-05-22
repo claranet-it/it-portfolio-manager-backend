@@ -1,5 +1,4 @@
 import {
-  BatchGetItemCommand,
   BatchWriteItemCommand,
   DynamoDBClient,
   PutItemCommand,
