@@ -51,13 +51,13 @@ test('delete customer-project without authentication', async (t) => {
 })
 
 test('delete customer-project', async (t) => {
-  const customer = 'Test delete customer'
+  const customerName = 'Test delete customer'
   const company = 'test delete company'
-  const project = 'Test delete project'
+  const projectName = 'Test delete project'
   const projectType = ProjectType.BILLABLE
   const task = 'Test delete task'
 
-  let response = await postTask(customer, company, project, projectType, task)
+  let response = await postTask(customerName, company, projectName, projectType, task)
   t.equal(response.statusCode, 200)
 
   response = await getCustomers(company)
@@ -65,16 +65,17 @@ test('delete customer-project', async (t) => {
 
   let customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
-  const expectedResult = ['Test delete customer']
+  const expectedResult = [customerName]
   t.same(customers.map((customer) => customer.name), expectedResult)
 
-  response = await getProjects(company, customer)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
 
   const projects = response.json<ProjectListType>()
   t.equal(projects.length, 1)
   const projExpectedResult = [
     {
+      id: projects[0].id,
       name: 'Test delete project',
       type: 'billable',
       plannedHours: 0,
@@ -83,10 +84,10 @@ test('delete customer-project', async (t) => {
   ]
   t.same(projects, projExpectedResult)
 
-  response = await deleteProject(company, customer, project)
+  response = await deleteProject(company, customers[0].id, projects[0].id??'')
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
   customers = response.json<CustomerType[]>()
   t.equal(customers.length, 0)

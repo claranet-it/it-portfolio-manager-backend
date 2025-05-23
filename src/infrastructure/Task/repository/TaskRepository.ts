@@ -432,20 +432,14 @@ export class TaskRepository implements TaskRepositoryInterface {
   async deleteCustomerProject(
     params: CustomerProjectDeleteParamsType,
   ): Promise<void> {
-    const company = params.company
     const projectName = params.project
-    const customer = params.customer
     const inactive = params.inactive || true
 
     const prisma = new PrismaClient()
 
-    const project = await prisma.project.findFirst({
+    const project = await prisma.project.findUnique({
       where: {
-        name: projectName,
-        customer: {
-          name: customer,
-          company_id: company,
-        },
+        id: params.project,
       },
       include: {
         tasks: {
