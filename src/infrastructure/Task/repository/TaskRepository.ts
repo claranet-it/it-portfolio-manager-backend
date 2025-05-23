@@ -31,6 +31,8 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     });
 
+    console.log("Company from customers ", result[0].company_id);
+
     return result.map((customer) => ({
       id: customer.id,
       name: customer.name,
@@ -470,5 +472,18 @@ export class TaskRepository implements TaskRepositoryInterface {
         id: project.id,
       },
     })
+  }
+
+  async getCompanyFromProject(project: string): Promise<string | null> {
+    const prisma = new PrismaClient()
+
+    const result = await prisma.$queryRaw<{ company_id: string }[]>`
+      SELECT DISTINCT c.company_id
+      FROM Customer c
+      JOIN Project p ON p.customer_id = c.id
+      WHERE p.id = ${project}
+    `
+
+    return result[0].company_id;
   }
 }
