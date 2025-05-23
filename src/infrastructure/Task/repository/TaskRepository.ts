@@ -42,10 +42,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     const result = await prisma.project.findMany({
       where: {
-        customer: {
-          company_id: params.company,
-          name: params.customer,
-        },
+        customer_id: params.customer,
         completed: params.completed,
         is_inactive: false,
       },
