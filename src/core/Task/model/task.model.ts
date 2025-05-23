@@ -40,6 +40,7 @@ export const ProjectOpt = Type.Object({
 })
 
 export const Project = Type.Object({
+  id: Type.Optional(Type.String()),
   name: Type.String(),
   type: Type.String(),
   plannedHours: Type.Number(),
@@ -61,7 +62,7 @@ export const CustomerProjectUpdateQueryParams = Type.Object({
 export const CustomerProjectParams = Type.Object({
   customer: Type.String(),
   project: Project,
-  newCustomer: Type.Optional(Type.String()),
+  newCustomerName: Type.Optional(Type.String()),
   newProject: Type.Optional(Project),
   completed: Type.Optional(Type.Boolean()),
 })
