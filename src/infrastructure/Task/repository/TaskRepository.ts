@@ -31,6 +31,8 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     });
 
+    console.log(result);
+
     return result.map((customer) => ({
       id: customer.id,
       name: customer.name,

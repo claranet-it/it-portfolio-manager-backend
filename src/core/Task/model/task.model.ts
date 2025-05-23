@@ -47,6 +47,8 @@ export const Project = Type.Object({
   completed: Type.Boolean(),
 })
 
+export type ProjectType = Static<typeof Project>
+
 export type ProjectDetailsType = Static<typeof Project>
 export const ProjectList = Type.Array(Project)
 
