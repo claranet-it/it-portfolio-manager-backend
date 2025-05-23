@@ -3,8 +3,7 @@ import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import {
   CustomerType,
-  ProjectDetailsType,
-  ProjectListType,
+  ProjectDetailsType, ProjectListType,
 } from '@src/core/Task/model/task.model'
 import { PrismaClient } from '../../../prisma/generated'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
@@ -46,13 +45,13 @@ test('update customer without authentication', async (t) => {
 })
 
 test('update customer', async (t) => {
-  const customer = 'Test update customer'
+  const customerName = 'Test update customer'
   const company = 'test update company'
-  const project = 'Test update project'
+  const projectName = 'Test update project'
   const projectType = ProjectType.BILLABLE
   const task = 'Test update task'
 
-  let response = await postTask(customer, company, project, projectType, task)
+  let response = await postTask(customerName, company, projectName, projectType, task)
   t.equal(response.statusCode, 200)
 
   response = await getCustomers(company)
@@ -64,12 +63,21 @@ test('update customer', async (t) => {
   let expectedResult = ['Test update customer']
   t.same(customers.map((customer) => customer.name), expectedResult)
 
+  response = await getProjects(company, customers[0].id)
+  t.equal(response.statusCode, 200)
+
+  let projects= response.json<ProjectListType>()
+  t.equal(projects.length, 1)
+  expectedResult = ['Test update project']
+  t.same(projects.map((project) => project.name), expectedResult)
+
   response = await putCustomer(
-    customer,
+    customers[0].id,
     company,
-    { name: project, type: projectType, plannedHours: 0, completed: true },
+    { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: 0, completed: true },
     'Test update new customer',
   )
+  console.log('84: ',response.json())
   t.equal(response.statusCode, 200)
 
   response = await getCustomers(company)
@@ -81,37 +89,42 @@ test('update customer', async (t) => {
 })
 
 test('update project - all', async (t) => {
-  const customer = 'Test update project all customer'
+  const customerName = 'Test update project all customer'
   const company = 'Test update project all company'
-  const project = 'Test update project all project'
+  const projectName = 'Test update project all project'
   const projectType = ProjectType.SLACK_TIME
   const plannedHours = 200
   const task = 'Test update project all task'
 
   let response = await postTask(
-    customer,
+    customerName,
     company,
-    project,
+    projectName,
     projectType,
     task,
     plannedHours,
   )
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+
+  response = await getCustomers(company)
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+
+  t.equal(customers.length, 1)
+  let expectedCustomer = ['Test update project all customer']
+  t.same(customers.map((customer) => customer.name), expectedCustomer)
+
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
 
   let projects = response.json<ProjectListType>()
-
   t.equal(projects.length, 1)
-  let expectedResult: {
-    name: string
-    type: ProjectType
-    plannedHours: number
-    completed: boolean
-  }[] = [
+  let expectedResult: ProjectListType = [
     {
-      name: project,
+      id: projects[0].id,
+      name: projectName,
       type: ProjectType.SLACK_TIME,
       plannedHours: plannedHours,
       completed: false,
@@ -123,12 +136,13 @@ test('update project - all', async (t) => {
   const newProjectType = ProjectType.BILLABLE
   const newPlannedHours = 300
   response = await putProject(
-    customer,
+    customers[0].id,
     company,
     {
-      name: project,
-      type: projectType,
-      plannedHours: plannedHours,
+      id: projects[0].id,
+      name: projects[0].name,
+      type: projects[0].type,
+      plannedHours: projects[0].plannedHours,
       completed: false,
     },
     {
@@ -140,12 +154,13 @@ test('update project - all', async (t) => {
   )
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
   projects = response.json<ProjectListType>()
   t.equal(projects.length, 1)
   expectedResult = [
     {
+      id: projects[0].id,
       name: newProjectName,
       type: newProjectType,
       plannedHours: newPlannedHours,
@@ -156,16 +171,25 @@ test('update project - all', async (t) => {
 })
 
 test('update project - only name', async (t) => {
-  const customer = 'Test update project customer'
+  const customerName = 'Test update project customer'
   const company = 'Test update project company'
-  const project = 'Test update project project'
+  const projectName = 'Test update project project'
   const projectType = ProjectType.NON_BILLABLE
   const task = 'Test update project task'
 
-  let response = await postTask(customer, company, project, projectType, task)
+  let response = await postTask(customerName, company, projectName, projectType, task)
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getCustomers(company)
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+
+  t.equal(customers.length, 1)
+  let expectedCustomer = [customerName]
+  t.same(customers.map((customer) => customer.name), expectedCustomer)
+
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
 
   let projects = response.json<ProjectListType>()
@@ -173,7 +197,8 @@ test('update project - only name', async (t) => {
   t.equal(projects.length, 1)
   let expectedResult = [
     {
-      name: project,
+      id: projects[0].id,
+      name: projectName,
       type: ProjectType.NON_BILLABLE,
       plannedHours: 0,
       completed: false,
@@ -183,9 +208,9 @@ test('update project - only name', async (t) => {
 
   const newProjectName = 'Test update NEW project project'
   response = await putProject(
-    customer,
+    customerName,
     company,
-    { name: project, type: projectType, plannedHours: 0, completed: false },
+    { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: projects[0].plannedHours, completed: false },
     {
       name: newProjectName,
       type: projectType,
@@ -195,12 +220,13 @@ test('update project - only name', async (t) => {
   )
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
   projects = response.json<ProjectListType>()
   t.equal(projects.length, 1)
   expectedResult = [
     {
+      id: projects[0].id,
       name: newProjectName,
       type: ProjectType.NON_BILLABLE,
       plannedHours: 0,
@@ -211,29 +237,34 @@ test('update project - only name', async (t) => {
 })
 
 test('update project - only projectType', async (t) => {
-  const customer = 'Test update project2 customer'
+  const customerName = 'Test update project2 customer'
   const company = 'Test update project2 company'
-  const project = 'Test update project2 project'
+  const projectName = 'Test update project2 project'
   const projectType = ProjectType.ABSENCE
   const task = 'Test update project2 task'
 
-  let response = await postTask(customer, company, project, projectType, task)
+  let response = await postTask(customerName, company, projectName, projectType, task)
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getCustomers(company)
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+
+  t.equal(customers.length, 1)
+  let expectedCustomer = [customerName]
+  t.same(customers.map((customer) => customer.name), expectedCustomer)
+
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
 
   let projects = response.json<ProjectListType>()
 
   t.equal(projects.length, 1)
-  let expectedResult: {
-    name: string
-    type: ProjectType
-    plannedHours: number
-    completed: boolean
-  }[] = [
+  let expectedResult: ProjectListType = [
     {
-      name: project,
+      id: projects[0].id,
+      name: projectName,
       type: ProjectType.ABSENCE,
       plannedHours: 0,
       completed: false,
@@ -242,11 +273,11 @@ test('update project - only projectType', async (t) => {
   t.same(projects, expectedResult)
 
   response = await putProject(
-    customer,
+    customers[0].id,
     company,
-    { name: project, type: projectType, plannedHours: 0, completed: false },
+    { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: projects[0].plannedHours, completed: false },
     {
-      name: project,
+      name: projectName,
       type: ProjectType.NON_BILLABLE,
       plannedHours: 0,
       completed: true,
@@ -254,13 +285,14 @@ test('update project - only projectType', async (t) => {
   )
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
   projects = response.json<ProjectListType>()
   t.equal(projects.length, 1)
   expectedResult = [
     {
-      name: project,
+      id: projects[0].id,
+      name: projectName,
       type: ProjectType.NON_BILLABLE,
       plannedHours: 0,
       completed: true,
@@ -270,16 +302,25 @@ test('update project - only projectType', async (t) => {
 })
 
 test('update project - only plannedHours', async (t) => {
-  const customer = 'Test update project3 customer'
+  const customerName = 'Test update project3 customer'
   const company = 'Test update project3 company'
-  const project = 'Test update project3 project'
+  const projectName = 'Test update project3 project'
   const projectType = ProjectType.ABSENCE
   const task = 'Test update project3 task'
 
-  let response = await postTask(customer, company, project, projectType, task)
+  let response = await postTask(customerName, company, projectName, projectType, task)
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getCustomers(company)
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+
+  t.equal(customers.length, 1)
+  let expectedCustomer = [customerName]
+  t.same(customers.map((customer) => customer.name), expectedCustomer)
+
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
 
   let projects = response.json<ProjectListType>()
@@ -287,7 +328,8 @@ test('update project - only plannedHours', async (t) => {
   t.equal(projects.length, 1)
   let expectedResult = [
     {
-      name: project,
+      id: projects[0].id,
+      name: projectName,
       type: ProjectType.ABSENCE,
       plannedHours: 0,
       completed: false,
@@ -297,11 +339,11 @@ test('update project - only plannedHours', async (t) => {
 
   const newPlannedHours = 300
   response = await putProject(
-    customer,
+    customers[0].id,
     company,
-    { name: project, type: projectType, plannedHours: 0, completed: false },
+    { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: projects[0].plannedHours, completed: false },
     {
-      name: project,
+      name: projectName,
       type: ProjectType.ABSENCE,
       plannedHours: newPlannedHours,
       completed: true,
@@ -309,13 +351,14 @@ test('update project - only plannedHours', async (t) => {
   )
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
   projects = response.json<ProjectListType>()
   t.equal(projects.length, 1)
   expectedResult = [
     {
-      name: project,
+      id: projects[0].id,
+      name: projectName,
       type: ProjectType.ABSENCE,
       plannedHours: newPlannedHours,
       completed: true,
@@ -325,23 +368,32 @@ test('update project - only plannedHours', async (t) => {
 })
 
 test('update project - plannedHours = 0', async (t) => {
-  const customer = 'Test update project3 customer'
+  const customerName = 'Test update project3 customer'
   const company = 'Test update project3 company'
-  const project = 'Test update project3 project'
+  const projectName = 'Test update project3 project'
   const projectType = ProjectType.ABSENCE
   const task = 'Test update project3 task'
 
   let response = await postTask(
-    customer,
+    customerName,
     company,
-    project,
+    projectName,
     projectType,
     task,
     300,
   )
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getCustomers(company)
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+
+  t.equal(customers.length, 1)
+  let expectedCustomer = [customerName]
+  t.same(customers.map((customer) => customer.name), expectedCustomer)
+
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
 
   let projects = response.json<ProjectListType>()
@@ -349,7 +401,8 @@ test('update project - plannedHours = 0', async (t) => {
   t.equal(projects.length, 1)
   let expectedResult = [
     {
-      name: project,
+      id: projects[0].id,
+      name: projectName,
       type: ProjectType.ABSENCE,
       plannedHours: 300,
       completed: false,
@@ -359,11 +412,11 @@ test('update project - plannedHours = 0', async (t) => {
 
   const newPlannedHours = 0
   response = await putProject(
-    customer,
+    customers[0].id,
     company,
-    { name: project, type: projectType, plannedHours: 300, completed: false },
+    { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: 300, completed: false },
     {
-      name: project,
+      name: projectName,
       type: ProjectType.ABSENCE,
       plannedHours: newPlannedHours,
       completed: true,
@@ -371,13 +424,14 @@ test('update project - plannedHours = 0', async (t) => {
   )
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
   projects = response.json<ProjectListType>()
   t.equal(projects.length, 1)
   expectedResult = [
     {
-      name: project,
+      id: projects[0].id,
+      name: projectName,
       type: ProjectType.ABSENCE,
       plannedHours: newPlannedHours,
       completed: true,
