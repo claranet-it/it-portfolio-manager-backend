@@ -1,7 +1,7 @@
 import {
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
-  CustomerReadParamsType,
+  CustomerReadParamsType, CustomerType,
   ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
@@ -15,7 +15,7 @@ import { TaskError } from '@src/core/customExceptions/TaskError'
 import { PrismaClient } from '../../../../prisma/generated'
 
 export class TaskRepository implements TaskRepositoryInterface {
-  async getCustomers(params: CustomerReadParamsType): Promise<string[]> {
+  async getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]> {
     const prima = new PrismaClient()
     const result = await prima.customer.findMany({
       where: {
@@ -31,7 +31,10 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     });
 
-    return result.map((customer) => customer.name).sort()
+    return result.map((customer) => ({
+      id: customer.id,
+      name: customer.name,
+    })).sort((a, b) => a.name.localeCompare(b.name));
   }
 
   async getProjects(params: ProjectReadParamsType): Promise<ProjectListType> {
@@ -39,10 +42,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     const result = await prisma.project.findMany({
       where: {
-        customer: {
-          company_id: params.company,
-          name: params.customer,
-        },
+        customer_id: params.customer,
         completed: params.completed,
         is_inactive: false,
       },
@@ -286,13 +286,17 @@ export class TaskRepository implements TaskRepositoryInterface {
       throw new TaskError('Project name must be valorized')
     }
 
-    if (params.newCustomer && params.newProject) {
+    if (!params.project.id) {
+      throw new TaskError('Project id must be valorized')
+    }
+
+    if (params.newCustomerName && params.newProject) {
       throw new TaskError(
         'Only one between new customer and new project must be valorized',
       )
     }
 
-    if (!params.newCustomer && !params.newProject) {
+    if (!params.newCustomerName && !params.newProject) {
       throw new TaskError(
         'At least one between new customer and new project must be valorized',
       )
@@ -301,13 +305,9 @@ export class TaskRepository implements TaskRepositoryInterface {
     const prisma = new PrismaClient()
 
     if (params.newProject) {
-      const project = await prisma.project.findFirstOrThrow({
+      const project = await prisma.project.findUniqueOrThrow({
         where: {
-          name: params.project.name,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          id: params.project.id,
         },
       })
 
@@ -328,10 +328,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         const existingProject = await prisma.project.findFirst({
           where: {
             name: params.newProject.name,
-            customer: {
-              name: params.customer,
-              company_id: params.company,
-            },
+            customer_id: params.customer,
           },
         })
         if (existingProject) {
@@ -352,17 +349,16 @@ export class TaskRepository implements TaskRepositoryInterface {
       })
     }
 
-    if (params.newCustomer) {
-      const customer = await prisma.customer.findFirstOrThrow({
+    if (params.newCustomerName) {
+      const customer = await prisma.customer.findUniqueOrThrow({
         where: {
-          name: params.customer,
-          company_id: params.company,
+          id: params.customer,
         },
       })
 
       const existingCustomer = await prisma.customer.findFirst({
         where: {
-          name: params.newCustomer,
+          name: params.newCustomerName,
           company_id: params.company,
         },
       })
@@ -373,7 +369,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
       await prisma.customer.update({
         data: {
-          name: params.newCustomer,
+          name: params.newCustomerName,
         },
         where: {
           id: customer.id,

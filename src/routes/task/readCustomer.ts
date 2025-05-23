@@ -1,13 +1,19 @@
 import { FastifyInstance } from 'fastify'
-import { CustomerList, CustomerListType, CustomerQueryParamType } from '@src/core/Task/model/task.model'
+import {
+  Customer,
+  CustomerQueryParamType,
+  CustomerType,
+} from '@src/core/Task/model/task.model'
+import { Type } from '@sinclair/typebox'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: CustomerQueryParamType
-    Reply: CustomerListType
+    Reply: CustomerType[]
   }>(
     '/customer',
     {
+      childLoggerFactory: undefined,
       onRequest: [fastify.authenticate],
       schema: {
         tags: ['Task', 'Customer'],
@@ -17,7 +23,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: CustomerList,
+          200: Type.Array(Customer),
           400: {
             type: 'null',
             description: 'Bad request',
@@ -31,7 +37,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             description: 'Internal server error',
           },
         },
-      },
+      }
     },
     async (request, reply) => {
       try {

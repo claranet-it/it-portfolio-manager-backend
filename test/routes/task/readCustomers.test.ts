@@ -1,7 +1,7 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { CustomerListType } from '@src/core/Task/model/task.model'
+import { CustomerType } from '@src/core/Task/model/task.model'
 import { PrismaClient } from '../../../prisma/generated'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 
@@ -148,10 +148,10 @@ inputs.forEach((input) => {
 
     t.equal(response.statusCode, 200)
 
-    const customers = response.json<CustomerListType>()
+    const customers = response.json<CustomerType[]>()
     t.equal(customers.length, input.expectedCustomers.length)
 
-    t.same(customers, input.expectedCustomers.map((customer) => customer.name))
+    t.same(customers.map((customer) => customer.name), input.expectedCustomers.map((customer) => customer.name))
   })
 })
 
@@ -174,7 +174,7 @@ inputs.forEach((input) => {
 
     t.equal(response.statusCode, 200)
 
-    const customers = response.json<CustomerListType>()
+    const customers = response.json<CustomerType[]>()
   
     const incompleteCustomers = input.expectedCustomers
     .filter(customer => 
@@ -184,6 +184,6 @@ inputs.forEach((input) => {
 
     t.equal(customers.length, incompleteCustomers.length)
 
-    t.same(customers, incompleteCustomers)
+    t.same(customers.map((customer) => customer.name), incompleteCustomers)
   })
 })

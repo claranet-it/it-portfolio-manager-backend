@@ -40,11 +40,14 @@ export const ProjectOpt = Type.Object({
 })
 
 export const Project = Type.Object({
+  id: Type.Optional(Type.String()),
   name: Type.String(),
   type: Type.String(),
   plannedHours: Type.Number(),
   completed: Type.Boolean(),
 })
+
+export type ProjectType = Static<typeof Project>
 
 export type ProjectDetailsType = Static<typeof Project>
 export const ProjectList = Type.Array(Project)
@@ -61,7 +64,7 @@ export const CustomerProjectUpdateQueryParams = Type.Object({
 export const CustomerProjectParams = Type.Object({
   customer: Type.String(),
   project: Project,
-  newCustomer: Type.Optional(Type.String()),
+  newCustomerName: Type.Optional(Type.String()),
   newProject: Type.Optional(Project),
   completed: Type.Optional(Type.Boolean()),
 })
@@ -141,9 +144,12 @@ export const TaskCreateReadParams = Type.Intersect([
 
 export type TaskCreateReadParamsType = Static<typeof TaskCreateReadParams>
 
-export const CustomerList = Type.Array(Type.String())
+export const Customer = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+});
 
-export type CustomerListType = Static<typeof CustomerList>
+export type CustomerType = Static<typeof Customer>
 
 export const Task = Type.Object({
   name: Type.String(),
