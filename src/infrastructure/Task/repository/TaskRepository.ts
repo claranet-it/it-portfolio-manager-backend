@@ -1,4 +1,5 @@
 import {
+  CustomerOptType,
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
   CustomerReadParamsType, CustomerType,
@@ -212,21 +213,25 @@ export class TaskRepository implements TaskRepositoryInterface {
       project.plannedHours,
     )
 
+
     await this.findOrCreateProjectTask(projectObj?.id as string, task)
   }
 
-  async findOrCreateCustomer(companyId: string, customerName: string) {
+  async findOrCreateCustomer(companyId: string, customer: CustomerOptType) {
     const prisma = new PrismaClient()
+    let existingCustomer;
 
-    let customer = await prisma.customer.findFirst({
-      where: { company_id: companyId, name: customerName },
-    })
+    if (customer.id) {
+      existingCustomer = await prisma.customer.findUnique({
+        where: { id: customer.id },
+      })
+    }
 
-    if (!customer) {
+    if (!existingCustomer || !customer.id) {
       customer = await prisma.customer.create({
         data: {
           company_id: companyId,
-          name: customerName,
+          name: customer.name,
         },
       })
     }

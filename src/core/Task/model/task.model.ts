@@ -10,6 +10,12 @@ export const Customer = Type.Object({
 });
 export type CustomerType = Static<typeof Customer>
 
+export const CustomerOpt = Type.Object({
+  id: Type.Optional(Type.String()),
+  name: Type.String(),
+});
+export type CustomerOptType = Static<typeof CustomerOpt>
+
 
 export const CustomerProjectDeleteQueryParams = Type.Object({
   project: Type.String(),
@@ -172,13 +178,13 @@ export const TaskReadParams = Type.Intersect([
 export type TaskReadParamsType = Static<typeof TaskReadParams>
 
 export const TaskCreateQueryParams = Type.Object({
-  customer: Type.String(),
+  customer: CustomerOpt,
   project: ProjectOpt,
   task: Type.String(),
 })
 
 export const TaskCreateParams = Type.Object({
-  customer: Type.String(),
+  customer: CustomerOpt,
   project: Project,
   task: Type.String(),
 })
