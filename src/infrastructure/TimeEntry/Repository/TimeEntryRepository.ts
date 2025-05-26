@@ -51,7 +51,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       user: timeEntry.email,
       date: timeEntry.time_entry_date.toISOString().substring(0, 10),
       company: timeEntry.task.project.customer.company_id,
-      customer: timeEntry.task.project.customer.name,
+      customer: { id: timeEntry.task.project.customer.id, name: timeEntry.task.project.customer.name },
       project: {
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
@@ -112,7 +112,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       user: timeEntry.email,
       date: timeEntry.time_entry_date.toISOString().substring(0, 10),
       company: timeEntry.task.project.customer.company_id,
-      customer: timeEntry.task.project.customer.name,
+      customer: { id: timeEntry.task.project.customer.id, name: timeEntry.task.project.customer.name },
       project: {
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
@@ -339,11 +339,8 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
             name: {
               in: params.project
             },
-            customer: {
-              name: {
-                in: params.customer
-              },
-              company_id: params.company,
+            customer_id: {
+              in: params.customer
             },
           },
         },
@@ -374,7 +371,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       user: timeEntry.email,
       date: timeEntry.time_entry_date.toISOString().substring(0, 10),
       company: timeEntry.task.project.customer.company_id,
-      customer: timeEntry.task.project.customer.name,
+      customer: { id: timeEntry.task.project.customer.id, name: timeEntry.task.project.customer.name },
       project: {
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
