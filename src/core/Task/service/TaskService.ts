@@ -9,7 +9,7 @@ import {
   TaskListType,
   TaskPropertiesUpdateParamsType,
   TaskReadParamsType,
-  TaskStructureListType,
+  TaskStructureType,
   TaskUpdateParamsType,
 } from '../model/task.model'
 import { TaskPropertiesRepositoryInterface } from '@src/core/Task/repository/TaskPropertiesRepositoryInterface'
@@ -33,7 +33,7 @@ export class TaskService {
     return this.taskRepository.getTasksWithProperties(params)
   }
 
-  async getTaskStructure(company: string): Promise<TaskStructureListType> {
+  async getTaskStructure(company: string): Promise<TaskStructureType[]> {
     return this.taskRepository.getTaskStructure(company)
   }
 

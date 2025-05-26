@@ -136,13 +136,11 @@ export type TaskPropertiesUpdateParamsType = Static<
 >
 
 export const TaskStructure = Type.Object({
-  customer: Type.String(),
+  customer: Customer,
   project: Type.String(),
   task: Type.String(),
 })
 export type TaskStructureType = Static<typeof TaskStructure>
-export const TaskStructureList = Type.Array(TaskStructure)
-export type TaskStructureListType = Static<typeof TaskStructureList>
 
 export const TaskUpdateQueryParams = Type.Object({
   customer: Type.String(),

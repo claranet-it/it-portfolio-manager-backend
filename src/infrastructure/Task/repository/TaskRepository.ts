@@ -6,7 +6,7 @@ import {
   ProjectReadParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
-  TaskStructureListType,
+  TaskStructureType,
   TaskType,
   TaskUpdateParamsType,
 } from '@src/core/Task/model/task.model'
@@ -86,7 +86,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result.map((task) => task.name)
   }
 
-  async getTaskStructure(company: string): Promise<TaskStructureListType> {
+  async getTaskStructure(company: string): Promise<TaskStructureType[]> {
     const prisma = new PrismaClient()
 
     const tasks = await prisma.projectTask.findMany({
@@ -105,6 +105,7 @@ export class TaskRepository implements TaskRepositoryInterface {
             customer: {
               select: {
                 name: true,
+                id: true,
               },
             },
           },
@@ -117,7 +118,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     return tasks.map((task) => ({
       task: task.name,
-      customer: task.project.customer.name,
+      customer: { name:task.project.customer.name, id: task.project.customer.id },
       project: task.project.name,
     }))
   }
