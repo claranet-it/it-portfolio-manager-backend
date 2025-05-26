@@ -22,6 +22,7 @@ model Company {
   image_url                String?
   skills                   Skill[]
   primary_contact          String
+  company_master           Boolean
   requestedConnections     CompanyConnections[] @relation("RequesterCompany")
   correspondentConnections CompanyConnections[] @relation("CorrespondentCompany")
 }
