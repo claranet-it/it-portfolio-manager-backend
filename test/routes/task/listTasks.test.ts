@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, test } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { TaskStructureListType } from '@src/core/Task/model/task.model'
+import { TaskStructureType } from '@src/core/Task/model/task.model'
 import { PrismaClient } from '../../../prisma/generated'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 let app: FastifyInstance
@@ -57,7 +57,7 @@ test('list tasks', async (t) => {
 
   t.equal(response.statusCode, 200)
 
-  const tasks = response.json<TaskStructureListType>()
+  const tasks = response.json<TaskStructureType[]>()
   t.equal(tasks.length, 1)
   tasks.forEach((task) => {
     t.same(Object.keys(task), ['customer', 'project', 'task'])
