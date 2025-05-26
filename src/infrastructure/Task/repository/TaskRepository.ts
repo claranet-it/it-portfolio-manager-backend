@@ -395,10 +395,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         name: params.task,
         project: {
           name: params.project,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          customer_id: params.customer,
         },
       },
     })
@@ -412,10 +409,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         name: params.newTask,
         project: {
           name: params.project,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          customer_id: params.customer,
         },
       },
     })
