@@ -4,6 +4,7 @@ import { FastifyInstance } from 'fastify'
 import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { PrismaClient } from '../../../prisma/generated'
+import { CustomerOptType, CustomerType } from '@src/core/Task/model/task.model'
 
 let app: FastifyInstance
 
@@ -49,14 +50,22 @@ test('save time entry without authentication', async (t) => {
 
 test('insert time entry in new day', async (t) => {
   const date = '2024-01-02'
-  const customer = 'Claranet'
+  const customerName = {name: 'Claranet'}
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
-  await postTask(customer, project, task, ProjectType.SLACK_TIME)
+  let response = await postTask(customerName, project, task, ProjectType.SLACK_TIME)
+  t.equal(response.statusCode, 200)
+
+  response = await getCustomers();
+  t.equal(response.statusCode, 200)
+
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -77,7 +86,7 @@ test('insert time entry in new day', async (t) => {
     user: 'nicholas.crow@email.com',
     company: 'it',
     date: date,
-    customer: customer,
+    customer: customerName.name,
     task: task,
     project: {
       name: project,
@@ -95,39 +104,53 @@ test('insert time entry in new day', async (t) => {
 
 test('insert time entry in an existing day', async (t) => {
   const date = '2024-01-03'
-  const firstCustomer = 'Claranet'
+  const firstCustomerName = { name: 'Claranet' }
   const firstProject = 'Funzionale'
   const firstTask = 'Attività di portfolio'
   const firstHours = 2
   await postTask(
-    firstCustomer,
+    firstCustomerName,
     firstProject,
     firstTask,
     ProjectType.NON_BILLABLE,
   )
+
+  let response = await getCustomers();
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
+
   const firstResponse = await addTimeEntry(
     date,
-    firstCustomer,
+    customers[0].id,
     firstProject,
     firstTask,
     firstHours,
   )
   t.equal(firstResponse.statusCode, 204)
 
-  const secondCustomer = 'Claranet'
+  const secondCustomerName = { name: 'Claranet 2' }
   const secondProject = 'Slack time'
   const secondTask = 'formazione'
   const secondHours = 5
   await postTask(
-    secondCustomer,
+    secondCustomerName,
     secondProject,
     secondTask,
     ProjectType.SLACK_TIME,
   )
 
+  response = await getCustomers();
+  t.equal(response.statusCode, 200)
+
+  customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 2)
+
   const secondResponse = await addTimeEntry(
     date,
-    secondCustomer,
+    customers.find((customer) => customer.name === secondCustomerName.name)!.id,
     secondProject,
     secondTask,
     secondHours,
@@ -152,7 +175,7 @@ test('insert time entry in an existing day', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: firstCustomer,
+      customer: firstCustomerName.name,
       task: firstTask,
       project: {
         name: firstProject,
@@ -170,7 +193,7 @@ test('insert time entry in an existing day', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: secondCustomer,
+      customer: secondCustomerName.name,
       task: secondTask,
       project: {
         name: secondProject,
@@ -189,7 +212,7 @@ test('insert time entry in an existing day', async (t) => {
 
 test('insert time entry in an existing day with description', async (t) => {
   const date = '2024-01-08'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Funzionale'
   const task = 'Attività di portfolio'
   const hours = 2
@@ -197,10 +220,20 @@ test('insert time entry in an existing day with description', async (t) => {
   const startHour = '08:00'
   const endHour = '10:00'
 
-  await postTask(customer, project, task, ProjectType.NON_BILLABLE)
+  let response = await postTask(customerName, project, task, ProjectType.NON_BILLABLE)
+  t.equal(response.statusCode, 200)
+
+  response = await getCustomers();
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
+
+
   const firstTaskInsert = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -211,23 +244,30 @@ test('insert time entry in an existing day with description', async (t) => {
   t.equal(firstTaskInsert.statusCode, 204)
 
   const secondDate = '2024-01-08'
-  const secondCustomer = 'Claranet'
+  const secondCustomerName = { name: 'Claranet 2' }
   const secondProject = 'Funzionale'
   const secondTask = 'Management'
   const secondHours = 4
   const secondDescription = 'description 2'
   const secondStartHour = '14:00'
   const secondEndHour = '18:00'
-  await postTask(
-    secondCustomer,
+  response = await postTask(
+    secondCustomerName,
     secondProject,
     secondTask,
     ProjectType.NON_BILLABLE,
   )
+  t.equal(response.statusCode, 200)
+
+  response = await getCustomers();
+  t.equal(response.statusCode, 200)
+
+  customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 2)
 
   const secondTaskInsert = await addTimeEntry(
     secondDate,
-    secondCustomer,
+    customers.find((customer) => customer.name === secondCustomerName.name)!.id,
     secondProject,
     secondTask,
     secondHours,
@@ -255,7 +295,7 @@ test('insert time entry in an existing day with description', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer,
+      customer: customerName.name,
       task,
       project: {
         name: 'Funzionale',
@@ -273,7 +313,7 @@ test('insert time entry in an existing day with description', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: secondCustomer,
+      customer: secondCustomerName.name,
       task: secondTask,
       project: {
         name: 'Funzionale',
@@ -292,14 +332,23 @@ test('insert time entry in an existing day with description', async (t) => {
 
 test('update hours on existing task', async (t) => {
   const date = '2024-01-04'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
-  await postTask(customer, project, task, ProjectType.SLACK_TIME)
+  let response = await postTask(customerName, project, task, ProjectType.SLACK_TIME)
+  t.equal(response.statusCode, 200)
+
+  response = await getCustomers();
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
+
   const addTimeentryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -321,7 +370,7 @@ test('update hours on existing task', async (t) => {
   const newHours = 5
   const updateTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     newHours,
@@ -346,7 +395,7 @@ test('update hours on existing task', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: customer,
+      customer: customerName.name,
       task: task,
       project: {
         name: project,
@@ -365,7 +414,7 @@ test('update hours on existing task', async (t) => {
 
 test('add hours on existing task', async (t) => {
   const date = '2024-01-04'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = {
     name: 'Slack time',
     type: ProjectType.SLACK_TIME,
@@ -374,10 +423,18 @@ test('add hours on existing task', async (t) => {
   }
   const task = 'formazione'
   const hours = 2
-  await postTask(customer, project.name, task, project.type)
+  let response = await postTask(customerName, project.name, task, project.type)
+  t.equal(response.statusCode, 200)
+
+  response = await getCustomers();
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project.name,
     task,
     hours,
@@ -390,7 +447,7 @@ test('add hours on existing task', async (t) => {
   const newHours = 5
   const updateTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project.name,
     task,
     newHours,
@@ -417,7 +474,7 @@ test('add hours on existing task', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: customer,
+      customer: customerName.name,
       task: task,
       project: project,
       hours: hours,
@@ -430,7 +487,7 @@ test('add hours on existing task', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: customer,
+      customer: customerName.name,
       task: task,
       project: project,
       hours: newHours,
@@ -444,14 +501,22 @@ test('add hours on existing task', async (t) => {
 
 test('throws error if trying to save absence on a saturday or sunday', async (t) => {
   const date = '2024-01-28'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Assenze'
   const task = 'FERIE'
   const hours = 2
-  await postTask(customer, project, task, ProjectType.ABSENCE)
+  let response = await postTask(customerName, project, task, ProjectType.ABSENCE)
+  t.equal(response.statusCode, 200)
+
+  response = await getCustomers();
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -465,14 +530,22 @@ test('throws error if trying to save absence on a saturday or sunday', async (t)
 
 test('returns without saving if entry has 0 hours', async (t) => {
   const date = '2024-01-27'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Funzionale'
   const task = 'Attività di portfolio'
   const hours = 0
-  await postTask(customer, project, task, ProjectType.NON_BILLABLE)
+  let response = await postTask(customerName, project, task, ProjectType.NON_BILLABLE)
+  t.equal(response.statusCode, 200)
+
+  response = await getCustomers();
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeentryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -548,14 +621,22 @@ test('throws error on not existing task', async (t) => {
 
 test('insert time entry with decimal hours', async (t) => {
   const date = '2024-01-02'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 0.5
-  await postTask(customer, project, task, ProjectType.SLACK_TIME)
+  let response = await postTask(customerName, project, task, ProjectType.SLACK_TIME)
+  t.equal(response.statusCode, 200)
+
+  response = await getCustomers();
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -576,7 +657,7 @@ test('insert time entry with decimal hours', async (t) => {
     user: 'nicholas.crow@email.com',
     company: 'it',
     date: date,
-    customer: customer,
+    customer: customerName.name,
     task: task,
     project: {
       name: project,
@@ -624,7 +705,7 @@ async function addTimeEntry(
 }
 
 async function postTask(
-  customer: string,
+  customer: CustomerOptType,
   project: string,
   task: string,
   projectType: string = 'billable',
@@ -647,6 +728,16 @@ async function getTimeEntry(from: string, to: string) {
   return await app.inject({
     method: 'GET',
     url: `/api/time-entry/mine?from=${from}&to=${to}`,
+    headers: {
+      authorization: `Bearer ${getToken()}`,
+    },
+  })
+}
+
+async function getCustomers() {
+  return await app.inject({
+    method: 'GET',
+    url: `/api/task/customer`,
     headers: {
       authorization: `Bearer ${getToken()}`,
     },

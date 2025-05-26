@@ -71,10 +71,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         project: {
           name: params.project,
           is_inactive: false,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          customer_id: params.customer,
         },
       },
       select: {
