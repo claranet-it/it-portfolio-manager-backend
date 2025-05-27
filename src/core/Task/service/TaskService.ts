@@ -69,12 +69,6 @@ export class TaskService {
   async deleteCustomerProject(
     params: CustomerProjectDeleteParamsType,
   ): Promise<void> {
-    const company = await this.taskRepository.getCompanyFromProject(params.project);
-
-    if (company !== params.company || company === null) {
-      throw new Error(`Cannot find project ${params.project}`)
-    }
-
     return this.taskRepository.deleteCustomerProject(params)
   }
 }

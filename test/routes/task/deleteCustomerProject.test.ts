@@ -178,7 +178,7 @@ async function postTask(
     },
     payload: {
       customer: customer,
-      project: { name: project, type: projectType, plannedHours, customer_id: customer },
+      project: { name: project, type: projectType, plannedHours },
       task: task,
     },
   })
