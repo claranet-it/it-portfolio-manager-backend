@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, test } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { TaskListType } from '@src/core/Task/model/task.model'
+import { CustomerOptType, CustomerType, TaskListType } from '@src/core/Task/model/task.model'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { PrismaClient } from '../../../prisma/generated'
 
@@ -46,7 +46,7 @@ test('create task without authentication', async (t) => {
 })
 
 test('create new task - new insert', async (t) => {
-    const customer = 'Test customer';
+    const customer = {name: 'Test customer'};
     const company = 'es';
     const project = 'Test project';
     const projectType = ProjectType.BILLABLE;
@@ -56,7 +56,13 @@ test('create new task - new insert', async (t) => {
     let response = await postTask(customer, company, project, task, projectType, plannedHours);
     t.equal(response.statusCode, 200)
 
-    response = await getTask(customer, project, company);
+    let customerResponse = await getCustomers(company);
+    t.equal(customerResponse.statusCode, 200)
+
+    const customers = customerResponse.json<CustomerType[]>()
+    t.equal(customers.length, 1)
+
+    response = await getTask(customers[0].id, project, company);
     t.equal(response.statusCode, 200)
 
     const tasks = response.json<TaskListType>()
@@ -70,7 +76,9 @@ test('create new task - new insert', async (t) => {
 })
 
 test('create task with existing customer and new project - new insert', async (t) => {
-    const customer = 'Test existing customer';
+    let customer: CustomerOptType = {
+        name: 'Test existing customer'
+    };
     const company = 'fr';
     const project = 'Test old project';
     const projectType = ProjectType.BILLABLE
@@ -81,7 +89,13 @@ test('create task with existing customer and new project - new insert', async (t
     let response = await postTask(customer, company, project, task, projectType, plannedHours);
     t.equal(response.statusCode, 200)
 
-    response = await getTask('Test existing customer', 'Test old project', 'fr');
+    let customerResponse = await getCustomers(company);
+    t.equal(customerResponse.statusCode, 200)
+
+    const customers = customerResponse.json<CustomerType[]>()
+    t.equal(customers.length, 1)
+
+    response = await getTask(customers[0].id, project, company);
     t.equal(response.statusCode, 200)
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
@@ -93,7 +107,12 @@ test('create task with existing customer and new project - new insert', async (t
     t.same(tasks, expectedResult)
 
     //SECOND INSERT
-    response = await postTask(customer,
+    customer = {
+        id: customers[0].id,
+        name: customers[0].name
+    }
+    response = await postTask(
+        customer,
         company,
         'Test new project',
         'Test task new',
@@ -102,7 +121,7 @@ test('create task with existing customer and new project - new insert', async (t
     t.equal(response.statusCode, 200)
 
     // CHECK NEW
-    response = await getTask(customer, 'Test new project', company)
+    response = await getTask(customers[0].id, 'Test new project', company)
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
@@ -114,7 +133,7 @@ test('create task with existing customer and new project - new insert', async (t
     t.same(tasks, expectedResult)
 
     // CHECK OLD STILL EXISTS
-    response = await getTask(customer, project, 'fr')
+    response = await getTask(customers[0].id, project, 'fr')
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
@@ -127,17 +146,25 @@ test('create task with existing customer and new project - new insert', async (t
 })
 
 test('create task with existing project and new customer - new insert', async (t) => {
-    const customer = 'Test old customer';
+    let oldCustomer: CustomerOptType = {
+        name: 'Test old customer'
+    };
     const company = 'cr';
     const project = 'Test existing project';
     const projectType = ProjectType.NON_BILLABLE
     const task = 'Test task old';
 
     //FIRST INSERT
-    let response = await postTask(customer, company, project, task, projectType);
+    let response = await postTask(oldCustomer, company, project, task, projectType);
     t.equal(response.statusCode, 200)
 
-    response = await getTask(customer, project, company)
+    let customerResponse = await getCustomers(company);
+    t.equal(customerResponse.statusCode, 200)
+
+    let customers = customerResponse.json<CustomerType[]>()
+    t.equal(customers.length, 1)
+
+    response = await getTask(customers[0].id, project, company);
     t.equal(response.statusCode, 200)
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
@@ -149,8 +176,13 @@ test('create task with existing project and new customer - new insert', async (t
     t.same(tasks, expectedResult)
 
     //SECOND INSERT
-    response = await postTask(customer, company, project, task, projectType);
-    response = await postTask('Test new customer',
+    oldCustomer = {
+        id: customers[0].id,
+        name: customers[0].name
+    }
+    response = await postTask(oldCustomer, company, project, task, projectType);
+    t.equal(response.statusCode, 200)
+    response = await postTask({ name: 'Test new customer'},
         company,
         project,
         'Test task new',
@@ -158,8 +190,16 @@ test('create task with existing project and new customer - new insert', async (t
         );
     t.equal(response.statusCode, 200)
 
+    customerResponse = await getCustomers(company);
+    t.equal(customerResponse.statusCode, 200)
+
+    customers = customerResponse.json<CustomerType[]>()
+    t.equal(customers.length, 2)
+
+    const newCustomer = customers.find(c => c.name === 'Test new customer')
+
     // CHECK NEW
-    response = await getTask('Test new customer', project, company)
+    response = await getTask(newCustomer?.id ?? '', project, company)
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
@@ -171,7 +211,7 @@ test('create task with existing project and new customer - new insert', async (t
     t.same(tasks, expectedResult)
 
     // CHECK OLD STILL EXISTS
-    response = await getTask(customer, project, company)
+    response = await getTask(oldCustomer.id ?? '', project, company)
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
@@ -184,7 +224,7 @@ test('create task with existing project and new customer - new insert', async (t
 })
 
 test('create task with same customer and project - update', async (t) => {
-    const customer = 'Test customer2';
+    const customer: CustomerOptType = { name: 'Test customer2' };
     const company = 'de';
     const project = 'Test project2';
     const projectType = ProjectType.SLACK_TIME
@@ -194,7 +234,13 @@ test('create task with same customer and project - update', async (t) => {
     let response = await postTask(customer, company, project, task, projectType);
     t.equal(response.statusCode, 200)
 
-    response = await getTask(customer, project, company)
+    let customerResponse = await getCustomers(company);
+    t.equal(customerResponse.statusCode, 200)
+
+    let customers = customerResponse.json<CustomerType[]>()
+    t.equal(customers.length, 1)
+
+    response = await getTask(customers[0].id, project, company);
     t.equal(response.statusCode, 200)
 
     let tasks = response.json<TaskListType>()
@@ -207,14 +253,14 @@ test('create task with same customer and project - update', async (t) => {
     t.same(tasks, expectedResult)
 
     // SECOND INSERT
-    response = await postTask(customer, company, project,'Test task3', projectType);
+    response = await postTask(customers[0], company, project,'Test task3', projectType);
     t.equal(response.statusCode, 200)
     t.same(JSON.parse(response.payload)['message'],
         'OK',
     );
 
     // CHECK TASK
-    response = await getTask(customer, project, company)
+    response = await getTask(customers[0].id, project, company)
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 2)
@@ -236,7 +282,7 @@ test('create task with same customer and project - update', async (t) => {
 })
 
 test('create task with existing customer and project but different company - new insert', async (t) => {
-    const customer = 'Test company';
+    const customer = { name: 'Test company'};
     const company = 'uk';
     const project = 'company';
     const projectType = ProjectType.SLACK_TIME
@@ -250,8 +296,14 @@ test('create task with existing customer and project but different company - new
     response = await postTask(customer, 'us', project, task, ProjectType.SLACK_TIME);
     t.equal(response.statusCode, 200)
 
+    let customerResponse = await getCustomers(company);
+    t.equal(customerResponse.statusCode, 200)
+
+    let customers = customerResponse.json<CustomerType[]>()
+    t.equal(customers.length, 1)
+
     //CHECK US TASKS
-    response = await getTask(customer, project, 'us')
+    response = await getTask(customers[0].id, project, 'us')
     t.equal(response.statusCode, 200)
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
@@ -262,7 +314,7 @@ test('create task with existing customer and project but different company - new
     }])
 
     //CHECK UK TASKS
-    response = await getTask(customer, project, 'uk')
+    response = await getTask(customers[0].id, project, 'uk')
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
@@ -273,7 +325,7 @@ test('create task with existing customer and project but different company - new
     }])
 })
 
-async function postTask(customer: string, company: string, project: string, task: string, projectType?: string, plannedHours?: number) {
+async function postTask(customer: CustomerOptType, company: string, project: string, task: string, projectType?: string, plannedHours?: number) {
     return await app.inject({
         method: 'POST',
         url: '/api/task/task/',
@@ -292,6 +344,16 @@ async function getTask(customer: string, project: string, company: string) {
     return await app.inject({
         method: 'GET',
         url: `/api/task/task/?company=${company}&customer=${customer}&project=${project}`,
+        headers: {
+            authorization: `Bearer ${getToken(company)}`,
+        },
+    })
+}
+
+async function getCustomers(company: string) {
+    return await app.inject({
+        method: 'GET',
+        url: `/api/task/customer`,
         headers: {
             authorization: `Bearer ${getToken(company)}`,
         },

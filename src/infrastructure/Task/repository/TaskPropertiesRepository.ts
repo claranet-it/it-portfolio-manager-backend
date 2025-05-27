@@ -14,10 +14,7 @@ export class TaskPropertiesRepository
         name: params.task,
         project: {
           name: params.project,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          customer_id: params.customer,
         },
       },
     })

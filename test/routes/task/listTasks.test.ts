@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, test } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { TaskStructureListType } from '@src/core/Task/model/task.model'
+import { CustomerOptType, TaskStructureType } from '@src/core/Task/model/task.model'
 import { PrismaClient } from '../../../prisma/generated'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 let app: FastifyInstance
@@ -45,7 +45,7 @@ test('list tasks', async (t) => {
 
   const token = getToken(input.company)
 
-  await postTask('customer', input.company, 'project', ProjectType.BILLABLE, 'task')
+  await postTask({ name: input.customer }, input.company, 'project', ProjectType.BILLABLE, 'task')
 
   const response = await app.inject({
     method: 'GET',
@@ -57,7 +57,7 @@ test('list tasks', async (t) => {
 
   t.equal(response.statusCode, 200)
 
-  const tasks = response.json<TaskStructureListType>()
+  const tasks = response.json<TaskStructureType[]>()
   t.equal(tasks.length, 1)
   tasks.forEach((task) => {
     t.same(Object.keys(task), ['customer', 'project', 'task'])
@@ -75,7 +75,7 @@ function getToken(company: string) {
 }
 
 
-async function postTask(customer: string, company: string, project: string, projectType: string, task: string, plannedHours?: string) {
+async function postTask(customer: CustomerOptType, company: string, project: string, projectType: string, task: string, plannedHours?: string) {
   return await app.inject({
     method: 'POST',
     url: '/api/task/task/',
