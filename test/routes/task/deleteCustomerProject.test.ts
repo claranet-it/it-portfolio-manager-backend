@@ -128,7 +128,6 @@ test("can't delete customer-project if there are time entries", async (t) => {
     },
   })
   t.equal(addTimeEntryResponse.statusCode, 204)
-  console.log(addTimeEntryResponse.statusCode)
 
   response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)

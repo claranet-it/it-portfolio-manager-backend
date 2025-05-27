@@ -174,9 +174,15 @@ test('update task with time entries assigned', async (t) => {
   let response = await postTask(customerName, company, project, projectType, task)
   t.equal(response.statusCode, 200)
 
+  response = await getCustomers(company);
+  t.equal(response.statusCode, 200)
+
+  let customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   response = await addTimeEntry(
     date,
-    customerName.name,
+    customers[0].id,
     project,
     task,
     2,
@@ -186,12 +192,6 @@ test('update task with time entries assigned', async (t) => {
     '00:00',
   )
   t.equal(response.statusCode, 204)
-
-  const customerResponse = await getCustomers(company);
-  t.equal(customerResponse.statusCode, 200)
-
-  const customers = customerResponse.json<CustomerType[]>()
-  t.equal(customers.length, 1)
 
   response = await getTask(customers[0].id, project, company)
   t.equal(response.statusCode, 200)

@@ -78,7 +78,6 @@ test('update customer', async (t) => {
     { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: 0, completed: true },
     'Test update new customer',
   )
-  console.log('84: ',response.json())
   t.equal(response.statusCode, 200)
 
   response = await getCustomers(company)
