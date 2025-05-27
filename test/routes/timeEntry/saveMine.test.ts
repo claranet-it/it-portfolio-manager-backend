@@ -86,7 +86,10 @@ test('insert time entry in new day', async (t) => {
     user: 'nicholas.crow@email.com',
     company: 'it',
     date: date,
-    customer: customerName.name,
+    customer: {
+      name: customers[0].name,
+      id: customers[0].id,
+    },
     task: task,
     project: {
       name: project,
@@ -175,7 +178,10 @@ test('insert time entry in an existing day', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: firstCustomerName.name,
+      customer: {
+        name: firstCustomerName.name,
+        id: customers.find((customer) => customer.name === firstCustomerName.name)!.id,
+      },
       task: firstTask,
       project: {
         name: firstProject,
@@ -193,7 +199,10 @@ test('insert time entry in an existing day', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: secondCustomerName.name,
+      customer: {
+        name: secondCustomerName.name,
+        id: customers.find((customer) => customer.name === secondCustomerName.name)!.id,
+      },
       task: secondTask,
       project: {
         name: secondProject,
@@ -295,7 +304,10 @@ test('insert time entry in an existing day with description', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: customerName.name,
+      customer: {
+        name: customerName.name,
+        id: customers.find((customer) => customer.name === customerName.name)!.id,
+      },
       task,
       project: {
         name: 'Funzionale',
@@ -313,7 +325,10 @@ test('insert time entry in an existing day with description', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: secondCustomerName.name,
+      customer: {
+        name: secondCustomerName.name,
+        id: customers.find((customer) => customer.name === secondCustomerName.name)!.id,
+      },
       task: secondTask,
       project: {
         name: 'Funzionale',
@@ -395,7 +410,10 @@ test('update hours on existing task', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: customerName.name,
+      customer: {
+        name: customers[0].name,
+        id: customers[0].id,
+      },
       task: task,
       project: {
         name: project,
@@ -474,7 +492,10 @@ test('add hours on existing task', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: customerName.name,
+      customer: {
+        name: customers[0].name,
+        id: customers[0].id,
+      },
       task: task,
       project: project,
       hours: hours,
@@ -487,7 +508,10 @@ test('add hours on existing task', async (t) => {
       user: 'nicholas.crow@email.com',
       date: date,
       company: 'it',
-      customer: customerName.name,
+      customer: {
+        name: customers[0].name,
+        id: customers[0].id,
+      },
       task: task,
       project: project,
       hours: newHours,
@@ -657,7 +681,10 @@ test('insert time entry with decimal hours', async (t) => {
     user: 'nicholas.crow@email.com',
     company: 'it',
     date: date,
-    customer: customerName.name,
+    customer: {
+      name: customers[0].name,
+      id: customers[0].id,
+    },
     task: task,
     project: {
       name: project,
