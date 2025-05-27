@@ -428,12 +428,14 @@ export class TaskRepository implements TaskRepositoryInterface {
   ): Promise<void> {
     const projectName = params.project
     const inactive = params.inactive || true
+    const customer = params.customer
 
     const prisma = new PrismaClient()
 
-    const project = await prisma.project.findUnique({
+    const project = await prisma.project.findFirst({
       where: {
-        id: params.project,
+        name: projectName,
+        customer_id: customer,
       },
       include: {
         tasks: {

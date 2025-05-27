@@ -18,6 +18,7 @@ export type CustomerOptType = Static<typeof CustomerOpt>
 
 
 export const CustomerProjectDeleteQueryParams = Type.Object({
+  customer: Type.String(),
   project: Type.String(),
   inactive: Type.Optional(Type.Boolean({ default: true })),
 })
