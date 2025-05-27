@@ -51,6 +51,7 @@ import { EducationService } from '../Education/service'
 import { WorkService } from '../Work/service'
 import { WorkRepository } from '@src/infrastructure/Work/Repository'
 import { UnsubscribeService } from '../Unsubscribe/service'
+import { SesClient } from '@src/infrastructure/mailer/sesClient'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -82,6 +83,10 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       dynamoDBClient: awilix.asValue(DynamoDBConnection.getClient()),
+    })
+
+    container.register({
+      sesClient: awilix.asValue(SesClient.getClient()),
     })
 
     container.register({
