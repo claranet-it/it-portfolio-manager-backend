@@ -2,6 +2,7 @@ import { afterEach, beforeEach, test } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import {
+  CustomerOptType,
   CustomerType,
   ProjectDetailsType, ProjectListType,
 } from '@src/core/Task/model/task.model'
@@ -45,7 +46,7 @@ test('update customer without authentication', async (t) => {
 })
 
 test('update customer', async (t) => {
-  const customerName = 'Test update customer'
+  const customerName = {name: 'Test update customer'}
   const company = 'test update company'
   const projectName = 'Test update project'
   const projectType = ProjectType.BILLABLE
@@ -89,7 +90,7 @@ test('update customer', async (t) => {
 })
 
 test('update project - all', async (t) => {
-  const customerName = 'Test update project all customer'
+  const customerName = {name: 'Test update project all customer'}
   const company = 'Test update project all company'
   const projectName = 'Test update project all project'
   const projectType = ProjectType.SLACK_TIME
@@ -171,7 +172,7 @@ test('update project - all', async (t) => {
 })
 
 test('update project - only name', async (t) => {
-  const customerName = 'Test update project customer'
+  const customerName = {name: 'Test update project customer'}
   const company = 'Test update project company'
   const projectName = 'Test update project project'
   const projectType = ProjectType.NON_BILLABLE
@@ -186,7 +187,7 @@ test('update project - only name', async (t) => {
   let customers = response.json<CustomerType[]>()
 
   t.equal(customers.length, 1)
-  let expectedCustomer = [customerName]
+  let expectedCustomer = [customerName.name]
   t.same(customers.map((customer) => customer.name), expectedCustomer)
 
   response = await getProjects(company, customers[0].id)
@@ -208,7 +209,7 @@ test('update project - only name', async (t) => {
 
   const newProjectName = 'Test update NEW project project'
   response = await putProject(
-    customerName,
+    customers[0].id,
     company,
     { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: projects[0].plannedHours, completed: false },
     {
@@ -237,7 +238,7 @@ test('update project - only name', async (t) => {
 })
 
 test('update project - only projectType', async (t) => {
-  const customerName = 'Test update project2 customer'
+  const customerName = {name: 'Test update project2 customer'}
   const company = 'Test update project2 company'
   const projectName = 'Test update project2 project'
   const projectType = ProjectType.ABSENCE
@@ -252,7 +253,7 @@ test('update project - only projectType', async (t) => {
   let customers = response.json<CustomerType[]>()
 
   t.equal(customers.length, 1)
-  let expectedCustomer = [customerName]
+  let expectedCustomer = [customerName.name]
   t.same(customers.map((customer) => customer.name), expectedCustomer)
 
   response = await getProjects(company, customers[0].id)
@@ -302,7 +303,7 @@ test('update project - only projectType', async (t) => {
 })
 
 test('update project - only plannedHours', async (t) => {
-  const customerName = 'Test update project3 customer'
+  const customerName = {name: 'Test update project3 customer'}
   const company = 'Test update project3 company'
   const projectName = 'Test update project3 project'
   const projectType = ProjectType.ABSENCE
@@ -317,7 +318,7 @@ test('update project - only plannedHours', async (t) => {
   let customers = response.json<CustomerType[]>()
 
   t.equal(customers.length, 1)
-  let expectedCustomer = [customerName]
+  let expectedCustomer = [customerName.name]
   t.same(customers.map((customer) => customer.name), expectedCustomer)
 
   response = await getProjects(company, customers[0].id)
@@ -368,7 +369,7 @@ test('update project - only plannedHours', async (t) => {
 })
 
 test('update project - plannedHours = 0', async (t) => {
-  const customerName = 'Test update project3 customer'
+  const customerName = {name: 'Test update project3 customer'}
   const company = 'Test update project3 company'
   const projectName = 'Test update project3 project'
   const projectType = ProjectType.ABSENCE
@@ -390,7 +391,7 @@ test('update project - plannedHours = 0', async (t) => {
   let customers = response.json<CustomerType[]>()
 
   t.equal(customers.length, 1)
-  let expectedCustomer = [customerName]
+  let expectedCustomer = [customerName.name]
   t.same(customers.map((customer) => customer.name), expectedCustomer)
 
   response = await getProjects(company, customers[0].id)
@@ -441,7 +442,7 @@ test('update project - plannedHours = 0', async (t) => {
 })
 
 async function postTask(
-  customer: string,
+  customer: CustomerOptType,
   company: string,
   project: string,
   projectType: string,
