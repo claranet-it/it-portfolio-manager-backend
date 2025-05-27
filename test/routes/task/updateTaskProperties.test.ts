@@ -62,7 +62,7 @@ test('create new task properties', async (t) => {
 
     const customers = response.json<CustomerType[]>()
     t.equal(customers.length, 1)
-    let expectedResult = [customerName.name]
+    const expectedResult = [customerName.name]
     t.same(customers.map((customer) => customer.name), expectedResult)
 
     response = await getTask(customers[0].id, project, company);
@@ -108,7 +108,7 @@ test('update task properties', async (t) => {
 
     const customers = response.json<CustomerType[]>()
     t.equal(customers.length, 1)
-    let expectedResult = [customerName.name]
+    const expectedResult = [customerName.name]
     t.same(customers.map((customer) => customer.name), expectedResult)
 
     response = await getTask(customers[0].id, project, company);

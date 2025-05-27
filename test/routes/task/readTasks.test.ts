@@ -7,7 +7,9 @@ import { PrismaClient } from '../../../prisma/generated'
 let app: FastifyInstance
 const prisma = new PrismaClient()
 
+/* eslint-disable */
 let testCustomer: any;
+/* eslint-disable */
 let claranet: any;
 
 const inputs = [

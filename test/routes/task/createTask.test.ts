@@ -56,7 +56,7 @@ test('create new task - new insert', async (t) => {
     let response = await postTask(customer, company, project, task, projectType, plannedHours);
     t.equal(response.statusCode, 200)
 
-    let customerResponse = await getCustomers(company);
+    const customerResponse = await getCustomers(company);
     t.equal(customerResponse.statusCode, 200)
 
     const customers = customerResponse.json<CustomerType[]>()
@@ -89,7 +89,7 @@ test('create task with existing customer and new project - new insert', async (t
     let response = await postTask(customer, company, project, task, projectType, plannedHours);
     t.equal(response.statusCode, 200)
 
-    let customerResponse = await getCustomers(company);
+    const customerResponse = await getCustomers(company);
     t.equal(customerResponse.statusCode, 200)
 
     const customers = customerResponse.json<CustomerType[]>()
@@ -234,10 +234,10 @@ test('create task with same customer and project - update', async (t) => {
     let response = await postTask(customer, company, project, task, projectType);
     t.equal(response.statusCode, 200)
 
-    let customerResponse = await getCustomers(company);
+    const customerResponse = await getCustomers(company);
     t.equal(customerResponse.statusCode, 200)
 
-    let customers = customerResponse.json<CustomerType[]>()
+    const customers = customerResponse.json<CustomerType[]>()
     t.equal(customers.length, 1)
 
     response = await getTask(customers[0].id, project, company);
@@ -296,10 +296,10 @@ test('create task with existing customer and project but different company - new
     response = await postTask(customer, 'us', project, task, ProjectType.SLACK_TIME);
     t.equal(response.statusCode, 200)
 
-    let customerResponse = await getCustomers(company);
+    const customerResponse = await getCustomers(company);
     t.equal(customerResponse.statusCode, 200)
 
-    let customers = customerResponse.json<CustomerType[]>()
+    const customers = customerResponse.json<CustomerType[]>()
     t.equal(customers.length, 1)
 
     //CHECK US TASKS

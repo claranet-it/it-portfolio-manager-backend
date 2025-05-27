@@ -357,7 +357,7 @@ test('update hours on existing task', async (t) => {
   response = await getCustomers();
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
 
 
@@ -447,7 +447,7 @@ test('add hours on existing task', async (t) => {
   response = await getCustomers();
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
 
   const addTimeEntryResponse = await addTimeEntry(
@@ -535,7 +535,7 @@ test('throws error if trying to save absence on a saturday or sunday', async (t)
   response = await getCustomers();
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
 
   const addTimeEntryResponse = await addTimeEntry(
@@ -564,7 +564,7 @@ test('returns without saving if entry has 0 hours', async (t) => {
   response = await getCustomers();
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
 
   const addTimeentryResponse = await addTimeEntry(
@@ -655,7 +655,7 @@ test('insert time entry with decimal hours', async (t) => {
   response = await getCustomers();
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
 
   const addTimeEntryResponse = await addTimeEntry(
