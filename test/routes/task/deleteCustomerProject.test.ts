@@ -108,9 +108,9 @@ test("can't delete customer-project if there are time entries", async (t) => {
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
-  let expectedResult = [customerName.name]
+  const expectedResult = [customerName.name]
   t.same(customers.map((customer) => customer.name), expectedResult)
 
   const addTimeEntryResponse = await app.inject({

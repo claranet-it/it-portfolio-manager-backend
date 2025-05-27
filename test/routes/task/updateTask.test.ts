@@ -177,7 +177,7 @@ test('update task with time entries assigned', async (t) => {
   response = await getCustomers(company);
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
 
   response = await addTimeEntry(

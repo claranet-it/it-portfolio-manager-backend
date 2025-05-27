@@ -67,7 +67,7 @@ test('update customer', async (t) => {
   response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
 
-  let projects= response.json<ProjectListType>()
+  const projects= response.json<ProjectListType>()
   t.equal(projects.length, 1)
   expectedResult = ['Test update project']
   t.same(projects.map((project) => project.name), expectedResult)
@@ -110,10 +110,10 @@ test('update project - all', async (t) => {
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
 
   t.equal(customers.length, 1)
-  let expectedCustomer = ['Test update project all customer']
+  const expectedCustomer = ['Test update project all customer']
   t.same(customers.map((customer) => customer.name), expectedCustomer)
 
   response = await getProjects(company, customers[0].id)
@@ -183,10 +183,10 @@ test('update project - only name', async (t) => {
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
 
   t.equal(customers.length, 1)
-  let expectedCustomer = [customerName.name]
+  const expectedCustomer = [customerName.name]
   t.same(customers.map((customer) => customer.name), expectedCustomer)
 
   response = await getProjects(company, customers[0].id)
@@ -249,10 +249,10 @@ test('update project - only projectType', async (t) => {
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
 
   t.equal(customers.length, 1)
-  let expectedCustomer = [customerName.name]
+  const expectedCustomer = [customerName.name]
   t.same(customers.map((customer) => customer.name), expectedCustomer)
 
   response = await getProjects(company, customers[0].id)
@@ -314,10 +314,10 @@ test('update project - only plannedHours', async (t) => {
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
 
   t.equal(customers.length, 1)
-  let expectedCustomer = [customerName.name]
+  const expectedCustomer = [customerName.name]
   t.same(customers.map((customer) => customer.name), expectedCustomer)
 
   response = await getProjects(company, customers[0].id)
@@ -387,10 +387,10 @@ test('update project - plannedHours = 0', async (t) => {
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerType[]>()
+  const customers = response.json<CustomerType[]>()
 
   t.equal(customers.length, 1)
-  let expectedCustomer = [customerName.name]
+  const expectedCustomer = [customerName.name]
   t.same(customers.map((customer) => customer.name), expectedCustomer)
 
   response = await getProjects(company, customers[0].id)
