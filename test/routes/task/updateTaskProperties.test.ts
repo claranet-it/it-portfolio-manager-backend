@@ -1,7 +1,7 @@
 import {test, beforeEach, afterEach} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
-import {TaskListType} from '@src/core/Task/model/task.model'
+import { CustomerOptType, CustomerType, TaskListType } from '@src/core/Task/model/task.model'
 import {ProjectType} from "@src/core/Report/model/productivity.model";
 import { PrismaClient } from '../../../prisma/generated'
 
@@ -48,16 +48,24 @@ test('create task properties without authentication', async (t) => {
 })
 
 test('create new task properties', async (t) => {
-    const customer = 'Test customer';
+    const customerName = { name: 'Test customer' };
     const company = 'it';
     const project = 'Test project';
     const completed = true;
     const plannedHours = 200;
     const task = 'Test task';
 
-    await postTask(customer, company, project, task, ProjectType.BILLABLE, plannedHours)
+    await postTask(customerName, company, project, task, ProjectType.BILLABLE, plannedHours)
 
-    let response = await getTask(customer, project, company);
+    let response = await getCustomers(company);
+    t.equal(response.statusCode, 200)
+
+    const customers = response.json<CustomerType[]>()
+    t.equal(customers.length, 1)
+    let expectedResult = [customerName.name]
+    t.same(customers.map((customer) => customer.name), expectedResult)
+
+    response = await getTask(customers[0].id, project, company);
     t.equal(response.statusCode, 200)
 
     const results = response.json<TaskListType>()
@@ -68,24 +76,24 @@ test('create new task properties', async (t) => {
         plannedHours: 0,
     }])
 
-    response = await postTaskProperties(customer, company, project, task, completed, plannedHours);
+    response = await postTaskProperties(customers[0].id, company, project, task, completed, plannedHours);
     t.equal(response.statusCode, 200)
 
-    response = await getTask(customer, project, company);
+    response = await getTask(customers[0].id, project, company);
     t.equal(response.statusCode, 200)
 
     const tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    const expectedResult = [{
+    const expectedTask = [{
         name: 'Test task',
         completed: true,
         plannedHours: 200,
     }]
-    t.same(tasks, expectedResult)
+    t.same(tasks, expectedTask)
 })
 
 test('update task properties', async (t) => {
-    const customer = 'Test customer2';
+    const customerName = {name: 'Test customer2'};
     const company = 'it';
     const project = 'Test project2';
     const task = 'Test task2';
@@ -93,9 +101,17 @@ test('update task properties', async (t) => {
     const plannedHours = 200;
     const updatedPlannedHours = 100;
 
-    await postTask(customer, company, project, task, ProjectType.BILLABLE, plannedHours)
+    await postTask(customerName, company, project, task, ProjectType.BILLABLE, plannedHours)
 
-    let response = await getTask(customer, project, company);
+    let response = await getCustomers(company);
+    t.equal(response.statusCode, 200)
+
+    const customers = response.json<CustomerType[]>()
+    t.equal(customers.length, 1)
+    let expectedResult = [customerName.name]
+    t.same(customers.map((customer) => customer.name), expectedResult)
+
+    response = await getTask(customers[0].id, project, company);
     t.equal(response.statusCode, 200)
 
     const results = response.json<TaskListType>()
@@ -106,25 +122,25 @@ test('update task properties', async (t) => {
         plannedHours: 0,
     }])
 
-    response = await postTaskProperties(customer, company, project, task, completed, plannedHours);
+    response = await postTaskProperties(customers[0].id, company, project, task, completed, plannedHours);
     t.equal(response.statusCode, 200)
 
-    response = await getTask(customer, project, company);
+    response = await getTask(customers[0].id, project, company);
     t.equal(response.statusCode, 200)
 
     const tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
-    const expectedResult = [{
+    const expectedTask = [{
         name: 'Test task2',
         completed: true,
         plannedHours: 200,
     }]
-    t.same(tasks, expectedResult)
+    t.same(tasks, expectedTask)
 
-    response = await postTaskProperties(customer, company, project, task, completed, updatedPlannedHours);
+    response = await postTaskProperties(customers[0].id, company, project, task, completed, updatedPlannedHours);
     t.equal(response.statusCode, 200)
 
-    response = await getTask(customer, project, company);
+    response = await getTask(customers[0].id, project, company);
     t.equal(response.statusCode, 200)
 
     const tasks2 = response.json<TaskListType>()
@@ -137,7 +153,7 @@ test('update task properties', async (t) => {
     t.same(tasks2, expectedResult2)
 })
 
-async function postTask(customer: string, company: string, project: string, task: string, projectType?: string, plannedHours?: number) {
+async function postTask(customer: CustomerOptType, company: string, project: string, task: string, projectType?: string, plannedHours?: number) {
     return await app.inject({
         method: 'POST',
         url: '/api/task/task/',
@@ -173,6 +189,16 @@ async function getTask(customer: string, project: string, company: string) {
     return await app.inject({
         method: 'GET',
         url: `/api/task/task/?company=${company}&customer=${customer}&project=${project}`,
+        headers: {
+            authorization: `Bearer ${getToken(company)}`,
+        },
+    })
+}
+
+async function getCustomers(company: string) {
+    return await app.inject({
+        method: 'GET',
+        url: `/api/task/customer`,
         headers: {
             authorization: `Bearer ${getToken(company)}`,
         },
