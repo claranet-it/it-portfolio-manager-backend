@@ -52,7 +52,7 @@ import { WorkService } from '../Work/service'
 import { WorkRepository } from '@src/infrastructure/Work/Repository'
 import { CompanyKeysRepository } from '@src/infrastructure/Company/Repository/CompanyKeysRepository'
 import { UnsubscribeService } from '../Unsubscribe/service'
-import { SesClient } from '@src/infrastructure/mailer/sesClient'
+import { SesConnection } from '@src/infrastructure/mailer/sesConnection'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -87,7 +87,7 @@ async function dependencyInjectionContainerPlugin(
     })
 
     container.register({
-      sesClient: awilix.asValue(SesClient.getClient()),
+      sesClient: awilix.asValue(SesConnection.getClient()),
     })
 
     container.register({

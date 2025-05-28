@@ -7,7 +7,7 @@ import { TaskService } from "@src/core/Task/service/TaskService";
 import { UserProfileService } from "@src/core/User/service/UserProfileService";
 import { sendEmail } from "@src/handlers/sendEmail";
 import { CompanyRepository } from "@src/infrastructure/Company/Repository/CompanyRepository";
-import { SesClient } from "@src/infrastructure/mailer/sesClient";
+import { SesConnection } from "@src/infrastructure/mailer/sesConnection";
 import { ForbiddenException } from "@src/shared/exceptions/ForbiddenException";
 import { NotFoundException } from "@src/shared/exceptions/NotFoundException";
 
@@ -20,11 +20,10 @@ export class UnsubscribeService {
         private readonly effortService: EffortService,
         private readonly companyConnectionsService: CompanyConnectionsService,
         private readonly userProfileService: UserProfileService,
-        private readonly sesClient: SesClient,
     ) { }
 
     async unsubscribe(jwtToken: JwtTokenType, idCompany: string): Promise<void> {
-
+        const sesClient = SesConnection.getClient()
         const company = await this.companyRepository.findById(idCompany)
 
         if (!company) {
@@ -38,7 +37,7 @@ export class UnsubscribeService {
         const from = "marteresa28@gmail.com";
         const to = "marteresa28@gmail.com"
         const body = `Mail created automatically. The company ${company.domain} has just submitted an unsubscription request at ${new Date()}.`
-        sendEmail(this.sesClient, from, to, "Unsubscribe Company", body)
+        sendEmail(sesClient, from, to, "Unsubscribe Company", body)
 
         await this.taskService.deleteCustomersAndRelatedDataByCompany(idCompany)
         await this.effortService.deleteEffortByCompany(company.name)

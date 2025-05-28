@@ -5,9 +5,10 @@ import { PrismaClient } from '../../../prisma/generated'
 import { unsubscribe } from '@test/utils/unsubscribe'
 import { seedCompany } from '@test/seed/prisma/company'
 import { seedSkill } from '@test/seed/prisma/skill'
-import { seedCompanyConnections } from '@test/seed/prisma/companyConnections'
 import { PutItemCommand, ScanCommand, ScanCommandOutput } from '@aws-sdk/client-dynamodb'
 import { getTableName } from '@src/core/db/TableName'
+import sinon from 'sinon'
+
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
@@ -15,7 +16,19 @@ let originalEffort: ScanCommandOutput
 let originalSkill: ScanCommandOutput
 let originalUser: ScanCommandOutput
 
-const FAKE_EMAIL = 'TEST_USUBSCRIBE@email.com'
+const sendEmailMock = sinon.stub().resolves();
+
+const SesConnection = {
+    getClient: () => ({
+        send: sendEmailMock
+    })
+};
+
+sinon.replace(SesConnection, 'getClient', () => ({
+    send: sendEmailMock
+}));
+
+const FAKE_EMAIL = 'TEST_UNSUBSCRIBE@email.com'
 const MY_COMPANY = 'it'
 
 before(async () => {
@@ -23,7 +36,6 @@ before(async () => {
     await app.ready()
     await seedCompany()
     await seedSkill()
-    await seedCompanyConnections()
 
     originalEffort = await app.dynamoDBClient.send(
         new ScanCommand({
@@ -163,7 +175,6 @@ test('should delete all data of company', async (t) => {
         t.equal(response.statusCode, 200)
         const company = await prisma.company.findMany()
         const skill = await prisma.skill.findMany()
-        const companyConnections = await prisma.companyConnections.findMany()
         const user = await app.dynamoDBClient.send(
             new ScanCommand({
                 TableName: getTableName('UserProfile'),
@@ -172,8 +183,9 @@ test('should delete all data of company', async (t) => {
 
         t.equal(company.length, 3)
         t.equal(skill.length, 1)
-        t.equal(companyConnections.length, 0)
         t.equal(user.Items?.length, 5)
+
+        t.equal(sendEmailMock.calledOnce, true);
     }
 })
 

@@ -181,7 +181,10 @@ custom:
             rawsources: [ ./seed/time-entry.json ]
           - table: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
             sources: ['./seed/crew.json']
-    
+
+  serverless-offline-ses-v2:
+    port: 8005  
+
 package:
   patterns:
     - node_modules/**

@@ -1,10 +1,9 @@
 
-import { SendEmailCommand } from "@aws-sdk/client-sesv2"
-import { SesClient } from "@src/infrastructure/mailer/sesClient";
+import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2"
 
 
-export async function sendEmail(ses: SesClient, from: string, to: string, subject: string, body: string) {
-    await ses.getClient().send(new SendEmailCommand({
+export async function sendEmail(ses: SESv2Client, from: string, to: string, subject: string, body: string) {
+    await ses.send(new SendEmailCommand({
         FromEmailAddress: from,
         Destination: { ToAddresses: [to] },
         Content: {
