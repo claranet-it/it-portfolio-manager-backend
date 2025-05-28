@@ -18,13 +18,15 @@ import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserPr
 import { TimeEntryError } from '@src/core/customExceptions/TimeEntryError'
 import { CompleteUserProfileType } from '@src/core/User/model/user.model'
 import { parseString, writeToString } from 'fast-csv'
+import { ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
+
 
 export class TimeEntryService {
   constructor(
     private timeEntryRepository: TimeEntryRepositoryInterface,
     private taskRepository: TaskRepositoryInterface,
     private userProfileRepository: UserProfileRepositoryInterface,
-  ) {}
+  ) { }
 
   async find(
     params: TimeEntryReadParamWithUserType,
@@ -48,32 +50,32 @@ export class TimeEntryService {
 
     return timeEntries.length > 0
       ? await Promise.all(
-          timeEntries.map(async (entry) => {
-            const user = users.find((user) => user.uid === entry.user)
-            return {
-              description: entry.task, //TODO
-              user: {
-                email: user?.uid ?? '',
-                name: user?.name ?? '',
-              },
-              userId: user?.uid ?? '',
+        timeEntries.map(async (entry) => {
+          const user = users.find((user) => user.uid === entry.user)
+          return {
+            description: entry.task, //TODO
+            user: {
+              email: user?.uid ?? '',
+              name: user?.name ?? '',
+            },
+            userId: user?.uid ?? '',
+            billable: entry.projectType === ProjectType.BILLABLE,
+            task: {
+              name: entry.task,
+            },
+            project: {
+              name: entry.project,
               billable: entry.projectType === ProjectType.BILLABLE,
-              task: {
-                name: entry.task,
-              },
-              project: {
-                name: entry.project,
-                billable: entry.projectType === ProjectType.BILLABLE,
-                clientName: entry.project,
-              },
-              timeInterval: {
-                start: entry.timeEntryDate.substring(0, 10),
-                end: '',
-                duration: entry.hours.toString(),
-              },
-            }
-          }),
-        )
+              clientName: entry.project,
+            },
+            timeInterval: {
+              start: entry.timeEntryDate.substring(0, 10),
+              end: '',
+              duration: entry.hours.toString(),
+            },
+          }
+        }),
+      )
       : []
   }
 
@@ -90,26 +92,26 @@ export class TimeEntryService {
     let reportData =
       timeEntries.length > 0
         ? await Promise.all(
-            timeEntries.map(async (entry) => {
-              const user = filteredUsers.find((user) => user.uid === entry.user)
-              return {
-                date: entry.date,
-                email: user?.uid ?? '',
-                name: user?.name ?? '',
-                company: user?.company ?? '',
-                crew: user?.crew ?? '',
-                customer: entry.customer,
-                project: entry.project.name,
-                task: entry.task,
-                projectType: entry.project.type,
-                plannedHours: entry.project.plannedHours,
-                hours: entry.hours,
-                description: entry.description,
-                startHour: entry.startHour,
-                endHour: entry.endHour,
-              }
-            }),
-          )
+          timeEntries.map(async (entry) => {
+            const user = filteredUsers.find((user) => user.uid === entry.user)
+            return {
+              date: entry.date,
+              email: user?.uid ?? '',
+              name: user?.name ?? '',
+              company: user?.company ?? '',
+              crew: user?.crew ?? '',
+              customer: entry.customer,
+              project: entry.project.name,
+              task: entry.task,
+              projectType: entry.project.type,
+              plannedHours: entry.project.plannedHours,
+              hours: entry.hours,
+              description: entry.description,
+              startHour: entry.startHour,
+              endHour: entry.endHour,
+            }
+          }),
+        )
         : []
 
     if (params.crew) {
@@ -205,7 +207,7 @@ export class TimeEntryService {
         (entry) =>
           entry.task == row.task &&
           entry.project.name == row.project &&
-          entry.customer == row.customer,
+          entry.customer.name == row.customer,
       )
 
       if (matchedEntries.length > 0) {
@@ -259,5 +261,60 @@ export class TimeEntryService {
     const customHeaders =
       'DATE,EMAIL,NAME,COMPANY,CREW,CUSTOMER,PROJECT,TASK,PROJECT TYPE,PLANNED HOURS,HOURS,DESCRIPTION,START HOUR,END HOUR'
     return csv.replace(csvHeaders, customHeaders)
+  }
+
+  async getReportProjectsFilterBy(
+    params: ReportProjectsWithCompanyType,
+  ): Promise<TimeEntryReportType[] | string> {
+    const userProfileCache = new Map();
+    let filteredUsers: CompleteUserProfileType[] = []
+
+    const getUserProfile = async (userId: string): Promise<CompleteUserProfileType | null> => {
+      if (userProfileCache.has(userId)) {
+        return userProfileCache.get(userId);
+      } else {
+        const userProfile = await this.userProfileRepository.getUserProfileById(userId);
+        userProfileCache.set(userId, userProfile);
+        return userProfile;
+      }
+    };
+
+    if (params.crew) {
+      const users = await this.userProfileRepository.getByCompany(params.company)
+      filteredUsers = params.crew
+        ? users.filter((profile) => profile.crew === params.crew)
+        : users
+      params.user = filteredUsers.map(user => user.uid)
+    }
+
+    const timeEntries = await this.timeEntryRepository.getTimeEntriesFilterBy(params)
+
+    const reportData =
+      timeEntries.length > 0
+        ? await Promise.all(
+          timeEntries.map(async (entry) => {
+            const user: CompleteUserProfileType | null = filteredUsers.find((user) => user.uid === entry.user) || await getUserProfile(entry.user);
+            return {
+              date: entry.date,
+              email: user?.uid ?? '',
+              name: user?.name ?? '',
+              company: user?.company ?? '',
+              crew: user?.crew ?? '',
+              customer: { id: entry.customer.id, name: entry.customer.name }, //TODO: entry.customer,
+              project: entry.project.name,
+              task: entry.task,
+              projectType: entry.project.type,
+              plannedHours: entry.project.plannedHours,
+              hours: entry.hours,
+              description: entry.description,
+              startHour: entry.startHour,
+              endHour: entry.endHour,
+            }
+          }))
+        : []
+
+    return params.format === 'json'
+      ? reportData
+      : this.generateCsvFrom(reportData)
   }
 }

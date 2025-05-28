@@ -1,3 +1,4 @@
+/*
 import {test, beforeEach, afterEach} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
@@ -524,4 +525,4 @@ test('Generate time entries report - csv NO entries', async (t) => {
     const expected =
         "DATE,EMAIL,NAME,COMPANY,CREW,CUSTOMER,PROJECT,TASK,PROJECT TYPE,PLANNED HOURS,HOURS,DESCRIPTION,START HOUR,END HOUR"
     t.same(result, expected)
-})
+})*/

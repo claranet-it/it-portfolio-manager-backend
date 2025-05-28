@@ -13,6 +13,7 @@ import { invariant } from '@src/helpers/invariant'
 import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
 import { PrismaClient } from '../../../../prisma/generated'
 import { TaskError } from '@src/core/customExceptions/TaskError'
+import { ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
@@ -50,7 +51,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       user: timeEntry.email,
       date: timeEntry.time_entry_date.toISOString().substring(0, 10),
       company: timeEntry.task.project.customer.company_id,
-      customer: timeEntry.task.project.customer.name,
+      customer: { id: timeEntry.task.project.customer.id, name: timeEntry.task.project.customer.name },
       project: {
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
@@ -111,7 +112,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       user: timeEntry.email,
       date: timeEntry.time_entry_date.toISOString().substring(0, 10),
       company: timeEntry.task.project.customer.company_id,
-      customer: timeEntry.task.project.customer.name,
+      customer: { id: timeEntry.task.project.customer.id, name: timeEntry.task.project.customer.name },
       project: {
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
@@ -260,10 +261,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         name: params.task,
         project: {
           name: params.project,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          customer_id: params.customer,
         },
       },
     })
@@ -317,5 +315,74 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     const from = `${fromYear}-${(fromMonth > 9 ? '' : '0') + fromMonth}-${(fromDay > 9 ? '' : '0') + fromDay}`
     const to = `${toYear}-${(toMonth > 9 ? '' : '0') + toMonth}-${(toDay > 9 ? '' : '0') + toDay}`
     return { from, to }
+  }
+
+  async getTimeEntriesFilterBy(
+    params: ReportProjectsWithCompanyType,
+  ): Promise<TimeEntryRowWithProjectEntityType[]> {
+    const prisma = new PrismaClient()
+
+    const result = await prisma.timeEntry.findMany({
+      where: {
+        time_entry_date: {
+          lte: new Date(params.to),
+          gte: new Date(params.from),
+        },
+        email: {
+          in: params.user
+        },
+        task: {
+          name: {
+            in: params.task
+          },
+          project: {
+            name: {
+              in: params.project
+            },
+            customer_id: {
+              in: params.customer
+            },
+          },
+        },
+      },
+      include: {
+        task: {
+          include: {
+            project: {
+              include: {
+                customer: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: [
+        {
+          createdAt: 'asc',
+        },
+        {
+          time_entry_date: 'asc',
+        },
+      ],
+    })
+
+    return result.map((timeEntry) => ({
+      id: timeEntry.id,
+      user: timeEntry.email,
+      date: timeEntry.time_entry_date.toISOString().substring(0, 10),
+      company: timeEntry.task.project.customer.company_id,
+      customer: { id: timeEntry.task.project.customer.id, name: timeEntry.task.project.customer.name },
+      project: {
+        name: timeEntry.task.project.name,
+        type: timeEntry.task.project.project_type,
+        plannedHours: timeEntry.task.project.plannedHours,
+        completed: timeEntry.task.project.completed,
+      },
+      task: timeEntry.task.name,
+      hours: timeEntry.hours,
+      description: timeEntry.description ?? '',
+      startHour: timeEntry.time_start ?? '',
+      endHour: timeEntry.time_end ?? '',
+    }))
   }
 }
