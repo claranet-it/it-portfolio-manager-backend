@@ -207,7 +207,7 @@ export class TimeEntryService {
         (entry) =>
           entry.task == row.task &&
           entry.project.name == row.project &&
-          entry.customer == row.customer,
+          entry.customer.name == row.customer,
       )
 
       if (matchedEntries.length > 0) {
@@ -300,7 +300,7 @@ export class TimeEntryService {
               name: user?.name ?? '',
               company: user?.company ?? '',
               crew: user?.crew ?? '',
-              customer: entry.customer,
+              customer: { id: entry.customer.id, name: entry.customer.name }, //TODO: entry.customer,
               project: entry.project.name,
               task: entry.task,
               projectType: entry.project.type,

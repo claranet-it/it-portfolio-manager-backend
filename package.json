@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "offline": "STAGE_NAME=dev sls offline --stage=dev start",
+    "offline:local": "STAGE_NAME=local sls offline --stage=local start",
     "dynamodb:install": "sls dynamodb install",
     "dynamodb:start:dev": "nohup sls dynamodb start --stage=dev --seed >/dev/null &",
     "dynamodb:start:dev:interactive": "sls dynamodb start --stage=dev --seed",
@@ -21,7 +22,8 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "precommit:init": "husky install",
-    "build:env": "npx ts-node src/env.ts $npm_config_buildStage"
+    "build:env": "npx ts-node src/env.ts $npm_config_buildStage",
+    "migrate:local": "npx dotenv -e .env.local -- npx prisma migrate dev"
   },
   "keywords": [],
   "author": "",
@@ -70,7 +72,7 @@
     "@sinclair/typebox": "^0.31.2",
     "@slack/web-api": "^7.0.2",
     "awilix": "^9.0.0",
-    "axios": "^1.7.9",
+    "axios": "1.8.2",
     "casbin": "^5.32.0",
     "casbin-prisma-adapter": "^1.5.0",
     "crypto": "^1.0.1",

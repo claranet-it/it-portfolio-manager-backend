@@ -23,6 +23,18 @@ model Company {
   skills                   Skill[]
   requestedConnections     CompanyConnections[] @relation("RequesterCompany")
   correspondentConnections CompanyConnections[] @relation("CorrespondentCompany")
+  company_keys             CompanyKeys[]
+}
+
+model CompanyKeys {
+  id                  String  @id @default(uuid())
+  company_id          String
+  company             Company @relation(fields: [company_id], references: [id])
+  encryptedPrivateKey String  @db.Text
+  encryptedAESKey     String  @db.Text
+  publicKey           String  @db.Text
+
+  @@unique([company_id])
 }
 
 model CompanyConnections {
@@ -94,53 +106,53 @@ model TimeEntry {
 }
 
 model BusinessCard {
-  id         String   @id @default(uuid())
-  name       String
-  role       String?
-  email      String   @unique
-  mobile     String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  role      String?
+  email     String   @unique
+  mobile    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CurriculumVitae {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String      @id @default(uuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   name        String
   role        String
-  email       String   @unique
-  summary		  String?  @db.VarChar(1000)
-  main_skills String?  @db.VarChar(1000)
-  education	  Education[]
-  work		    Work[]  
+  email       String      @unique
+  summary     String?     @db.VarChar(1000)
+  main_skills String?     @db.VarChar(1000)
+  education   Education[]
+  work        Work[]
 }
 
 model Education {
-  id                String          @id @default(uuid())
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  curriculum_vitae  CurriculumVitae @relation(fields: [curriculum_id], references: [id])
-  curriculum_id     String
-  note              String?         @db.VarChar(1000)
-  year_start        Int
-  year_end	        Int? 
-  institution       String
-  current           Boolean?
+  id               String          @id @default(uuid())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  curriculum_vitae CurriculumVitae @relation(fields: [curriculum_id], references: [id])
+  curriculum_id    String
+  note             String?         @db.VarChar(1000)
+  year_start       Int
+  year_end         Int?
+  institution      String
+  current          Boolean?
 }
 
 model Work {
-  id                String          @id @default(uuid())
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  curriculum_vitae  CurriculumVitae @relation(fields: [curriculum_id], references: [id])
-  curriculum_id     String 
-  note              String?         @db.VarChar(1000)
-  year_start        Int
-  year_end	        Int? 
-  institution       String
-  role		          String?
-  current           Boolean?
+  id               String          @id @default(uuid())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  curriculum_vitae CurriculumVitae @relation(fields: [curriculum_id], references: [id])
+  curriculum_id    String
+  note             String?         @db.VarChar(1000)
+  year_start       Int
+  year_end         Int?
+  institution      String
+  role             String?
+  current          Boolean?
 }
 
 

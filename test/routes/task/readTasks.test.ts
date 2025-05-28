@@ -7,6 +7,11 @@ import { PrismaClient } from '../../../prisma/generated'
 let app: FastifyInstance
 const prisma = new PrismaClient()
 
+/* eslint-disable */
+let testCustomer: any;
+/* eslint-disable */
+let claranet: any;
+
 const inputs = [
   {
     company: 'it',
@@ -32,13 +37,13 @@ beforeEach(async () => {
   app = createApp({ logger: false })
   await app.ready()
 
-  const claranet = await prisma.customer.create({
+  claranet = await prisma.customer.create({
     data: {
       name: 'Claranet',
       company_id: 'it',
     }
   })
-  const testCustomer = await prisma.customer.create({
+  testCustomer = await prisma.customer.create({
     data: {
       name: 'test customer',
       company_id: 'it',
@@ -136,9 +141,11 @@ inputs.forEach((input) => {
       company: input.company
     })
 
+    const customer = input.customer === 'test customer' ? testCustomer.id : claranet.id;
+
     const response = await app.inject({
       method: 'GET',
-      url: `/api/task/task?customer=${input.customer}&project=${input.project}`,
+      url: `/api/task/task?customer=${customer}&project=${input.project}`,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -162,7 +169,7 @@ test('read not completed tasks', async (t) => {
 
     const response = await app.inject({
       method: 'GET',
-      url: `/api/task/task?customer=test customer&project=SOR Sviluppo&completed=false`,
+      url: `/api/task/task?customer=${testCustomer.id}&project=SOR Sviluppo&completed=false`,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -184,7 +191,7 @@ test('read completed tasks', async (t) => {
 
     const response = await app.inject({
       method: 'GET',
-      url: `/api/task/task?customer=test customer&project=SOR Sviluppo&completed=true`,
+      url: `/api/task/task?customer=${testCustomer.id}&project=SOR Sviluppo&completed=true`,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -212,7 +219,7 @@ test('read task with additional properties', async (t) => {
 
   const response = await app.inject({
     method: 'GET',
-    url: `/api/task/task?customer=${input.customer}&project=${input.project}`,
+    url: `/api/task/task?customer=${claranet.id}&project=${input.project}`,
     headers: {
       authorization: `Bearer ${token}`,
     },

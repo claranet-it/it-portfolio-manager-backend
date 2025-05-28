@@ -1,31 +1,27 @@
 import { FastifyInstance } from 'fastify'
-import {
-  TaskReadQueryParamsType, TaskStructure,
-  TaskStructureType,
-} from '@src/core/Task/model/task.model'
 import { Type } from '@sinclair/typebox'
+import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
+import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Querystring: TaskReadQueryParamsType
-    Reply: TaskStructureType[]
+    Reply: { privateKey: string, symmetricKey: string }
   }>(
-    '/task-list',
+    '/',
     {
       onRequest: [fastify.authenticate],
       schema: {
-        tags: ['Task'],
+        tags: ['Company'],
         security: [
           {
             apiKey: [],
           },
         ],
         response: {
-          200: Type.Array(TaskStructure),
-          400: {
-            type: 'null',
-            description: 'Bad request',
-          },
+          200: Type.Object({
+            encryptedPrivateKey: Type.String(),
+            encryptedAESKey: Type.String(),
+          }),
           401: {
             type: 'null',
             description: 'Unauthorized',
@@ -41,10 +37,16 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       try {
         return await fastify
           .dependencyInjectionContainer()
-          .resolve('taskService')
-          .getTaskStructure(request.user.company)
+          .resolve('companyService')
+          .getKeys(request.user)
       } catch (error) {
         request.log.error(error)
+        if (error instanceof NotFoundException) {
+          return reply.code(404).send()
+        }
+        if (error instanceof ForbiddenException) {
+          return reply.code(403).send()
+        }
         return reply.code(500).send()
       }
     },

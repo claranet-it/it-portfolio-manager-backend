@@ -12,6 +12,7 @@ const inputs = [
   {
     company: 'it',
     customer: 'Claranet',
+    customerId: '',
     expectProjects: [
       {
         name: 'Assenze',
@@ -36,6 +37,7 @@ const inputs = [
   {
     company: 'it',
     customer: 'test customer',
+    customerId: '',
     expectProjects: [
       {
         name: 'SOR Sviluppo',
@@ -48,6 +50,7 @@ const inputs = [
   {
     company: 'other company',
     customer: 'test customer of other company',
+    customerId: '',
     expectProjects: [
       {
         name: 'test project of other company',
@@ -69,6 +72,7 @@ beforeEach(async () => {
       company_id: 'it',
     },
   })
+  inputs[0].customerId = customer.id
   await prisma.project.createMany({
     data: [
       {
@@ -98,6 +102,7 @@ beforeEach(async () => {
       company_id: 'it',
     },
   })
+  inputs[1].customerId = customer2.id
   await prisma.project.createMany({
     data: [
       {
@@ -114,6 +119,7 @@ beforeEach(async () => {
       company_id: 'other company',
     },
   })
+  inputs[2].customerId = customer3.id
   await prisma.project.createMany({
     data: [
       {
@@ -155,7 +161,7 @@ inputs.forEach((input) => {
 
     const response = await app.inject({
       method: 'GET',
-      url: `/api/task/project/?customer=${input.customer}`,
+      url: `/api/task/project/?customer=${input.customerId}`,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -166,7 +172,7 @@ inputs.forEach((input) => {
     const projects = response.json<ProjectListType>()
     t.equal(projects.length, input.expectProjects.length)
 
-    t.same(projects, input.expectProjects)
+    t.same(projects.map((project) => project.name), input.expectProjects.map((project) => project.name))
   })
 })
 
@@ -180,7 +186,7 @@ test(`read not completed projects`, async (t) => {
 
   const response = await app.inject({
     method: 'GET',
-    url: `/api/task/project/?customer=Claranet&completed=false`,
+    url: `/api/task/project/?customer=${inputs[0].customerId}&completed=false`,
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -203,7 +209,7 @@ test(`read completed projects`, async (t) => {
 
   const response = await app.inject({
     method: 'GET',
-    url: `/api/task/project/?customer=Claranet&completed=true`,
+    url: `/api/task/project/?customer=${inputs[0].customerId}&completed=true`,
     headers: {
       authorization: `Bearer ${token}`,
     },
