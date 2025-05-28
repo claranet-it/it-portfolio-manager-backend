@@ -20,18 +20,15 @@ export const TemplateCreateParams = Type.Object({
     daytime: Type.Array(Type.Integer()),
     date_start: Type.RegExp(dateFormat),
     date_end: Type.RegExp(dateFormat),
-    projectName: Type.String(),
-    customerName: Type.String(),
-    taskName: Type.Optional(Type.String()),
+    project_id: Type.String(),
+    customer_id: Type.String(),
+    task_id: Type.Optional(Type.String()),
 })
 
 export const TemplateCreateParamsWithUserEmail = Type.Intersect([
     TemplateCreateParams,
     Type.Object({
         userEmail: Type.String(),
-    }),
-    Type.Object({
-        company: Type.String(),
     })
 ])
 

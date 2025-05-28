@@ -10,33 +10,14 @@ const prisma = new PrismaClient()
 
 const My_EMAIL = "my-email@mail.com"
 
-const CUSTOMER_NAME = "Claranet";
-const PROJECT_NAME = "Slack time";
-const TASK_NAME = "formazione";
+const CUSTOMER_ID = "customerId";
+const PROJECT_ID = "projectId";
+const TASK_ID = "taskId";
 
 before(async () => {
     app = createApp({ logger: false })
     await app.ready()
-    const customer = await prisma.customer.create({
-        data: {
-            name: CUSTOMER_NAME,
-            company_id: 'it',
-        }
-    })
 
-    const project = await prisma.project.create({
-        data: {
-            name: PROJECT_NAME,
-            customer_id: customer.id
-        }
-    })
-
-    await prisma.projectTask.create({
-        data: {
-            name: TASK_NAME,
-            project_id: project.id,
-        }
-    })
 })
 
 after(async () => {
@@ -67,9 +48,9 @@ test('should save my template', async (t) => {
         daytime: [1, 3, 5],
         date_start: '2025-01-02',
         date_end: '2025-02-02',
-        projectName: PROJECT_NAME,
-        customerName: CUSTOMER_NAME,
-        taskName: TASK_NAME
+        project_id: PROJECT_ID,
+        customer_id: CUSTOMER_ID,
+        task_id: TASK_ID
     }
     const addResponse = await addNewTemplate(app, getToken(app, My_EMAIL), payload)
     t.equal(addResponse.statusCode, 200)
@@ -82,36 +63,3 @@ test('should save my template', async (t) => {
 })
 
 
-test('should save my template without task', async (t) => {
-    const payload = {
-        timehours: 8,
-        daytime: [1, 3, 5],
-        date_start: '2025-01-02',
-        date_end: '2025-02-02',
-        projectName: PROJECT_NAME,
-        customerName: CUSTOMER_NAME,
-    }
-    const addResponse = await addNewTemplate(app, getToken(app, My_EMAIL), payload)
-    t.equal(addResponse.statusCode, 200)
-
-    const templates = await prisma.template.findMany()
-    t.equal(templates.length, 2)
-    t.equal(templates[0].email, My_EMAIL)
-
-
-})
-
-
-test('should save my template with invalid project', async (t) => {
-    const payload = {
-        timehours: 8,
-        daytime: [1, 3, 5],
-        date_start: '2025-01-02',
-        date_end: '2025-02-02',
-        projectName: "Not Valid Project",
-        customerName: CUSTOMER_NAME,
-    }
-    const addResponse = await addNewTemplate(app, getToken(app, My_EMAIL), payload)
-    t.equal(addResponse.statusCode, 500)
-
-})

@@ -43,7 +43,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
                 await fastify
                     .dependencyInjectionContainer()
                     .resolve('templateService')
-                    .save({ ...request.body, userEmail: request.user.email, company: request.user.company })
+                    .save({ ...request.body, userEmail: request.user.email })
                 return reply.send(JSON.stringify({ message: 'OK' }))
             } catch (error) {
                 request.log.error(error)

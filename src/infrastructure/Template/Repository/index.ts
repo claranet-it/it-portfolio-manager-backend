@@ -1,7 +1,6 @@
 import { TemplateRepositoryInterface } from '@src/core/Template/repository'
 import { PrismaClient } from '../../../../prisma/generated'
 import { TemplateCreateParamsWithUserEmailType, TemplateType, TemplateUpdateType } from '@src/core/Template/model'
-import { NotFoundException } from '@src/shared/exceptions/NotFoundException';
 
 
 export class TemplateRepository implements TemplateRepositoryInterface {
@@ -80,46 +79,12 @@ export class TemplateRepository implements TemplateRepositoryInterface {
     async save(params: TemplateCreateParamsWithUserEmailType): Promise<void> {
         const prisma = new PrismaClient()
 
-        const customer = await prisma.customer.findFirst({
-            where: {
-                company_id: params.company,
-                name: params.customerName
-            }
-        })
-
-        if (!customer) {
-            throw new NotFoundException('Customer not found')
-        }
-
-        const project = await prisma.project.findFirst({
-            where: {
-                customer: {
-                    company_id: params.company,
-                    name: params.customerName,
-                },
-                name: params.projectName
-            }
-        })
-
-        if (!project) {
-            throw new NotFoundException('Project not found')
-        }
-
-        const task = await prisma.projectTask.findFirst({
-            where: {
-                project: {
-                    id: project.id
-                },
-                name: params.taskName
-            }
-        })
-
         await prisma.template.create({
             data: {
                 email: params.userEmail,
-                task_id: task?.id || undefined,
-                customer_id: customer.id,
-                project_id: project.id,
+                task_id: params.task_id,
+                customer_id: params.customer_id,
+                project_id: params.project_id,
                 timehours: params.timehours,
                 daytime: this.intArrayToString(params.daytime),
                 date_start: new Date(params.date_start),
