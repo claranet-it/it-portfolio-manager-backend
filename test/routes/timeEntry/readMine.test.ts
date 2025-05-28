@@ -130,6 +130,13 @@ test('Return empty array on no entries in date range', async (t) => {
 })
 
 test('Return time entries', async (t) => {
+  const customers = await prisma.customer.findMany({
+    where: {
+      company_id: 'it',
+    },
+  })
+  t.equal(customers.length, 1)
+
   const response = await app.inject({
     method: 'GET',
     url: '/api/time-entry/mine?from=2024-01-01&to=2024-01-01',
@@ -148,7 +155,10 @@ test('Return time entries', async (t) => {
       user: 'nicholas.crow@email.com',
       date: '2024-01-01',
       company: 'it',
-      customer: 'Claranet',
+      customer: {
+        name: customers[0].name,
+        id: customers[0].id,
+      },
       project: {
         name: 'Funzionale',
         type: 'non-billable',
@@ -166,7 +176,10 @@ test('Return time entries', async (t) => {
       user: 'nicholas.crow@email.com',
       date: '2024-01-01',
       company: 'it',
-      customer: 'Claranet',
+      customer: {
+        name: customers[0].name,
+        id: customers[0].id,
+      },
       project: {
         name: 'Slack time',
         type: 'slack-time',
@@ -184,7 +197,10 @@ test('Return time entries', async (t) => {
       user: 'nicholas.crow@email.com',
       date: '2024-01-01',
       company: 'it',
-      customer: 'Claranet',
+      customer: {
+        name: customers[0].name,
+        id: customers[0].id,
+      },
       project: {
         name: 'Assenze',
         type: 'absence',

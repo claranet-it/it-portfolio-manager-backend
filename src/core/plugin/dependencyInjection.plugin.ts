@@ -50,6 +50,7 @@ import { EducationRepository } from '@src/infrastructure/Education/Repository'
 import { EducationService } from '../Education/service'
 import { WorkService } from '../Work/service'
 import { WorkRepository } from '@src/infrastructure/Work/Repository'
+import { CompanyKeysRepository } from '@src/infrastructure/Company/Repository/CompanyKeysRepository'
 import { UnsubscribeService } from '../Unsubscribe/service'
 import { SesClient } from '@src/infrastructure/mailer/sesClient'
 
@@ -230,6 +231,9 @@ async function dependencyInjectionContainerPlugin(
     })
     container.register({
       companyRepository: asClass(CompanyRepository),
+    })
+    container.register({
+      companyKeysRepository: asClass(CompanyKeysRepository),
     })
     container.register({
       crewRepository: asClass(CrewRepository),

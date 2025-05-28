@@ -1,12 +1,13 @@
 import {
+  CustomerOptType,
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
-  CustomerReadParamsType,
+  CustomerReadParamsType, CustomerType,
   ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
   TaskReadParamsType,
-  TaskStructureListType,
+  TaskStructureType,
   TaskType,
   TaskUpdateParamsType,
 } from '@src/core/Task/model/task.model'
@@ -15,7 +16,7 @@ import { TaskError } from '@src/core/customExceptions/TaskError'
 import { PrismaClient } from '../../../../prisma/generated'
 
 export class TaskRepository implements TaskRepositoryInterface {
-  async getCustomers(params: CustomerReadParamsType): Promise<string[]> {
+  async getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]> {
     const prima = new PrismaClient()
     const result = await prima.customer.findMany({
       where: {
@@ -31,7 +32,10 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     });
 
-    return result.map((customer) => customer.name).sort()
+    return result.map((customer) => ({
+      id: customer.id,
+      name: customer.name,
+    })).sort((a, b) => a.name.localeCompare(b.name));
   }
 
   async getProjects(params: ProjectReadParamsType): Promise<ProjectListType> {
@@ -39,10 +43,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     const result = await prisma.project.findMany({
       where: {
-        customer: {
-          company_id: params.company,
-          name: params.customer,
-        },
+        customer_id: params.customer,
         completed: params.completed,
         is_inactive: false,
       },
@@ -68,10 +69,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         project: {
           name: params.project,
           is_inactive: false,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          customer_id: params.customer,
         },
       },
       select: {
@@ -84,7 +82,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     return result.map((task) => task.name)
   }
 
-  async getTaskStructure(company: string): Promise<TaskStructureListType> {
+  async getTaskStructure(company: string): Promise<TaskStructureType[]> {
     const prisma = new PrismaClient()
 
     const tasks = await prisma.projectTask.findMany({
@@ -103,6 +101,7 @@ export class TaskRepository implements TaskRepositoryInterface {
             customer: {
               select: {
                 name: true,
+                id: true,
               },
             },
           },
@@ -115,7 +114,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     return tasks.map((task) => ({
       task: task.name,
-      customer: task.project.customer.name,
+      customer: { name:task.project.customer.name, id: task.project.customer.id },
       project: task.project.name,
     }))
   }
@@ -131,10 +130,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         project: {
           name: params.project,
           is_inactive: false,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          customer_id: params.customer,
         },
       },
       orderBy: [
@@ -212,21 +208,25 @@ export class TaskRepository implements TaskRepositoryInterface {
       project.plannedHours,
     )
 
+
     await this.findOrCreateProjectTask(projectObj?.id as string, task)
   }
 
-  async findOrCreateCustomer(companyId: string, customerName: string) {
+  async findOrCreateCustomer(companyId: string, customer: CustomerOptType) {
     const prisma = new PrismaClient()
+    let existingCustomer;
 
-    let customer = await prisma.customer.findFirst({
-      where: { company_id: companyId, name: customerName },
-    })
+    if (customer.id) {
+      existingCustomer = await prisma.customer.findUnique({
+        where: { id: customer.id },
+      })
+    }
 
-    if (!customer) {
+    if (!existingCustomer || !customer.id) {
       customer = await prisma.customer.create({
         data: {
           company_id: companyId,
-          name: customerName,
+          name: customer.name,
         },
       })
     }
@@ -286,13 +286,17 @@ export class TaskRepository implements TaskRepositoryInterface {
       throw new TaskError('Project name must be valorized')
     }
 
-    if (params.newCustomer && params.newProject) {
+    if (!params.project.id) {
+      throw new TaskError('Project id must be valorized')
+    }
+
+    if (params.newCustomerName && params.newProject) {
       throw new TaskError(
         'Only one between new customer and new project must be valorized',
       )
     }
 
-    if (!params.newCustomer && !params.newProject) {
+    if (!params.newCustomerName && !params.newProject) {
       throw new TaskError(
         'At least one between new customer and new project must be valorized',
       )
@@ -301,13 +305,9 @@ export class TaskRepository implements TaskRepositoryInterface {
     const prisma = new PrismaClient()
 
     if (params.newProject) {
-      const project = await prisma.project.findFirstOrThrow({
+      const project = await prisma.project.findUniqueOrThrow({
         where: {
-          name: params.project.name,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          id: params.project.id,
         },
       })
 
@@ -328,10 +328,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         const existingProject = await prisma.project.findFirst({
           where: {
             name: params.newProject.name,
-            customer: {
-              name: params.customer,
-              company_id: params.company,
-            },
+            customer_id: params.customer,
           },
         })
         if (existingProject) {
@@ -352,17 +349,16 @@ export class TaskRepository implements TaskRepositoryInterface {
       })
     }
 
-    if (params.newCustomer) {
-      const customer = await prisma.customer.findFirstOrThrow({
+    if (params.newCustomerName) {
+      const customer = await prisma.customer.findUniqueOrThrow({
         where: {
-          name: params.customer,
-          company_id: params.company,
+          id: params.customer,
         },
       })
 
       const existingCustomer = await prisma.customer.findFirst({
         where: {
-          name: params.newCustomer,
+          name: params.newCustomerName,
           company_id: params.company,
         },
       })
@@ -373,7 +369,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
       await prisma.customer.update({
         data: {
-          name: params.newCustomer,
+          name: params.newCustomerName,
         },
         where: {
           id: customer.id,
@@ -394,10 +390,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         name: params.task,
         project: {
           name: params.project,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          customer_id: params.customer,
         },
       },
     })
@@ -411,10 +404,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         name: params.newTask,
         project: {
           name: params.project,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
+          customer_id: params.customer,
         },
       },
     })
@@ -436,20 +426,16 @@ export class TaskRepository implements TaskRepositoryInterface {
   async deleteCustomerProject(
     params: CustomerProjectDeleteParamsType,
   ): Promise<void> {
-    const company = params.company
     const projectName = params.project
-    const customer = params.customer
     const inactive = params.inactive || true
+    const customer = params.customer
 
     const prisma = new PrismaClient()
 
     const project = await prisma.project.findFirst({
       where: {
         name: projectName,
-        customer: {
-          name: customer,
-          company_id: company,
-        },
+        customer_id: customer,
       },
       include: {
         tasks: {
