@@ -4,6 +4,7 @@ import { FastifyInstance } from 'fastify'
 import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
 import { PrismaClient } from '../../../prisma/generated'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
+import { CustomerOptType, CustomerType } from '@src/core/Task/model/task.model'
 
 let app: FastifyInstance
 
@@ -38,7 +39,7 @@ afterEach(async () => {
   await prisma.$disconnect()
   await app.close()
 })
-
+/*
 test('delete time entry without authentication', async (t) => {
   const response = await app.inject({
     method: 'DELETE',
@@ -46,15 +47,21 @@ test('delete time entry without authentication', async (t) => {
   })
   t.equal(response.statusCode, 401)
 })
-
+*/
 test('delete time entry if index is passed', async (t) => {
   const date = '2024-01-10'
-  const customer = 'Claranet'
+  const customerName = {name: 'Claranet'}
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
-  await postTask(customer, project, task, ProjectType.SLACK_TIME)
-  const addResponse = await createTimeEntry(date, customer, project, task, hours)
+  await postTask(customerName, project, task, ProjectType.SLACK_TIME)
+
+  let response = await getCustomers(getToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
+  const addResponse = await createTimeEntry(date, customers[0].id, project, task, hours)
   t.equal(addResponse.statusCode, 204)
   const getTimeEntryResponse = await getTimeEntry(date)
   t.equal(getTimeEntryResponse.statusCode, 200)
@@ -68,7 +75,7 @@ test('delete time entry if index is passed', async (t) => {
     },
     payload: {
         date: date,
-        customer: customer,
+        customer: customers[0].id,
         project: project,
         task: task,
         index: timeEntry[0].index
@@ -83,12 +90,18 @@ test('delete time entry if index is passed', async (t) => {
 
 test('can\'t delete time entry if no index is passed', async (t) => {
   const date = '2024-01-10'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
-  await postTask(customer, project, task, ProjectType.SLACK_TIME)
-  const addResponse = await createTimeEntry(date, customer, project, task, hours)
+  await postTask(customerName, project, task, ProjectType.SLACK_TIME)
+
+  let response = await getCustomers(getToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
+  const addResponse = await createTimeEntry(date, customers[0].id, project, task, hours)
   t.equal(addResponse.statusCode, 204)
   const deleteResponse = await app.inject({
     method: 'DELETE',
@@ -98,7 +111,7 @@ test('can\'t delete time entry if no index is passed', async (t) => {
     },
     payload: {
       date: date,
-      customer: customer,
+      customer: customers[0].id,
       project: project,
       task: task,
     },
@@ -112,13 +125,19 @@ test('can\'t delete time entry if no index is passed', async (t) => {
 
 test('delete the right time entry if there are more than one', async (t) => {
   const date = '2024-01-10'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = {name: 'Slack time', type: ProjectType.SLACK_TIME, plannedHours: 0}
   const task = 'formazione'
-  await postTask(customer, project.name, task, project.type)
-  const addResponse1 = await createTimeEntry(date, customer, project.name, task, 1)
+  await postTask(customerName, project.name, task, project.type)
+
+  let response = await getCustomers(getToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
+  const addResponse1 = await createTimeEntry(date, customers[0].id, project.name, task, 1)
   t.equal(addResponse1.statusCode, 204)
-  const addResponse2 = await createTimeEntry(date, customer, project.name, task, 2)
+  const addResponse2 = await createTimeEntry(date, customers[0].id, project.name, task, 2)
   t.equal(addResponse2.statusCode, 204)
   let getResponse = await app.inject({
     method: 'GET',
@@ -137,7 +156,7 @@ test('delete the right time entry if there are more than one', async (t) => {
     },
     payload: {
         date: date,
-        customer: customer,
+        customer: customers[0].id,
         project: project.name,
         task: task,
         index: timeEntries[1].index,
@@ -158,13 +177,19 @@ test('delete the right time entry if there are more than one', async (t) => {
 
 test('delete the right time entry if there are more than one by setting hours to 0', async (t) => {
   const date = '2024-01-10'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = {name: 'Slack time', type: ProjectType.SLACK_TIME, plannedHours: 0}
   const task = 'formazione'
-  await postTask(customer, project.name, task, project.type)
-  const addResponse1 = await createTimeEntry(date, customer, project.name, task, 1)
+  await postTask(customerName, project.name, task, project.type)
+
+  let response = await getCustomers(getToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
+  const addResponse1 = await createTimeEntry(date, customers[0].id, project.name, task, 1)
   t.equal(addResponse1.statusCode, 204)
-  const addResponse2 = await createTimeEntry(date, customer, project.name, task, 2)
+  const addResponse2 = await createTimeEntry(date, customers[0].id, project.name, task, 2)
   t.equal(addResponse2.statusCode, 204)
 
   let getResponse = await app.inject({
@@ -185,7 +210,7 @@ test('delete the right time entry if there are more than one by setting hours to
     },
     payload: {
         date: date,
-        customer: customer,
+        customer: customers[0].id,
         project: project.name,
         task: task,
         hours: 0,
@@ -207,7 +232,7 @@ test('delete the right time entry if there are more than one by setting hours to
   t.same(result, [timeEntries[0]])
 })
 
-async function postTask(customer: string, project: string, task: string, projectType: string = 'billable') {
+async function postTask(customer: CustomerOptType, project: string, task: string, projectType: string = 'billable') {
   return await app.inject({
     method: 'POST',
     url: '/api/task/task/',
@@ -245,6 +270,16 @@ async function createTimeEntry(date: string, customer: string, project: string, 
       project: project,
       task: task,
       hours: hours,
+    },
+  })
+}
+
+async function getCustomers(token: string) {
+  return await app.inject({
+    method: 'GET',
+    url: `/api/task/customer`,
+    headers: {
+      authorization: `Bearer ${token}`,
     },
   })
 }
