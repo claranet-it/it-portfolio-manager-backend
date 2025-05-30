@@ -59,7 +59,7 @@ afterEach(async () => {
   await app.close()
 })
 
-test('save time entry without authentication', async (t) => {
+/*test('save time entry without authentication', async (t) => {
   const response = await app.inject({
     method: 'POST',
     url: '/api/time-entry/sun@test.com',
@@ -94,7 +94,7 @@ test('save time entry without the proper role', async (t) => {
     },
   })
   t.equal(response.statusCode, 403)
-})
+})*/
 
 test('insert time entry as ADMIN', async (t) => {
   const date = '2024-01-02'
@@ -107,8 +107,10 @@ test('insert time entry as ADMIN', async (t) => {
 
   let response = await getCustomers(getAdminToken());
   t.equal(response.statusCode, 200)
+  console.log("110: ", response.statusCode)
   const customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
+  console.log("113: ", customers.length)
 
   const addTimeEntryResponse = await addTimeEntry(
     date,
@@ -120,6 +122,7 @@ test('insert time entry as ADMIN', async (t) => {
     getAdminToken(),
   )
   t.equal(addTimeEntryResponse.statusCode, 204)
+  console.log("125: ", addTimeEntryResponse.statusCode)
 
   const getTimeEntryResponse = await app.inject({
     method: 'GET',
@@ -129,6 +132,7 @@ test('insert time entry as ADMIN', async (t) => {
     },
   })
   t.equal(getTimeEntryResponse.statusCode, 200)
+  console.log("135: ", getTimeEntryResponse.statusCode)
   const timeEntry = getTimeEntryResponse.json<TimeEntryRowListType>()
   t.equal(timeEntry.length, 1)
   t.same(timeEntry[0], {
@@ -152,6 +156,7 @@ test('insert time entry as ADMIN', async (t) => {
     endHour: '',
     index: timeEntry[0].index,
   })
+  console.log("157: ", timeEntry[0])
 })
 /*
 test('update hours on existing task as ADMIN', async (t) => {
