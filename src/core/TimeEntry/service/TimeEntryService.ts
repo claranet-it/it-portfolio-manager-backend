@@ -251,9 +251,27 @@ export class TimeEntryService {
 
   private async generateCsvFrom(data: TimeEntryReportType[]): Promise<string> {
     // use fixed headers instead of { headers: true } to be sure of the key order
+    const dataToWrite = data.map((row) => {
+      return {
+        date: row.date,
+        email: row.email,
+        name: row.name,
+        company: row.company,
+        crew: row.crew,
+        customer: row.customer.name,
+        project: row.project,
+        task: row.task,
+        projectType: row.projectType,
+        plannedHours: row.plannedHours,
+        hours: row.hours,
+        description: row.description,
+        startHour: row.startHour,
+        endHour: row.endHour,
+      }
+    })
     const csvHeaders =
       'date,email,name,company,crew,customer,project,task,projectType,plannedHours,hours,description,startHour,endHour'
-    const csv = await writeToString(data, {
+    const csv = await writeToString(dataToWrite, {
       headers: csvHeaders.split(','),
       alwaysWriteHeaders: true,
     })
