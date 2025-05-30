@@ -4,9 +4,12 @@ import {FastifyInstance} from 'fastify'
 import {TimeEntryReportListType} from "@src/core/TimeEntry/model/timeEntry.model";
 import { PrismaClient } from '../../../prisma/generated'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
+import { CustomerType } from '@src/core/Task/model/task.model'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
+let testCustomer: CustomerType;
+let claranetCustomer: CustomerType;
 
 function getToken(): string {
     return app.createTestJwt({
@@ -20,13 +23,13 @@ beforeEach(async () => {
     app = createApp({logger: false})
     await app.ready()
 
-    const claranet = await prisma.customer.create({
+    claranetCustomer = await prisma.customer.create({
         data: {
             name: 'Claranet',
             company_id: 'it',
         }
     })
-    const testCustomer = await prisma.customer.create({
+    testCustomer = await prisma.customer.create({
         data: {
             name: 'test customer',
             company_id: 'it',
@@ -35,21 +38,21 @@ beforeEach(async () => {
     const assenze = await prisma.project.create({
         data: {
             name: 'Assenze',
-            customer_id: claranet.id,
+            customer_id: claranetCustomer.id,
             project_type: ProjectType.ABSENCE,
         }
     })
     const slackTime = await prisma.project.create({
         data: {
             name: 'Slack time',
-            customer_id: claranet.id,
+            customer_id: claranetCustomer.id,
             project_type: ProjectType.SLACK_TIME,
         }
     })
     const funzionale = await prisma.project.create({
         data: {
             name: 'Funzionale',
-            customer_id: claranet.id,
+            customer_id: claranetCustomer.id,
             project_type: ProjectType.NON_BILLABLE,
         }
     })
@@ -221,7 +224,10 @@ test('Generate time entries report - json', async (t) => {
             "name": "Micol Panetta",
             "company": "it",
             "crew": "sun",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Assenze",
             "task": "FESTIVITA",
             "projectType": "absence",
@@ -237,7 +243,10 @@ test('Generate time entries report - json', async (t) => {
             "name": "Micol Panetta",
             "company": "it",
             "crew": "sun",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Assenze",
             "task": "MALATTIA (INVIARE CERTIFICATO MEDICO)",
             "projectType": "absence",
@@ -253,7 +262,10 @@ test('Generate time entries report - json', async (t) => {
             "name": "Micol Panetta",
             "company": "it",
             "crew": "sun",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Funzionale",
             "task": "Attività di portfolio",
             "projectType": "non-billable",
@@ -269,7 +281,10 @@ test('Generate time entries report - json', async (t) => {
             "name": "Micol Panetta",
             "company": "it",
             "crew": "sun",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Slack time",
             "task": "formazione",
             "projectType": "slack-time",
@@ -285,7 +300,10 @@ test('Generate time entries report - json', async (t) => {
             "name": "Micol Panetta",
             "company": "it",
             "crew": "sun",
-            "customer": "test customer",
+            "customer": {
+                id: testCustomer.id,
+                name: testCustomer.name
+            },
             "project": "SOR Sviluppo",
             "task": "Iterazione 1",
             "projectType": "billable",
@@ -301,7 +319,10 @@ test('Generate time entries report - json', async (t) => {
             "name": "Nicholas Crow",
             "company": "it",
             "crew": "moon",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Assenze",
             "task": "DONAZIONE SANGUE",
             "projectType": "absence",
@@ -317,7 +338,10 @@ test('Generate time entries report - json', async (t) => {
             "name": "Nicholas Crow",
             "company": "it",
             "crew": "moon",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Funzionale",
             "task": "Attività di portfolio",
             "projectType": "non-billable",
@@ -333,7 +357,10 @@ test('Generate time entries report - json', async (t) => {
             "name": "Nicholas Crow",
             "company": "it",
             "crew": "moon",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Slack time",
             "task": "formazione",
             "projectType": "slack-time",
@@ -349,7 +376,10 @@ test('Generate time entries report - json', async (t) => {
             "name": "Micol Panetta",
             "company": "it",
             "crew": "sun",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Funzionale",
             "task": "Attività di portfolio",
             "projectType": "non-billable",
@@ -365,7 +395,10 @@ test('Generate time entries report - json', async (t) => {
             "name": "Micol Panetta",
             "company": "it",
             "crew": "sun",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Slack time",
             "task": "formazione",
             "projectType": "slack-time",
@@ -399,7 +432,10 @@ test('Generate time entries report - json FILTER by crew', async (t) => {
             "name": "Nicholas Crow",
             "company": "it",
             "crew": "moon",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Assenze",
             "task": "DONAZIONE SANGUE",
             "projectType": "absence",
@@ -415,7 +451,10 @@ test('Generate time entries report - json FILTER by crew', async (t) => {
             "name": "Nicholas Crow",
             "company": "it",
             "crew": "moon",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Funzionale",
             "task": "Attività di portfolio",
             "projectType": "non-billable",
@@ -431,7 +470,10 @@ test('Generate time entries report - json FILTER by crew', async (t) => {
             "name": "Nicholas Crow",
             "company": "it",
             "crew": "moon",
-            "customer": "Claranet",
+            "customer": {
+                id: claranetCustomer.id,
+                name: claranetCustomer.name
+            },
             "project": "Slack time",
             "task": "formazione",
             "projectType": "slack-time",
