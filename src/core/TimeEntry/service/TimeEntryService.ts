@@ -152,6 +152,7 @@ export class TimeEntryService {
   async csvImport(
     params: CSVImportTimeEntryType,
   ): Promise<CSVImportErrorsType> {
+    const companyCustomers = await this.taskRepository.getCustomers({company: params.company})
     interface CsvRow {
       customer: string
       project: string
@@ -224,6 +225,7 @@ export class TimeEntryService {
       }
 
       try {
+        row.customer = companyCustomers.find((customer) => customer.name === row.customer)?.id
         await this.save(row)
       } catch (error) {
         let errorMessage = ''
