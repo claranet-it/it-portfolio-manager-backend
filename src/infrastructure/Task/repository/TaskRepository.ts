@@ -282,11 +282,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   async updateCustomerProject(
     params: CustomerProjectUpdateParamsType,
   ): Promise<void> {
-    if (!params.project.name) {
-      throw new TaskError('Project name must be valorized')
-    }
-
-    if (!params.project.id) {
+    if (!params.project) {
       throw new TaskError('Project id must be valorized')
     }
 
@@ -307,17 +303,16 @@ export class TaskRepository implements TaskRepositoryInterface {
     if (params.newProject) {
       const project = await prisma.project.findUniqueOrThrow({
         where: {
-          id: params.project.id,
+          id: params.project,
         },
       })
 
       const projectType = params.newProject.type
-        ? params.newProject.type
-        : params.project.type
+
       const plannedHours =
         params.newProject.plannedHours !== undefined
           ? params.newProject.plannedHours
-          : params.project.plannedHours
+          : 0
       const completed =
         params.newProject !== undefined &&
           params.newProject.completed !== undefined

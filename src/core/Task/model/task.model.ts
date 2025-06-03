@@ -63,7 +63,7 @@ export type ProjectListType = Static<typeof ProjectList>
 
 export const CustomerProjectParams = Type.Object({
   customer: Type.String(),
-  project: Project,
+  project: Type.String(),
   newCustomerName: Type.Optional(Type.String()),
   newProject: Type.Optional(Project),
   completed: Type.Optional(Type.Boolean()),
@@ -83,7 +83,7 @@ export const ProjectOpt = Type.Object({
 })
 export const CustomerProjectUpdateQueryParams = Type.Object({
   customer: Type.String(),
-  project: ProjectOpt,
+  project: Type.String(),
   newCustomer: Type.Optional(Type.String()),
   newProject: Type.Optional(ProjectOpt),
 })
