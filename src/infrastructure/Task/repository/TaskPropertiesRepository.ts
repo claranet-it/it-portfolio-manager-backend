@@ -13,8 +13,7 @@ export class TaskPropertiesRepository
       where: {
         name: params.task,
         project: {
-          name: params.project,
-          customer_id: params.customer,
+          id: params.project,
         },
       },
     })

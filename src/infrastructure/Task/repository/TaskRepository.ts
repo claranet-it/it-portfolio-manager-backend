@@ -383,8 +383,7 @@ export class TaskRepository implements TaskRepositoryInterface {
       where: {
         name: params.task,
         project: {
-          name: params.project,
-          customer_id: params.customer,
+          id: params.project,
         },
       },
     })
@@ -397,8 +396,7 @@ export class TaskRepository implements TaskRepositoryInterface {
       where: {
         name: params.newTask,
         project: {
-          name: params.project,
-          customer_id: params.customer,
+          id: params.project,
         },
       },
     })

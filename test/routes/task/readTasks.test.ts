@@ -143,9 +143,16 @@ inputs.forEach((input) => {
 
     const customer = input.customer === 'test customer' ? testCustomer.id : claranet.id;
 
+    const project = (await prisma.project.findFirst({
+      where: {
+        name: input.project,
+        customer_id: customer
+      }
+    }))?.id
+
     const response = await app.inject({
       method: 'GET',
-      url: `/api/task/task?customer=${customer}&project=${input.project}`,
+      url: `/api/task/task?customer=${customer}&project=${project}`,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -167,9 +174,16 @@ test('read not completed tasks', async (t) => {
       company: 'it'
     })
 
+  const project = (await prisma.project.findFirst({
+    where: {
+      name: 'SOR Sviluppo',
+      customer_id: testCustomer.id
+    }
+  }))?.id
+
     const response = await app.inject({
       method: 'GET',
-      url: `/api/task/task?customer=${testCustomer.id}&project=SOR Sviluppo&completed=false`,
+      url: `/api/task/task?customer=${testCustomer.id}&project=${project}&completed=false`,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -189,9 +203,16 @@ test('read completed tasks', async (t) => {
       company: 'it'
     })
 
+  const project = (await prisma.project.findFirst({
+    where: {
+      name: 'SOR Sviluppo',
+      customer_id: testCustomer.id
+    }
+  }))?.id
+
     const response = await app.inject({
       method: 'GET',
-      url: `/api/task/task?customer=${testCustomer.id}&project=SOR Sviluppo&completed=true`,
+      url: `/api/task/task?customer=${testCustomer.id}&project=${project}&completed=true`,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -217,9 +238,16 @@ test('read task with additional properties', async (t) => {
     company: input.company
   })
 
+  const project = (await prisma.project.findFirst({
+    where: {
+      name: input.project,
+      customer_id: claranet.id
+    }
+  }))?.id
+
   const response = await app.inject({
     method: 'GET',
-    url: `/api/task/task?customer=${claranet.id}&project=${input.project}`,
+    url: `/api/task/task?customer=${claranet.id}&project=${project}`,
     headers: {
       authorization: `Bearer ${token}`,
     },
