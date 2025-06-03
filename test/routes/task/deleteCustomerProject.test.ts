@@ -85,7 +85,7 @@ test('delete customer-project', async (t) => {
   ]
   t.same(projects, projExpectedResult)
 
-  response = await deleteProject(company, customers[0].id, projects[0].name)
+  response = await deleteProject(company, customers[0].id, projects[0].id ?? '')
   t.equal(response.statusCode, 200)
 
   response = await getProjects(company, customers[0].id)
@@ -145,7 +145,7 @@ test("can't delete customer-project if there are time entries", async (t) => {
   ]
   t.same(projects, projExpectedResult)
 
-  response = await deleteProject(company, customers[0].id, project)
+  response = await deleteProject(company, customers[0].id, projects[0].id ?? '')
   t.equal(response.statusCode, 400)
 
   response = await getProjects(company, customers[0].id)
