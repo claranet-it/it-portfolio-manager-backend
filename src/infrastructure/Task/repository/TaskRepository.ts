@@ -128,9 +128,8 @@ export class TaskRepository implements TaskRepositoryInterface {
       where: {
         is_completed: params.completed,
         project: {
-          name: params.project,
+          id: params.project,
           is_inactive: false,
-          customer_id: params.customer,
         },
       },
       orderBy: [
