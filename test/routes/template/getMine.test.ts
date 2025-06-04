@@ -97,7 +97,7 @@ test('should return only my templates', async (t) => {
     t.equal(response.statusCode, 200)
     t.equal(responseData.length, 1)
     t.equal(responseData[0].email, My_EMAIL)
-    t.equal(responseData[0].customer, "Claranet")
+    t.equal(responseData[0].customer.name, "Claranet")
     t.equal(responseData[0].project.name, "Slack time")
     t.equal(responseData[0].task.name, "formazione")
 })

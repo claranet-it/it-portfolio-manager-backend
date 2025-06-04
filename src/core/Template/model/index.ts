@@ -1,14 +1,15 @@
 import { Static, Type } from '@sinclair/typebox'
-import { ProjectOpt, Task } from '@src/core/Task/model/task.model'
+import { Customer, ProjectOpt, Task } from '@src/core/Task/model/task.model'
 
 const dateFormat = /([0-9][0-9][0-9][0-9])-(0[1-9]|1[012])-([0-9][0-9])$/
 export const Template = Type.Object({
+    id: Type.String(),
     email: Type.String({ format: 'email' }),
     timehours: Type.Number(),
     daytime: Type.Array(Type.Integer()),
     date_start: Type.RegExp(dateFormat),
     date_end: Type.RegExp(dateFormat),
-    customer: Type.String(),
+    customer: Customer,
     project: ProjectOpt,
     task: Type.Optional(Task),
 })

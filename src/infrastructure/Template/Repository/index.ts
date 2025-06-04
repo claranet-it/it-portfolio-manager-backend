@@ -57,12 +57,13 @@ export class TemplateRepository implements TemplateRepositoryInterface {
             }
 
             return {
+                id: template.id,
                 email: template.email,
                 timehours: template.timehours,
                 daytime: this.stringToIntArray(template.daytime),
                 date_start: template.date_start.toISOString().substring(0, 10),
                 date_end: template.date_end.toISOString().substring(0, 10),
-                customer: customer.name,
+                customer: { id: customer.id, name: customer.name },
                 project: project,
                 task: task,
             };
