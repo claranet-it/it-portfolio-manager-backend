@@ -59,6 +59,11 @@ export const TimeEntryRow = Type.Object({
   index: Type.Optional(Type.String()),
 })
 
+export const TimeEntryProject = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+})
+
 export const TimeEntryReport = Type.Object({
   date: Type.String(),
   email: Type.String(),
@@ -66,7 +71,7 @@ export const TimeEntryReport = Type.Object({
   company: Type.String(),
   crew: Type.String(),
   customer: Customer,
-  project: Type.String(),
+  project: TimeEntryProject,
   task: Type.String(),
   projectType: Type.String(),
   plannedHours: Type.Number(),
