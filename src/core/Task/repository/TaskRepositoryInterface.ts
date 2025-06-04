@@ -13,7 +13,7 @@ import {
 export interface TaskRepositoryInterface {
   getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]>
   getProjects(params: ProjectReadParamsType): Promise<ProjectListType>
-  getTasks(params: TaskReadParamsType): Promise<string[]>
+  getTask(task: string): Promise<string | null>
   getTaskStructure(company: string): Promise<TaskStructureType[]>
   getTasksWithProperties(params: TaskReadParamsType): Promise<TaskType[]>
   getTasksWithProjectDetails(

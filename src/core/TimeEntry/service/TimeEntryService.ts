@@ -123,12 +123,8 @@ export class TimeEntryService {
   }
 
   async save(params: TimeEntryRowType): Promise<void> {
-    const tasks = await this.taskRepository.getTasks({
-      company: params.company,
-      customer: params.customer,
-      project: params.project,
-    })
-    if (!tasks.includes(params.task)) {
+    const task = await this.taskRepository.getTask(params.task)
+    if (!task) {
       throw new TaskNotExistsError()
     }
     if (!this.isWeekDay(params.date) && params.project === 'Assenze') {

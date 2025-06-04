@@ -61,25 +61,15 @@ export class TaskRepository implements TaskRepositoryInterface {
     }))
   }
 
-  async getTasks(params: TaskReadParamsType): Promise<string[]> {
+  async getTask(task:string): Promise<string | null> {
     const prisma = new PrismaClient()
 
-    const result = await prisma.projectTask.findMany({
+    const result = await prisma.projectTask.findUnique({
       where: {
-        project: {
-          name: params.project,
-          is_inactive: false,
-          customer_id: params.customer,
-        },
-      },
-      select: {
-        name: true,
-      },
-      orderBy: {
-        name: 'asc',
+        id: task
       },
     })
-    return result.map((task) => task.name)
+    return result?.id ?? null;
   }
 
   async getTaskStructure(company: string): Promise<TaskStructureType[]> {

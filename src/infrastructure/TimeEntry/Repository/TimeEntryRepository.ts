@@ -12,7 +12,6 @@ import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { invariant } from '@src/helpers/invariant'
 import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
 import { PrismaClient } from '../../../../prisma/generated'
-import { TaskError } from '@src/core/customExceptions/TaskError'
 import { ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -257,19 +256,11 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       return
     }
 
-    const task = await prisma.projectTask.findFirst({
+    const task = await prisma.projectTask.findUniqueOrThrow({
       where: {
-        name: params.task,
-        project: {
-          name: params.project,
-          customer_id: params.customer,
-        },
+        id: params.task,
       },
     })
-
-    if (!task) {
-      throw new TaskError(`Cannot find task ${params.task}`)
-    }
 
     await prisma.timeEntry.create({
       data: {
