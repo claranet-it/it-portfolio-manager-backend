@@ -258,7 +258,7 @@ export class TimeEntryService {
         crew: row.crew,
         customer: row.customer.name,
         project: row.project.name,
-        task: row.task,
+        task: row.task.name,
         projectType: row.projectType,
         plannedHours: row.plannedHours,
         hours: row.hours,

@@ -57,7 +57,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         plannedHours: timeEntry.task.project.plannedHours,
         completed: timeEntry.task.project.completed,
       },
-      task: timeEntry.task.name,
+      task: { id: timeEntry.task.id, name: timeEntry.task.name},
       hours: timeEntry.hours,
       description: timeEntry.description ?? '',
       startHour: timeEntry.time_start ?? '',
@@ -119,7 +119,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         plannedHours: timeEntry.task.project.plannedHours,
         completed: timeEntry.task.project.completed,
       },
-      task: timeEntry.task.name,
+      task: { id: timeEntry.task.id, name: timeEntry.task.name},
       hours: timeEntry.hours,
       description: timeEntry.description ?? '',
       startHour: timeEntry.time_start ?? '',
@@ -324,7 +324,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
           in: params.user
         },
         task: {
-          name: {
+          id: {
             in: params.task
           },
           project: {
@@ -370,7 +370,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         plannedHours: timeEntry.task.project.plannedHours,
         completed: timeEntry.task.project.completed,
       },
-      task: timeEntry.task.name,
+      task: { name: timeEntry.task.name, id: timeEntry.task.id },
       hours: timeEntry.hours,
       description: timeEntry.description ?? '',
       startHour: timeEntry.time_start ?? '',

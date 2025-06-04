@@ -27,15 +27,6 @@ export class ReportService {
       throw new DateRangeError(params.from, params.to)
     }
 
-    // TODO: non servono i due controlli successivi con gli id
-    if (params.task && !(params.customer && params.project)) {
-      throw new FieldsOrderError()
-    }
-
-    if (params.project && !params.customer) {
-      throw new FieldsOrderError()
-    }
-
     let uids: { email: string }[] = []
     if (params.name) {
       uids = await this.userProfileRepository.getByName(

@@ -119,6 +119,11 @@ export const Task = Type.Object({
 })
 export type TaskType = Static<typeof Task>
 
+export const TaskMin = Type.Object({
+  name: Type.String(),
+  id: Type.String(),
+})
+
 export const TaskList = Type.Array(Task)
 
 export type TaskListType = Static<typeof TaskList>
