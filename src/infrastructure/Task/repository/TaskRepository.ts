@@ -379,18 +379,11 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     const prisma = new PrismaClient()
 
-    const oldTask = await prisma.projectTask.findFirst({
+    const oldTask = await prisma.projectTask.findUniqueOrThrow({
       where: {
-        name: params.task,
-        project: {
-          id: params.project,
-        },
+        id: params.task,
       },
     })
-
-    if (!oldTask) {
-      throw new TaskError(`Cannot find task ${params.task}`)
-    }
 
     const existingTask = await prisma.projectTask.findFirst({
       where: {
@@ -410,7 +403,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         name: params.newTask,
       },
       where: {
-        id: oldTask.id,
+        id: params.task,
       },
     })
   }
