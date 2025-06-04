@@ -7,7 +7,7 @@ export class SesConnection {
         let sesClientOptions = {}
         if (process.env.IS_OFFLINE) {
             sesClientOptions = {
-                region: 'localhost',
+                region: 'aws-ses-v2-local',
                 endpoint: 'http://0.0.0.0:8005',
                 credentials: {
                     accessKeyId: 'MockAccessKeyId',

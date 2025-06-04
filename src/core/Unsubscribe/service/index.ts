@@ -34,16 +34,20 @@ export class UnsubscribeService {
             throw new ForbiddenException('Forbidden')
         }
 
-        const from = "marteresa28@gmail.com";
+        const from = `${company.name}@unsubscribe.com`;
         const to = "marteresa28@gmail.com"
         const body = `Mail created automatically. The company ${company.domain} has just submitted an unsubscription request at ${new Date()}.`
+        console.log("##### mail")
+        console.log("##### from", from)
+        console.log("##### to", to)
+        console.log("##### body", body)
         sendEmail(sesClient, from, to, "Unsubscribe Company", body)
 
-        await this.taskService.deleteCustomersAndRelatedDataByCompany(idCompany)
-        await this.effortService.deleteEffortByCompany(company.name)
-        await this.skillMatrixService.deleteSkillMatrixByCompany(company.name)
-        await this.companyConnectionsService.deleteConnections(idCompany)
-        await this.userProfileService.deleteUsersByCompany(company.name)
-        await this.companyService.deleteCompany(idCompany)
+        /*  await this.taskService.deleteCustomersAndRelatedDataByCompany(idCompany)
+         await this.effortService.deleteEffortByCompany(company.name)
+         await this.skillMatrixService.deleteSkillMatrixByCompany(company.name)
+         await this.companyConnectionsService.deleteConnections(idCompany)
+         await this.userProfileService.deleteUsersByCompany(company.name)
+         await this.companyService.deleteCompany(idCompany) */
     }
 }
