@@ -9,12 +9,9 @@ export class TaskPropertiesRepository
     params: TaskPropertiesUpdateParamsType,
   ): Promise<void> {
     const prisma = new PrismaClient()
-    const task = await prisma.projectTask.findFirstOrThrow({
+    const task = await prisma.projectTask.findUniqueOrThrow({
       where: {
-        name: params.task,
-        project: {
-          id: params.project,
-        },
+        id: params.task,
       },
     })
 
