@@ -328,7 +328,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
             in: params.task
           },
           project: {
-            name: {
+            id: {
               in: params.project
             },
             customer_id: {

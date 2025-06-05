@@ -318,7 +318,7 @@ export class TimeEntryService {
               crew: user?.crew ?? '',
               customer: { id: entry.customer.id, name: entry.customer.name }, //TODO: entry.customer,
               project: { id: entry.project.id ?? '', name: entry.project.name },
-              task: entry.task,
+              task: { id: entry.task.id ?? '', name: entry.task.name }, //TODO: entry.task,
               projectType: entry.project.type,
               plannedHours: entry.project.plannedHours,
               hours: entry.hours,
