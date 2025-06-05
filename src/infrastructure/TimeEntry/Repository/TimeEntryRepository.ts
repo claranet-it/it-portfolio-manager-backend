@@ -52,6 +52,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       company: timeEntry.task.project.customer.company_id,
       customer: { id: timeEntry.task.project.customer.id, name: timeEntry.task.project.customer.name },
       project: {
+        id: timeEntry.task.project.id,
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
         plannedHours: timeEntry.task.project.plannedHours,
