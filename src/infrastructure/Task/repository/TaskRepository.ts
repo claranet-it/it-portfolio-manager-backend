@@ -88,6 +88,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         project: {
           select: {
             name: true,
+            id: true,
             customer: {
               select: {
                 name: true,
@@ -103,9 +104,9 @@ export class TaskRepository implements TaskRepositoryInterface {
     })
 
     return tasks.map((task) => ({
-      task: task.name,
+      task: { id: task.id, name: task.name },
       customer: { name:task.project.customer.name, id: task.project.customer.id },
-      project: task.project.name,
+      project: { name: task.project.name, id: task.project.id },
     }))
   }
 

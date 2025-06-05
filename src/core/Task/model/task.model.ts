@@ -1,4 +1,5 @@
 import { Static, Type } from '@sinclair/typebox'
+import { TimeEntryProject } from '@src/core/TimeEntry/model/timeEntry.model'
 
 /**
  * Customer Structure Model
@@ -156,8 +157,8 @@ export type TaskPropertiesUpdateParamsType = Static<
 
 export const TaskStructure = Type.Object({
   customer: Customer,
-  project: Type.String(),
-  task: Type.String(),
+  project: TimeEntryProject,
+  task: TaskMin,
 })
 export type TaskStructureType = Static<typeof TaskStructure>
 
