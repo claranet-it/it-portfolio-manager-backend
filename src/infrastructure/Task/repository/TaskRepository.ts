@@ -5,7 +5,7 @@ import {
   CustomerReadParamsType, CustomerType,
   ProjectListType,
   ProjectReadParamsType,
-  TaskCreateReadParamsType,
+  TaskCreateReadParamsType, TaskListType,
   TaskReadParamsType,
   TaskStructureType,
   TaskType,
@@ -111,7 +111,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
   async getTasksWithProperties(
     params: TaskReadParamsType,
-  ): Promise<TaskType[]> {
+  ): Promise<TaskListType> {
     const prisma = new PrismaClient()
 
     const result = await prisma.projectTask.findMany({
