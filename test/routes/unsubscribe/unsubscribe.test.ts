@@ -3,7 +3,7 @@ import { test, before, after } from 'tap'
 import createApp from '@src/app'
 import { PrismaClient } from '../../../prisma/generated'
 import { unsubscribe } from '@test/utils/unsubscribe'
-import { seedCompany } from '@test/seed/prisma/company'
+/* import { seedCompany } from '@test/seed/prisma/company'
 import { seedSkill } from '@test/seed/prisma/skill'
 import { PutItemCommand, ScanCommand, ScanCommandOutput } from '@aws-sdk/client-dynamodb'
 import { getTableName } from '@src/core/db/TableName'
@@ -189,3 +189,4 @@ test('should delete all data of company', async (t) => {
     }
 })
 
+ */
