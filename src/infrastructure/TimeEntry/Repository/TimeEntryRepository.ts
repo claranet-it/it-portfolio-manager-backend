@@ -332,8 +332,11 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
             id: {
               in: params.project
             },
-            customer_id: {
-              in: params.customer
+            customer: {
+              id: {
+                in: params.customer
+              },
+              company_id: params.company,
             },
           },
         },
