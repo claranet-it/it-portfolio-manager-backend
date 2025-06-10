@@ -186,6 +186,8 @@ export class TaskRepository implements TaskRepositoryInterface {
     const customer = params.customer
     const task = params.task
 
+    const prisma = new PrismaClient()
+
     if (!params.project.type) {
       throw new TaskError('Project type missing')
     }
@@ -200,7 +202,12 @@ export class TaskRepository implements TaskRepositoryInterface {
     )
 
 
-    await this.findOrCreateProjectTask(projectObj?.id as string, task)
+    await prisma.projectTask.create({
+      data: {
+        name: task,
+        project_id: projectObj?.id as string,
+      },
+    })
   }
 
   async findOrCreateCustomer(companyId: string, customer: CustomerOptType) {
@@ -250,26 +257,6 @@ export class TaskRepository implements TaskRepositoryInterface {
     }
 
     return project
-  }
-
-  // Questo controllo non potrà più essere fatto lato BE con la cifratura
-  async findOrCreateProjectTask(projectId: string, taskName: string) {
-    const prisma = new PrismaClient()
-
-    let task = await prisma.projectTask.findFirst({
-      where: { project_id: projectId, name: taskName },
-    })
-
-    if (!task) {
-      task = await prisma.projectTask.create({
-        data: {
-          name: taskName,
-          project_id: projectId,
-        },
-      })
-    }
-
-    return task
   }
 
   async updateCustomerProject(
