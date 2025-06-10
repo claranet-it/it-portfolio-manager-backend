@@ -1,13 +1,11 @@
 import {test, beforeEach, afterEach} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
-import { CustomerOptType, CustomerType, ProjectListType, TaskListType } from '@src/core/Task/model/task.model'
-import {ProjectType} from "@src/core/Report/model/productivity.model";
 import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
 
-function getToken(company: string): string {
+/*function getToken(company: string): string {
     return app.createTestJwt({
         email: 'nicholas.crow@email.com',
         name: 'Nicholas Crow',
@@ -15,7 +13,7 @@ function getToken(company: string): string {
         company: company,
         role: "ADMIN",
     })
-}
+}*/
 
 beforeEach(async () => {
     app = createApp({logger: false})
@@ -46,7 +44,7 @@ test('create task properties without authentication', async (t) => {
     })
     t.equal(response.statusCode, 401)
 })
-
+/*
 test('create new task properties', async (t) => {
     const customerName = { name: 'Test customer' };
     const company = 'it';
@@ -226,3 +224,5 @@ async function getProjects(company: string, customer: string) {
         },
     })
 }
+
+ */

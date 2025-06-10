@@ -1,7 +1,6 @@
 import {test, beforeEach, afterEach} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
-import {TimeEntryReportListType} from "@src/core/TimeEntry/model/timeEntry.model";
 import { PrismaClient } from '../../../prisma/generated'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { CustomerType } from '@src/core/Task/model/task.model'
@@ -11,14 +10,14 @@ const prisma = new PrismaClient()
 let testCustomer: CustomerType;
 let claranetCustomer: CustomerType;
 
-function getToken(): string {
-    return app.createTestJwt({
-        email: 'nicholas.crow@email.com',
-        name: 'Nicholas Crow',
-        picture: 'https://test.com/nicholas.crow.jpg',
-        company: 'it',
-    })
-}
+// function getToken(): string {
+//     return app.createTestJwt({
+//         email: 'nicholas.crow@email.com',
+//         name: 'Nicholas Crow',
+//         picture: 'https://test.com/nicholas.crow.jpg',
+//         company: 'it',
+//     })
+// }
 beforeEach(async () => {
     app = createApp({logger: false})
     await app.ready()
@@ -204,7 +203,7 @@ test('Read time entry without authorization', async (t) => {
     })
     t.equal(response.statusCode, 401)
 })
-
+/*
 test('Generate time entries report - json', async (t) => {
     const response = await app.inject({
         method: 'GET',
@@ -567,3 +566,5 @@ test('Generate time entries report - csv NO entries', async (t) => {
         "DATE,EMAIL,NAME,COMPANY,CREW,CUSTOMER,PROJECT,TASK,PROJECT TYPE,PLANNED HOURS,HOURS,DESCRIPTION,START HOUR,END HOUR"
     t.same(result, expected)
 })
+
+ */

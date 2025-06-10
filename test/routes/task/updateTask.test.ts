@@ -3,7 +3,6 @@ import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import { CustomerOptType, CustomerType, ProjectListType, TaskListType } from '@src/core/Task/model/task.model'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
-import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
 import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
@@ -319,47 +318,47 @@ async function getTask(customer: string, project: string, company: string) {
   })
 }
 
-async function addTimeEntry(
-  date: string,
-  customer: string,
-  project: string,
-  task: string,
-  hours: number,
-  company: string,
-  description?: string,
-  startHour?: string,
-  endHour?: string,
-  index?: number,
-) {
-  return await app.inject({
-    method: 'POST',
-    url: '/api/time-entry/mine',
-    headers: {
-      authorization: `Bearer ${getToken(company)}`,
-    },
-    payload: {
-      date,
-      customer,
-      project,
-      task,
-      hours,
-      description,
-      startHour,
-      endHour,
-      index,
-    },
-  })
-}
+// async function addTimeEntry(
+//   date: string,
+//   customer: string,
+//   project: string,
+//   task: string,
+//   hours: number,
+//   company: string,
+//   description?: string,
+//   startHour?: string,
+//   endHour?: string,
+//   index?: number,
+// ) {
+//   return await app.inject({
+//     method: 'POST',
+//     url: '/api/time-entry/mine',
+//     headers: {
+//       authorization: `Bearer ${getToken(company)}`,
+//     },
+//     payload: {
+//       date,
+//       customer,
+//       project,
+//       task,
+//       hours,
+//       description,
+//       startHour,
+//       endHour,
+//       index,
+//     },
+//   })
+// }
 
-async function getTimeEntry(from: string, to: string, company: string) {
-  return await app.inject({
-    method: 'GET',
-    url: `/api/time-entry/mine?from=${from}&to=${to}`,
-    headers: {
-      authorization: `Bearer ${getToken(company)}`,
-    },
-  })
-}
+// async function getTimeEntry(from: string, to: string, company: string) {
+//   return await app.inject({
+//     method: 'GET',
+//     url: `/api/time-entry/mine?from=${from}&to=${to}`,
+//     headers: {
+//       authorization: `Bearer ${getToken(company)}`,
+//     },
+//   })
+// }
 
 async function getCustomers(company: string) {
   return await app.inject({

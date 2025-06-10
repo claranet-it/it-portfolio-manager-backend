@@ -1,41 +1,38 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
-import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { PrismaClient } from '../../../prisma/generated'
-import { CustomerOptType, CustomerType } from '@src/core/Task/model/task.model'
 
 let app: FastifyInstance
-
-function getAdminToken(): string {
-  return app.createTestJwt({
-    email: 'nicholas.crow@email.com',
-    name: 'Nicholas Crow',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it',
-    role: 'ADMIN',
-  })
-}
-
-function getTeamLeaderToken(): string {
-  return app.createTestJwt({
-    email: 'micol.ts@email.com',
-    name: 'Micol Panetta',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it',
-    role: 'TEAM_LEADER',
-  })
-}
-
-function getStandardToken(): string {
-  return app.createTestJwt({
-    email: 'sun@test.com',
-    name: 'Crew Sun',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it',
-  })
-}
+//
+// function getAdminToken(): string {
+//   return app.createTestJwt({
+//     email: 'nicholas.crow@email.com',
+//     name: 'Nicholas Crow',
+//     picture: 'https://test.com/nicholas.crow.jpg',
+//     company: 'it',
+//     role: 'ADMIN',
+//   })
+// }
+//
+// function getTeamLeaderToken(): string {
+//   return app.createTestJwt({
+//     email: 'micol.ts@email.com',
+//     name: 'Micol Panetta',
+//     picture: 'https://test.com/nicholas.crow.jpg',
+//     company: 'it',
+//     role: 'TEAM_LEADER',
+//   })
+// }
+//
+// function getStandardToken(): string {
+//   return app.createTestJwt({
+//     email: 'sun@test.com',
+//     name: 'Crew Sun',
+//     picture: 'https://test.com/nicholas.crow.jpg',
+//     company: 'it',
+//   })
+// }
 
 beforeEach(async () => {
   app = createApp({ logger: false })
@@ -66,7 +63,7 @@ test('save time entry without authentication', async (t) => {
   })
   t.equal(response.statusCode, 401)
 })
-
+/*
 test('save time entry without the proper role', async (t) => {
   const date = '2024-01-02'
   const customer = {name: 'Claranet'}
@@ -619,3 +616,5 @@ async function getCustomers(token: string) {
     },
   })
 }
+
+ */

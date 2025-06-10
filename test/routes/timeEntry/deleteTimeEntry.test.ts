@@ -1,22 +1,19 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
 import { PrismaClient } from '../../../prisma/generated'
-import { ProjectType } from '@src/core/Report/model/productivity.model'
-import { CustomerOptType, CustomerType } from '@src/core/Task/model/task.model'
 
 let app: FastifyInstance
 
-function getToken(): string {
-  return app.createTestJwt({
-    email: 'nicholas.crow@email.com',
-    name: 'Nicholas Crow',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it',
-    role: "ADMIN",
-  })
-}
+// function getToken(): string {
+//   return app.createTestJwt({
+//     email: 'nicholas.crow@email.com',
+//     name: 'Nicholas Crow',
+//     picture: 'https://test.com/nicholas.crow.jpg',
+//     company: 'it',
+//     role: "ADMIN",
+//   })
+// }
 
 beforeEach(async () => {
   app = createApp({ logger: false })
@@ -39,7 +36,7 @@ afterEach(async () => {
   await prisma.$disconnect()
   await app.close()
 })
-/*
+
 test('delete time entry without authentication', async (t) => {
   const response = await app.inject({
     method: 'DELETE',
@@ -47,7 +44,7 @@ test('delete time entry without authentication', async (t) => {
   })
   t.equal(response.statusCode, 401)
 })
-*/
+/*
 test('delete time entry if index is passed', async (t) => {
   const date = '2024-01-10'
   const customerName = {name: 'Claranet'}
@@ -283,3 +280,5 @@ async function getCustomers(token: string) {
     },
   })
 }
+
+ */

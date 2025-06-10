@@ -8,7 +8,6 @@ import {
   TaskCreateReadParamsType, TaskListType,
   TaskReadParamsType,
   TaskStructureType,
-  TaskType,
   TaskUpdateParamsType,
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
@@ -360,7 +359,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     const prisma = new PrismaClient()
 
-    const oldTask = await prisma.projectTask.findUniqueOrThrow({
+    await prisma.projectTask.findUniqueOrThrow({
       where: {
         id: params.task,
       },

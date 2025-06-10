@@ -6,7 +6,6 @@ import {
   TaskCreateReadParamsType,
   TaskReadParamsType,
   TaskUpdateParamsType,
-  TaskType,
   CustomerReadParamsType, CustomerType, TaskStructureType, TaskListType,
 } from '../model/task.model'
 
