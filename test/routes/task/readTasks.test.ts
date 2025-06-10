@@ -162,7 +162,13 @@ inputs.forEach((input) => {
 
     const tasks = response.json<TaskListType>()
     t.equal(tasks.length, input.expectedTasks.length)
-    t.same(tasks, input.expectedTasks)
+
+    tasks.forEach((task, index) => {
+      let taskToCompare = input.expectedTasks.find((taskToCompare) => taskToCompare.name === task.name)
+      t.equal(task.name, taskToCompare?.name)
+      t.equal(task.completed, taskToCompare?.completed)
+      t.equal(task.plannedHours, taskToCompare?.plannedHours)
+    })
   })
 })
 
@@ -258,6 +264,7 @@ test('read task with additional properties', async (t) => {
   const tasks = response.json<TaskListType>()
   t.equal(tasks.length, 1)
   t.same(tasks, [{
+    id: tasks[0].id,
     name: 'formazione',
     completed: false,
     plannedHours: 0,

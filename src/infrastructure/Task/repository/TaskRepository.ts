@@ -193,9 +193,10 @@ export class TaskRepository implements TaskRepositoryInterface {
     const customerObj = await this.findOrCreateCustomer(company, customer)
     const projectObj = await this.findOrCreateProject(
       customerObj?.id as string,
+      project.id ?? '',
       project.name,
       project.type,
-      project.plannedHours,
+      project.plannedHours
     )
 
 
@@ -226,14 +227,15 @@ export class TaskRepository implements TaskRepositoryInterface {
 
   async findOrCreateProject(
     customerId: string,
+    projectId: string,
     projectName: string,
     projectType: string,
     plannedHours: number,
   ) {
     const prisma = new PrismaClient()
 
-    let project = await prisma.project.findFirst({
-      where: { customer_id: customerId, name: projectName },
+    let project = await prisma.project.findUnique({
+      where: {id: projectId },
     })
 
     if (!project) {
@@ -250,6 +252,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     return project
   }
 
+  // Questo controllo non potrà più essere fatto lato BE con la cifratura
   async findOrCreateProjectTask(projectId: string, taskName: string) {
     const prisma = new PrismaClient()
 

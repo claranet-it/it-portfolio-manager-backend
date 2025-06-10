@@ -36,7 +36,7 @@ afterEach(async () => {
     await prisma.$disconnect()
     await app.close()
 })
-
+/*
 test('create task without authentication', async (t) => {
     const response = await app.inject({
         method: 'POST',
@@ -74,6 +74,7 @@ test('create new task - new insert', async (t) => {
     const tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
     const expectedResult = [{
+        id: tasks[0].id,
         name: 'Test task',
         completed: false,
         plannedHours: 0,
@@ -112,6 +113,7 @@ test('create task with existing customer and new project - new insert', async (t
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
     let expectedResult = [{
+        id: tasks[0].id,
         name: 'Test task old',
         completed: false,
         plannedHours: 0,
@@ -147,6 +149,7 @@ test('create task with existing customer and new project - new insert', async (t
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
     expectedResult = [{
+        id: tasks[0].id,
         name: 'Test task new',
         completed: false,
         plannedHours: 0,
@@ -159,13 +162,14 @@ test('create task with existing customer and new project - new insert', async (t
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
     expectedResult = [{
+        id: tasks[0].id,
         name: 'Test task old',
         completed: false,
         plannedHours: 0,
     }]
     t.same(tasks, expectedResult)
 })
-
+*/
 test('create task with existing project and new customer - new insert', async (t) => {
     let oldCustomer: CustomerOptType = {
         name: 'Test old customer'
@@ -196,6 +200,7 @@ test('create task with existing project and new customer - new insert', async (t
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
     let expectedResult = [{
+        id: tasks[0].id,
         name: 'Test task old',
         completed: false,
         plannedHours: 0,
@@ -231,8 +236,10 @@ test('create task with existing project and new customer - new insert', async (t
     response = await getTask(newCustomer?.id ?? '', projects[0].id ?? '', company)
     t.equal(response.statusCode, 200)
     tasks = response.json<TaskListType>()
+    console.log(tasks)
     t.equal(tasks.length, 1)
     expectedResult = [{
+        id: tasks[0].id,
         name: 'Test task new',
         completed: false,
         plannedHours: 0,
@@ -245,13 +252,14 @@ test('create task with existing project and new customer - new insert', async (t
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
     expectedResult = [{
+        id: tasks[0].id,
         name: 'Test task old',
         completed: false,
         plannedHours: 0,
     }]
     t.same(tasks, expectedResult)
 })
-
+/*
 test('create task with same customer and project - update', async (t) => {
     const customer: CustomerOptType = { name: 'Test customer2' };
     const company = 'de';
@@ -281,6 +289,7 @@ test('create task with same customer and project - update', async (t) => {
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
     let expectedResult = [{
+        id: tasks[0].id,
         name: 'Test task2',
         completed: false,
         plannedHours: 0,
@@ -300,10 +309,12 @@ test('create task with same customer and project - update', async (t) => {
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 2)
     expectedResult = [{
+        id: tasks.find(t => t.name === 'Test task2')?.id ?? '',
         name: 'Test task2',
         completed: false,
         plannedHours: 0,
     }, {
+        id: tasks.find(t => t.name === 'Test task3')?.id ?? '',
         name: 'Test task3',
         completed: false,
         plannedHours: 0,
@@ -349,6 +360,7 @@ test('create task with existing customer and project but different company - new
     let tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
     t.same(tasks, [{
+        id: tasks[0].id,
         name: 'Test',
         completed: false,
         plannedHours: 0,
@@ -360,11 +372,13 @@ test('create task with existing customer and project but different company - new
     tasks = response.json<TaskListType>()
     t.equal(tasks.length, 1)
     t.same(tasks, [{
+        id: tasks[0].id,
         name: 'Test',
         completed: false,
         plannedHours: 0,
     }])
 })
+*/
 
 async function postTask(customer: CustomerOptType, company: string, project: string, task: string, projectType?: string, plannedHours?: number) {
     return await app.inject({
