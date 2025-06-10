@@ -212,7 +212,15 @@ test('create task with existing project and new customer - new insert', async (t
         id: customers[0].id,
         name: customers[0].name
     }
-    response = await postTask(oldCustomer, company, project, task, projectType);
+    response = await postTask(
+      oldCustomer,
+      company,
+      projects[0].name,
+      task,
+      projectType,
+      undefined,
+      projects[0].id
+);
     t.equal(response.statusCode, 200)
     response = await postTask({ name: 'Test new customer'},
         company,
@@ -380,7 +388,7 @@ test('create task with existing customer and project but different company - new
 })
 */
 
-async function postTask(customer: CustomerOptType, company: string, project: string, task: string, projectType?: string, plannedHours?: number) {
+async function postTask(customer: CustomerOptType, company: string, project: string, task: string, projectType?: string, plannedHours?: number, projectId?: string) {
     return await app.inject({
         method: 'POST',
         url: '/api/task/task/',
@@ -389,7 +397,7 @@ async function postTask(customer: CustomerOptType, company: string, project: str
         },
         payload: {
             customer: customer,
-            project: {name:project, type: projectType, plannedHours: plannedHours},
+            project: { id: projectId, name:project, type: projectType, plannedHours: plannedHours},
             task: task
         }
     })
