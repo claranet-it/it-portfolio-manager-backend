@@ -17,30 +17,30 @@ const prisma = new PrismaClient()
 // }
 
 beforeEach(async () => {
-    app = createApp({logger: false})
-    await app.ready()
+  app = createApp({logger: false})
+  await app.ready()
 })
 
 afterEach(async () => {
-    const deleteCustomer = prisma.customer.deleteMany()
-    const deleteProject = prisma.project.deleteMany()
-    const deleteTask = prisma.projectTask.deleteMany()
+  const deleteCustomer = prisma.customer.deleteMany()
+  const deleteProject = prisma.project.deleteMany()
+  const deleteTask = prisma.projectTask.deleteMany()
 
-    await prisma.$transaction([
-        deleteTask,
-        deleteProject,
-        deleteCustomer,
-    ])
-    await prisma.$disconnect()
-    await app.close()
+  await prisma.$transaction([
+    deleteTask,
+    deleteProject,
+    deleteCustomer,
+  ])
+  await prisma.$disconnect()
+  await app.close()
 })
 
 test('create task without authentication', async (t) => {
-    const response = await app.inject({
-        method: 'POST',
-        url: '/api/task/task',
-    })
-    t.equal(response.statusCode, 401)
+  const response = await app.inject({
+    method: 'POST',
+    url: '/api/task/task',
+  })
+  t.equal(response.statusCode, 401)
 })
 /*
 test('create new task - new insert', async (t) => {

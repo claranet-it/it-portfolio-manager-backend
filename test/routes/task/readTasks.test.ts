@@ -174,11 +174,11 @@ inputs.forEach((input) => {
 
 test('read not completed tasks', async (t) => {
   const token = app.createTestJwt({
-      email: 'nicholas.crow@email.com',
-      name: 'Nicholas Crow',
-      picture: 'https://test.com/nicholas.crow.jpg',
-      company: 'it'
-    })
+    email: 'nicholas.crow@email.com',
+    name: 'Nicholas Crow',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
+  })
 
   const project = (await prisma.project.findFirst({
     where: {
@@ -187,27 +187,27 @@ test('read not completed tasks', async (t) => {
     }
   }))?.id
 
-    const response = await app.inject({
-      method: 'GET',
-      url: `/api/task/task?customer=${testCustomer.id}&project=${project}&completed=false`,
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    })
+  const response = await app.inject({
+    method: 'GET',
+    url: `/api/task/task?customer=${testCustomer.id}&project=${project}&completed=false`,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
 
-    t.equal(response.statusCode, 200)
+  t.equal(response.statusCode, 200)
 
-    const tasks = response.json<TaskListType>()
-    t.equal(tasks.length, 2)
+  const tasks = response.json<TaskListType>()
+  t.equal(tasks.length, 2)
 })
 
 test('read completed tasks', async (t) => {
   const token = app.createTestJwt({
-      email: 'nicholas.crow@email.com',
-      name: 'Nicholas Crow',
-      picture: 'https://test.com/nicholas.crow.jpg',
-      company: 'it'
-    })
+    email: 'nicholas.crow@email.com',
+    name: 'Nicholas Crow',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
+  })
 
   const project = (await prisma.project.findFirst({
     where: {
@@ -216,18 +216,18 @@ test('read completed tasks', async (t) => {
     }
   }))?.id
 
-    const response = await app.inject({
-      method: 'GET',
-      url: `/api/task/task?customer=${testCustomer.id}&project=${project}&completed=true`,
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    })
+  const response = await app.inject({
+    method: 'GET',
+    url: `/api/task/task?customer=${testCustomer.id}&project=${project}&completed=true`,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
 
-    t.equal(response.statusCode, 200)
+  t.equal(response.statusCode, 200)
 
-    const tasks = response.json<TaskListType>()
-    t.equal(tasks.length, 1)
+  const tasks = response.json<TaskListType>()
+  t.equal(tasks.length, 1)
 })
 
 test('read task with additional properties', async (t) => {

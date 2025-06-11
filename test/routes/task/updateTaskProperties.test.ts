@@ -16,33 +16,33 @@ let app: FastifyInstance
 }*/
 
 beforeEach(async () => {
-    app = createApp({logger: false})
-    await app.ready()
+  app = createApp({logger: false})
+  await app.ready()
 })
 
 afterEach(async () => {
-    const prisma = new PrismaClient()
-    const deleteCustomer = prisma.customer.deleteMany()
-    const deleteProject = prisma.project.deleteMany()
-    const deleteTask = prisma.projectTask.deleteMany()
-    const deleteTimeEntry = prisma.timeEntry.deleteMany()
+  const prisma = new PrismaClient()
+  const deleteCustomer = prisma.customer.deleteMany()
+  const deleteProject = prisma.project.deleteMany()
+  const deleteTask = prisma.projectTask.deleteMany()
+  const deleteTimeEntry = prisma.timeEntry.deleteMany()
 
-    await prisma.$transaction([
-        deleteTimeEntry,
-        deleteTask,
-        deleteProject,
-        deleteCustomer,
-    ])
-    await prisma.$disconnect()
-    await app.close()
+  await prisma.$transaction([
+    deleteTimeEntry,
+    deleteTask,
+    deleteProject,
+    deleteCustomer,
+  ])
+  await prisma.$disconnect()
+  await app.close()
 })
 
 test('create task properties without authentication', async (t) => {
-    const response = await app.inject({
-        method: 'POST',
-        url: '/api/task/task-properties',
-    })
-    t.equal(response.statusCode, 401)
+  const response = await app.inject({
+    method: 'POST',
+    url: '/api/task/task-properties',
+  })
+  t.equal(response.statusCode, 401)
 })
 /*
 test('create new task properties', async (t) => {
