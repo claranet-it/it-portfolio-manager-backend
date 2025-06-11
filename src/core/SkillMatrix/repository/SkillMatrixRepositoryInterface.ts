@@ -1,3 +1,4 @@
+import { AttributeValue } from '@aws-sdk/client-dynamodb'
 import {
   SkillMatrixMineResponseType,
   SkillMatrixQueryParamsType,
@@ -28,4 +29,8 @@ export interface SkillMatrixRepositoryInterface {
     skillMatrixUpdateOfUserParams: SkillMatrixUpdateOfUserParamsType,
   ): Promise<void>
   delete(uid: string): Promise<void>
+
+  getData(): Promise<Record<string, AttributeValue>[] | undefined>
+
+  restoreData(item: Record<string, AttributeValue>): Promise<void>
 }

@@ -16,11 +16,12 @@ import { CompanyKeysType } from '@src/core/Company/model/CompanyKeys'
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 
 export class CompanyService {
+
   constructor(
     private companyRepository: CompanyRepositoryInterface,
     private companyKeysRepository: CompanyKeysRepositoryInterface,
     private skillRepository: SkillRepository,
-  ) {}
+  ) { }
 
   async networkingFindAll(jwtToken: JwtTokenType): Promise<CompanyType[]> {
     const company = await this.companyRepository.findOne({
@@ -144,5 +145,9 @@ export class CompanyService {
       encryptedPrivateKey: body.encryptedPrivateKey,
       encryptedAESKey: body.encryptedAESKey
     })
+  }
+
+  async deleteCompany(idCompany: string): Promise<void> {
+    await this.companyRepository.deleteCompany(idCompany)
   }
 }

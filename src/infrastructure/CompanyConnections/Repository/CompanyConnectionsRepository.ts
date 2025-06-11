@@ -4,8 +4,7 @@ import { CompanyConnectionsType } from '@src/core/CompanyConnections/model/Compa
 import { UniqueConstraintViolationException } from '@src/shared/exceptions/UniqueConstraintViolationException'
 
 export class CompanyConnectionsRepository
-  implements CompanyConnectionsRepositoryInterface
-{
+  implements CompanyConnectionsRepositoryInterface {
   private prismaClient: PrismaClient
 
   constructor() {
@@ -56,6 +55,17 @@ export class CompanyConnectionsRepository
         requester_company_id: requesterId,
         correspondent_company_id: correspondentId,
       },
+    })
+  }
+
+  async deleteConnections(idCompany: string): Promise<void> {
+    await this.prismaClient.companyConnections.deleteMany({
+      where: {
+        OR: [
+          { requester_company_id: idCompany },
+          { correspondent_company_id: idCompany },
+        ]
+      }
     })
   }
 }

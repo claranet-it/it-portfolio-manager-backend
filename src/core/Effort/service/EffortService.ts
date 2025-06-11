@@ -14,7 +14,7 @@ export class EffortService {
   constructor(
     private effortRepository: EffortRepositoryInterface,
     private userProfileService: UserProfileService,
-  ) {}
+  ) { }
 
   async getEffortFormattedResponse(
     params: EffortReadParamsType,
@@ -137,5 +137,23 @@ export class EffortService {
 
   async delete(uid: string) {
     await this.effortRepository.delete(uid)
+  }
+
+  async deleteEffortByCompany(companyDomain: string) {
+    const originalData = await this.effortRepository.getData()
+    if (originalData?.length) {
+      const allUsersCompany = await this.userProfileService.getByCompany(companyDomain)
+      for (const user of allUsersCompany) {
+        try {
+          await this.effortRepository.delete(user.uid)
+        } catch (error) {
+          console.error("Error: delete effort of a company", error)
+          for (const item of originalData) {
+            this.effortRepository.restoreData(item)
+          }
+          break;
+        }
+      }
+    }
   }
 }
