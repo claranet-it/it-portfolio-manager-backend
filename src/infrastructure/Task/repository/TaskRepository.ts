@@ -8,7 +8,8 @@ import {
   TaskCreateReadParamsType, TaskListType,
   TaskReadParamsType,
   TaskStructureType,
-  TaskUpdateParamsType,
+  TaskType,
+  TaskUpdateParamsType, ProjectToEncryptType,
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import { TaskError } from '@src/core/customExceptions/TaskError'
@@ -294,7 +295,7 @@ export class TaskRepository implements TaskRepositoryInterface {
           : 0
       const completed =
         params.newProject !== undefined &&
-          params.newProject.completed !== undefined
+        params.newProject.completed !== undefined
           ? params.newProject.completed
           : project.completed
 
@@ -428,5 +429,60 @@ export class TaskRepository implements TaskRepositoryInterface {
         id: project.id,
       },
     })
+  }
+
+  async getCustomersByCompany(companyName: string): Promise<CustomerType[]> {
+    const prisma = new PrismaClient()
+
+    const result = await prisma.customer.findMany({
+      where: {
+        company_id: companyName,
+      },
+    })
+
+    return result.map((customer) => ({
+      id: customer.id,
+      name: customer.name,
+      inactive: customer.inactive,
+    }))
+  }
+
+  async getProjectsByCompany(companyName: string): Promise<ProjectToEncryptType[]> {
+    const prisma = new PrismaClient()
+
+    const result = await prisma.project.findMany({
+      where: {
+        customer: {
+          company_id: companyName,
+        },
+      },
+    })
+
+    return result.map((task) => ({
+      id: task.id,
+      name: task.name,
+      projectType: task.project_type,
+    }))
+  }
+
+  async getTasksByCompany(companyName: string): Promise<TaskType[]> {
+    const prisma = new PrismaClient()
+
+    const result = await prisma.projectTask.findMany({
+      where: {
+        project: {
+          customer: {
+            company_id: companyName,
+          },
+        },
+      },
+    })
+
+    return result.map((task) => ({
+      id: task.id,
+      name: task.name,
+      completed: task.is_completed,
+      plannedHours: task.planned_hours,
+    }))
   }
 }

@@ -4,6 +4,7 @@ export const CompanyKeys = Type.Object({
   encryptedPrivateKey: Type.String(),
   encryptedAESKey: Type.String(),
   publicKey: Type.String(),
+  encryptionCompleted: Type.Optional(Type.Boolean()),
 })
 
 export type CompanyKeysType = Static<typeof CompanyKeys>

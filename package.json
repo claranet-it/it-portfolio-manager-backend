@@ -65,6 +65,7 @@
     "@fastify/cors": "^8.4.0",
     "@fastify/env": "^4.2.0",
     "@fastify/jwt": "^7.2.1",
+    "@fastify/multipart": "^8.3.1",
     "@fastify/session": "^10.9.0",
     "@fastify/swagger": "^8.10.0",
     "@fastify/swagger-ui": "^1.9.3",

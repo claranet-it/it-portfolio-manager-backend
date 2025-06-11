@@ -190,3 +190,9 @@ export const CSVImportErrors = Type.Object({
   errors: Type.Array(Type.String()),
 })
 export type CSVImportErrorsType = Static<typeof CSVImportErrors>
+
+export const TimeEntriesToEncrypt = Type.Object({
+  id: Type.String(),
+  description: Type.String(),
+})
+export type TimeEntriesToEncryptType = Static<typeof TimeEntriesToEncrypt>

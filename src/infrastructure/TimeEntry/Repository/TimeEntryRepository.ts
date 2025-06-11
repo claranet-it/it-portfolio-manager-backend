@@ -1,6 +1,6 @@
 import {
   CnaReadParamType,
-  deleteTimeEntryWithUserType,
+  deleteTimeEntryWithUserType, TimeEntriesToEncryptType,
   TimeEntryReadParamWithCompanyAndCrewType,
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
@@ -381,5 +381,26 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       startHour: timeEntry.time_start ?? '',
       endHour: timeEntry.time_end ?? '',
     }))
+  }
+
+  async getTimeEntriesByCompany(companyName: string): Promise<TimeEntriesToEncryptType[]> {
+    const prisma = new PrismaClient()
+
+    const result = await prisma.timeEntry.findMany({
+      where: {
+        task: {
+          project: {
+            customer: {
+              company_id: companyName,
+            },
+          },
+        },
+      },
+    });
+
+    return result.map((timeEntry) => ({
+      id: timeEntry.id,
+      description: timeEntry.description ?? '',
+    }));
   }
 }

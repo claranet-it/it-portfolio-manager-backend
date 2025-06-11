@@ -211,3 +211,11 @@ export const TaskCreateReadParams = Type.Intersect([
 ])
 
 export type TaskCreateReadParamsType = Static<typeof TaskCreateReadParams>
+
+export const ProjectToEncrypt = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+  projectType: Type.String(),
+})
+
+export type ProjectToEncryptType = Static<typeof ProjectToEncrypt>
