@@ -48,13 +48,14 @@ model CompanyConnections {
 }
 
 model Customer {
-  id         String    @id @default(uuid())
+  id         String     @id @default(uuid())
   company_id String
-  name       String    @db.Text
-  inactive   Boolean   @default(false)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  name       String     @db.Text
+  inactive   Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
   projects   Project[]
+  template   Template[]
 }
 
 model Project {
@@ -69,6 +70,7 @@ model Project {
   updatedAt    DateTime      @updatedAt
   tasks        ProjectTask[]
   completed    Boolean       @default(false)
+  templates    Template[]
 }
 
 model ProjectTask {
@@ -81,6 +83,7 @@ model ProjectTask {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   time_entries  TimeEntry[]
+  templates     Template[]
 }
 
 model Skill {
@@ -159,11 +162,14 @@ model Work {
 
 model Template {
   id            String        @id @default(uuid())
-  email         String        
+  email         String
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  customer      Customer      @relation(fields: [customer_id], references: [id])
   customer_id   String
+  project       Project       @relation(fields: [project_id], references: [id])
   project_id    String
+  task          ProjectTask?   @relation(fields: [task_id], references: [id])
   task_id       String?
   timehours     Float         @default(0)
   daytime       String

@@ -15,6 +15,27 @@ before(async () => {
     app = createApp({ logger: false })
     await app.ready()
 
+    const customer = await prisma.customer.create({
+        data: {
+            name: 'Claranet',
+            company_id: 'it',
+        }
+    })
+
+    const project = await prisma.project.create({
+        data: {
+            name: 'Slack time',
+            customer_id: customer.id
+        }
+    })
+
+    const task = await prisma.projectTask.create({
+        data: {
+            name: 'formazione',
+            project_id: project.id,
+        }
+    })
+
     await prisma.template.create({
         data: {
             email: FAKE_EMAIL,
@@ -22,9 +43,9 @@ before(async () => {
             daytime: "1, 3, 5",
             date_start: new Date('2025-01-02'),
             date_end: new Date('2025-02-02'),
-            project_id: "project.id",
-            customer_id: "customer.id",
-            task_id: "task.id"
+            project_id: project.id,
+            customer_id: customer.id,
+            task_id: task.id
         }
     })
 
@@ -35,9 +56,9 @@ before(async () => {
             daytime: "1, 3, 5",
             date_start: new Date('2025-01-02'),
             date_end: new Date('2025-02-02'),
-            project_id: "project.id",
-            customer_id: "customer.id",
-            task_id: "task.id"
+            project_id: project.id,
+            customer_id: customer.id,
+            task_id: task.id
         }
     })
 

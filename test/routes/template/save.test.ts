@@ -10,14 +10,35 @@ const prisma = new PrismaClient()
 
 const My_EMAIL = "my-email@mail.com"
 
-const CUSTOMER_ID = "customerId";
-const PROJECT_ID = "projectId";
-const TASK_ID = "taskId";
+let CUSTOMER_ID: string;
+let PROJECT_ID: string;
+let TASK_ID: string;
 
 before(async () => {
     app = createApp({ logger: false })
     await app.ready()
 
+    const customer = await prisma.customer.create({
+        data: {
+            name: 'Claranet',
+            company_id: 'it',
+        }
+    })
+    CUSTOMER_ID = customer.id
+    const project = await prisma.project.create({
+        data: {
+            name: 'Slack time',
+            customer_id: customer.id
+        }
+    })
+    PROJECT_ID = project.id
+    const task = await prisma.projectTask.create({
+        data: {
+            name: 'formazione',
+            project_id: project.id,
+        }
+    })
+    TASK_ID = task.id
 })
 
 after(async () => {
