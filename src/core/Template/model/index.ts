@@ -1,5 +1,5 @@
 import { Static, Type } from '@sinclair/typebox'
-import { Customer, ProjectOpt, Task } from '@src/core/Task/model/task.model'
+import { Customer, Task } from '@src/core/Task/model/task.model'
 
 const dateFormat = /([0-9][0-9][0-9][0-9])-(0[1-9]|1[012])-([0-9][0-9])$/
 export const Template = Type.Object({
@@ -10,7 +10,10 @@ export const Template = Type.Object({
     date_start: Type.RegExp(dateFormat),
     date_end: Type.RegExp(dateFormat),
     customer: Customer,
-    project: ProjectOpt,
+    project: Type.Object({
+        id: Type.String(),
+        name: Type.String(),
+    }),
     task: Type.Optional(Task),
 })
 

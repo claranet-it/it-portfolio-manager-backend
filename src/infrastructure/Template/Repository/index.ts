@@ -64,7 +64,7 @@ export class TemplateRepository implements TemplateRepositoryInterface {
                 date_start: template.date_start.toISOString().substring(0, 10),
                 date_end: template.date_end.toISOString().substring(0, 10),
                 customer: { id: customer.id, name: customer.name },
-                project: project,
+                project: { id: project.id, name: project.name },
                 task: task,
             };
         });
