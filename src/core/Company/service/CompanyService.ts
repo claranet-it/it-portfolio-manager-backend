@@ -124,6 +124,10 @@ export class CompanyService {
   }
 
   async saveKeys(jwtToken: JwtTokenType, body: CompanyKeysType): Promise<void> {
+    if (!['ADMIN', 'SUPERADMIN'].includes(jwtToken.role ?? '')) {
+      throw new ForbiddenException('Forbidden')
+    }
+
     const company = await this.companyRepository.findOne({
       name: jwtToken.company,
     })
