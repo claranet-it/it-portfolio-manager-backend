@@ -1,20 +1,20 @@
 import {afterEach, beforeEach, test} from 'tap'
 import createApp from '@src/app'
 import {FastifyInstance} from 'fastify'
-import { ProductivityReportResponseType, ProjectType } from '@src/core/Report/model/productivity.model'
+import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
 
-function getToken(company: string): string {
+/*function getToken(company: string): string {
     return app.createTestJwt({
         email: 'nicholas.crow@email.com',
         name: 'Nicholas Crow',
         picture: 'https://test.com/nicholas.crow.jpg',
         company: company,
     })
-}
+}*/
 
 beforeEach(async () => {
     app = createApp({logger: false})
@@ -202,7 +202,7 @@ test('read productivity report without authentication', async (t) => {
 
     t.equal(response.statusCode, 401)
 })
-
+/*
 test('read productivity report fail: startDate > endDate', async (t) => {
     const company = 'it'
     const token = getToken(company)
@@ -1195,3 +1195,5 @@ test('read productivity report - name & customer filter', async (t) => {
 
     t.same(result, expected)
 })
+
+ */

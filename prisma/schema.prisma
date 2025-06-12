@@ -33,6 +33,7 @@ model CompanyKeys {
   encryptedPrivateKey String  @db.Text
   encryptedAESKey     String  @db.Text
   publicKey           String  @db.Text
+  encryptionCompleted Boolean @default(false)
 
   @@unique([company_id])
 }
@@ -49,7 +50,7 @@ model CompanyConnections {
 model Customer {
   id         String    @id @default(uuid())
   company_id String
-  name       String
+  name       String    @db.Text
   inactive   Boolean   @default(false)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -60,7 +61,7 @@ model Project {
   id           String        @id @default(uuid())
   customer     Customer      @relation(fields: [customer_id], references: [id])
   customer_id  String
-  name         String
+  name         String        @db.Text
   project_type String        @default("billable")
   is_inactive  Boolean       @default(false)
   plannedHours Int           @default(0)
@@ -74,7 +75,7 @@ model ProjectTask {
   id            String      @id @default(uuid())
   project       Project     @relation(fields: [project_id], references: [id])
   project_id    String
-  name          String
+  name          String      @db.Text
   is_completed  Boolean     @default(false)
   planned_hours Int         @default(0)
   createdAt     DateTime    @default(now())

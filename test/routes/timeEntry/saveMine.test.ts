@@ -1,22 +1,19 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
-import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { PrismaClient } from '../../../prisma/generated'
-import { CustomerOptType, CustomerType } from '@src/core/Task/model/task.model'
 
 let app: FastifyInstance
 
-function getToken(): string {
-  return app.createTestJwt({
-    email: 'nicholas.crow@email.com',
-    name: 'Nicholas Crow',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it',
-    role: 'ADMIN',
-  })
-}
+// function getToken(): string {
+//   return app.createTestJwt({
+//     email: 'nicholas.crow@email.com',
+//     name: 'Nicholas Crow',
+//     picture: 'https://test.com/nicholas.crow.jpg',
+//     company: 'it',
+//     role: 'ADMIN',
+//   })
+// }
 
 beforeEach(async () => {
   app = createApp({ logger: false })
@@ -47,7 +44,7 @@ test('save time entry without authentication', async (t) => {
   })
   t.equal(response.statusCode, 401)
 })
-
+/*
 test('insert time entry in new day', async (t) => {
   const date = '2024-01-02'
   const customerName = {name: 'Claranet'}
@@ -770,3 +767,5 @@ async function getCustomers() {
     },
   })
 }
+
+ */

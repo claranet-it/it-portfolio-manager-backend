@@ -75,7 +75,7 @@ test('update customer', async (t) => {
   response = await putCustomer(
     customers[0].id,
     company,
-    { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: 0, completed: true },
+    projects[0].id ?? '',
     'Test update new customer',
   )
   t.equal(response.statusCode, 200)
@@ -138,13 +138,7 @@ test('update project - all', async (t) => {
   response = await putProject(
     customers[0].id,
     company,
-    {
-      id: projects[0].id,
-      name: projects[0].name,
-      type: projects[0].type,
-      plannedHours: projects[0].plannedHours,
-      completed: false,
-    },
+    projects[0].id ?? '',
     {
       name: newProjectName,
       type: newProjectType,
@@ -210,7 +204,7 @@ test('update project - only name', async (t) => {
   response = await putProject(
     customers[0].id,
     company,
-    { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: projects[0].plannedHours, completed: false },
+    projects[0].id ?? '',
     {
       name: newProjectName,
       type: projectType,
@@ -275,7 +269,7 @@ test('update project - only projectType', async (t) => {
   response = await putProject(
     customers[0].id,
     company,
-    { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: projects[0].plannedHours, completed: false },
+    projects[0].id ?? '',
     {
       name: projectName,
       type: ProjectType.NON_BILLABLE,
@@ -341,7 +335,7 @@ test('update project - only plannedHours', async (t) => {
   response = await putProject(
     customers[0].id,
     company,
-    { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: projects[0].plannedHours, completed: false },
+    projects[0].id ?? '',
     {
       name: projectName,
       type: ProjectType.ABSENCE,
@@ -414,7 +408,7 @@ test('update project - plannedHours = 0', async (t) => {
   response = await putProject(
     customers[0].id,
     company,
-    { id: projects[0].id, name: projects[0].name, type: projects[0].type, plannedHours: 300, completed: false },
+    projects[0].id ?? '',
     {
       name: projectName,
       type: ProjectType.ABSENCE,
@@ -465,7 +459,7 @@ async function postTask(
 async function putCustomer(
   customer: string,
   company: string,
-  project: ProjectDetailsType,
+  project: string,
   newCustomer: string,
 ) {
   return await app.inject({
@@ -485,7 +479,7 @@ async function putCustomer(
 async function putProject(
   customer: string,
   company: string,
-  project: ProjectDetailsType,
+  project: string,
   newProject: ProjectDetailsType,
 ) {
   return await app.inject({

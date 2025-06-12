@@ -6,4 +6,6 @@ export interface CompanyKeysRepositoryInterface {
   ): Promise<CompanyKeysType | null>
 
   save(companyKeys: CreateCompanyKeysType): Promise<void>
+
+  updateEncryptionStatus(companyId: string, encryptionCompleted: boolean): Promise<void>
 }

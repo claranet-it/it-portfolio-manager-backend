@@ -1,5 +1,5 @@
 import { Static, Type } from '@sinclair/typebox'
-import { Customer, Project } from '@src/core/Task/model/task.model'
+import { Customer, Project, TaskMin } from '@src/core/Task/model/task.model'
 
 const dateFormat = /([0-9][0-9][0-9][0-9])-(0[1-9]|1[012])-([0-9][0-9])$/
 export const TimeEntryReadParam = Type.Object({
@@ -59,6 +59,11 @@ export const TimeEntryRow = Type.Object({
   index: Type.Optional(Type.String()),
 })
 
+export const TimeEntryProject = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+})
+
 export const TimeEntryReport = Type.Object({
   date: Type.String(),
   email: Type.String(),
@@ -66,8 +71,8 @@ export const TimeEntryReport = Type.Object({
   company: Type.String(),
   crew: Type.String(),
   customer: Customer,
-  project: Type.String(),
-  task: Type.String(),
+  project: TimeEntryProject,
+  task: TaskMin,
   projectType: Type.String(),
   plannedHours: Type.Number(),
   hours: Type.Number(),
@@ -116,7 +121,7 @@ export const TimeEntryRowWithProjectEntity = Type.Object({
   company: Type.String(),
   customer: Customer,
   project: Project,
-  task: Type.String(),
+  task: TaskMin,
   hours: Type.Number(),
   description: Type.String(),
   startHour: Type.String(),
@@ -185,3 +190,9 @@ export const CSVImportErrors = Type.Object({
   errors: Type.Array(Type.String()),
 })
 export type CSVImportErrorsType = Static<typeof CSVImportErrors>
+
+export const TimeEntriesToEncrypt = Type.Object({
+  id: Type.String(),
+  description: Type.String(),
+})
+export type TimeEntriesToEncryptType = Static<typeof TimeEntriesToEncrypt>
