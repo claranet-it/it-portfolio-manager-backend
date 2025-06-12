@@ -6,7 +6,7 @@ import {
   CnaReadParamType,
   TimeEntryRowWithProjectType,
   TimeEntryRowWithProjectEntityType,
-  TimeEntryReadParamWithCompanyAndCrewType,
+  TimeEntryReadParamWithCompanyAndCrewType, TimeEntriesToEncryptType,
 } from '../model/timeEntry.model'
 
 export interface TimeEntryRepositoryInterface {
@@ -26,4 +26,5 @@ export interface TimeEntryRepositoryInterface {
   delete(params: deleteTimeEntryWithUserType): Promise<void>
   getTimeEntriesFilterBy(params: ReportProjectsWithCompanyType,
   ): Promise<TimeEntryRowWithProjectEntityType[]>
+  getTimeEntriesByCompany(companyName: string): Promise<TimeEntriesToEncryptType[]>
 }
