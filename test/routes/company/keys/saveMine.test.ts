@@ -14,6 +14,7 @@ function getToken(): string {
     name: 'Nicholas Crow',
     picture: 'https://test.com/nicholas.crow.jpg',
     company: 'it',
+    role: "ADMIN"
   })
 }
 
