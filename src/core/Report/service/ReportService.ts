@@ -8,7 +8,6 @@ import { ReportRepositoryInterface } from '@src/core/Report/repository/ReportRep
 import { UserProfileRepositoryInterface } from '@src/core/User/repository/UserProfileRepositoryInterface'
 import { DateRangeError } from '@src/core/customExceptions/DateRangeError'
 import { CompleteUserProfileType } from '@src/core/User/model/user.model'
-import { FieldsOrderError } from '@src/core/customExceptions/FieldsOrderError'
 import { ProductivityCalculator } from '@src/core/Report/service/ProductivityCalculator'
 import { CrewRepositoryInterface } from '@src/core/Configuration/repository/CrewRepositoryInterface'
 
@@ -25,14 +24,6 @@ export class ReportService {
   ): Promise<ProductivityReportResponseType> {
     if (new Date(params.from) > new Date(params.to)) {
       throw new DateRangeError(params.from, params.to)
-    }
-
-    if (params.task && !(params.customer && params.project)) {
-      throw new FieldsOrderError()
-    }
-
-    if (params.project && !params.customer) {
-      throw new FieldsOrderError()
     }
 
     let uids: { email: string }[] = []

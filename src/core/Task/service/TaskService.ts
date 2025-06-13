@@ -59,7 +59,7 @@ export class TaskService {
       company: params.company,
     })
 
-    if (tasks.filter((task) => task.name === params.task).length === 0) {
+    if (tasks.filter((task) => task.id === params.task).length === 0) {
       throw new TaskNotExistsError()
     }
 

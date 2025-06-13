@@ -1,4 +1,5 @@
 import { Static, Type } from '@sinclair/typebox'
+import { TimeEntryProject } from '@src/core/TimeEntry/model/timeEntry.model'
 
 /**
  * Customer Structure Model
@@ -63,7 +64,7 @@ export type ProjectListType = Static<typeof ProjectList>
 
 export const CustomerProjectParams = Type.Object({
   customer: Type.String(),
-  project: Project,
+  project: Type.String(),
   newCustomerName: Type.Optional(Type.String()),
   newProject: Type.Optional(Project),
   completed: Type.Optional(Type.Boolean()),
@@ -83,7 +84,7 @@ export const ProjectOpt = Type.Object({
 })
 export const CustomerProjectUpdateQueryParams = Type.Object({
   customer: Type.String(),
-  project: ProjectOpt,
+  project: Type.String(),
   newCustomer: Type.Optional(Type.String()),
   newProject: Type.Optional(ProjectOpt),
 })
@@ -119,7 +120,19 @@ export const Task = Type.Object({
 })
 export type TaskType = Static<typeof Task>
 
-export const TaskList = Type.Array(Task)
+export const TaskMin = Type.Object({
+  name: Type.String(),
+  id: Type.String(),
+})
+
+export const GetTask = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+  completed: Type.Boolean(),
+  plannedHours: Type.Number(),
+})
+
+export const TaskList = Type.Array(GetTask)
 
 export type TaskListType = Static<typeof TaskList>
 
@@ -144,8 +157,8 @@ export type TaskPropertiesUpdateParamsType = Static<
 
 export const TaskStructure = Type.Object({
   customer: Customer,
-  project: Type.String(),
-  task: Type.String(),
+  project: TimeEntryProject,
+  task: TaskMin,
 })
 export type TaskStructureType = Static<typeof TaskStructure>
 
@@ -198,3 +211,11 @@ export const TaskCreateReadParams = Type.Intersect([
 ])
 
 export type TaskCreateReadParamsType = Static<typeof TaskCreateReadParams>
+
+export const ProjectToEncrypt = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+  projectType: Type.String(),
+})
+
+export type ProjectToEncryptType = Static<typeof ProjectToEncrypt>

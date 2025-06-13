@@ -107,6 +107,36 @@ export class EffortRepository implements EffortRepositoryInterface {
     })
   }
 
+  /**
+   * Recupera tutti i record associati a ciascun uid usando QueryCommand
+   */
+  async getEffortsByUids(uids: string[]): Promise<EffortRowType[]> {
+    if (uids.length === 0) return []
+    const TableName = getTableName('Effort')
+    const results: EffortRowType[] = []
+    for (const uid of uids) {
+      const queryCommand = new QueryCommand({
+        TableName,
+        KeyConditionExpression: 'uid = :uid',
+        ExpressionAttributeValues: {
+          ':uid': { S: uid },
+        },
+      })
+      const response = await this.dynamoDBClient.send(queryCommand)
+      const items = response.Items || []
+      for (const item of items) {
+        results.push({
+          uid: item.uid?.S ?? '',
+          month_year: item.month_year?.S ?? '',
+          confirmedEffort: item.confirmedEffort?.N ? Number(item.confirmedEffort.N) : 0,
+          tentativeEffort: item.tentativeEffort?.N ? Number(item.tentativeEffort.N) : 0,
+          notes: item.notes?.S ?? '',
+        })
+      }
+    }
+    return results
+  }
+
   async getData(): Promise<Record<string, AttributeValue>[] | undefined> {
     const originalResponse = await this.dynamoDBClient.send(
       new ScanCommand({

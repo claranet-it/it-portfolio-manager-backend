@@ -8,6 +8,8 @@ export interface EffortRepositoryInterface {
 
   delete(uid: string): Promise<void>
 
+  getEffortsByUids(uids: string[]): Promise<EffortRowType[]>
+
   getData(): Promise<Record<string, AttributeValue>[] | undefined>
 
   restoreData(item: Record<string, AttributeValue>): Promise<void>

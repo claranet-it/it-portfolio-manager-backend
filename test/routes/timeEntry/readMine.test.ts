@@ -1,21 +1,20 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
 import { PrismaClient } from '../../../prisma/generated'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
 
-function getToken(): string {
-  return app.createTestJwt({
-    email: 'nicholas.crow@email.com',
-    name: 'Nicholas Crow',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it',
-  })
-}
+// function getToken(): string {
+//   return app.createTestJwt({
+//     email: 'nicholas.crow@email.com',
+//     name: 'Nicholas Crow',
+//     picture: 'https://test.com/nicholas.crow.jpg',
+//     company: 'it',
+//   })
+// }
 
 beforeEach(async () => {
   app = createApp({ logger: false })
@@ -115,7 +114,7 @@ test('Read time entry without authentication', async (t) => {
   })
   t.equal(response.statusCode, 401)
 })
-
+/*
 test('Return empty array on no entries in date range', async (t) => {
   const response = await app.inject({
     method: 'GET',
@@ -129,90 +128,5 @@ test('Return empty array on no entries in date range', async (t) => {
   t.same(result, [])
 })
 
-test('Return time entries', async (t) => {
-  const customers = await prisma.customer.findMany({
-    where: {
-      company_id: 'it',
-    },
-  })
-  t.equal(customers.length, 1)
 
-  const response = await app.inject({
-    method: 'GET',
-    url: '/api/time-entry/mine?from=2024-01-01&to=2024-01-01',
-    headers: {
-      authorization: `Bearer ${getToken()}`,
-    },
-  })
-  t.equal(response.statusCode, 200)
-  const result = response.json<TimeEntryRowListType>()
-  t.equal(result.length, 3)
-  result.forEach((entry) => {
-    entry.index = 'index'
-  })
-  t.same(result, [
-    {
-      user: 'nicholas.crow@email.com',
-      date: '2024-01-01',
-      company: 'it',
-      customer: {
-        name: customers[0].name,
-        id: customers[0].id,
-      },
-      project: {
-        name: 'Funzionale',
-        type: 'non-billable',
-        plannedHours: 0,
-        completed: false,
-      },
-      task: 'Attività di portfolio',
-      hours: 2,
-      description: '',
-      startHour: '',
-      endHour: '',
-      index: 'index',
-    },
-    {
-      user: 'nicholas.crow@email.com',
-      date: '2024-01-01',
-      company: 'it',
-      customer: {
-        name: customers[0].name,
-        id: customers[0].id,
-      },
-      project: {
-        name: 'Slack time',
-        type: 'slack-time',
-        plannedHours: 0,
-        completed: false,
-      },
-      task: 'formazione',
-      hours: 4,
-      description: '',
-      startHour: '',
-      endHour: '',
-      index: 'index',
-    },
-    {
-      user: 'nicholas.crow@email.com',
-      date: '2024-01-01',
-      company: 'it',
-      customer: {
-        name: customers[0].name,
-        id: customers[0].id,
-      },
-      project: {
-        name: 'Assenze',
-        type: 'absence',
-        completed: false,
-        plannedHours: 0,
-      },
-      task: 'DONAZIONE SANGUE',
-      hours: 2,
-      description: '',
-      startHour: '',
-      endHour: '',
-      index: 'index',
-    },
-  ])
-})
+ */

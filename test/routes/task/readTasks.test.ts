@@ -143,9 +143,16 @@ inputs.forEach((input) => {
 
     const customer = input.customer === 'test customer' ? testCustomer.id : claranet.id;
 
+    const project = (await prisma.project.findFirst({
+      where: {
+        name: input.project,
+        customer_id: customer
+      }
+    }))?.id
+
     const response = await app.inject({
       method: 'GET',
-      url: `/api/task/task?customer=${customer}&project=${input.project}`,
+      url: `/api/task/task?customer=${customer}&project=${project}`,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -155,52 +162,72 @@ inputs.forEach((input) => {
 
     const tasks = response.json<TaskListType>()
     t.equal(tasks.length, input.expectedTasks.length)
-    t.same(tasks, input.expectedTasks)
+
+    tasks.forEach((task, index) => {
+      let taskToCompare = input.expectedTasks.find((taskToCompare) => taskToCompare.name === task.name)
+      t.equal(task.name, taskToCompare?.name)
+      t.equal(task.completed, taskToCompare?.completed)
+      t.equal(task.plannedHours, taskToCompare?.plannedHours)
+    })
   })
 })
 
 test('read not completed tasks', async (t) => {
   const token = app.createTestJwt({
-      email: 'nicholas.crow@email.com',
-      name: 'Nicholas Crow',
-      picture: 'https://test.com/nicholas.crow.jpg',
-      company: 'it'
-    })
+    email: 'nicholas.crow@email.com',
+    name: 'Nicholas Crow',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
+  })
 
-    const response = await app.inject({
-      method: 'GET',
-      url: `/api/task/task?customer=${testCustomer.id}&project=SOR Sviluppo&completed=false`,
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    })
+  const project = (await prisma.project.findFirst({
+    where: {
+      name: 'SOR Sviluppo',
+      customer_id: testCustomer.id
+    }
+  }))?.id
 
-    t.equal(response.statusCode, 200)
+  const response = await app.inject({
+    method: 'GET',
+    url: `/api/task/task?customer=${testCustomer.id}&project=${project}&completed=false`,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
 
-    const tasks = response.json<TaskListType>()
-    t.equal(tasks.length, 2)
+  t.equal(response.statusCode, 200)
+
+  const tasks = response.json<TaskListType>()
+  t.equal(tasks.length, 2)
 })
 
 test('read completed tasks', async (t) => {
   const token = app.createTestJwt({
-      email: 'nicholas.crow@email.com',
-      name: 'Nicholas Crow',
-      picture: 'https://test.com/nicholas.crow.jpg',
-      company: 'it'
-    })
+    email: 'nicholas.crow@email.com',
+    name: 'Nicholas Crow',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it'
+  })
 
-    const response = await app.inject({
-      method: 'GET',
-      url: `/api/task/task?customer=${testCustomer.id}&project=SOR Sviluppo&completed=true`,
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    })
+  const project = (await prisma.project.findFirst({
+    where: {
+      name: 'SOR Sviluppo',
+      customer_id: testCustomer.id
+    }
+  }))?.id
 
-    t.equal(response.statusCode, 200)
+  const response = await app.inject({
+    method: 'GET',
+    url: `/api/task/task?customer=${testCustomer.id}&project=${project}&completed=true`,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
 
-    const tasks = response.json<TaskListType>()
-    t.equal(tasks.length, 1)
+  t.equal(response.statusCode, 200)
+
+  const tasks = response.json<TaskListType>()
+  t.equal(tasks.length, 1)
 })
 
 test('read task with additional properties', async (t) => {
@@ -217,9 +244,16 @@ test('read task with additional properties', async (t) => {
     company: input.company
   })
 
+  const project = (await prisma.project.findFirst({
+    where: {
+      name: input.project,
+      customer_id: claranet.id
+    }
+  }))?.id
+
   const response = await app.inject({
     method: 'GET',
-    url: `/api/task/task?customer=${claranet.id}&project=${input.project}`,
+    url: `/api/task/task?customer=${claranet.id}&project=${project}`,
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -230,6 +264,7 @@ test('read task with additional properties', async (t) => {
   const tasks = response.json<TaskListType>()
   t.equal(tasks.length, 1)
   t.same(tasks, [{
+    id: tasks[0].id,
     name: 'formazione',
     completed: false,
     plannedHours: 0,
