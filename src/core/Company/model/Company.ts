@@ -6,7 +6,7 @@ export const Company = Type.Object({
   domain: Type.String(),
   name: Type.String(),
   image_url: Type.Optional(Type.Union([Type.String(), Type.Null()])),
-  primary_contact: Type.String(),
+  primary_contact: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   company_master: Type.Boolean(),
 })
 

@@ -2,7 +2,7 @@ import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositor
 import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { CompanyRepositoryInterface } from '@src/core/Company/repository/CompanyRepositoryInterface'
-import { CustomerType, ProjectToEncryptType, TaskType } from '@src/core/Task/model/task.model'
+import { CustomerType, ProjectToEncryptType, TaskListType } from '@src/core/Task/model/task.model'
 import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/TimeEntryRepositoryInterface'
 import { TimeEntriesToEncryptType } from '@src/core/TimeEntry/model/timeEntry.model'
 import { EffortRowType } from '@src/core/Effort/model/effort'
@@ -37,7 +37,7 @@ export class EncryptionService {
 
     const customers: CustomerType[] = await this.taskRepository.getCustomersByCompany(company.name)
     const projects = await this.taskRepository.getProjectsByCompany(company.name)
-    const tasks: TaskType[] = await this.taskRepository.getTasksByCompany(company.name)
+    const tasks: TaskListType = await this.taskRepository.getTasksByCompany(company.name)
     const timeEntries = await this.timeEntryRepository.getTimeEntriesByCompany(company.name)
 
     const companyUsers: string[] = (await this.userRepository.getByCompany(company.name)).map((u) => u.uid)
@@ -146,7 +146,7 @@ export class EncryptionService {
   }
 
   private aggregateDataToEncrypt(
-    tasks: TaskType[],
+    tasks: TaskListType,
     customers: CustomerType[],
     projects: ProjectToEncryptType[],
     timeEntries: TimeEntriesToEncryptType[],
