@@ -5,7 +5,7 @@ import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Reply: { privateKey: string, symmetricKey: string }
+    Reply: { encryptedPrivateKey: string,  encryptedAESKey: string, encryptionCompleted: boolean }
   }>(
     '/',
     {
@@ -21,6 +21,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           200: Type.Object({
             encryptedPrivateKey: Type.String(),
             encryptedAESKey: Type.String(),
+            encryptionCompleted: Type.Boolean(),
           }),
           401: {
             type: 'null',

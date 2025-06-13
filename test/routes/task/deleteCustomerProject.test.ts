@@ -4,7 +4,7 @@ import { FastifyInstance } from 'fastify'
 import {
   CustomerOptType,
   CustomerType,
-  ProjectListType,
+  ProjectListType, TaskListType,
 } from '@src/core/Task/model/task.model'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { PrismaClient } from '../../../prisma/generated'
@@ -85,7 +85,7 @@ test('delete customer-project', async (t) => {
   ]
   t.same(projects, projExpectedResult)
 
-  response = await deleteProject(company, customers[0].id, projects[0].name)
+  response = await deleteProject(company, customers[0].id, projects[0].id ?? '')
   t.equal(response.statusCode, 200)
 
   response = await getProjects(company, customers[0].id)
@@ -113,6 +113,18 @@ test("can't delete customer-project if there are time entries", async (t) => {
   const expectedResult = [customerName.name]
   t.same(customers.map((customer) => customer.name), expectedResult)
 
+  response = await getProjects(company, customers[0].id)
+  t.equal(response.statusCode, 200)
+
+  let projects = response.json<ProjectListType>()
+  t.equal(projects.length, 1)
+
+  response = await getTask(customers[0].id, projects[0].id ?? '', company)
+  t.equal(response.statusCode, 200)
+
+  const tasks = response.json<TaskListType>()
+  t.equal(tasks.length, 1)
+
   const addTimeEntryResponse = await app.inject({
     method: 'POST',
     url: '/api/time-entry/mine',
@@ -122,8 +134,8 @@ test("can't delete customer-project if there are time entries", async (t) => {
     payload: {
       date: '2024-08-01',
       customer: customers[0].id,
-      project: project,
-      task: task,
+      project: projects[0].id,
+      task: tasks[0].id,
       hours: 2,
     },
   })
@@ -132,7 +144,7 @@ test("can't delete customer-project if there are time entries", async (t) => {
   response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
 
-  let projects = response.json<ProjectListType>()
+  projects = response.json<ProjectListType>()
   t.equal(projects.length, 1)
   const projExpectedResult = [
     {
@@ -145,7 +157,7 @@ test("can't delete customer-project if there are time entries", async (t) => {
   ]
   t.same(projects, projExpectedResult)
 
-  response = await deleteProject(company, customers[0].id, project)
+  response = await deleteProject(company, customers[0].id, projects[0].id ?? '')
   t.equal(response.statusCode, 400)
 
   response = await getProjects(company, customers[0].id)
@@ -217,6 +229,16 @@ async function getProjects(company: string, customer: string) {
   return await app.inject({
     method: 'GET',
     url: `/api/task/project?customer=${customer}`,
+    headers: {
+      authorization: `Bearer ${getToken(company)}`,
+    },
+  })
+}
+
+async function getTask(customer: string, project: string, company: string) {
+  return await app.inject({
+    method: 'GET',
+    url: `/api/task/task/?company=${company}&customer=${customer}&project=${project}`,
     headers: {
       authorization: `Bearer ${getToken(company)}`,
     },

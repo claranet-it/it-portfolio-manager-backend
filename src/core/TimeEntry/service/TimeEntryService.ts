@@ -101,7 +101,7 @@ export class TimeEntryService {
               company: user?.company ?? '',
               crew: user?.crew ?? '',
               customer: entry.customer,
-              project: entry.project.name,
+              project: { id: entry.project.id ?? '', name: entry.project.name },
               task: entry.task,
               projectType: entry.project.type,
               plannedHours: entry.project.plannedHours,
@@ -123,12 +123,8 @@ export class TimeEntryService {
   }
 
   async save(params: TimeEntryRowType): Promise<void> {
-    const tasks = await this.taskRepository.getTasks({
-      company: params.company,
-      customer: params.customer,
-      project: params.project,
-    })
-    if (!tasks.includes(params.task)) {
+    const task = await this.taskRepository.getTask(params.task)
+    if (!task) {
       throw new TaskNotExistsError()
     }
     if (!this.isWeekDay(params.date) && params.project === 'Assenze') {
@@ -152,6 +148,7 @@ export class TimeEntryService {
   async csvImport(
     params: CSVImportTimeEntryType,
   ): Promise<CSVImportErrorsType> {
+    const companyCustomers = await this.taskRepository.getCustomers({company: params.company})
     interface CsvRow {
       customer: string
       project: string
@@ -224,6 +221,7 @@ export class TimeEntryService {
       }
 
       try {
+        row.customer = companyCustomers.find((customer) => customer.name === row.customer)?.id
         await this.save(row)
       } catch (error) {
         let errorMessage = ''
@@ -251,9 +249,27 @@ export class TimeEntryService {
 
   private async generateCsvFrom(data: TimeEntryReportType[]): Promise<string> {
     // use fixed headers instead of { headers: true } to be sure of the key order
+    const dataToWrite = data.map((row) => {
+      return {
+        date: row.date,
+        email: row.email,
+        name: row.name,
+        company: row.company,
+        crew: row.crew,
+        customer: row.customer.name,
+        project: row.project.name,
+        task: row.task.name,
+        projectType: row.projectType,
+        plannedHours: row.plannedHours,
+        hours: row.hours,
+        description: row.description,
+        startHour: row.startHour,
+        endHour: row.endHour,
+      }
+    })
     const csvHeaders =
       'date,email,name,company,crew,customer,project,task,projectType,plannedHours,hours,description,startHour,endHour'
-    const csv = await writeToString(data, {
+    const csv = await writeToString(dataToWrite, {
       headers: csvHeaders.split(','),
       alwaysWriteHeaders: true,
     })
@@ -301,8 +317,8 @@ export class TimeEntryService {
               company: user?.company ?? '',
               crew: user?.crew ?? '',
               customer: { id: entry.customer.id, name: entry.customer.name }, //TODO: entry.customer,
-              project: entry.project.name,
-              task: entry.task,
+              project: { id: entry.project.id ?? '', name: entry.project.name },
+              task: { id: entry.task.id ?? '', name: entry.task.name }, //TODO: entry.task,
               projectType: entry.project.type,
               plannedHours: entry.project.plannedHours,
               hours: entry.hours,
