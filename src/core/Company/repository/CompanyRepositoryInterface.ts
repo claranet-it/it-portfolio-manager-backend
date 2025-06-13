@@ -20,4 +20,5 @@ export interface CompanyRepositoryInterface {
   ): Promise<CompanyType[]>
   save(company: CompanyType): Promise<CompanyType>
   deleteCompany(idCompany: string): Promise<void>
+  findCompanyMaster(): Promise<CompanyType | null>
 }

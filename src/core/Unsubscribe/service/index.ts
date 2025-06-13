@@ -25,6 +25,7 @@ export class UnsubscribeService {
     async unsubscribe(jwtToken: JwtTokenType, idCompany: string): Promise<void> {
         const sesClient = SesConnection.getClient()
         const company = await this.companyRepository.findById(idCompany)
+        /* const companyMaster = await this.companyRepository.findCompanyMaster() */
 
         if (!company) {
             throw new NotFoundException('Company not found')
@@ -35,7 +36,7 @@ export class UnsubscribeService {
         }
 
         const from = `${company.name}@unsubscribe.com`;
-        const to = "marteresa28@gmail.com"
+        const to = "marteresa28@gmail.com" /* companyMaster.primary_contact */
         const body = `Mail created automatically. The company ${company.domain} has just submitted an unsubscription request at ${new Date()}.`
         console.log("##### mail")
         console.log("##### from", from)

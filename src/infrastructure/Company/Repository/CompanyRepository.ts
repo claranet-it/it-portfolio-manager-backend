@@ -72,6 +72,18 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     }
   }
 
+  async findCompanyMaster(): Promise<CompanyType | null> {
+    const company = await this.prismaClient.company.findFirst({
+      where: { company_master: true },
+    })
+
+    if (!company) {
+      return null
+    }
+
+    return company
+  }
+
   async findAll(
     idToExclude?: string,
     excludeConnectedCompanies?: boolean,

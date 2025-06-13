@@ -489,6 +489,14 @@ export class TaskRepository implements TaskRepositoryInterface {
   async deleteCustomersAndRelatedDataByCompany(id: string): Promise<void> {
     const prisma = new PrismaClient()
 
+    const deleteTemplate = prisma.template.deleteMany({
+      where: {
+        customer: {
+          company_id: id
+        }
+      },
+    })
+
     const deleteTimeEntries = prisma.timeEntry.deleteMany({
       where: {
         task: {
@@ -525,6 +533,6 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
 
-    await prisma.$transaction([deleteTimeEntries, deleteTasks, deleteProjects, deleteCustomers])
+    await prisma.$transaction([deleteTemplate, deleteTimeEntries, deleteTasks, deleteProjects, deleteCustomers])
   }
 }

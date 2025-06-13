@@ -99,6 +99,18 @@ before(async () => {
         }
     })
 
+    await prisma.template.create({
+        data: {
+            timehours: 8,
+            customer_id: myCustomer.id,
+            project_id: slackTime.id,
+            daytime: "1, 3, 5",
+            date_start: new Date('2025-01-02'),
+            date_end: new Date('2025-02-02'),
+            email: 'marytex@email.com'
+        }
+    })
+
     const taskRepository = new TaskRepository()
     const taskPropertiesRepository = new TaskPropertiesRepository()
     taskService = new TaskService(taskRepository, taskPropertiesRepository)
@@ -109,8 +121,9 @@ after(async () => {
     const deleteProj = prisma.project.deleteMany()
     const deleteTask = prisma.projectTask.deleteMany()
     const deleteTimeEntries = prisma.timeEntry.deleteMany()
+    const deleteTemplate = prisma.template.deleteMany()
 
-    await prisma.$transaction([
+    await prisma.$transaction([deleteTemplate,
         deleteTimeEntries, deleteTask, deleteProj, deleteCustomer,
     ])
     prisma.$disconnect()
@@ -123,9 +136,11 @@ test('Delete all customers and related data by company id', async (t) => {
     const responseProj = await prisma.project.findMany()
     const responseTask = await prisma.projectTask.findMany()
     const responseTimeEntries = await prisma.timeEntry.findMany()
+    const responseTemplate = await prisma.template.findMany()
     t.equal(responseCustomer.length, 1)
     t.equal(responseProj.length, 1)
     t.equal(responseTask.length, 1)
     t.equal(responseTimeEntries.length, 1)
+    t.equal(responseTemplate.length, 0)
 })
 

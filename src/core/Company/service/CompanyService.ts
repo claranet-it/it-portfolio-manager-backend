@@ -46,7 +46,7 @@ export class CompanyService {
       },
       true,
     )
-
+    console.log("### ", company?.company_master, company?.primary_contact)
     if (!company) {
       throw new NotFoundException('Company not found')
     }
