@@ -8,7 +8,6 @@ import {
   TaskCreateReadParamsType, TaskListType,
   TaskReadParamsType,
   TaskStructureType,
-  TaskType,
   TaskUpdateParamsType, ProjectToEncryptType,
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
@@ -465,7 +464,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     }))
   }
 
-  async getTasksByCompany(companyName: string): Promise<TaskType[]> {
+  async getTasksByCompany(companyName: string): Promise<TaskListType> {
     const prisma = new PrismaClient()
 
     const result = await prisma.projectTask.findMany({

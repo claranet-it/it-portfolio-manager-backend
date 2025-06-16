@@ -14,66 +14,49 @@ export class TemplateRepository implements TemplateRepositoryInterface {
     }
 
     async get(email: string): Promise<TemplateType[]> {
-
-
         const prisma = new PrismaClient()
 
-        const templates = await prisma.template.findMany({
+        const result = await prisma.template.findMany({
             where: {
                 email: email,
+            },
+            include: {
+                customer: {
+                    select: {
+                        id: true,
+                        name: true,
+                    }
+                },
+                project: {
+                    select: {
+                        id: true,
+                        name: true,
+                    }
+                },
+                task: {
+                    select: {
+                        id: true,
+                        name: true,
+                    }
+                },
             },
         })
 
 
-        const promiseArray = templates.map(async template => {
-            let task;
-            const customer = await prisma.customer.findUnique({
-                where: {
-                    id: template.customer_id,
-                },
-            });
-            if (!customer) {
-                return null;
-            }
-
-            const project = await prisma.project.findUnique({
-                where: {
-                    id: template.project_id,
-                },
-            });
-            if (!project) {
-                return null;
-            }
-
-            if (template.task_id) {
-                const taskFound = await prisma.projectTask.findUnique({
-                    where: {
-                        id: template.task_id,
-                    },
-                });
-                if (taskFound) {
-                    task = { name: taskFound.name, completed: taskFound.is_completed, plannedHours: taskFound.planned_hours };
-                }
-            }
-
-            return {
-                id: template.id,
-                email: template.email,
-                timehours: template.timehours,
-                daytime: this.stringToIntArray(template.daytime),
-                date_start: template.date_start.toISOString().substring(0, 10),
-                date_end: template.date_end.toISOString().substring(0, 10),
-                customer: { id: customer.id, name: customer.name },
-                project: { id: project.id, name: project.name },
-                task: task,
-            };
-        });
-
-        const mappedTemplates = await Promise.all(promiseArray);
-        const filteredMappedTemplates = mappedTemplates.filter(template => template !== null);
-
-        return filteredMappedTemplates;
-
+        return result.map((template) => ({
+            id: template.id,
+            email: template.email,
+            task_id: template.task_id,
+            customer_id: template.customer_id,
+            project_id: template.project_id,
+            timehours: template.timehours,
+            daytime: this.stringToIntArray(template.daytime),
+            date_start: template.date_start.toISOString().substring(0, 10),
+            date_end: template.date_end.toISOString().substring(0, 10),
+            customer: template.customer,
+            project: template.project,
+            task: template.task ?? undefined,
+        }))
     }
 
 
