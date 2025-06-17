@@ -55,7 +55,7 @@ import { TemplateService } from '../Template/service'
 import { TemplateRepository } from '@src/infrastructure/Template/Repository'
 import { EncryptionService } from '@src/core/Encryption/service/encryptionService'
 import { UnsubscribeService } from '../Unsubscribe/service'
-import { SesConnection } from '@src/infrastructure/mailer/sesConnection'
+import { Mailer } from '@src/infrastructure/mailer/Mailer'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -90,7 +90,7 @@ async function dependencyInjectionContainerPlugin(
     })
 
     container.register({
-      sesClient: awilix.asValue(SesConnection.getClient()),
+      mailer: asClass(Mailer),
     })
 
     container.register({

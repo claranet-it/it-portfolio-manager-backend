@@ -5,11 +5,11 @@ import { JwtTokenType } from "@src/core/JwtToken/model/jwtToken.model";
 import { SkillMatrixService } from "@src/core/SkillMatrix/service/SkillMatrixService";
 import { TaskService } from "@src/core/Task/service/TaskService";
 import { UserProfileService } from "@src/core/User/service/UserProfileService";
-import { sendEmail } from "@src/handlers/sendEmail";
 import { CompanyRepository } from "@src/infrastructure/Company/Repository/CompanyRepository";
-import { SesConnection } from "@src/infrastructure/mailer/sesConnection";
+import { Mailer } from "@src/infrastructure/mailer/Mailer";
 import { ForbiddenException } from "@src/shared/exceptions/ForbiddenException";
 import { NotFoundException } from "@src/shared/exceptions/NotFoundException";
+import { getTestMessageUrl } from "nodemailer";
 
 export class UnsubscribeService {
     constructor(
@@ -20,10 +20,10 @@ export class UnsubscribeService {
         private readonly effortService: EffortService,
         private readonly companyConnectionsService: CompanyConnectionsService,
         private readonly userProfileService: UserProfileService,
+        private readonly mailer: Mailer
     ) { }
 
     async unsubscribe(jwtToken: JwtTokenType, idCompany: string): Promise<void> {
-        const sesClient = SesConnection.getClient()
         const company = await this.companyRepository.findById(idCompany)
         /* const companyMaster = await this.companyRepository.findCompanyMaster() */
 
@@ -42,7 +42,17 @@ export class UnsubscribeService {
         console.log("##### from", from)
         console.log("##### to", to)
         console.log("##### body", body)
-        sendEmail(sesClient, from, to, "Unsubscribe Company", body)
+        try {
+
+            const info = await this.mailer.sendEmail(from, to, "Unsubscribe Company", body)
+            if (info) {
+                console.log("Preview URL: %s", getTestMessageUrl(info));
+                console.log('Email sent:', info.response);
+            }
+        } catch (err) {
+            console.error("Error while sending mail", err);
+        }
+
 
         /*  await this.taskService.deleteCustomersAndRelatedDataByCompany(idCompany)
          await this.effortService.deleteEffortByCompany(company.name)

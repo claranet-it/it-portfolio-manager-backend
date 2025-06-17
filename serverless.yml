@@ -64,7 +64,6 @@ plugins:
   - serverless-dynamodb
   - serverless-offline
   - serverless-domain-manager
-  - serverless-offline-ses-v2
 
 custom:
   customDomain:
@@ -182,8 +181,6 @@ custom:
           - table: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
             sources: ['./seed/crew.json']
 
-  serverless-offline-ses-v2:
-    port: 8005  
 
 package:
   patterns:
