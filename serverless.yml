@@ -50,6 +50,10 @@ provider:
             - kms:Decrypt
           Resource:
             - arn:aws:kms:${self:provider.region}:755827290206:key/3ffc4341-f95c-43cf-aeba-da53557f0d4b
+        - Effect: "Allow"
+          Action:
+            - "ses:SendEmail"
+          Resource: "*"
   stackTags:
     Owner: 'Massimo Biagioli'
     Destroy: 'false'
@@ -177,6 +181,7 @@ custom:
           - table: "ItPortfolioManager-Crew-${opt:stage, 'dev'}"
             sources: ['./seed/crew.json']
 
+
 package:
   patterns:
     - node_modules/**
@@ -256,6 +261,7 @@ functions:
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       SLACK_TOKEN_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/slack-token
+
 
 resources:
   Resources:

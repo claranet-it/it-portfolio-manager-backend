@@ -72,6 +72,18 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     }
   }
 
+  async findCompanyMaster(): Promise<CompanyType | null> {
+    const company = await this.prismaClient.company.findFirst({
+      where: { company_master: true },
+    })
+
+    if (!company) {
+      return null
+    }
+
+    return company
+  }
+
   async findAll(
     idToExclude?: string,
     excludeConnectedCompanies?: boolean,
@@ -129,4 +141,23 @@ export class CompanyRepository implements CompanyRepositoryInterface {
       create: company,
     })
   }
+
+  async deleteCompany(idCompany: string): Promise<void> {
+
+    const deleteSkill = this.prismaClient.skill.deleteMany({
+      where: {
+        company_id: idCompany
+      },
+    })
+
+    const deleteCompany = this.prismaClient.company.delete({
+      where: {
+        id: idCompany,
+      },
+    })
+
+    await this.prismaClient.$transaction([deleteSkill, deleteCompany])
+
+  }
+
 }

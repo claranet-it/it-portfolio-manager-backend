@@ -1,3 +1,4 @@
+import { AttributeValue } from '@aws-sdk/client-dynamodb'
 import { EffortRowType, GetEffortParamsType } from '../model/effort'
 
 export interface EffortRepositoryInterface {
@@ -8,4 +9,8 @@ export interface EffortRepositoryInterface {
   delete(uid: string): Promise<void>
 
   getEffortsByUids(uids: string[]): Promise<EffortRowType[]>
+
+  getData(): Promise<Record<string, AttributeValue>[] | undefined>
+
+  restoreData(item: Record<string, AttributeValue>): Promise<void>
 }

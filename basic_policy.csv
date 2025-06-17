@@ -11,6 +11,7 @@ p, SUPERADMIN, skill, read
 p, SUPERADMIN, skill, write
 p, SUPERADMIN, user, write
 p, SUPERADMIN, user, delete
+p, SUPERADMIN, unsubscribe, delete
 p, ADMIN, companyAvailable, read
 p, ADMIN, company, write
 p, ADMIN, companyConnections, read
@@ -22,6 +23,7 @@ p, ADMIN, skill, read
 p, ADMIN, skill, write
 p, ADMIN, user, write
 p, ADMIN, user, delete
+p, ADMIN, unsubscribe, delete
 p, TEAM_LEADER, time_entry, read
 p, TEAM_LEADER, time_entry, write
 p, TEAM_LEADER, skill, read

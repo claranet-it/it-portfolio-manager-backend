@@ -60,7 +60,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     }))
   }
 
-  async getTask(task:string): Promise<string | null> {
+  async getTask(task: string): Promise<string | null> {
     const prisma = new PrismaClient()
 
     const result = await prisma.projectTask.findUnique({
@@ -104,7 +104,7 @@ export class TaskRepository implements TaskRepositoryInterface {
 
     return tasks.map((task) => ({
       task: { id: task.id, name: task.name },
-      customer: { name:task.project.customer.name, id: task.project.customer.id },
+      customer: { name: task.project.customer.name, id: task.project.customer.id },
       project: { name: task.project.name, id: task.project.id },
     }))
   }
@@ -241,7 +241,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     const prisma = new PrismaClient()
 
     let project = await prisma.project.findUnique({
-      where: {id: projectId },
+      where: { id: projectId },
     })
 
     if (!project) {
@@ -294,7 +294,7 @@ export class TaskRepository implements TaskRepositoryInterface {
           : 0
       const completed =
         params.newProject !== undefined &&
-        params.newProject.completed !== undefined
+          params.newProject.completed !== undefined
           ? params.newProject.completed
           : project.completed
 
@@ -483,5 +483,55 @@ export class TaskRepository implements TaskRepositoryInterface {
       completed: task.is_completed,
       plannedHours: task.planned_hours,
     }))
+  }
+
+  async deleteCustomersAndRelatedDataByCompany(id: string): Promise<void> {
+    const prisma = new PrismaClient()
+
+    const deleteTemplate = prisma.template.deleteMany({
+      where: {
+        customer: {
+          company_id: id
+        }
+      },
+    })
+
+    const deleteTimeEntries = prisma.timeEntry.deleteMany({
+      where: {
+        task: {
+          project: {
+            customer: {
+              company_id: id
+            }
+          }
+        }
+      },
+    })
+
+    const deleteTasks = prisma.projectTask.deleteMany({
+      where: {
+        project: {
+          customer: {
+            company_id: id
+          }
+        }
+      },
+    })
+
+    const deleteProjects = prisma.project.deleteMany({
+      where: {
+        customer: {
+          company_id: id
+        }
+      },
+    })
+
+    const deleteCustomers = prisma.customer.deleteMany({
+      where: {
+        company_id: id
+      },
+    })
+
+    await prisma.$transaction([deleteTemplate, deleteTimeEntries, deleteTasks, deleteProjects, deleteCustomers])
   }
 }

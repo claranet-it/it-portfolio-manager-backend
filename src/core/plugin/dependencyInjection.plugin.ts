@@ -54,6 +54,8 @@ import { CompanyKeysRepository } from '@src/infrastructure/Company/Repository/Co
 import { TemplateService } from '../Template/service'
 import { TemplateRepository } from '@src/infrastructure/Template/Repository'
 import { EncryptionService } from '@src/core/Encryption/service/encryptionService'
+import { UnsubscribeService } from '../Unsubscribe/service'
+import { Mailer } from '@src/infrastructure/mailer/Mailer'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -85,6 +87,10 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       dynamoDBClient: awilix.asValue(DynamoDBConnection.getClient()),
+    })
+
+    container.register({
+      mailer: asClass(Mailer),
     })
 
     container.register({
@@ -162,6 +168,11 @@ async function dependencyInjectionContainerPlugin(
     container.register({
       timeEntryService: asClass(TimeEntryService),
     })
+
+    container.register({
+      unsubscribeService: asClass(UnsubscribeService),
+    })
+
     container.register({
       jwt: awilix.asValue(fastify.jwt),
     })

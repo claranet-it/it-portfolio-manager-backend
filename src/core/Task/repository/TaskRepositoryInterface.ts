@@ -26,4 +26,5 @@ export interface TaskRepositoryInterface {
   getCustomersByCompany(companyName: string): Promise<CustomerType[]>
   getTasksByCompany(companyName: string): Promise<TaskListType>
   getProjectsByCompany(companyName: string): Promise<ProjectToEncryptType[]>
+  deleteCustomersAndRelatedDataByCompany(id: string): Promise<void>
 }

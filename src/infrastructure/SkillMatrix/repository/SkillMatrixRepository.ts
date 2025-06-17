@@ -1,8 +1,10 @@
 import {
+  AttributeValue,
   BatchWriteItemCommand,
   DynamoDBClient,
   PutItemCommand,
   QueryCommand,
+  ScanCommand,
   TransactWriteItemsCommand,
   TransactWriteItemsCommandInput,
   WriteRequest,
@@ -21,7 +23,7 @@ import { SkillMatrixList } from '@src/core/SkillMatrix/model/skillMatrixList.mod
 import { UserProfileType } from '@src/core/User/model/user.model'
 
 export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
-  constructor(private dynamoDBClient: DynamoDBClient) {}
+  constructor(private dynamoDBClient: DynamoDBClient) { }
 
   async getAllSkillMatrix(
     params: SkillMatrixQueryParamsType,
@@ -171,5 +173,23 @@ export class SkillMatrixRepository implements SkillMatrixRepositoryInterface {
       const command = new BatchWriteItemCommand({ RequestItems: requestItems })
       await this.dynamoDBClient.send(command)
     }
+  }
+
+  async getData(): Promise<Record<string, AttributeValue>[] | undefined> {
+    const originalResponse = await this.dynamoDBClient.send(
+      new ScanCommand({
+        TableName: getTableName('SkillMatrix'),
+      }),
+    )
+    return originalResponse.Items;
+  }
+
+  async restoreData(item: Record<string, AttributeValue>): Promise<void> {
+    await this.dynamoDBClient.send(
+      new PutItemCommand({
+        TableName: getTableName('SkillMatrix'),
+        Item: item,
+      })
+    );
   }
 }

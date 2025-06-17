@@ -24,6 +24,14 @@ services:
     ports:
       - "3307:3306"
 
+  mailhog: 
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
+  
+
 volumes:
   mariadb_data:
     driver: local
