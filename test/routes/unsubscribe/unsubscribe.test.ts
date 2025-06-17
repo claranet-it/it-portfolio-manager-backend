@@ -1,13 +1,14 @@
-/* import { FastifyInstance } from 'fastify'
+import { FastifyInstance } from 'fastify'
 import { test, before, after } from 'tap'
 import createApp from '@src/app'
 import { PrismaClient } from '../../../prisma/generated'
-import { unsubscribe } from '@test/utils/unsubscribe' 
+import { unsubscribe } from '@test/utils/unsubscribe'
 import { seedCompany } from '@test/seed/prisma/company'
 import { seedSkill } from '@test/seed/prisma/skill'
 import { PutItemCommand, ScanCommand, ScanCommandOutput } from '@aws-sdk/client-dynamodb'
 import { getTableName } from '@src/core/db/TableName'
 import sinon from 'sinon'
+import { Mailer } from '@src/infrastructure/mailer/Mailer'
 
 
 let app: FastifyInstance
@@ -16,20 +17,10 @@ let originalEffort: ScanCommandOutput
 let originalSkill: ScanCommandOutput
 let originalUser: ScanCommandOutput
 
-const sendEmailMock = sinon.stub().resolves();
-
-const SesConnection = {
-    getClient: () => ({
-        send: sendEmailMock
-    })
-};
-
-sinon.replace(SesConnection, 'getClient', () => ({
-    send: sendEmailMock
-}));
-
 const FAKE_EMAIL = 'TEST_UNSUBSCRIBE@email.com'
 const MY_COMPANY = 'it'
+
+const sendEmailSpy = sinon.stub(Mailer.prototype, "sendEmail").resolves();
 
 before(async () => {
     app = createApp({ logger: false })
@@ -98,7 +89,7 @@ after(async () => {
             );
         }
     }
-
+    sendEmailSpy.restore();
     prisma.$disconnect()
     await app.close()
 })
@@ -185,8 +176,6 @@ test('should delete all data of company', async (t) => {
         t.equal(skill.length, 1)
         t.equal(user.Items?.length, 5)
 
-        t.equal(sendEmailMock.calledOnce, true);
+        sinon.assert.calledOnce(sendEmailSpy);
     }
 })
-
- */
