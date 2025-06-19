@@ -2,10 +2,11 @@ import { FastifyInstance } from 'fastify'
 import { Type } from '@sinclair/typebox'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
+import { EncryptionStatus } from '../../../../prisma/generated'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Reply: { encryptedPrivateKey: string,  encryptedAESKey: string, encryptionCompleted: boolean }
+    Reply: { encryptedPrivateKey: string,  encryptedAESKey: string, encryptionStatus: EncryptionStatus }
   }>(
     '/',
     {

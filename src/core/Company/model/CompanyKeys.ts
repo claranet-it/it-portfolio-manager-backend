@@ -1,10 +1,17 @@
 import { Static, Type } from '@sinclair/typebox'
 
+export const EncryptionStatus = Type.Union([
+  Type.Literal('notEncrypted'),
+  Type.Literal('pending'),
+  Type.Literal('completed'),
+  Type.Literal('failed'),
+])
+
 export const CompanyKeys = Type.Object({
   encryptedPrivateKey: Type.String(),
   encryptedAESKey: Type.String(),
   publicKey: Type.String(),
-  encryptionCompleted: Type.Optional(Type.Boolean()),
+  encryptionStatus: Type.Optional(EncryptionStatus),
 })
 
 export type CompanyKeysType = Static<typeof CompanyKeys>

@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../../../prisma/generated'
+import { EncryptionStatus, PrismaClient } from '../../../../prisma/generated'
 import { CompanyKeysRepositoryInterface } from '@src/core/Company/repository/CompanyKeysRepositoryInterface'
 import { CompanyKeysType, CreateCompanyKeysType } from '@src/core/Company/model/CompanyKeys'
 
@@ -24,7 +24,7 @@ export class CompanyKeysRepository implements CompanyKeysRepositoryInterface {
       encryptedPrivateKey: companyKeys.encryptedPrivateKey,
       encryptedAESKey: companyKeys.encryptedAESKey,
       publicKey: companyKeys.publicKey,
-      encryptionCompleted: companyKeys.encryptionCompleted
+      encryptionStatus: companyKeys.encryptionStatus
     }
   }
 
@@ -39,13 +39,13 @@ export class CompanyKeysRepository implements CompanyKeysRepositoryInterface {
     })
   }
 
-  async updateEncryptionStatus(companyId: string, encryptionCompleted: boolean): Promise<void> {
+  async updateEncryptionStatus(companyId: string, encryptionStatus: EncryptionStatus): Promise<void> {
     await this.prismaClient.companyKeys.update({
       where: {
         company_id: companyId
       },
       data: {
-        encryptionCompleted: encryptionCompleted
+        encryptionStatus: encryptionStatus
       }
     })
   }
