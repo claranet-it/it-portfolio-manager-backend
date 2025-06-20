@@ -45,6 +45,8 @@ provider:
           Resource:
             - arn:aws:s3:::755827290206-prod-brickly-background-images
             - arn:aws:s3:::755827290206-prod-brickly-background-images/*
+            - arn:aws:s3:::encryption-data-bucket
+            - arn:aws:s3:::encryption-data-bucket/*
         - Effect: "Allow"
           Action:
             - kms:Decrypt
