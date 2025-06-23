@@ -83,4 +83,23 @@ test('should save my template', async (t) => {
 
 })
 
+test('should save my template without task', async (t) => {
+    const payload = {
+        timehours: 8,
+        daytime: [1, 3, 5],
+        date_start: '2025-01-02',
+        date_end: '2025-02-02',
+        project_id: PROJECT_ID,
+        customer_id: CUSTOMER_ID,
+    }
+    const addResponse = await addNewTemplate(app, getToken(app, My_EMAIL), payload)
+    t.equal(addResponse.statusCode, 200)
+
+    const templates = await prisma.template.findMany()
+    t.equal(templates.length, 1)
+    t.equal(templates[0].email, My_EMAIL)
+
+
+})
+
 
