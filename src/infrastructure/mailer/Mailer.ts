@@ -10,7 +10,7 @@ export class Mailer {
     }
 
     async sendEmail(from: string, to: string, subject: string, body: string): Promise<void | SESTransport.SentMessageInfo | SMTPTransport.SentMessageInfo> {
-        if (process.env.STAGE_NAME === "dev") {
+        if (process.env.STAGE_NAME === "dev" || process.env.IS_OFFLINE) {
             const transporter = createTransport({
                 host: "127.0.0.1",
                 port: 1025,
