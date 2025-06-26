@@ -1,14 +1,12 @@
-
 import { EducationRepositoryInterface } from '@src/core/Education/repository'
-import { PrismaClient } from '../../../../prisma/generated'
 import { EducationUpdateType, EducationCreateWithUserEmailType } from '@src/core/Education/model'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 export class EducationRepository implements EducationRepositoryInterface {
+    constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
 
     async addEducation(params: EducationCreateWithUserEmailType): Promise<void> {
-        const prisma = new PrismaClient()
-
-        const curriculum = await prisma.curriculumVitae.findUnique({
+        const curriculum = await this.prismaDBConnection.getClient().curriculumVitae.findUnique({
             where: {
                 email: params.userEmail,
             },
@@ -18,7 +16,7 @@ export class EducationRepository implements EducationRepositoryInterface {
             return
         }
 
-        await prisma.education.create({
+        await this.prismaDBConnection.getClient().education.create({
             data: {
                 note: params.note,
                 year_start: params.year_start,
@@ -32,9 +30,7 @@ export class EducationRepository implements EducationRepositoryInterface {
     }
 
     async updateEducation(id: string, params: EducationUpdateType): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.education.update({
+        await this.prismaDBConnection.getClient().education.update({
             where: {
                 id
             },
@@ -49,9 +45,7 @@ export class EducationRepository implements EducationRepositoryInterface {
     }
 
     async deleteEducation(id: string): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.education.delete({
+        await this.prismaDBConnection.getClient().education.delete({
             where: {
                 id,
             },

@@ -12,7 +12,6 @@ import {
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import { TaskError } from '@src/core/customExceptions/TaskError'
-import { PrismaClient } from '../../../../prisma/generated'
 import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 export class TaskRepository implements TaskRepositoryInterface {
