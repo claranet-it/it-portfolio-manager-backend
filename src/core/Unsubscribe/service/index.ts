@@ -46,10 +46,6 @@ export class UnsubscribeService {
             return
         }
 
-        console.log("##### from", from)
-        console.log("##### to", to)
-
-
         try {
             const info = await this.mailer.sendEmail(from, to, "Unsubscribe Company", body)
             if (info) {
