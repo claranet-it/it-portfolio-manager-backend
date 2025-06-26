@@ -45,6 +45,8 @@ provider:
           Resource:
             - arn:aws:s3:::755827290206-prod-brickly-background-images
             - arn:aws:s3:::755827290206-prod-brickly-background-images/*
+            - arn:aws:s3:::encryption-data-bucket
+            - arn:aws:s3:::encryption-data-bucket/*
         - Effect: "Allow"
           Action:
             - kms:Decrypt
@@ -262,6 +264,59 @@ functions:
       STAGE_NAME: ${opt:stage, 'dev'}
       SLACK_TOKEN_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/slack-token
 
+  encryptDataOfClaranet:
+    handler: src/handlers/encryptDataOfClaranet.handler
+    vpc: ${self:custom.vpc.${opt:stage, 'dev'}}
+    timeout: 900
+    memorySize: 2048
+    environment:
+      STAGE_NAME: ${opt:stage, 'dev'}
+      OPENAI_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/openai-api-key
+      BRICKLY_API_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/brickly-api-key
+      GOOGLE_CLIENT_ID_ARN: ${self:custom.variables.googleClientId.${opt:stage, 'dev'}}
+      GOOGLE_CLIENT_SECRET_ARN: ${self:custom.variables.googleClientSecret.${opt:stage, 'dev'}}
+      GOOGLE_CALLBACK_URL: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}/${opt:stage, 'dev'}/api/auth/google/oauthCallback
+      MSAL_CLIENT_ID_ARN: ${self:custom.variables.msalClientId.${opt:stage, 'dev'}}
+      MSAL_CLIENT_SECRET_ARN: ${self:custom.variables.msalClientSecret.${opt:stage, 'dev'}}
+      MSAL_CLOUD_INSTANCE_ARN: ${self:custom.variables.msalCloudInstance.${opt:stage, 'dev'}}
+      MSAL_TENANT_ID_ARN: ${self:custom.variables.msalTenantId.${opt:stage, 'dev'}}
+      MSAL_CALLBACK_URL: ${self:custom.variables.apiBaseUrl.${opt:stage, 'dev'}}/${opt:stage, 'dev'}/api/auth/microsoft/msalCallback
+      JWT_PRIVATE_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-private-key
+      JWT_PUBLIC_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-public-key
+      DATABASE_URL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/database-url}
+      BACKGROUND_TEMPLATES_BUCKET: ${ssm:/it-portfolio-manager/${opt:stage, 'stage'}/background-templates-bucket, ''}
+      FIND_TEAM_OPENAI_PROMPT: "  Given the SKILL data:
+
+      [[SKILL]]
+
+      and EFFORT 
+
+      [[EFFORT]]
+
+      mont_year refers to the month and year, expressed in the format MM_yy
+      if effort for one of the requested months is not present, consider avaiableEffort = 100%
+      avaiableEffort refers to the effort definitely available, possible avaiable effort refers to the effort potentially available
+      try to answer this question: [[QUESTION]]
+      Filter only the results that satisfy the effort condition
+      Sort the results first by skill score in descending order, then by effort in descending order
+      Provide the answer without generating code."
+
+      FIND_SKILLS_OPENAI_PROMPT: '       Your task is to extract the required skills from the sentence by selecting them from SKILLS, respond only with output_format
+          sentence: [[QUESTION]]
+
+          SKILLS:
+            [[SKILL_LIST]]
+
+          output_format: {"skills":[...]}" '
+
+      FIND_PERIOD_OPENAI_PROMPT: '
+        Your task is to find the time period described in the following sentence, respond only in the output_format format:
+
+        sentence: [[QUESTION]]
+
+        if year is not specified consider [[CURRENT_YEAR]]
+
+        output_format: {"start": mm_yy "month_number": ...}"'
 
 resources:
   Resources:

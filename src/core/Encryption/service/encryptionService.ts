@@ -14,6 +14,7 @@ import { Prisma, PrismaClient } from '../../../../prisma/generated'
 import { CompanyKeysRepositoryInterface } from '@src/core/Company/repository/CompanyKeysRepositoryInterface'
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 import { DefaultArgs } from 'prisma/generated/runtime/library'
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
 export class EncryptionService {
   constructor(
@@ -71,7 +72,123 @@ export class EncryptionService {
     const previuoseEffort = await this.effortRepository.getEffortsByUids(companyUsers)
 
     try {
-      await this.companyKeysRepository.updateEncryptionStatus(company.id, true)
+      for (const effort of dataToEncrypt.efforts) {
+        await this.effortRepository.saveEffort({
+          uid: effort.id,
+          month_year: effort.month_year,
+          confirmedEffort: effort.confirmedEffort,
+          tentativeEffort: effort.tentativeEffort,
+          notes: effort.notes,
+        })
+      }
+
+      const customers: Prisma.Prisma__CustomerClient<{ id: string; company_id: string; name: string; inactive: boolean; createdAt: Date; updatedAt: Date }, never, DefaultArgs>[] = []
+      dataToEncrypt.customers.forEach((object) => {
+        customers.push(prisma.customer.update({
+          where: {
+            id: object.id,
+          },
+          data: {
+            name: object.name,
+          },
+        }))
+      })
+
+      const projects: Prisma.Prisma__ProjectClient<{ id: string; customer_id: string; name: string; project_type: string; is_inactive: boolean; plannedHours: number; createdAt: Date; updatedAt: Date; completed: boolean }, never, DefaultArgs>[] = [];
+      dataToEncrypt.projects.forEach( (object) => {
+        projects.push(prisma.project.update({
+          where: {
+            id: object.id
+          },
+          data: {
+            name: object.name
+          }
+        }));
+      })
+
+      const tasks: Prisma.Prisma__ProjectTaskClient<{ id: string; project_id: string; name: string; is_completed: boolean; planned_hours: number; createdAt: Date; updatedAt: Date }, never, DefaultArgs>[] = [];
+      dataToEncrypt.tasks.forEach( (object) => {
+        tasks.push(prisma.projectTask.update({
+          where: {
+            id: object.id
+          },
+          data: {
+            name: object.name
+          }
+        }));
+      })
+
+      const timeEntries: Prisma.Prisma__TimeEntryClient<{ id: string; time_entry_date: Date; task_id: string; hours: number; description: string | null; time_start: string | null; time_end: string | null; email: string; createdAt: Date; updatedAt: Date }, never, DefaultArgs>[] = [];
+      dataToEncrypt.timeEntries.forEach( (object) => {
+        timeEntries.push(prisma.timeEntry.update({
+          where: {
+            id: object.id
+          },
+          data: {
+            description: object.description
+          }
+        }));
+      })
+
+      const updateStatus = prisma.companyKeys.update({
+        where: {
+          company_id: company.id
+        },
+        data: {
+          encryptionCompleted: true
+        }
+      })
+
+      await prisma.$transaction([...customers, ...projects, ...tasks, ...timeEntries, updateStatus]);
+    } catch (error) {
+      console.log(error);
+      console.log('Error encrypting data. Start rolling back dynamoDB table');
+      for (const effort of previuoseEffort) {
+        await this.effortRepository.saveEffort(effort);
+      }
+      await this.companyKeysRepository.updateEncryptionStatus(company.id, false);
+      throw error;
+    }
+
+  }
+
+  async encryptClaranetData() {
+    const company = await this.companyRepository.findOne({
+      name: 'it',
+    })
+
+    if (!company) {
+      throw new NotFoundException('Company not found')
+    }
+
+    const companyKeys = await this.companyKeysRepository.findByCompany(company.id)
+
+    if (!companyKeys) {
+      throw new NotFoundException('Company keys not found')
+    }
+
+    if (companyKeys.encryptionCompleted) {
+      throw new BadRequestException('Encryption already completed')
+    }
+
+    const prisma = new PrismaClient()
+
+    const companyUsers: string[] = (await this.userRepository.getByCompany(company.name)).map((u) => u.uid)
+    const previuoseEffort = await this.effortRepository.getEffortsByUids(companyUsers)
+
+    try {
+      let dataToEncrypt: GetDataToEncryptReturnType;
+      const data = await this.getFileFromS3()
+
+      if (data) {
+        try {
+          dataToEncrypt= JSON.parse(data)
+        } catch (e) {
+          throw new Error('Error parsing JSON data')
+        }
+      } else {
+        throw new Error('No data found in S3')
+      }
 
       for (const effort of dataToEncrypt.efforts) {
         await this.effortRepository.saveEffort({
@@ -131,8 +248,16 @@ export class EncryptionService {
         }));
       })
 
+      const updateStatus = prisma.companyKeys.update({
+        where: {
+          company_id: company.id
+        },
+        data: {
+          encryptionCompleted: true
+        }
+      })
 
-      await prisma.$transaction([...customers, ...projects, ...tasks, ...timeEntries]);
+      await prisma.$transaction([...customers, ...projects, ...tasks, ...timeEntries, updateStatus]);
     } catch (error) {
       console.log(error);
       console.log('Error encrypting data. Start rolling back dynamoDB table');
@@ -170,6 +295,21 @@ export class EncryptionService {
         tentativeEffort: e.tentativeEffort,
         notes: e.notes
       })),
+    }
+  }
+
+  private async getFileFromS3() {
+    const s3Client = new S3Client()
+    try {
+      const response = await s3Client.send(new GetObjectCommand({
+        Bucket: 'encryption-data-bucket',
+        Key: 'claranet.json'
+      }))
+
+      return response.Body?.transformToString();
+    } catch (error) {
+      console.error('Error getting file from S3:', error)
+      throw new Error('Error getting file from S3')
     }
   }
 }
