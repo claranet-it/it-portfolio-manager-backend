@@ -13,8 +13,10 @@ import {
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import { TaskError } from '@src/core/customExceptions/TaskError'
 import { PrismaClient } from '../../../../prisma/generated'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 export class TaskRepository implements TaskRepositoryInterface {
+  constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
   async getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]> {
     const prima = new PrismaClient()
     const result = await prima.customer.findMany({
@@ -433,7 +435,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   async getCustomersByCompany(companyName: string): Promise<CustomerType[]> {
     const prisma = new PrismaClient()
 
-    const result = await prisma.customer.findMany({
+    const result = await this.prismaDBConnection.getClient().customer.findMany({
       where: {
         company_id: companyName,
       },

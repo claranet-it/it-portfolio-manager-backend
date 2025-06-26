@@ -56,6 +56,7 @@ import { TemplateRepository } from '@src/infrastructure/Template/Repository'
 import { EncryptionService } from '@src/core/Encryption/service/encryptionService'
 import { UnsubscribeService } from '../Unsubscribe/service'
 import { Mailer } from '@src/infrastructure/mailer/Mailer'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -87,6 +88,10 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       dynamoDBClient: awilix.asValue(DynamoDBConnection.getClient()),
+    })
+
+    container.register({
+      prismaDBConnection: asClass(PrismaDBConnection),
     })
 
     container.register({
