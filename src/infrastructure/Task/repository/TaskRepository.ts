@@ -31,6 +31,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         }),
       },
     });
+    await this.prismaDBConnection.disconnect();
 
     return result.map((customer) => ({
       id: customer.id,
@@ -49,6 +50,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         name: 'asc',
       },
     })
+    await this.prismaDBConnection.disconnect();
 
     return result.map((project) => ({
       id: project.id,
