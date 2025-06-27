@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { test, before, after, beforeEach, afterEach } from 'tap'
+import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { PrismaClient } from '../../../prisma/generated'
 import { getToken } from '@test/utils/token'
