@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { test, before, after } from 'tap'
+import { test, before, after, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { PrismaClient } from '../../../prisma/generated'
 import { getToken } from '@test/utils/token'
@@ -14,7 +14,7 @@ let CUSTOMER_ID: string;
 let PROJECT_ID: string;
 let TASK_ID: string;
 
-before(async () => {
+beforeEach(async () => {
     app = createApp({ logger: false })
     await app.ready()
 
@@ -41,17 +41,12 @@ before(async () => {
     TASK_ID = task.id
 })
 
-after(async () => {
+afterEach(async () => {
 
-    const deleteTemplate = prisma.template.deleteMany()
-
-    await prisma.$transaction([
-        deleteTemplate
-    ])
-})
-
-after(async () => {
-    prisma.$disconnect()
+    await prisma.template.deleteMany()
+    await prisma.projectTask.deleteMany()
+    await prisma.project.deleteMany()
+    await prisma.customer.deleteMany()
     await app.close()
 })
 
@@ -67,7 +62,7 @@ test('should save my template', async (t) => {
     const payload = {
         timehours: 8,
         daytime: [1, 3, 5],
-        date_start: '2025-01-02',
+        date_start: '2025-01-01',
         date_end: '2025-02-02',
         project_id: PROJECT_ID,
         customer_id: CUSTOMER_ID,
