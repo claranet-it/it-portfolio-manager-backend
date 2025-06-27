@@ -1,9 +1,10 @@
 import { TemplateRepositoryInterface } from '@src/core/Template/repository'
-import { PrismaClient } from '../../../../prisma/generated'
 import { TemplateCreateParamsWithUserEmailType, TemplateType, TemplateUpdateType } from '@src/core/Template/model'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 
 export class TemplateRepository implements TemplateRepositoryInterface {
+    constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
 
     intArrayToString(arr: number[]): string {
         return arr.join(',');
@@ -14,9 +15,7 @@ export class TemplateRepository implements TemplateRepositoryInterface {
     }
 
     async get(email: string): Promise<TemplateType[]> {
-        const prisma = new PrismaClient()
-
-        const result = await prisma.template.findMany({
+        const result = await this.prismaDBConnection.getClient().template.findMany({
             where: {
                 email: email,
             },
@@ -61,9 +60,7 @@ export class TemplateRepository implements TemplateRepositoryInterface {
 
 
     async save(params: TemplateCreateParamsWithUserEmailType): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.template.create({
+        await this.prismaDBConnection.getClient().template.create({
             data: {
                 email: params.userEmail,
                 task_id: params.task_id,
@@ -78,9 +75,7 @@ export class TemplateRepository implements TemplateRepositoryInterface {
     }
 
     async patch(id: string, params: TemplateUpdateType): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.template.update({
+        await this.prismaDBConnection.getClient().template.update({
             where: {
                 id
             },
@@ -94,9 +89,7 @@ export class TemplateRepository implements TemplateRepositoryInterface {
     }
 
     async delete(id: string): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.template.delete({
+        await this.prismaDBConnection.getClient().template.delete({
             where: {
                 id,
             },

@@ -12,12 +12,13 @@ import {
 } from '@src/core/Task/model/task.model'
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import { TaskError } from '@src/core/customExceptions/TaskError'
-import { PrismaClient } from '../../../../prisma/generated'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 export class TaskRepository implements TaskRepositoryInterface {
+  constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
+
   async getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]> {
-    const prima = new PrismaClient()
-    const result = await prima.customer.findMany({
+    const result = await this.prismaDBConnection.getClient().customer.findMany({
       where: {
         company_id: params.company,
         inactive: false,
@@ -38,9 +39,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   }
 
   async getProjects(params: ProjectReadParamsType): Promise<ProjectListType> {
-    const prisma = new PrismaClient()
-
-    const result = await prisma.project.findMany({
+    const result = await this.prismaDBConnection.getClient().project.findMany({
       where: {
         customer_id: params.customer,
         completed: params.completed,
@@ -61,9 +60,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   }
 
   async getTask(task: string): Promise<string | null> {
-    const prisma = new PrismaClient()
-
-    const result = await prisma.projectTask.findUnique({
+    const result = await this.prismaDBConnection.getClient().projectTask.findUnique({
       where: {
         id: task
       },
@@ -72,9 +69,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   }
 
   async getTaskStructure(company: string): Promise<TaskStructureType[]> {
-    const prisma = new PrismaClient()
-
-    const tasks = await prisma.projectTask.findMany({
+    const tasks = await this.prismaDBConnection.getClient().projectTask.findMany({
       where: {
         project: {
           is_inactive: false,
@@ -112,9 +107,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   async getTasksWithProperties(
     params: TaskReadParamsType,
   ): Promise<TaskListType> {
-    const prisma = new PrismaClient()
-
-    const result = await prisma.projectTask.findMany({
+    const result = await this.prismaDBConnection.getClient().projectTask.findMany({
       where: {
         is_completed: params.completed,
         project: {
@@ -143,9 +136,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   async getTasksWithProjectDetails(
     params: TaskReadParamsType,
   ): Promise<{ tasks: string[]; projectType: string; plannedHours: number }> {
-    const prisma = new PrismaClient()
-
-    const result = await prisma.projectTask.findMany({
+    const result = await this.prismaDBConnection.getClient().projectTask.findMany({
       where: {
         project: {
           name: params.project,
@@ -185,8 +176,6 @@ export class TaskRepository implements TaskRepositoryInterface {
     const customer = params.customer
     const task = params.task
 
-    const prisma = new PrismaClient()
-
     if (!params.project.type) {
       throw new TaskError('Project type missing')
     }
@@ -201,7 +190,7 @@ export class TaskRepository implements TaskRepositoryInterface {
     )
 
 
-    await prisma.projectTask.create({
+    await this.prismaDBConnection.getClient().projectTask.create({
       data: {
         name: task,
         project_id: projectObj?.id as string,
@@ -210,17 +199,16 @@ export class TaskRepository implements TaskRepositoryInterface {
   }
 
   async findOrCreateCustomer(companyId: string, customer: CustomerOptType) {
-    const prisma = new PrismaClient()
     let existingCustomer;
 
     if (customer.id) {
-      existingCustomer = await prisma.customer.findUnique({
+      existingCustomer = await this.prismaDBConnection.getClient().customer.findUnique({
         where: { id: customer.id },
       })
     }
 
     if (!existingCustomer || !customer.id) {
-      customer = await prisma.customer.create({
+      customer = await this.prismaDBConnection.getClient().customer.create({
         data: {
           company_id: companyId,
           name: customer.name,
@@ -238,14 +226,12 @@ export class TaskRepository implements TaskRepositoryInterface {
     projectType: string,
     plannedHours: number,
   ) {
-    const prisma = new PrismaClient()
-
-    let project = await prisma.project.findUnique({
+    let project = await this.prismaDBConnection.getClient().project.findUnique({
       where: { id: projectId },
     })
 
     if (!project) {
-      project = await prisma.project.create({
+      project = await this.prismaDBConnection.getClient().project.create({
         data: {
           name: projectName,
           project_type: projectType,
@@ -277,10 +263,8 @@ export class TaskRepository implements TaskRepositoryInterface {
       )
     }
 
-    const prisma = new PrismaClient()
-
     if (params.newProject) {
-      const project = await prisma.project.findUniqueOrThrow({
+      const project = await this.prismaDBConnection.getClient().project.findUniqueOrThrow({
         where: {
           id: params.project,
         },
@@ -299,7 +283,7 @@ export class TaskRepository implements TaskRepositoryInterface {
           : project.completed
 
       if (params.newProject.name !== project.name) {
-        const existingProject = await prisma.project.findFirst({
+        const existingProject = await this.prismaDBConnection.getClient().project.findFirst({
           where: {
             name: params.newProject.name,
             customer_id: params.customer,
@@ -310,7 +294,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         }
       }
 
-      await prisma.project.update({
+      await this.prismaDBConnection.getClient().project.update({
         data: {
           name: params.newProject.name,
           project_type: projectType,
@@ -324,13 +308,13 @@ export class TaskRepository implements TaskRepositoryInterface {
     }
 
     if (params.newCustomerName) {
-      const customer = await prisma.customer.findUniqueOrThrow({
+      const customer = await this.prismaDBConnection.getClient().customer.findUniqueOrThrow({
         where: {
           id: params.customer,
         },
       })
 
-      const existingCustomer = await prisma.customer.findFirst({
+      const existingCustomer = await this.prismaDBConnection.getClient().customer.findFirst({
         where: {
           name: params.newCustomerName,
           company_id: params.company,
@@ -341,7 +325,7 @@ export class TaskRepository implements TaskRepositoryInterface {
         throw new TaskError('Customer already exists')
       }
 
-      await prisma.customer.update({
+      await this.prismaDBConnection.getClient().customer.update({
         data: {
           name: params.newCustomerName,
         },
@@ -357,15 +341,13 @@ export class TaskRepository implements TaskRepositoryInterface {
       throw new TaskError('New task must be valorized')
     }
 
-    const prisma = new PrismaClient()
-
-    await prisma.projectTask.findUniqueOrThrow({
+    await this.prismaDBConnection.getClient().projectTask.findUniqueOrThrow({
       where: {
         id: params.task,
       },
     })
 
-    const existingTask = await prisma.projectTask.findFirst({
+    const existingTask = await this.prismaDBConnection.getClient().projectTask.findFirst({
       where: {
         name: params.newTask,
         project: {
@@ -378,7 +360,7 @@ export class TaskRepository implements TaskRepositoryInterface {
       throw new TaskError('Task already exists')
     }
 
-    await prisma.projectTask.update({
+    await this.prismaDBConnection.getClient().projectTask.update({
       data: {
         name: params.newTask,
       },
@@ -393,9 +375,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   ): Promise<void> {
     const inactive = params.inactive || true
 
-    const prisma = new PrismaClient()
-
-    const project = await prisma.project.findUnique({
+    const project = await this.prismaDBConnection.getClient().project.findUnique({
       where: {
         id: params.project,
       },
@@ -420,7 +400,7 @@ export class TaskRepository implements TaskRepositoryInterface {
       throw new TaskError('Customer project already assigned')
     }
 
-    await prisma.project.update({
+    await this.prismaDBConnection.getClient().project.update({
       data: {
         is_inactive: inactive,
       },
@@ -431,9 +411,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   }
 
   async getCustomersByCompany(companyName: string): Promise<CustomerType[]> {
-    const prisma = new PrismaClient()
-
-    const result = await prisma.customer.findMany({
+    const result = await this.prismaDBConnection.getClient().customer.findMany({
       where: {
         company_id: companyName,
       },
@@ -447,9 +425,8 @@ export class TaskRepository implements TaskRepositoryInterface {
   }
 
   async getProjectsByCompany(companyName: string): Promise<ProjectToEncryptType[]> {
-    const prisma = new PrismaClient()
 
-    const result = await prisma.project.findMany({
+    const result = await this.prismaDBConnection.getClient().project.findMany({
       where: {
         customer: {
           company_id: companyName,
@@ -465,9 +442,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   }
 
   async getTasksByCompany(companyName: string): Promise<TaskListType> {
-    const prisma = new PrismaClient()
-
-    const result = await prisma.projectTask.findMany({
+    const result = await this.prismaDBConnection.getClient().projectTask.findMany({
       where: {
         project: {
           customer: {
@@ -486,9 +461,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   }
 
   async deleteCustomersAndRelatedDataByCompany(id: string): Promise<void> {
-    const prisma = new PrismaClient()
-
-    const deleteTemplate = prisma.template.deleteMany({
+    const deleteTemplate = this.prismaDBConnection.getClient().template.deleteMany({
       where: {
         customer: {
           company_id: id
@@ -496,7 +469,7 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
 
-    const deleteTimeEntries = prisma.timeEntry.deleteMany({
+    const deleteTimeEntries = this.prismaDBConnection.getClient().timeEntry.deleteMany({
       where: {
         task: {
           project: {
@@ -508,7 +481,7 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
 
-    const deleteTasks = prisma.projectTask.deleteMany({
+    const deleteTasks = this.prismaDBConnection.getClient().projectTask.deleteMany({
       where: {
         project: {
           customer: {
@@ -518,7 +491,7 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
 
-    const deleteProjects = prisma.project.deleteMany({
+    const deleteProjects = this.prismaDBConnection.getClient().project.deleteMany({
       where: {
         customer: {
           company_id: id
@@ -526,12 +499,12 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
 
-    const deleteCustomers = prisma.customer.deleteMany({
+    const deleteCustomers = this.prismaDBConnection.getClient().customer.deleteMany({
       where: {
         company_id: id
       },
     })
 
-    await prisma.$transaction([deleteTemplate, deleteTimeEntries, deleteTasks, deleteProjects, deleteCustomers])
+    await this.prismaDBConnection.getClient().$transaction([deleteTemplate, deleteTimeEntries, deleteTasks, deleteProjects, deleteCustomers])
   }
 }

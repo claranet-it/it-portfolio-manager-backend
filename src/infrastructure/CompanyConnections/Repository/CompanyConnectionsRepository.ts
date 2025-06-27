@@ -1,15 +1,12 @@
-import { Prisma, PrismaClient } from '../../../../prisma/generated'
+import { Prisma } from '../../../../prisma/generated'
 import { CompanyConnectionsRepositoryInterface } from '@src/core/CompanyConnections/repository/CompanyConnectionsRepositoryInterface'
 import { CompanyConnectionsType } from '@src/core/CompanyConnections/model/CompanyConnections'
 import { UniqueConstraintViolationException } from '@src/shared/exceptions/UniqueConstraintViolationException'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 export class CompanyConnectionsRepository
   implements CompanyConnectionsRepositoryInterface {
-  private prismaClient: PrismaClient
-
-  constructor() {
-    this.prismaClient = new PrismaClient()
-  }
+  constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
 
   async findAll(requesterId?: string): Promise<CompanyConnectionsType[]> {
     const where: Prisma.CompanyConnectionsWhereInput = {}
@@ -18,7 +15,7 @@ export class CompanyConnectionsRepository
       where.OR = [{ requester_company_id: requesterId }, { correspondent_company_id: requesterId }]
     }
 
-    return this.prismaClient.companyConnections.findMany({
+    return this.prismaDBConnection.getClient().companyConnections.findMany({
       where: where,
       include: {
         requester: true,
@@ -29,7 +26,7 @@ export class CompanyConnectionsRepository
 
   async create(requesterId: string, correspondentId: string): Promise<void> {
     try {
-      await this.prismaClient.companyConnections.create({
+      await this.prismaDBConnection.getClient().companyConnections.create({
         data: {
           requester_company_id: requesterId,
           correspondent_company_id: correspondentId,
@@ -50,7 +47,7 @@ export class CompanyConnectionsRepository
   }
 
   async delete(requesterId: string, correspondentId: string): Promise<void> {
-    await this.prismaClient.companyConnections.deleteMany({
+    await this.prismaDBConnection.getClient().companyConnections.deleteMany({
       where: {
         requester_company_id: requesterId,
         correspondent_company_id: correspondentId,
@@ -59,7 +56,7 @@ export class CompanyConnectionsRepository
   }
 
   async deleteConnections(idCompany: string): Promise<void> {
-    await this.prismaClient.companyConnections.deleteMany({
+    await this.prismaDBConnection.getClient().companyConnections.deleteMany({
       where: {
         OR: [
           { requester_company_id: idCompany },

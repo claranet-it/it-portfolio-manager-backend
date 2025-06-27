@@ -1,14 +1,13 @@
 import { CurriculumRepositoryInterface } from '@src/core/Curriculum/repository'
-import { PrismaClient } from '../../../../prisma/generated'
 import { CurriculumType, CurriculumUpdateWithUserEmailType, GetCurriculumByEmailType } from '@src/core/Curriculum/model'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 
 export class CurriculumRepository implements CurriculumRepositoryInterface {
+    constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
 
     async create(params: CurriculumType): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.curriculumVitae.create({
+        await this.prismaDBConnection.getClient().curriculumVitae.create({
             data: {
                 name: params.name,
                 email: params.email,
@@ -22,9 +21,7 @@ export class CurriculumRepository implements CurriculumRepositoryInterface {
     }
 
     async updateCurriculum(params: CurriculumUpdateWithUserEmailType): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.curriculumVitae.update({
+        await this.prismaDBConnection.getClient().curriculumVitae.update({
             where: {
                 email: params.userEmail
             },
@@ -37,9 +34,7 @@ export class CurriculumRepository implements CurriculumRepositoryInterface {
     }
 
     async get(params: GetCurriculumByEmailType): Promise<CurriculumType | null> {
-        const prisma = new PrismaClient()
-
-        const curriculum = await prisma.curriculumVitae.findUnique({
+        const curriculum = await this.prismaDBConnection.getClient().curriculumVitae.findUnique({
             where: {
                 email: params.email,
             },

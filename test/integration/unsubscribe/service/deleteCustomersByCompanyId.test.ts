@@ -1,14 +1,14 @@
 import { FastifyInstance } from 'fastify'
 import { test, before, after } from 'tap'
 import createApp from '@src/app'
-import { PrismaClient } from 'prisma/generated'
 import { TaskService } from '@src/core/Task/service/TaskService'
 import { TaskRepository } from '@src/infrastructure/Task/repository/TaskRepository'
 import { TaskPropertiesRepository } from '@src/infrastructure/Task/repository/TaskPropertiesRepository'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 let app: FastifyInstance
-const prisma = new PrismaClient()
+const prisma = new PrismaDBConnection()
 
 let taskService: TaskService
 
@@ -18,33 +18,33 @@ before(async () => {
     app = createApp({ logger: false })
     await app.ready()
 
-    const myCustomer = await prisma.customer.create({
+    const myCustomer = await prisma.getClient().customer.create({
         data: {
             name: 'MyCustomer',
             company_id: MY_COMPANY_ID,
         }
     })
-    const otherCustomer = await prisma.customer.create({
+    const otherCustomer = await prisma.getClient().customer.create({
         data: {
             name: 'OtherCustomer',
             company_id: 'OtherCompany',
         }
     })
-    const assenze = await prisma.project.create({
+    const assenze = await prisma.getClient().project.create({
         data: {
             name: 'Assenze',
             customer_id: myCustomer.id,
             project_type: ProjectType.ABSENCE,
         }
     })
-    const slackTime = await prisma.project.create({
+    const slackTime = await prisma.getClient().project.create({
         data: {
             name: 'Slack time',
             customer_id: myCustomer.id,
             project_type: ProjectType.SLACK_TIME,
         }
     })
-    const funzionale = await prisma.project.create({
+    const funzionale = await prisma.getClient().project.create({
         data: {
             name: 'Funzionale',
             customer_id: otherCustomer.id,
@@ -52,28 +52,28 @@ before(async () => {
         }
     })
 
-    const festivita = await prisma.projectTask.create({
+    const festivita = await prisma.getClient().projectTask.create({
         data: {
             name: 'FESTIVITA',
             project_id: assenze.id,
         }
     })
 
-    const formazione = await prisma.projectTask.create({
+    const formazione = await prisma.getClient().projectTask.create({
         data: {
             name: 'FORMAZIONE',
             project_id: slackTime.id,
         }
     })
 
-    const brickly = await prisma.projectTask.create({
+    const brickly = await prisma.getClient().projectTask.create({
         data: {
             name: 'Brickly',
             project_id: funzionale.id,
         }
     })
 
-    await prisma.timeEntry.create({
+    await prisma.getClient().timeEntry.create({
         data: {
             task_id: festivita.id,
             hours: 1,
@@ -81,7 +81,7 @@ before(async () => {
             time_entry_date: new Date('2024-01-01'),
         }
     })
-    await prisma.timeEntry.create({
+    await prisma.getClient().timeEntry.create({
         data: {
             task_id: brickly.id,
             hours: 1,
@@ -90,7 +90,7 @@ before(async () => {
         }
     })
 
-    await prisma.timeEntry.create({
+    await prisma.getClient().timeEntry.create({
         data: {
             task_id: formazione.id,
             hours: 1,
@@ -99,7 +99,7 @@ before(async () => {
         }
     })
 
-    await prisma.template.create({
+    await prisma.getClient().template.create({
         data: {
             timehours: 8,
             customer_id: myCustomer.id,
@@ -111,32 +111,32 @@ before(async () => {
         }
     })
 
-    const taskRepository = new TaskRepository()
-    const taskPropertiesRepository = new TaskPropertiesRepository()
+    const taskRepository = new TaskRepository(prisma)
+    const taskPropertiesRepository = new TaskPropertiesRepository(prisma)
     taskService = new TaskService(taskRepository, taskPropertiesRepository)
 })
 
 after(async () => {
-    const deleteCustomer = prisma.customer.deleteMany()
-    const deleteProj = prisma.project.deleteMany()
-    const deleteTask = prisma.projectTask.deleteMany()
-    const deleteTimeEntries = prisma.timeEntry.deleteMany()
-    const deleteTemplate = prisma.template.deleteMany()
+    const deleteCustomer = prisma.getClient().customer.deleteMany()
+    const deleteProj = prisma.getClient().project.deleteMany()
+    const deleteTask = prisma.getClient().projectTask.deleteMany()
+    const deleteTimeEntries = prisma.getClient().timeEntry.deleteMany()
+    const deleteTemplate = prisma.getClient().template.deleteMany()
 
-    await prisma.$transaction([deleteTemplate,
+    await prisma.getClient().$transaction([deleteTemplate,
         deleteTimeEntries, deleteTask, deleteProj, deleteCustomer,
     ])
-    prisma.$disconnect()
+    prisma.getClient().$disconnect()
     await app.close()
 })
 
 test('Delete all customers and related data by company id', async (t) => {
     await taskService.deleteCustomersAndRelatedDataByCompany(MY_COMPANY_ID)
-    const responseCustomer = await prisma.customer.findMany()
-    const responseProj = await prisma.project.findMany()
-    const responseTask = await prisma.projectTask.findMany()
-    const responseTimeEntries = await prisma.timeEntry.findMany()
-    const responseTemplate = await prisma.template.findMany()
+    const responseCustomer = await prisma.getClient().customer.findMany()
+    const responseProj = await prisma.getClient().project.findMany()
+    const responseTask = await prisma.getClient().projectTask.findMany()
+    const responseTimeEntries = await prisma.getClient().timeEntry.findMany()
+    const responseTemplate = await prisma.getClient().template.findMany()
     t.equal(responseCustomer.length, 1)
     t.equal(responseProj.length, 1)
     t.equal(responseTask.length, 1)

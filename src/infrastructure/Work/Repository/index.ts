@@ -1,14 +1,13 @@
 import { WorkCreateWithUserEmailType, WorkUpdateType } from '@src/core/Work/model'
-import { PrismaClient } from '../../../../prisma/generated'
 import { WorkRepositoryInterface } from '@src/core/Work/repository'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 
 export class WorkRepository implements WorkRepositoryInterface {
+    constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
 
     async addWork(params: WorkCreateWithUserEmailType): Promise<void> {
-        const prisma = new PrismaClient()
-
-        const curriculum = await prisma.curriculumVitae.findUnique({
+        const curriculum = await this.prismaDBConnection.getClient().curriculumVitae.findUnique({
             where: {
                 email: params.userEmail,
             },
@@ -18,7 +17,7 @@ export class WorkRepository implements WorkRepositoryInterface {
             return
         }
 
-        await prisma.work.create({
+        await this.prismaDBConnection.getClient().work.create({
             data: {
                 note: params.note,
                 year_start: params.year_start,
@@ -33,9 +32,7 @@ export class WorkRepository implements WorkRepositoryInterface {
     }
 
     async updateWork(id: string, params: WorkUpdateType): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.work.update({
+        await this.prismaDBConnection.getClient().work.update({
             where: {
                 id
             },
@@ -51,9 +48,7 @@ export class WorkRepository implements WorkRepositoryInterface {
     }
 
     async deleteWork(id: string): Promise<void> {
-        const prisma = new PrismaClient()
-
-        await prisma.work.delete({
+        await this.prismaDBConnection.getClient().work.delete({
             where: {
                 id,
             },
