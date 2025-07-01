@@ -36,10 +36,10 @@ export class UnsubscribeService {
 
         const from = process.env.SENDER_EMAIL;
         const to = process.env.RECEIVER_EMAIL;
-        const body = `Mail created automatically. 
-        The company with domain ${company.domain} and name ${company.name} 
-        has just submitted an unsubscription request at ${new Date()}.
-        Please verify if the data in the database has been deleted.`
+        const subject = `Unsubscription Request for ${company.domain}`;
+        const body = `Mail created automatically.
+        Unsubscription request has been submitted for ${company.name} (domain: ${company.domain}) on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}.
+        Please verify that all associated data for this company has been successfully and completely removed from our database in accordance with our data retention policies and relevant regulations.`
 
         if (!(from && to)) {
             console.error("Error while sending mail, missing email address");
@@ -47,7 +47,7 @@ export class UnsubscribeService {
         }
 
         try {
-            const info = await this.mailer.sendEmail(from, to, "Unsubscribe Company", body)
+            const info = await this.mailer.sendEmail(from, to, subject, body)
             if (info) {
                 console.log("Preview URL: %s", getTestMessageUrl(info));
                 console.log('Email sent:', info.response);
@@ -57,11 +57,11 @@ export class UnsubscribeService {
         }
 
         /* TODO: unica transaction al passaggio completo su MariaDB */
-        /*       await this.taskService.deleteCustomersAndRelatedDataByCompany(idCompany)
-              await this.effortService.deleteEffortByCompany(company.name)
-              await this.skillMatrixService.deleteSkillMatrixByCompany(company.name)
-              await this.companyConnectionsService.deleteConnections(idCompany)
-              await this.userProfileService.deleteUsersByCompany(company.name)
-              await this.companyService.deleteCompany(idCompany) */
+        await this.taskService.deleteCustomersAndRelatedDataByCompany(idCompany)
+        await this.effortService.deleteEffortByCompany(company.name)
+        await this.skillMatrixService.deleteSkillMatrixByCompany(company.name)
+        await this.companyConnectionsService.deleteConnections(idCompany)
+        await this.userProfileService.deleteUsersByCompany(company.name)
+        await this.companyService.deleteCompany(idCompany)
     }
 }

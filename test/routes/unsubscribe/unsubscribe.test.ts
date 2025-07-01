@@ -1,4 +1,4 @@
-/* import { FastifyInstance } from 'fastify'
+import { FastifyInstance } from 'fastify'
 import { test, before, after } from 'tap'
 import createApp from '@src/app'
 import { PrismaClient } from '../../../prisma/generated'
@@ -178,4 +178,4 @@ test('should delete all data of company', async (t) => {
 
         sinon.assert.calledOnce(sendEmailSpy);
     }
-}) */
+})
