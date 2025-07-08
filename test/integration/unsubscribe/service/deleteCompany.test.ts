@@ -6,6 +6,7 @@ import { SkillRepository } from '@src/infrastructure/Skill/Repository/SkillRepos
 import { CompanyService } from '@src/core/Company/service/CompanyService'
 import { CompanyRepository } from '@src/infrastructure/Company/Repository/CompanyRepository'
 import { CompanyKeysRepository } from '@src/infrastructure/Company/Repository/CompanyKeysRepository'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
@@ -64,9 +65,9 @@ before(async () => {
         ],
     })
 
-    const companyRepository = new CompanyRepository()
-    const skillRepository = new SkillRepository()
-    const companyKeysRepository = new CompanyKeysRepository()
+    const companyRepository = new CompanyRepository(new PrismaDBConnection())
+    const skillRepository = new SkillRepository(new PrismaDBConnection())
+    const companyKeysRepository = new CompanyKeysRepository(new PrismaDBConnection())
     companyService = new CompanyService(companyRepository, companyKeysRepository, skillRepository)
 })
 
