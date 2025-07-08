@@ -5,6 +5,7 @@ import { CompanyConnectionsService } from '@src/core/CompanyConnections/service/
 import { CompanyRepository } from '@src/infrastructure/Company/Repository/CompanyRepository'
 import { CompanyConnectionsRepository } from '@src/infrastructure/CompanyConnections/Repository/CompanyConnectionsRepository'
 import { PrismaClient } from 'prisma/generated'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
@@ -57,8 +58,8 @@ before(async () => {
         ],
     })
 
-    const companyRepository = new CompanyRepository()
-    const companyConnectionRepository = new CompanyConnectionsRepository()
+    const companyRepository = new CompanyRepository(new PrismaDBConnection())
+    const companyConnectionRepository = new CompanyConnectionsRepository(new PrismaDBConnection())
     companyConnectionsService = new CompanyConnectionsService(companyRepository, companyConnectionRepository)
 })
 
