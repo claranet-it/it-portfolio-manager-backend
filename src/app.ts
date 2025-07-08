@@ -17,6 +17,7 @@ import fastifyEnv from '@fastify/env'
 import * as process from 'node:process'
 import fastifyCasbin from 'fastify-casbin'
 import fastifyCasbinRest from 'fastify-casbin-rest'
+import multipart from '@fastify/multipart';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -35,8 +36,14 @@ export default function createApp(
     logger: true,
     ignoreTrailingSlash: true,
   }
-
+  // add " ajv: { customOptions: {coerceTypes: false} } " to make http request type checking works
   const app = fastify({ ...defaultOptions, ...opts })
+
+  app.register(multipart, {
+    limits: {
+      fileSize: 10 * 1024 * 1024,
+    },
+  })
 
   app.register(swagger, {
     swagger: {

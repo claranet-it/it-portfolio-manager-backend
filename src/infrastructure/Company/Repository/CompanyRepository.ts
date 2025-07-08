@@ -4,20 +4,17 @@ import {
   CompanyType,
   CompanyWithSkillsType,
 } from '@src/core/Company/model/Company'
-import { Prisma, PrismaClient } from '../../../../prisma/generated'
+import { Prisma } from '../../../../prisma/generated'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 export class CompanyRepository implements CompanyRepositoryInterface {
-  private prismaClient: PrismaClient
-
-  constructor() {
-    this.prismaClient = new PrismaClient()
-  }
+  constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
 
   async findById(
     id: string,
     joinSkills: boolean = false,
   ): Promise<CompanyType | CompanyWithSkillsType | null> {
-    const company = await this.prismaClient.company.findFirst({
+    const company = await this.prismaDBConnection.getClient().company.findFirst({
       where: { id: id },
       include: {
         ...(joinSkills && { skills: true }),
@@ -50,7 +47,7 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     if (find.domain) {
       where = { domain: find.domain }
     }
-    const company = await this.prismaClient.company.findFirst({
+    const company = await this.prismaDBConnection.getClient().company.findFirst({
       where: where,
       include: { skills: includeSkills },
     })
@@ -70,6 +67,18 @@ export class CompanyRepository implements CompanyRepositoryInterface {
         })),
       }),
     }
+  }
+
+  async findCompanyMaster(): Promise<CompanyType | null> {
+    const company = await this.prismaDBConnection.getClient().company.findFirst({
+      where: { company_master: true },
+    })
+
+    if (!company) {
+      return null
+    }
+
+    return company
   }
 
   async findAll(
@@ -116,17 +125,36 @@ export class CompanyRepository implements CompanyRepositoryInterface {
       }
     }
 
-    return this.prismaClient.company.findMany({
+    return this.prismaDBConnection.getClient().company.findMany({
       where: where,
       orderBy: { name: 'asc' },
     })
   }
 
   async save(company: CompanyType): Promise<CompanyType> {
-    return this.prismaClient.company.upsert({
+    return this.prismaDBConnection.getClient().company.upsert({
       where: { id: company.id },
       update: company,
       create: company,
     })
   }
+
+  async deleteCompany(idCompany: string): Promise<void> {
+
+    const deleteSkill = this.prismaDBConnection.getClient().skill.deleteMany({
+      where: {
+        company_id: idCompany
+      },
+    })
+
+    const deleteCompany = this.prismaDBConnection.getClient().company.delete({
+      where: {
+        id: idCompany,
+      },
+    })
+
+    await this.prismaDBConnection.getClient().$transaction([deleteSkill, deleteCompany])
+
+  }
+
 }

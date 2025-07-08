@@ -1,14 +1,14 @@
 import { FastifyInstance } from 'fastify'
 import {
-  TaskReadQueryParamsType,
-  TaskStructureList,
-  TaskStructureListType,
+  TaskReadQueryParamsType, TaskStructure,
+  TaskStructureType,
 } from '@src/core/Task/model/task.model'
+import { Type } from '@sinclair/typebox'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
     Querystring: TaskReadQueryParamsType
-    Reply: TaskStructureListType
+    Reply: TaskStructureType[]
   }>(
     '/task-list',
     {
@@ -21,7 +21,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: TaskStructureList,
+          200: Type.Array(TaskStructure),
           400: {
             type: 'null',
             description: 'Bad request',

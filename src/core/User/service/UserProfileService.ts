@@ -10,8 +10,9 @@ import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 
+
 export class UserProfileService {
-  constructor(private userProfileRepository: UserProfileRepositoryInterface) {}
+  constructor(private userProfileRepository: UserProfileRepositoryInterface) { }
 
   async getUserProfile(
     uid: string,
@@ -128,5 +129,23 @@ export class UserProfileService {
     }
 
     return currentRoleIndex > targetRoleIndex
+  }
+
+  async deleteUsersByCompany(companyDomain: string): Promise<void> {
+    const originalData = await this.userProfileRepository.getData()
+    if (originalData?.length) {
+      const allUsersCompany = await this.getByCompany(companyDomain)
+      for (const user of allUsersCompany) {
+        try {
+          await this.userProfileRepository.removeUser(user.uid)
+        } catch (error) {
+          console.error("Error: delete all users of a company", error)
+          for (const item of originalData) {
+            this.userProfileRepository.restoreData(item)
+          }
+          break;
+        }
+      }
+    }
   }
 }

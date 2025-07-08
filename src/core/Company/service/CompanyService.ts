@@ -11,12 +11,17 @@ import { skills } from '@src/core/Configuration/service/ConfigurationService'
 import { SkillWithCompanyType } from '@src/core/Skill/model/Skill'
 import { SkillRepository } from '@src/infrastructure/Skill/Repository/SkillRepository'
 import { SkillType } from '@src/core/Configuration/model/configuration.model'
+import { CompanyKeysRepositoryInterface } from '@src/core/Company/repository/CompanyKeysRepositoryInterface'
+import { CompanyKeysType } from '@src/core/Company/model/CompanyKeys'
+import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 
 export class CompanyService {
+
   constructor(
     private companyRepository: CompanyRepositoryInterface,
+    private companyKeysRepository: CompanyKeysRepositoryInterface,
     private skillRepository: SkillRepository,
-  ) {}
+  ) { }
 
   async networkingFindAll(jwtToken: JwtTokenType): Promise<CompanyType[]> {
     const company = await this.companyRepository.findOne({
@@ -41,7 +46,7 @@ export class CompanyService {
       },
       true,
     )
-
+    console.log("### ", company?.company_master, company?.primary_contact)
     if (!company) {
       throw new NotFoundException('Company not found')
     }
@@ -99,5 +104,54 @@ export class CompanyService {
       return updatedCompany
     }
     return company
+  }
+
+  async getKeys(jwtToken: JwtTokenType): Promise<CompanyKeysType | null> {
+    const company = await this.companyRepository.findOne({
+      name: jwtToken.company,
+    })
+
+    if (!company) {
+      throw new NotFoundException('Company not found')
+    }
+
+    const keys = await this.companyKeysRepository.findByCompany(company.id)
+
+    if (!keys) {
+      throw new NotFoundException('Company keys not found')
+    }
+
+    return keys;
+  }
+
+  async saveKeys(jwtToken: JwtTokenType, body: CompanyKeysType): Promise<void> {
+    if (!['ADMIN', 'SUPERADMIN'].includes(jwtToken.role ?? '')) {
+      throw new ForbiddenException('Forbidden')
+    }
+
+    const company = await this.companyRepository.findOne({
+      name: jwtToken.company,
+    })
+
+    if (!company) {
+      throw new NotFoundException('Company not found')
+    }
+
+    const keys = await this.companyKeysRepository.findByCompany(company.id);
+
+    if (keys) {
+      throw new BadRequestException('Keys already exist')
+    }
+
+    await this.companyKeysRepository.save({
+      company_id: company.id,
+      publicKey: body.publicKey,
+      encryptedPrivateKey: body.encryptedPrivateKey,
+      encryptedAESKey: body.encryptedAESKey
+    })
+  }
+
+  async deleteCompany(idCompany: string): Promise<void> {
+    await this.companyRepository.deleteCompany(idCompany)
   }
 }

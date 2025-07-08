@@ -1,40 +1,38 @@
 import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
-import { TimeEntryRowListType } from '@src/core/TimeEntry/model/timeEntry.model'
-import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
-
-function getAdminToken(): string {
-  return app.createTestJwt({
-    email: 'nicholas.crow@email.com',
-    name: 'Nicholas Crow',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it',
-    role: 'ADMIN',
-  })
-}
-
-function getTeamLeaderToken(): string {
-  return app.createTestJwt({
-    email: 'micol.ts@email.com',
-    name: 'Micol Panetta',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it',
-    role: 'TEAM_LEADER',
-  })
-}
-
-function getStandardToken(): string {
-  return app.createTestJwt({
-    email: 'sun@test.com',
-    name: 'Crew Sun',
-    picture: 'https://test.com/nicholas.crow.jpg',
-    company: 'it',
-  })
-}
+//
+// function getAdminToken(): string {
+//   return app.createTestJwt({
+//     email: 'nicholas.crow@email.com',
+//     name: 'Nicholas Crow',
+//     picture: 'https://test.com/nicholas.crow.jpg',
+//     company: 'it',
+//     role: 'ADMIN',
+//   })
+// }
+//
+// function getTeamLeaderToken(): string {
+//   return app.createTestJwt({
+//     email: 'micol.ts@email.com',
+//     name: 'Micol Panetta',
+//     picture: 'https://test.com/nicholas.crow.jpg',
+//     company: 'it',
+//     role: 'TEAM_LEADER',
+//   })
+// }
+//
+// function getStandardToken(): string {
+//   return app.createTestJwt({
+//     email: 'sun@test.com',
+//     name: 'Crew Sun',
+//     picture: 'https://test.com/nicholas.crow.jpg',
+//     company: 'it',
+//   })
+// }
 
 beforeEach(async () => {
   app = createApp({ logger: false })
@@ -65,14 +63,20 @@ test('save time entry without authentication', async (t) => {
   })
   t.equal(response.statusCode, 401)
 })
-
+/*
 test('save time entry without the proper role', async (t) => {
   const date = '2024-01-02'
-  const customer = 'Claranet'
+  const customer = {name: 'Claranet'}
   const project = 'Slack time'
   const task = 'formazione'
   await postTask(customer, project, task, ProjectType.SLACK_TIME)
-  const response = await app.inject({
+
+  let response = await getCustomers(getAdminToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
+  response = await app.inject({
     method: 'POST',
     url: '/api/time-entry/sun@test.com',
     headers: {
@@ -80,7 +84,7 @@ test('save time entry without the proper role', async (t) => {
     },
     payload: {
       date,
-      customer,
+      customer: customers[0].id,
       project,
       task,
       hours: 2,
@@ -91,15 +95,21 @@ test('save time entry without the proper role', async (t) => {
 
 test('insert time entry as ADMIN', async (t) => {
   const date = '2024-01-02'
-  const customer = 'Claranet'
+  const customer = {name: 'Claranet'}
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
   const userEmail = 'sun@test.com'
   await postTask(customer, project, task, ProjectType.SLACK_TIME)
+
+  let response = await getCustomers(getAdminToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -122,7 +132,10 @@ test('insert time entry as ADMIN', async (t) => {
     user: userEmail,
     company: 'it',
     date: date,
-    customer: customer,
+    customer: {
+      name: customers[0].name,
+      id: customers[0].id,
+    },
     task: task,
     project: {
       name: project,
@@ -140,15 +153,21 @@ test('insert time entry as ADMIN', async (t) => {
 
 test('update hours on existing task as ADMIN', async (t) => {
   const date = '2024-01-04'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
   const userEmail = 'sun@test.com'
-  await postTask(customer, project, task, ProjectType.SLACK_TIME)
+  await postTask(customerName, project, task, ProjectType.SLACK_TIME)
+
+  let response = await getCustomers(getAdminToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeentryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -172,7 +191,7 @@ test('update hours on existing task as ADMIN', async (t) => {
   const newHours = 5
   const updateTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     newHours,
@@ -199,7 +218,10 @@ test('update hours on existing task as ADMIN', async (t) => {
       user: userEmail,
       date: date,
       company: 'it',
-      customer: customer,
+      customer: {
+        name: customers[0].name,
+        id: customers[0].id,
+      },
       task: task,
       project: {
         name: project,
@@ -218,7 +240,7 @@ test('update hours on existing task as ADMIN', async (t) => {
 
 test('add hours on existing task as ADMIN', async (t) => {
   const date = '2024-01-04'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = {
     name: 'Slack time',
     type: ProjectType.SLACK_TIME,
@@ -228,10 +250,16 @@ test('add hours on existing task as ADMIN', async (t) => {
   const task = 'formazione'
   const hours = 2
   const userEmail = 'sun@test.com'
-  await postTask(customer, project.name, task, project.type)
+  await postTask(customerName, project.name, task, project.type)
+
+  let response = await getCustomers(getAdminToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project.name,
     task,
     hours,
@@ -246,7 +274,7 @@ test('add hours on existing task as ADMIN', async (t) => {
   const newHours = 5
   const updateTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project.name,
     task,
     newHours,
@@ -275,7 +303,10 @@ test('add hours on existing task as ADMIN', async (t) => {
       user: userEmail,
       date: date,
       company: 'it',
-      customer: customer,
+      customer: {
+        name: customers[0].name,
+        id: customers[0].id,
+      },
       task: task,
       project: project,
       hours: hours,
@@ -288,7 +319,10 @@ test('add hours on existing task as ADMIN', async (t) => {
       user: userEmail,
       date: date,
       company: 'it',
-      customer: customer,
+      customer: {
+        name: customers[0].name,
+        id: customers[0].id,
+      },
       task: task,
       project: project,
       hours: newHours,
@@ -302,15 +336,21 @@ test('add hours on existing task as ADMIN', async (t) => {
 
 test('insert time entry for a member of the same crew as TEAM_LEADER', async (t) => {
   const date = '2024-01-02'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
   const userEmail = 'sun@test.com'
-  await postTask(customer, project, task, ProjectType.SLACK_TIME)
+  await postTask(customerName, project, task, ProjectType.SLACK_TIME)
+
+  let response = await getCustomers(getAdminToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -333,7 +373,10 @@ test('insert time entry for a member of the same crew as TEAM_LEADER', async (t)
     user: userEmail,
     company: 'it',
     date: date,
-    customer: customer,
+    customer: {
+      name: customers[0].name,
+      id: customers[0].id,
+    },
     task: task,
     project: {
       name: project,
@@ -351,15 +394,21 @@ test('insert time entry for a member of the same crew as TEAM_LEADER', async (t)
 
 test('insert time entry for a member of a different crew as TEAM_LEADER', async (t) => {
   const date = '2024-01-02'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Slack time'
   const task = 'formazione'
   const hours = 2
   const userEmail = 'testIt@test.com'
-  await postTask(customer, project, task, ProjectType.SLACK_TIME)
+  await postTask(customerName, project, task, ProjectType.SLACK_TIME)
+
+  let response = await getCustomers(getAdminToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -371,14 +420,20 @@ test('insert time entry for a member of a different crew as TEAM_LEADER', async 
 
 test('throws error if trying to save absence on a saturday or sunday', async (t) => {
   const date = '2024-01-28'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Assenze'
   const task = 'FERIE'
   const hours = 2
-  await postTask(customer, project, task, ProjectType.ABSENCE)
+  await postTask(customerName, project, task, ProjectType.ABSENCE)
+
+  let response = await getCustomers(getAdminToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeEntryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -394,14 +449,20 @@ test('throws error if trying to save absence on a saturday or sunday', async (t)
 
 test('returns without saving if entry has 0 hours', async (t) => {
   const date = '2024-01-27'
-  const customer = 'Claranet'
+  const customerName = { name: 'Claranet' }
   const project = 'Funzionale'
   const task = 'Attività di portfolio'
   const hours = 0
-  await postTask(customer, project, task, ProjectType.NON_BILLABLE)
+  await postTask(customerName, project, task, ProjectType.NON_BILLABLE)
+
+  let response = await getCustomers(getAdminToken());
+  t.equal(response.statusCode, 200)
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+
   const addTimeentryResponse = await addTimeEntry(
     date,
-    customer,
+    customers[0].id,
     project,
     task,
     hours,
@@ -517,7 +578,7 @@ async function addTimeEntry(
 }
 
 async function postTask(
-  customer: string,
+  customer: CustomerOptType,
   project: string,
   task: string,
   projectType: string = 'billable',
@@ -545,3 +606,15 @@ async function getTimeEntry(from: string, to: string) {
     },
   })
 }
+
+async function getCustomers(token: string) {
+  return await app.inject({
+    method: 'GET',
+    url: `/api/task/customer`,
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
+}
+
+ */

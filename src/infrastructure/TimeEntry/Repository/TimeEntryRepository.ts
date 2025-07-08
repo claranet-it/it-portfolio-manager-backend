@@ -1,6 +1,6 @@
 import {
   CnaReadParamType,
-  deleteTimeEntryWithUserType,
+  deleteTimeEntryWithUserType, TimeEntriesToEncryptType,
   TimeEntryReadParamWithCompanyAndCrewType,
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
@@ -11,19 +11,18 @@ import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/Tim
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { invariant } from '@src/helpers/invariant'
 import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
-import { PrismaClient } from '../../../../prisma/generated'
-import { TaskError } from '@src/core/customExceptions/TaskError'
 import { ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 export class TimeEntryRepository implements TimeEntryRepositoryInterface {
+  constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
+
   async find(
     params: TimeEntryReadParamWithUserType,
   ): Promise<TimeEntryRowWithProjectEntityType[]> {
-    const prisma = new PrismaClient()
-    const result = await prisma.timeEntry.findMany({
-      where: {
+    const result = await this.prismaDBConnection.getClient().timeEntry.findMany({ where: {
         email: params.user,
         time_entry_date: {
           lte: new Date(params.to),
@@ -51,14 +50,15 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       user: timeEntry.email,
       date: timeEntry.time_entry_date.toISOString().substring(0, 10),
       company: timeEntry.task.project.customer.company_id,
-      customer: timeEntry.task.project.customer.name,
+      customer: { id: timeEntry.task.project.customer.id, name: timeEntry.task.project.customer.name },
       project: {
+        id: timeEntry.task.project.id,
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
         plannedHours: timeEntry.task.project.plannedHours,
         completed: timeEntry.task.project.completed,
       },
-      task: timeEntry.task.name,
+      task: { id: timeEntry.task.id, name: timeEntry.task.name},
       hours: timeEntry.hours,
       description: timeEntry.description ?? '',
       startHour: timeEntry.time_start ?? '',
@@ -70,9 +70,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   async findTimeEntriesForReport(
     params: TimeEntryReadParamWithCompanyAndCrewType,
   ): Promise<TimeEntryRowWithProjectEntityType[]> {
-    const prisma = new PrismaClient()
-
-    const result = await prisma.timeEntry.findMany({
+    const result = await this.prismaDBConnection.getClient().timeEntry.findMany({
       where: {
         time_entry_date: {
           lte: new Date(params.to),
@@ -112,14 +110,15 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       user: timeEntry.email,
       date: timeEntry.time_entry_date.toISOString().substring(0, 10),
       company: timeEntry.task.project.customer.company_id,
-      customer: timeEntry.task.project.customer.name,
+      customer: { id: timeEntry.task.project.customer.id, name: timeEntry.task.project.customer.name },
       project: {
+        id: timeEntry.task.project.id,
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
         plannedHours: timeEntry.task.project.plannedHours,
         completed: timeEntry.task.project.completed,
       },
-      task: timeEntry.task.name,
+      task: { id: timeEntry.task.id, name: timeEntry.task.name},
       hours: timeEntry.hours,
       description: timeEntry.description ?? '',
       startHour: timeEntry.time_start ?? '',
@@ -136,9 +135,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       params.year,
     )
     const users = []
-    const prisma = new PrismaClient()
-    for (const user of flowingUsers) {
-      const result = await prisma.timeEntry.findMany({
+    for (const user of flowingUsers) {const result = await this.prismaDBConnection.getClient().timeEntry.findMany({
         where: {
           email: user,
           time_entry_date: {
@@ -190,9 +187,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       params.month,
       params.year,
     )
-    const prisma = new PrismaClient()
-    const result = await prisma.timeEntry.findMany({
-      where: {
+    const result = await this.prismaDBConnection.getClient().timeEntry.findMany({ where: {
         task: {
           project: {
             name: 'Assenze',
@@ -236,10 +231,8 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   }
 
   async save(params: TimeEntryRowType): Promise<void> {
-    const prisma = new PrismaClient()
-
     if (params.index !== undefined) {
-      await prisma.timeEntry.update({
+      await this.prismaDBConnection.getClient().timeEntry.update({
         data: {
           hours: params.hours,
           description: params.description,
@@ -256,24 +249,13 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       return
     }
 
-    const task = await prisma.projectTask.findFirst({
+    const task = await this.prismaDBConnection.getClient().projectTask.findUniqueOrThrow({
       where: {
-        name: params.task,
-        project: {
-          name: params.project,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
-        },
+        id: params.task,
       },
     })
 
-    if (!task) {
-      throw new TaskError(`Cannot find task ${params.task}`)
-    }
-
-    await prisma.timeEntry.create({
+    await this.prismaDBConnection.getClient().timeEntry.create({
       data: {
         time_entry_date: new Date(params.date),
         task_id: task.id,
@@ -292,9 +274,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       return
     }
 
-    const prisma = new PrismaClient()
-    await prisma.timeEntry.delete({
-      where: {
+    await this.prismaDBConnection.getClient().timeEntry.delete({ where: {
         id: params.index,
       },
     })
@@ -323,9 +303,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   async getTimeEntriesFilterBy(
     params: ReportProjectsWithCompanyType,
   ): Promise<TimeEntryRowWithProjectEntityType[]> {
-    const prisma = new PrismaClient()
-
-    const result = await prisma.timeEntry.findMany({
+    const result = await this.prismaDBConnection.getClient().timeEntry.findMany({
       where: {
         time_entry_date: {
           lte: new Date(params.to),
@@ -335,15 +313,15 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
           in: params.user
         },
         task: {
-          name: {
+          id: {
             in: params.task
           },
           project: {
-            name: {
+            id: {
               in: params.project
             },
             customer: {
-              name: {
+              id: {
                 in: params.customer
               },
               company_id: params.company,
@@ -377,18 +355,38 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       user: timeEntry.email,
       date: timeEntry.time_entry_date.toISOString().substring(0, 10),
       company: timeEntry.task.project.customer.company_id,
-      customer: timeEntry.task.project.customer.name,
+      customer: { id: timeEntry.task.project.customer.id, name: timeEntry.task.project.customer.name },
       project: {
+        id: timeEntry.task.project.id,
         name: timeEntry.task.project.name,
         type: timeEntry.task.project.project_type,
         plannedHours: timeEntry.task.project.plannedHours,
         completed: timeEntry.task.project.completed,
       },
-      task: timeEntry.task.name,
+      task: { name: timeEntry.task.name, id: timeEntry.task.id },
       hours: timeEntry.hours,
       description: timeEntry.description ?? '',
       startHour: timeEntry.time_start ?? '',
       endHour: timeEntry.time_end ?? '',
     }))
+  }
+
+  async getTimeEntriesByCompany(companyName: string): Promise<TimeEntriesToEncryptType[]> {
+    const result = await this.prismaDBConnection.getClient().timeEntry.findMany({
+      where: {
+        task: {
+          project: {
+            customer: {
+              company_id: companyName,
+            },
+          },
+        },
+      },
+    });
+
+    return result.map((timeEntry) => ({
+      id: timeEntry.id,
+      description: timeEntry.description ?? '',
+    }));
   }
 }

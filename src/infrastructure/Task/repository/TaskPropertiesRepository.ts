@@ -1,28 +1,22 @@
 import { TaskPropertiesUpdateParamsType } from '@src/core/Task/model/task.model'
 import { TaskPropertiesRepositoryInterface } from '@src/core/Task/repository/TaskPropertiesRepositoryInterface'
-import { PrismaClient } from '../../../../prisma/generated'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 export class TaskPropertiesRepository
   implements TaskPropertiesRepositoryInterface
 {
+  constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
+
   async updateTaskProperties(
     params: TaskPropertiesUpdateParamsType,
   ): Promise<void> {
-    const prisma = new PrismaClient()
-    const task = await prisma.projectTask.findFirstOrThrow({
+    const task = await this.prismaDBConnection.getClient().projectTask.findUniqueOrThrow({
       where: {
-        name: params.task,
-        project: {
-          name: params.project,
-          customer: {
-            name: params.customer,
-            company_id: params.company,
-          },
-        },
+        id: params.task,
       },
     })
 
-    await prisma.projectTask.update({
+    await this.prismaDBConnection.getClient().projectTask.update({
       where: {
         id: task.id,
       },

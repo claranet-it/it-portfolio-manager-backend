@@ -2,8 +2,9 @@ import { test, beforeEach, afterEach } from 'tap'
 import createApp from '@src/app'
 import { FastifyInstance } from 'fastify'
 import {
-  CustomerListType,
-  ProjectListType,
+  CustomerOptType,
+  CustomerType,
+  ProjectListType, TaskListType,
 } from '@src/core/Task/model/task.model'
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { PrismaClient } from '../../../prisma/generated'
@@ -51,30 +52,31 @@ test('delete customer-project without authentication', async (t) => {
 })
 
 test('delete customer-project', async (t) => {
-  const customer = 'Test delete customer'
+  const customerName = { name: 'Test delete customer' }
   const company = 'test delete company'
-  const project = 'Test delete project'
+  const projectName = 'Test delete project'
   const projectType = ProjectType.BILLABLE
   const task = 'Test delete task'
 
-  let response = await postTask(customer, company, project, projectType, task)
+  let response = await postTask(customerName, company, projectName, projectType, task)
   t.equal(response.statusCode, 200)
 
   response = await getCustomers(company)
   t.equal(response.statusCode, 200)
 
-  let customers = response.json<CustomerListType>()
+  let customers = response.json<CustomerType[]>()
   t.equal(customers.length, 1)
-  const expectedResult = ['Test delete customer']
-  t.same(customers, expectedResult)
+  const expectedResult = [customerName.name]
+  t.same(customers.map((customer) => customer.name), expectedResult)
 
-  response = await getProjects(company, customer)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
 
   const projects = response.json<ProjectListType>()
   t.equal(projects.length, 1)
   const projExpectedResult = [
     {
+      id: projects[0].id,
       name: 'Test delete project',
       type: 'billable',
       plannedHours: 0,
@@ -83,25 +85,45 @@ test('delete customer-project', async (t) => {
   ]
   t.same(projects, projExpectedResult)
 
-  response = await deleteProject(company, customer, project)
+  response = await deleteProject(company, customers[0].id, projects[0].id ?? '')
   t.equal(response.statusCode, 200)
 
-  response = await getProjects(company, customer)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
-  customers = response.json<CustomerListType>()
+  customers = response.json<CustomerType[]>()
   t.equal(customers.length, 0)
   t.same(customers, [])
 })
 
 test("can't delete customer-project if there are time entries", async (t) => {
-  const customer = 'Test delete customer'
+  const customerName = { name:'Test delete customer' }
   const company = 'test delete company'
   const project = 'Test delete project'
   const projectType = ProjectType.BILLABLE
   const task = 'Test delete task'
 
-  let response = await postTask(customer, company, project, projectType, task)
+  let response = await postTask(customerName, company, project, projectType, task)
   t.equal(response.statusCode, 200)
+
+  response = await getCustomers(company)
+  t.equal(response.statusCode, 200)
+
+  const customers = response.json<CustomerType[]>()
+  t.equal(customers.length, 1)
+  const expectedResult = [customerName.name]
+  t.same(customers.map((customer) => customer.name), expectedResult)
+
+  response = await getProjects(company, customers[0].id)
+  t.equal(response.statusCode, 200)
+
+  let projects = response.json<ProjectListType>()
+  t.equal(projects.length, 1)
+
+  response = await getTask(customers[0].id, projects[0].id ?? '', company)
+  t.equal(response.statusCode, 200)
+
+  const tasks = response.json<TaskListType>()
+  t.equal(tasks.length, 1)
 
   const addTimeEntryResponse = await app.inject({
     method: 'POST',
@@ -111,29 +133,22 @@ test("can't delete customer-project if there are time entries", async (t) => {
     },
     payload: {
       date: '2024-08-01',
-      customer: customer,
-      project: project,
-      task: task,
+      customer: customers[0].id,
+      project: projects[0].id,
+      task: tasks[0].id,
       hours: 2,
     },
   })
   t.equal(addTimeEntryResponse.statusCode, 204)
 
-  response = await getCustomers(company)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
 
-  const customers = response.json<CustomerListType>()
-  t.equal(customers.length, 1)
-  const expectedResult = ['Test delete customer']
-  t.same(customers, expectedResult)
-
-  response = await getProjects(company, customer)
-  t.equal(response.statusCode, 200)
-
-  let projects = response.json<ProjectListType>()
+  projects = response.json<ProjectListType>()
   t.equal(projects.length, 1)
   const projExpectedResult = [
     {
+      id: projects[0].id,
       name: 'Test delete project',
       type: 'billable',
       plannedHours: 0,
@@ -142,15 +157,16 @@ test("can't delete customer-project if there are time entries", async (t) => {
   ]
   t.same(projects, projExpectedResult)
 
-  response = await deleteProject(company, customer, project)
+  response = await deleteProject(company, customers[0].id, projects[0].id ?? '')
   t.equal(response.statusCode, 400)
 
-  response = await getProjects(company, customer)
+  response = await getProjects(company, customers[0].id)
   t.equal(response.statusCode, 200)
   projects = response.json<ProjectListType>()
   t.equal(projects.length, 1)
   t.same(projects, [
     {
+      id: projects[0].id,
       name: 'Test delete project',
       type: 'billable',
       plannedHours: 0,
@@ -160,7 +176,7 @@ test("can't delete customer-project if there are time entries", async (t) => {
 })
 
 async function postTask(
-  customer: string,
+  customer: CustomerOptType,
   company: string,
   project: string,
   projectType: string,
@@ -213,6 +229,16 @@ async function getProjects(company: string, customer: string) {
   return await app.inject({
     method: 'GET',
     url: `/api/task/project?customer=${customer}`,
+    headers: {
+      authorization: `Bearer ${getToken(company)}`,
+    },
+  })
+}
+
+async function getTask(customer: string, project: string, company: string) {
+  return await app.inject({
+    method: 'GET',
+    url: `/api/task/task/?company=${company}&customer=${customer}&project=${project}`,
     headers: {
       authorization: `Bearer ${getToken(company)}`,
     },

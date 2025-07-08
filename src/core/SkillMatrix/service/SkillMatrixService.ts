@@ -16,7 +16,7 @@ export class SkillMatrixService {
   constructor(
     private skillMatrixRepository: SkillMatrixRepositoryInterface,
     private userProfileService: UserProfileService,
-  ) {}
+  ) { }
 
   async getAllSkillMatrix(
     params: SkillMatrixQueryParamsType,
@@ -78,4 +78,24 @@ export class SkillMatrixService {
   async delete(uid: string) {
     await this.skillMatrixRepository.delete(uid)
   }
+
+  async deleteSkillMatrixByCompany(companyDomain: string): Promise<void> {
+    const originalData = await this.skillMatrixRepository.getData()
+    if (originalData?.length) {
+      const allUsersCompany = await this.userProfileService.getByCompany(companyDomain)
+      for (const user of allUsersCompany) {
+        try {
+          await this.skillMatrixRepository.delete(user.uid)
+        } catch (error) {
+          console.error("Error: delete skillMatrix of a company", error)
+          for (const item of originalData) {
+            this.skillMatrixRepository.restoreData(item)
+          }
+          break;
+        }
+      }
+    }
+  }
+
+
 }

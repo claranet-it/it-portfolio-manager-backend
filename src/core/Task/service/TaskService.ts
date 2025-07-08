@@ -2,14 +2,14 @@ import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositor
 import {
   CustomerProjectDeleteParamsType,
   CustomerProjectUpdateParamsType,
-  CustomerReadParamsType,
+  CustomerReadParamsType, CustomerType,
   ProjectListType,
   ProjectReadParamsType,
   TaskCreateReadParamsType,
   TaskListType,
   TaskPropertiesUpdateParamsType,
   TaskReadParamsType,
-  TaskStructureListType,
+  TaskStructureType,
   TaskUpdateParamsType,
 } from '../model/task.model'
 import { TaskPropertiesRepositoryInterface } from '@src/core/Task/repository/TaskPropertiesRepositoryInterface'
@@ -19,9 +19,9 @@ export class TaskService {
   constructor(
     private taskRepository: TaskRepositoryInterface,
     private taskPropertiesRepository: TaskPropertiesRepositoryInterface,
-  ) {}
+  ) { }
 
-  async getCustomers(params: CustomerReadParamsType): Promise<string[]> {
+  async getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]> {
     return this.taskRepository.getCustomers(params)
   }
 
@@ -33,7 +33,7 @@ export class TaskService {
     return this.taskRepository.getTasksWithProperties(params)
   }
 
-  async getTaskStructure(company: string): Promise<TaskStructureListType> {
+  async getTaskStructure(company: string): Promise<TaskStructureType[]> {
     return this.taskRepository.getTaskStructure(company)
   }
 
@@ -59,7 +59,7 @@ export class TaskService {
       company: params.company,
     })
 
-    if (tasks.filter((task) => task.name === params.task).length === 0) {
+    if (tasks.filter((task) => task.id === params.task).length === 0) {
       throw new TaskNotExistsError()
     }
 
@@ -70,5 +70,9 @@ export class TaskService {
     params: CustomerProjectDeleteParamsType,
   ): Promise<void> {
     return this.taskRepository.deleteCustomerProject(params)
+  }
+
+  async deleteCustomersAndRelatedDataByCompany(id: string): Promise<void> {
+    return this.taskRepository.deleteCustomersAndRelatedDataByCompany(id)
   }
 }

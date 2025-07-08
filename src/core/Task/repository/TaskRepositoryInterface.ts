@@ -6,17 +6,15 @@ import {
   TaskCreateReadParamsType,
   TaskReadParamsType,
   TaskUpdateParamsType,
-  TaskType,
-  TaskStructureListType,
-  CustomerReadParamsType,
+  CustomerReadParamsType, CustomerType, TaskStructureType, TaskListType, ProjectToEncryptType,
 } from '../model/task.model'
 
 export interface TaskRepositoryInterface {
-  getCustomers(params: CustomerReadParamsType): Promise<string[]>
+  getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]>
   getProjects(params: ProjectReadParamsType): Promise<ProjectListType>
-  getTasks(params: TaskReadParamsType): Promise<string[]>
-  getTaskStructure(company: string): Promise<TaskStructureListType>
-  getTasksWithProperties(params: TaskReadParamsType): Promise<TaskType[]>
+  getTask(task: string): Promise<string | null>
+  getTaskStructure(company: string): Promise<TaskStructureType[]>
+  getTasksWithProperties(params: TaskReadParamsType): Promise<TaskListType>
   getTasksWithProjectDetails(
     params: TaskReadParamsType,
   ): Promise<{ tasks: string[]; projectType: string; plannedHours: number }>
@@ -24,4 +22,9 @@ export interface TaskRepositoryInterface {
   updateCustomerProject(params: CustomerProjectUpdateParamsType): Promise<void>
   updateTask(params: TaskUpdateParamsType): Promise<void>
   deleteCustomerProject(params: CustomerProjectDeleteParamsType): Promise<void>
+
+  getCustomersByCompany(companyName: string): Promise<CustomerType[]>
+  getTasksByCompany(companyName: string): Promise<TaskListType>
+  getProjectsByCompany(companyName: string): Promise<ProjectToEncryptType[]>
+  deleteCustomersAndRelatedDataByCompany(id: string): Promise<void>
 }

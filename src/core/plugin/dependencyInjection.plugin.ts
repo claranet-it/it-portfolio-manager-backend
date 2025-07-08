@@ -50,6 +50,13 @@ import { EducationRepository } from '@src/infrastructure/Education/Repository'
 import { EducationService } from '../Education/service'
 import { WorkService } from '../Work/service'
 import { WorkRepository } from '@src/infrastructure/Work/Repository'
+import { CompanyKeysRepository } from '@src/infrastructure/Company/Repository/CompanyKeysRepository'
+import { TemplateService } from '../Template/service'
+import { TemplateRepository } from '@src/infrastructure/Template/Repository'
+import { EncryptionService } from '@src/core/Encryption/service/encryptionService'
+import { UnsubscribeService } from '../Unsubscribe/service'
+import { Mailer } from '@src/infrastructure/mailer/Mailer'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -84,6 +91,14 @@ async function dependencyInjectionContainerPlugin(
     })
 
     container.register({
+      prismaDBConnection: asClass(PrismaDBConnection),
+    })
+
+    container.register({
+      mailer: asClass(Mailer),
+    })
+
+    container.register({
       configurationService: asClass(ConfigurationService),
     })
 
@@ -96,6 +111,10 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       networkingService: asClass(NetworkingService),
+    })
+
+    container.register({
+      encryptionService: asClass(EncryptionService),
     })
 
     container.register({
@@ -154,6 +173,11 @@ async function dependencyInjectionContainerPlugin(
     container.register({
       timeEntryService: asClass(TimeEntryService),
     })
+
+    container.register({
+      unsubscribeService: asClass(UnsubscribeService),
+    })
+
     container.register({
       jwt: awilix.asValue(fastify.jwt),
     })
@@ -221,6 +245,9 @@ async function dependencyInjectionContainerPlugin(
       companyRepository: asClass(CompanyRepository),
     })
     container.register({
+      companyKeysRepository: asClass(CompanyKeysRepository),
+    })
+    container.register({
       crewRepository: asClass(CrewRepository),
     })
     container.register({
@@ -277,6 +304,14 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       workRepository: asClass(WorkRepository),
+    })
+
+    container.register({
+      templateService: asClass(TemplateService),
+    })
+
+    container.register({
+      templateRepository: asClass(TemplateRepository),
     })
 
     return container

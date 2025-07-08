@@ -21,8 +21,23 @@ model Company {
   name                     String
   image_url                String?
   skills                   Skill[]
+  primary_contact          String?
+  company_master           Boolean @default(false)
   requestedConnections     CompanyConnections[] @relation("RequesterCompany")
   correspondentConnections CompanyConnections[] @relation("CorrespondentCompany")
+  company_keys             CompanyKeys[]
+}
+
+model CompanyKeys {
+  id                  String  @id @default(uuid())
+  company_id          String
+  company             Company @relation(fields: [company_id], references: [id])
+  encryptedPrivateKey String  @db.Text
+  encryptedAESKey     String  @db.Text
+  publicKey           String  @db.Text
+  encryptionCompleted Boolean @default(false)
+
+  @@unique([company_id])
 }
 
 model CompanyConnections {
@@ -35,20 +50,21 @@ model CompanyConnections {
 }
 
 model Customer {
-  id         String    @id @default(uuid())
+  id         String     @id @default(uuid())
   company_id String
-  name       String
-  inactive   Boolean   @default(false)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  name       String     @db.Text
+  inactive   Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
   projects   Project[]
+  template   Template[]
 }
 
 model Project {
   id           String        @id @default(uuid())
   customer     Customer      @relation(fields: [customer_id], references: [id])
   customer_id  String
-  name         String
+  name         String        @db.Text
   project_type String        @default("billable")
   is_inactive  Boolean       @default(false)
   plannedHours Int           @default(0)
@@ -56,18 +72,20 @@ model Project {
   updatedAt    DateTime      @updatedAt
   tasks        ProjectTask[]
   completed    Boolean       @default(false)
+  templates    Template[]
 }
 
 model ProjectTask {
   id            String      @id @default(uuid())
   project       Project     @relation(fields: [project_id], references: [id])
   project_id    String
-  name          String
+  name          String      @db.Text
   is_completed  Boolean     @default(false)
   planned_hours Int         @default(0)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   time_entries  TimeEntry[]
+  templates     Template[]
 }
 
 model Skill {
@@ -94,51 +112,69 @@ model TimeEntry {
 }
 
 model BusinessCard {
-  id         String   @id @default(uuid())
-  name       String
-  role       String?
-  email      String   @unique
-  mobile     String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  role      String?
+  email     String   @unique
+  mobile    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CurriculumVitae {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String      @id @default(uuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   name        String
   role        String
-  email       String   @unique
-  summary		  String?  @db.VarChar(1000)
-  main_skills String?  @db.VarChar(1000)
-  education	  Education[]
-  work		    Work[]  
+  email       String      @unique
+  summary     String?     @db.VarChar(1000)
+  main_skills String?     @db.VarChar(1000)
+  education   Education[]
+  work        Work[]
 }
 
 model Education {
-  id                String          @id @default(uuid())
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  curriculum_vitae  CurriculumVitae @relation(fields: [curriculum_id], references: [id])
-  curriculum_id     String
-  note              String?         @db.VarChar(1000)
-  year_start        Int
-  year_end	        Int? 
-  institution       String
-  current           Boolean?
+  id               String          @id @default(uuid())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  curriculum_vitae CurriculumVitae @relation(fields: [curriculum_id], references: [id])
+  curriculum_id    String
+  note             String?         @db.VarChar(1000)
+  year_start       Int
+  year_end         Int?
+  institution      String
+  current          Boolean?
 }
 
 model Work {
-  id                String          @id @default(uuid())
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  curriculum_vitae  CurriculumVitae @relation(fields: [curriculum_id], references: [id])
-  curriculum_id     String 
-  note              String?         @db.VarChar(1000)
-  year_start        Int
-  year_end	        Int? 
-  institution       String
-  role		          String?
-  current           Boolean?
+  id               String          @id @default(uuid())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  curriculum_vitae CurriculumVitae @relation(fields: [curriculum_id], references: [id])
+  curriculum_id    String
+  note             String?         @db.VarChar(1000)
+  year_start       Int
+  year_end         Int?
+  institution      String
+  role             String?
+  current          Boolean?
+}
+
+
+model Template {
+  id            String        @id @default(uuid())
+  email         String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  customer      Customer      @relation(fields: [customer_id], references: [id])
+  customer_id   String
+  project       Project       @relation(fields: [project_id], references: [id])
+  project_id    String
+  task          ProjectTask?   @relation(fields: [task_id], references: [id])
+  task_id       String?
+  timehours     Float         @default(0)
+  daytime       String
+  date_start    DateTime
+  date_end	    DateTime
 }

@@ -28,14 +28,14 @@ export class ReportRepository implements ReportRepositoryInterface {
     }
     if (params.customer) {
       Object.assign(where['task']['project']['customer'], {
-        name: params.customer,
+        id: params.customer,
       })
     }
     if (params.project) {
-      Object.assign(where['task']['project'], { name: params.project })
+      Object.assign(where['task']['project'], { id: params.project })
     }
     if (params.task) {
-      Object.assign(where['task'], { name: params.task })
+      Object.assign(where['task'], { id: params.task })
     }
     if (params.name) {
       Object.assign(where, { email: { in: uids.map((item) => item.email) } })
