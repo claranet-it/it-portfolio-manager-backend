@@ -1,18 +1,18 @@
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { ReportRepositoryInterface } from '@src/core/Report/repository/ReportRepositoryInterface'
 import { ProductivityReportReadParamWithCompanyType } from '@src/core/Report/model/productivity.model'
 import { TimeEntryRowType } from '@src/core/TimeEntry/model/timeEntry.model'
 import { PrismaClient } from '../../../../prisma/generated'
+import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 export class ReportRepository implements ReportRepositoryInterface {
-  constructor(private dynamoDBClient: DynamoDBClient) {}
+  constructor(
+    private prismaDBConnection: PrismaDBConnection,
+  ) {}
 
   async getProductivityReport(
     params: ProductivityReportReadParamWithCompanyType,
     uids: { email: string }[],
   ): Promise<TimeEntryRowType[]> {
-    const prisma = new PrismaClient()
-
     const where = {
       time_entry_date: {
         gte: new Date(params.from),
@@ -41,7 +41,7 @@ export class ReportRepository implements ReportRepositoryInterface {
       Object.assign(where, { email: { in: uids.map((item) => item.email) } })
     }
 
-    const result = await prisma.timeEntry.findMany({
+    const result = await this.prismaDBConnection.getClient().timeEntry.findMany({
       where: where,
       include: {
         task: {
@@ -71,8 +71,7 @@ export class ReportRepository implements ReportRepositoryInterface {
   async getProjectTypes(
     company: string,
   ): Promise<{ project: string; projectType: string }[]> {
-    const prisma = new PrismaClient()
-    const result = await prisma.project.findMany({
+    const result = await this.prismaDBConnection.getClient().project.findMany({
       where: {
         customer: {
           company_id: company,
