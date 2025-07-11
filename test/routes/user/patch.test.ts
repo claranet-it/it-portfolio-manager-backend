@@ -104,6 +104,39 @@ test('Patch user with SUPERADMIN ROLE and payload.role = ADMIN', async (t) => {
   t.equal(updatedUser.role.S, 'ADMIN')
 })
 
+test('Patch user with SUPERADMIN ROLE and payload.role = SUPERADMIN', async (t) => {
+  const tempToken = app.createTestJwt({
+    email: 'nicholas.crow@email.com',
+    name: 'Nicholas Crow',
+    picture: 'https://test.com/nicholas.crow.jpg',
+    company: 'it',
+    role: 'SUPERADMIN',
+  })
+
+  const response = await app.inject({
+    method: 'PATCH',
+    url: `/api/user/george.python@email.com`,
+    headers: {
+      authorization: `Bearer ${tempToken}`,
+    },
+    body: {
+      role: 'SUPERADMIN',
+    },
+  })
+  t.equal(response.statusCode, 204)
+
+  const result = await app.dynamoDBClient.send(
+    new QueryCommand({
+      TableName: getTableName('UserProfile'),
+      KeyConditionExpression: 'uid = :uid',
+      ExpressionAttributeValues: { ':uid': { S: 'george.python@email.com' } },
+    }),
+  )
+
+  const updatedUser = result.Items![0]
+  t.equal(updatedUser.role.S, 'SUPERADMIN')
+})
+
 test('Patch user with role TEAM_LEADER', async (t) => {
   const response = await app.inject({
     method: 'PATCH',
