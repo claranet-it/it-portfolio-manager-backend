@@ -4,17 +4,18 @@ import { FastifyInstance } from 'fastify'
 import { CompanyConnectionsService } from '@src/core/CompanyConnections/service/CompanyConnectionsService'
 import { CompanyRepository } from '@src/infrastructure/Company/Repository/CompanyRepository'
 import { CompanyConnectionsRepository } from '@src/infrastructure/CompanyConnections/Repository/CompanyConnectionsRepository'
+import { PrismaClient } from 'prisma/generated'
 import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 let app: FastifyInstance
-const prisma = new PrismaDBConnection()
+const prisma = new PrismaClient()
 
 const MY_COMPANY_ID = "MyCompanyId"
 let companyConnectionsService: CompanyConnectionsService
 before(async () => {
     app = createApp({ logger: false })
     await app.ready()
-    const myCompany = await prisma.getClient().company.create({
+    const myCompany = await prisma.company.create({
         data: {
             domain: "MyComany",
             name: "MyComany",
@@ -24,7 +25,7 @@ before(async () => {
 
     })
 
-    const otherCompany = await prisma.getClient().company.create({
+    const otherCompany = await prisma.company.create({
         data: {
             domain: "OtherComany",
             name: "OtherComany",
@@ -32,7 +33,7 @@ before(async () => {
         },
     })
 
-    const externalCompany = await prisma.getClient().company.create({
+    const externalCompany = await prisma.company.create({
         data: {
             domain: "ExternalComany",
             name: "ExternalComany",
@@ -40,7 +41,7 @@ before(async () => {
         },
     })
 
-    await prisma.getClient().companyConnections.createMany({
+    await prisma.companyConnections.createMany({
         data: [
             {
                 requester_company_id: myCompany.id,
@@ -57,22 +58,22 @@ before(async () => {
         ],
     })
 
-    const companyRepository = new CompanyRepository(prisma)
-    const companyConnectionRepository = new CompanyConnectionsRepository(prisma)
+    const companyRepository = new CompanyRepository(new PrismaDBConnection())
+    const companyConnectionRepository = new CompanyConnectionsRepository(new PrismaDBConnection())
     companyConnectionsService = new CompanyConnectionsService(companyRepository, companyConnectionRepository)
 })
 
 after(async () => {
-    const deleteCompanyConnections = prisma.getClient().companyConnections.deleteMany()
-    const deleteCompany = prisma.getClient().company.deleteMany()
+    const deleteCompanyConnections = prisma.companyConnections.deleteMany()
+    const deleteCompany = prisma.company.deleteMany()
 
-    await prisma.getClient().$transaction([deleteCompanyConnections, deleteCompany])
-    await prisma.getClient().$disconnect()
+    await prisma.$transaction([deleteCompanyConnections, deleteCompany])
+    await prisma.$disconnect()
     await app.close()
 })
 
 test('Remove connection', async (t) => {
     await companyConnectionsService.deleteConnections(MY_COMPANY_ID)
-    const responseConnections = await prisma.getClient().companyConnections.findMany()
+    const responseConnections = await prisma.companyConnections.findMany()
     t.equal(responseConnections.length, 1)
 })

@@ -106,7 +106,7 @@ test('should return 500 deleting not existing company', async (t) => {
     const token = app.createTestJwt({
         email: FAKE_EMAIL,
         name: 'Marytex',
-        picture: 'https://test.com/marytex.jpg',
+        picture: 'https:test.com/marytex.jpg',
         company: MY_COMPANY,
         role: 'ADMIN',
     })
@@ -120,7 +120,7 @@ test('should return 403 deleting other company', async (t) => {
     const token = app.createTestJwt({
         email: FAKE_EMAIL,
         name: 'Marytex',
-        picture: 'https://test.com/marytex.jpg',
+        picture: 'https:test.com/marytex.jpg',
         company: 'OtherCompany',
         role: 'ADMIN',
     })
@@ -137,7 +137,7 @@ test('should return 403 deleting company without ADMIN role', async (t) => {
     const token = app.createTestJwt({
         email: FAKE_EMAIL,
         name: 'Marytex',
-        picture: 'https://test.com/marytex.jpg',
+        picture: 'https:test.com/marytex.jpg',
         company: MY_COMPANY,
         role: 'USER',
     })
@@ -155,7 +155,7 @@ test('should delete all data of company', async (t) => {
     const token = app.createTestJwt({
         email: FAKE_EMAIL,
         name: 'Marytex',
-        picture: 'https://test.com/marytex.jpg',
+        picture: 'https:test.com/marytex.jpg',
         company: MY_COMPANY,
         role: 'SUPERADMIN',
     })
