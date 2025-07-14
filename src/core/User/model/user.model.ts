@@ -87,6 +87,7 @@ export type UserWithCrewListType = Static<typeof UserWithCrewList>
 const PatchRole = Type.Union([
   Type.Literal('ADMIN'),
   Type.Literal('TEAM_LEADER'),
+  Type.Literal('SUPERADMIN'),
   Type.Literal(''),
 ])
 

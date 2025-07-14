@@ -68,6 +68,7 @@ before(async () => {
     const companyRepository = new CompanyRepository(new PrismaDBConnection())
     const skillRepository = new SkillRepository(new PrismaDBConnection())
     const companyKeysRepository = new CompanyKeysRepository(new PrismaDBConnection())
+
     companyService = new CompanyService(companyRepository, companyKeysRepository, skillRepository)
 })
 
