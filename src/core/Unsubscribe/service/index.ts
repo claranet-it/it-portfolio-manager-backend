@@ -10,6 +10,7 @@ import { Mailer } from "@src/infrastructure/mailer/Mailer";
 import { ForbiddenException } from "@src/shared/exceptions/ForbiddenException";
 import { NotFoundException } from "@src/shared/exceptions/NotFoundException";
 import { getTestMessageUrl } from "nodemailer";
+import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 
 export class UnsubscribeService {
     constructor(
@@ -42,8 +43,7 @@ export class UnsubscribeService {
         Please verify that all associated data for this company has been successfully and completely removed from our database in accordance with our data retention policies and relevant regulations.`
 
         if (!(from && to)) {
-            console.error("Error while sending mail, missing email address");
-            return
+            throw new NotFoundException("Sending or Reciver email not found!");
         }
 
         try {
@@ -54,6 +54,7 @@ export class UnsubscribeService {
             }
         } catch (err) {
             console.error("Error while sending mail", err);
+            throw new Error("Error while sending mail")
         }
 
         /* TODO: unica transaction al passaggio completo su MariaDB */

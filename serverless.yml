@@ -212,6 +212,8 @@ functions:
       JWT_PUBLIC_KEY_ARN: /it-portfolio-manager/${opt:stage, 'dev'}/jwt-public-key
       DATABASE_URL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/database-url}
       BACKGROUND_TEMPLATES_BUCKET: ${ssm:/it-portfolio-manager/${opt:stage, 'stage'}/background-templates-bucket, ''}
+      RECEIVER_EMAIL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/unsubscribe-email/receiver, ''}
+      SENDER_EMAIL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/unsubscribe-email/sender, ''}
       FIND_TEAM_OPENAI_PROMPT: "  Given the SKILL data:
 
       [[SKILL]]

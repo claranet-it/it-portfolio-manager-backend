@@ -57,6 +57,9 @@ export class SkillRepository implements SkillRepositoryInterface {
         }
       }),
     )
+
+    await this.prismaDBConnection.getClient().$disconnect();
+
     return upsertedSkills.map((skill) => ({
       id: skill.id,
       name: skill.name,
