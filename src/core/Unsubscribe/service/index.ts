@@ -10,7 +10,6 @@ import { Mailer } from "@src/infrastructure/mailer/Mailer";
 import { ForbiddenException } from "@src/shared/exceptions/ForbiddenException";
 import { NotFoundException } from "@src/shared/exceptions/NotFoundException";
 import { getTestMessageUrl } from "nodemailer";
-import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
 
 export class UnsubscribeService {
     constructor(
