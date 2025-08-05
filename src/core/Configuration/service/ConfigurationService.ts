@@ -112,10 +112,11 @@ const scoreRangeLabels = {
 }
 
 export class ConfigurationService {
-  constructor(private crewRepository: CrewRepositoryInterface) {}
+  constructor(private crewRepository: CrewRepositoryInterface) { }
   async getAllConfiguration(company: string): Promise<ConfigurationType> {
     const crews = await this.crewRepository.findByCompany(company)
     return {
+      company: company,
       crews,
       skills,
       scoreRange,

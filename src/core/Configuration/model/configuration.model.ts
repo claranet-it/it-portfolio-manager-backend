@@ -28,6 +28,7 @@ const ScoreRangeLabels = Type.Object({
 })
 
 export const Configuration = Type.Object({
+  company: Type.String(),
   crews: ConfigurationCrews,
   skills: ConfigurationSkills,
   scoreRange: Type.Object({
