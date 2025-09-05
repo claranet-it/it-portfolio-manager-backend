@@ -417,8 +417,6 @@ export class TaskRepository implements TaskRepositoryInterface {
     id: string,
   ): Promise<void> {
 
-    console.log("####### sono qui con questo id", id)
-
     const task = await this.prismaDBConnection.getClient().projectTask.findUnique({
       where: {
         id: id,

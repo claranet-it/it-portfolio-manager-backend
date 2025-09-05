@@ -15,7 +15,6 @@ import {
 import { TaskPropertiesRepositoryInterface } from '@src/core/Task/repository/TaskPropertiesRepositoryInterface'
 import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
 
-
 export class TaskService {
   constructor(
     private taskRepository: TaskRepositoryInterface,
