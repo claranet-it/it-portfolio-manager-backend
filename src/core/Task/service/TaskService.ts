@@ -15,6 +15,7 @@ import {
 import { TaskPropertiesRepositoryInterface } from '@src/core/Task/repository/TaskPropertiesRepositoryInterface'
 import { TaskNotExistsError } from '@src/core/customExceptions/TaskNotExistsError'
 
+
 export class TaskService {
   constructor(
     private taskRepository: TaskRepositoryInterface,
@@ -74,5 +75,9 @@ export class TaskService {
 
   async deleteCustomersAndRelatedDataByCompany(id: string): Promise<void> {
     return this.taskRepository.deleteCustomersAndRelatedDataByCompany(id)
+  }
+
+  async deleteTask(id: string): Promise<void> {
+    return this.taskRepository.deleteTask(id)
   }
 }

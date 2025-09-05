@@ -15,7 +15,7 @@ import { TaskError } from '@src/core/customExceptions/TaskError'
 import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 export class TaskRepository implements TaskRepositoryInterface {
-  constructor(private readonly prismaDBConnection: PrismaDBConnection) {}
+  constructor(private readonly prismaDBConnection: PrismaDBConnection) { }
 
   async getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]> {
     const result = await this.prismaDBConnection.getClient().customer.findMany({
@@ -408,6 +408,33 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
       where: {
         id: project.id,
+      },
+    })
+  }
+
+
+  async deleteTask(
+    id: string,
+  ): Promise<void> {
+
+    console.log("####### sono qui con questo id", id)
+
+    const task = await this.prismaDBConnection.getClient().projectTask.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        time_entries: true,
+      },
+    })
+
+    if (task?.time_entries.length && task.time_entries.length > 0) {
+      throw new Error(`Cannot delete task ${id} with time entries`)
+    }
+
+    await this.prismaDBConnection.getClient().projectTask.delete({
+      where: {
+        id,
       },
     })
   }
