@@ -8,6 +8,7 @@ export const Company = Type.Object({
   image_url: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   primary_contact: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   company_master: Type.Boolean(),
+  company_fullname: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 })
 
 export type CompanyType = Static<typeof Company>
