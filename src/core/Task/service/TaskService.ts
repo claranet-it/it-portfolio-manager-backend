@@ -75,4 +75,8 @@ export class TaskService {
   async deleteCustomersAndRelatedDataByCompany(id: string): Promise<void> {
     return this.taskRepository.deleteCustomersAndRelatedDataByCompany(id)
   }
+
+  async deleteTask(id: string): Promise<void> {
+    return this.taskRepository.deleteTask(id)
+  }
 }

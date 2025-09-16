@@ -4,6 +4,7 @@ p, SUPERADMIN, companyAvailable, read
 p, SUPERADMIN, companyConnections, read
 p, SUPERADMIN, companyConnections, write
 p, SUPERADMIN, task, write
+p, SUPERADMIN, task, delete
 p, SUPERADMIN, time_entry, read
 p, SUPERADMIN, time_entry, write
 p, SUPERADMIN, time_entry, import
@@ -16,6 +17,7 @@ p, ADMIN, companyAvailable, read
 p, ADMIN, company, write
 p, ADMIN, companyConnections, read
 p, ADMIN, task, write
+p, ADMIN, task, delete
 p, ADMIN, time_entry, read
 p, ADMIN, time_entry, write
 p, ADMIN, time_entry, import

@@ -22,7 +22,7 @@ export interface TaskRepositoryInterface {
   updateCustomerProject(params: CustomerProjectUpdateParamsType): Promise<void>
   updateTask(params: TaskUpdateParamsType): Promise<void>
   deleteCustomerProject(params: CustomerProjectDeleteParamsType): Promise<void>
-
+  deleteTask(id: string): Promise<void>
   getCustomersByCompany(companyName: string): Promise<CustomerType[]>
   getTasksByCompany(companyName: string): Promise<TaskListType>
   getProjectsByCompany(companyName: string): Promise<ProjectToEncryptType[]>
