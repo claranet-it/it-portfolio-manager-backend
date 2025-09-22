@@ -15,6 +15,7 @@ import { TaskError } from '@src/core/customExceptions/TaskError'
 import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 export class TaskRepository implements TaskRepositoryInterface {
+  
   constructor(private readonly prismaDBConnection: PrismaDBConnection) { }
 
   async getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]> {
@@ -411,7 +412,6 @@ export class TaskRepository implements TaskRepositoryInterface {
       },
     })
   }
-
 
   async deleteTask(
     id: string,
