@@ -26,6 +26,7 @@ model Company {
   requestedConnections     CompanyConnections[] @relation("RequesterCompany")
   correspondentConnections CompanyConnections[] @relation("CorrespondentCompany")
   company_keys             CompanyKeys[]
+  company_fullname         String?
 }
 
 model CompanyKeys {

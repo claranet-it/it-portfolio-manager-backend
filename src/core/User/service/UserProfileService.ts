@@ -128,6 +128,10 @@ export class UserProfileService {
       throw new BadRequestException('Invalid role')
     }
 
+    if (currentRole === 'SUPERADMIN') {
+      return true
+    }
+
     return currentRoleIndex > targetRoleIndex
   }
 
