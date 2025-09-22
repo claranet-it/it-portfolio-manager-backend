@@ -14,6 +14,7 @@ p, SUPERADMIN, user, write
 p, SUPERADMIN, user, delete
 p, SUPERADMIN, unsubscribe, delete
 p, ADMIN, companyAvailable, read
+p, ADMIN, company, read
 p, ADMIN, company, write
 p, ADMIN, companyConnections, read
 p, ADMIN, task, write
