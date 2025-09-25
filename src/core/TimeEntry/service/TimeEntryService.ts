@@ -61,9 +61,11 @@ export class TimeEntryService {
             userId: user?.uid ?? '',
             billable: entry.projectType === ProjectType.BILLABLE,
             task: {
+              id: entry.taskId,
               name: entry.task,
             },
             project: {
+              id: entry.projectId,
               name: entry.project,
               billable: entry.projectType === ProjectType.BILLABLE,
               clientName: entry.project,

@@ -90,8 +90,9 @@ export const TimeEntriesForCna = Type.Object({
   user: Type.Object({ email: Type.String(), name: Type.String() }),
   userId: Type.String(),
   billable: Type.Boolean(),
-  task: Type.Object({ name: Type.String() }),
+  task: Type.Object({ id: Type.String(), name: Type.String() }),
   project: Type.Object({
+    id: Type.String(),
     name: Type.String(),
     billable: Type.Boolean(),
     clientName: Type.String(),
@@ -109,8 +110,10 @@ export const TimeEntryRowWithProject = Type.Object({
   company: Type.String(),
   customer: Type.String(),
   project: Type.String(),
+  projectId: Type.String(),
   projectType: Type.String(),
   task: Type.String(),
+  taskId: Type.String(),
   hours: Type.Number(),
   timeEntryDate: Type.String(),
 })

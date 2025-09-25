@@ -170,8 +170,10 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
           company: timeEntry.task.project.customer.company_id,
           customer: timeEntry.task.project.customer.name,
           project: timeEntry.task.project.name,
+          projectId: timeEntry.task.project.id,
           projectType: ProjectType.ABSENCE,
           task: timeEntry.task.name,
+          taskId: timeEntry.task.id,
           hours: timeEntry.hours,
           timeEntryDate: timeEntry.time_entry_date.toDateString(), // TODO: DUPLICATED
         })),
@@ -223,8 +225,10 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       company: timeEntry.task.project.customer.company_id,
       customer: timeEntry.task.project.customer.name,
       project: timeEntry.task.project.name,
+      projectId: timeEntry.task.project.id,
       projectType: ProjectType.ABSENCE,
       task: timeEntry.task.name,
+      taskId: timeEntry.task.id,
       hours: timeEntry.hours,
       timeEntryDate: timeEntry.time_entry_date.toISOString(), // TODO: DUPLICATED
     }))

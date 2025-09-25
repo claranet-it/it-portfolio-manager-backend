@@ -6,36 +6,46 @@ import { PrismaClient } from '../../../prisma/generated'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
+/* eslint-disable */
+let customer: any;
+/* eslint-disable */
+let project: any;
+/* eslint-disable */
+let donazione: any;
+/* eslint-disable */
+let festivita: any;
+/* eslint-disable */
+let malattia: any;
 
 beforeEach(async () => {
     app = createApp({logger: false})
     await app.ready()
 
-    const customer = await prisma.customer.create({
+    customer = await prisma.customer.create({
         data: {
             name: "Claranet",
             company_id: "it",
         }
     })
-    const project = await prisma.project.create({
+    project = await prisma.project.create({
         data: {
             name: "Assenze",
             customer_id: customer.id,
         }
     })
-    const donazione = await prisma.projectTask.create({
+    donazione = await prisma.projectTask.create({
         data: {
             name: "DONAZIONE SANGUE",
             project_id: project.id,
         }
     })
-    const festivita = await prisma.projectTask.create({
+    festivita = await prisma.projectTask.create({
         data: {
             name: "FESTIVITA",
             project_id: project.id,
         }
     })
-    const malattia = await prisma.projectTask.create({
+    malattia = await prisma.projectTask.create({
         data: {
             name: "MALATTIA (INVIARE CERTIFICATO MEDICO)",
             project_id: project.id,
@@ -124,9 +134,11 @@ test('Return time entries for cna', async (t) => {
             "userId": "micol.ts@email.com",
             "billable": false,
             "task": {
+                "id": festivita.id,
                 "name": "FESTIVITA",
             },
             "project": {
+                "id": project.id,
                 "name": "Assenze",
                 "billable": false,
                 "clientName": "Assenze",
@@ -146,9 +158,11 @@ test('Return time entries for cna', async (t) => {
             "userId": "micol.ts@email.com",
             "billable": false,
             "task": {
+                "id": malattia.id,
                 "name": "MALATTIA (INVIARE CERTIFICATO MEDICO)"
             },
             "project": {
+                "id": project.id,
                 "name": "Assenze",
                 "billable": false,
                 "clientName": "Assenze"
@@ -168,9 +182,11 @@ test('Return time entries for cna', async (t) => {
             "userId": "nicholas.crow@email.com",
             "billable": false,
             "task": {
+                "id": donazione.id,
                 "name": "DONAZIONE SANGUE",
             },
             "project": {
+                "id": project.id,
                 "name": "Assenze",
                 "billable": false,
                 "clientName": "Assenze",
