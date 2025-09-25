@@ -6,6 +6,7 @@ import { seedCompany } from '@test/seed/prisma/company'
 import { PrismaClient } from '../../../prisma/generated'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
+import { seedCompanyConnections } from '@test/seed/prisma/companyConnections'
 
 let app: FastifyInstance
 const prisma = new PrismaClient()
@@ -23,12 +24,14 @@ before(async () => {
   app = createApp({ logger: false })
   await app.ready()
   await seedCompany()
+  await seedCompanyConnections()
 })
 
 after(async () => {
+  const deleteCompanyConnections = prisma.companyConnections.deleteMany()
   const deleteCompany = prisma.company.deleteMany()
 
-  await prisma.$transaction([deleteCompany])
+  await prisma.$transaction([deleteCompanyConnections, deleteCompany])
   await prisma.$disconnect()
   await app.close()
 })
