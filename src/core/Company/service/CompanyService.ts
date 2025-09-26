@@ -2,6 +2,7 @@ import { JwtTokenType } from '@src/core/JwtToken/model/jwtToken.model'
 import { CompanyRepositoryInterface } from '../repository/CompanyRepositoryInterface'
 import {
   CompanyType,
+  CompanyWithConnectionStatusType,
   CompanyWithSkillsType,
 } from '@src/core/Company/model/Company'
 import { NotFoundException } from '@src/shared/exceptions/NotFoundException'
@@ -9,19 +10,18 @@ import { CompanyPatchBodyType } from '@src/core/Company/service/dto/CompanyPatch
 import { ForbiddenException } from '@src/shared/exceptions/ForbiddenException'
 import { skills } from '@src/core/Configuration/service/ConfigurationService'
 import { SkillWithCompanyType } from '@src/core/Skill/model/Skill'
-import { SkillRepository } from '@src/infrastructure/Skill/Repository/SkillRepository'
 import { SkillType } from '@src/core/Configuration/model/configuration.model'
 import { CompanyKeysRepositoryInterface } from '@src/core/Company/repository/CompanyKeysRepositoryInterface'
 import { CompanyKeysType } from '@src/core/Company/model/CompanyKeys'
 import { BadRequestException } from '@src/shared/exceptions/BadRequestException'
+import { SkillRepositoryInterface } from '@src/core/Skill/repository/SkillRepositoryInterface'
 
 export class CompanyService {
-
   constructor(
     private companyRepository: CompanyRepositoryInterface,
     private companyKeysRepository: CompanyKeysRepositoryInterface,
-    private skillRepository: SkillRepository,
-  ) { }
+    private skillRepository: SkillRepositoryInterface,
+  ) {}
 
   async networkingFindAll(jwtToken: JwtTokenType): Promise<CompanyType[]> {
     const company = await this.companyRepository.findOne({
@@ -35,8 +35,20 @@ export class CompanyService {
     return this.companyRepository.findAll(company.id, true)
   }
 
-  async getAll(): Promise<CompanyType[]> {
-    return await this.companyRepository.findAll()
+  async getAll(jwtToken?: JwtTokenType, excludeMine?: boolean): Promise<CompanyWithConnectionStatusType[]> {
+    let company
+    if(jwtToken !== undefined) {
+      company = await this.companyRepository.findOne(
+      {
+        name: jwtToken.company,
+      },
+      true,
+      )
+    }
+
+    const idToExclude = excludeMine && company ? company.id : undefined
+
+    return await this.companyRepository.findAll(idToExclude, undefined, undefined)
   }
 
   async getMine(jwtToken: JwtTokenType): Promise<CompanyWithSkillsType | null> {
@@ -46,7 +58,7 @@ export class CompanyService {
       },
       true,
     )
-    console.log("### ", company?.company_master, company?.primary_contact)
+    console.log('### ', company?.company_master, company?.primary_contact)
     if (!company) {
       throw new NotFoundException('Company not found')
     }
@@ -121,7 +133,7 @@ export class CompanyService {
       throw new NotFoundException('Company keys not found')
     }
 
-    return keys;
+    return keys
   }
 
   async saveKeys(jwtToken: JwtTokenType, body: CompanyKeysType): Promise<void> {
@@ -137,7 +149,7 @@ export class CompanyService {
       throw new NotFoundException('Company not found')
     }
 
-    const keys = await this.companyKeysRepository.findByCompany(company.id);
+    const keys = await this.companyKeysRepository.findByCompany(company.id)
 
     if (keys) {
       throw new BadRequestException('Keys already exist')
@@ -147,7 +159,7 @@ export class CompanyService {
       company_id: company.id,
       publicKey: body.publicKey,
       encryptedPrivateKey: body.encryptedPrivateKey,
-      encryptedAESKey: body.encryptedAESKey
+      encryptedAESKey: body.encryptedAESKey,
     })
   }
 
