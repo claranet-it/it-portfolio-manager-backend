@@ -2,7 +2,9 @@ import { CompanyRepositoryInterface } from '@src/core/Company/repository/Company
 import {
   CompanyFindType,
   CompanyType,
+  CompanyWithConnectionStatusType,
   CompanyWithSkillsType,
+  ConnectionStatusType,
 } from '@src/core/Company/model/Company'
 import { Prisma } from '../../../../prisma/generated'
 import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
@@ -14,12 +16,14 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     id: string,
     joinSkills: boolean = false,
   ): Promise<CompanyType | CompanyWithSkillsType | null> {
-    const company = await this.prismaDBConnection.getClient().company.findFirst({
-      where: { id: id },
-      include: {
-        ...(joinSkills && { skills: true }),
-      },
-    })
+    const company = await this.prismaDBConnection
+      .getClient()
+      .company.findFirst({
+        where: { id: id },
+        include: {
+          ...(joinSkills && { skills: true }),
+        },
+      })
 
     if (!company) {
       return null
@@ -47,10 +51,12 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     if (find.domain) {
       where = { domain: find.domain }
     }
-    const company = await this.prismaDBConnection.getClient().company.findFirst({
-      where: where,
-      include: { skills: includeSkills },
-    })
+    const company = await this.prismaDBConnection
+      .getClient()
+      .company.findFirst({
+        where: where,
+        include: { skills: includeSkills },
+      })
 
     if (!company) {
       return null
@@ -70,9 +76,11 @@ export class CompanyRepository implements CompanyRepositoryInterface {
   }
 
   async findCompanyMaster(): Promise<CompanyType | null> {
-    const company = await this.prismaDBConnection.getClient().company.findFirst({
-      where: { company_master: true },
-    })
+    const company = await this.prismaDBConnection
+      .getClient()
+      .company.findFirst({
+        where: { company_master: true },
+      })
 
     if (!company) {
       return null
@@ -85,7 +93,7 @@ export class CompanyRepository implements CompanyRepositoryInterface {
     idToExclude?: string,
     excludeConnectedCompanies?: boolean,
     excludeUnconnectedCompanies?: boolean,
-  ): Promise<CompanyType[]> {
+  ): Promise<CompanyWithConnectionStatusType[]> {
     let where: Prisma.CompanyWhereInput = {}
     if (idToExclude) {
       where.NOT = { id: idToExclude }
@@ -125,9 +133,35 @@ export class CompanyRepository implements CompanyRepositoryInterface {
       }
     }
 
-    return this.prismaDBConnection.getClient().company.findMany({
-      where: where,
-      orderBy: { name: 'asc' },
+    const companies = await this.prismaDBConnection
+      .getClient()
+      .company.findMany({
+        where: where,
+        orderBy: { name: 'asc' },
+        include: {
+          ...(idToExclude && {
+            requestedConnections: {
+              where: { correspondent_company_id: idToExclude },
+            },
+            correspondentConnections: {
+              where: { requester_company_id: idToExclude },
+            },
+          }),
+        },
+      })
+
+    return companies.map((company) => {
+      const hasConnection =
+        (company.requestedConnections?.length ?? 0) > 0 ||
+        (company.correspondentConnections?.length ?? 0) > 0
+      const connectionStatus: ConnectionStatusType = hasConnection
+        ? 'CONNECTED'
+        : 'UNCONNECTED'
+
+      return {
+        ...company,
+        connectionStatus,
+      }
     })
   }
 
@@ -140,10 +174,9 @@ export class CompanyRepository implements CompanyRepositoryInterface {
   }
 
   async deleteCompany(idCompany: string): Promise<void> {
-
     const deleteSkill = this.prismaDBConnection.getClient().skill.deleteMany({
       where: {
-        company_id: idCompany
+        company_id: idCompany,
       },
     })
 
@@ -153,8 +186,8 @@ export class CompanyRepository implements CompanyRepositoryInterface {
       },
     })
 
-    await this.prismaDBConnection.getClient().$transaction([deleteSkill, deleteCompany])
-
+    await this.prismaDBConnection
+      .getClient()
+      .$transaction([deleteSkill, deleteCompany])
   }
-
 }
