@@ -154,7 +154,7 @@ export class NetworkingService {
         await this.companyRepository.findAll(
           company.id,
           false,
-          companyName !== 'it',
+          true,
         )
       ).map((company) => company.name)
     }
