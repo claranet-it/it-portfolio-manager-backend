@@ -1,6 +1,7 @@
 import {
   CompanyFindType,
   CompanyType,
+  CompanyWithConnectionStatusType,
   CompanyWithSkillsType,
 } from '@src/core/Company/model/Company'
 
@@ -17,7 +18,7 @@ export interface CompanyRepositoryInterface {
     idToExclude?: string,
     excludeConnectedCompanies?: boolean,
     excludeUnconnectedCompanies?: boolean,
-  ): Promise<CompanyType[]>
+  ): Promise<CompanyWithConnectionStatusType[]>
   save(company: CompanyType): Promise<CompanyType>
   deleteCompany(idCompany: string): Promise<void>
   findCompanyMaster(): Promise<CompanyType | null>

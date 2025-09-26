@@ -1,12 +1,11 @@
 import { FastifyInstance } from 'fastify'
-import {
-  CompaniesArray,
-  CompaniesArrayType,
-} from '@src/core/Company/model/Company'
+import { CompaniesWithConnectionStatusArrayType } from '@src/core/Company/model/Company'
+import { Type } from '@sinclair/typebox'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Reply: CompaniesArrayType
+    Querystring: { excludeMine?: boolean }
+    Reply: CompaniesWithConnectionStatusArrayType
   }>(
     '/',
     {
@@ -24,8 +23,11 @@ export default async function (fastify: FastifyInstance): Promise<void> {
             apiKey: [],
           },
         ],
+        querystring: {
+          excludeMine: Type.Optional(Type.Boolean()),
+        },
         response: {
-          200: CompaniesArray,
+          200: CompaniesWithConnectionStatusArrayType,
           401: {
             type: 'null',
             description: 'Unauthorized',
@@ -42,7 +44,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('companyService')
-          .getAll()
+          .getAll(request.user, request.query.excludeMine)
       } catch (error) {
         request.log.error(error)
         return reply.code(500).send()
