@@ -16,8 +16,9 @@ export class NetworkingService {
 
   async getNetworkingAverageSkillsOf(
     company: string,
+    includeUnconnectedCompanies: boolean = false,
   ): Promise<NetworkingSkillsResponseType> {
-    const networkingCompanies = await this.getNetworkingCompanies(company)
+    const networkingCompanies = await this.getNetworkingCompanies(company, !includeUnconnectedCompanies)
 
     return await Promise.all(
       networkingCompanies.map(async (company) => {
@@ -147,14 +148,14 @@ export class NetworkingService {
     return numbers.length > 0 ? sum / numbers.length : 0
   }
 
-  private async getNetworkingCompanies(companyName: string): Promise<string[]> {
+  private async getNetworkingCompanies(companyName: string, excludeUnconnectedCompanies: boolean = true): Promise<string[]> {
     const company = await this.companyRepository.findOne({ name: companyName })
     if (company) {
       return (
         await this.companyRepository.findAll(
           company.id,
           false,
-          true,
+          excludeUnconnectedCompanies,
         )
       ).map((company) => company.name)
     }
