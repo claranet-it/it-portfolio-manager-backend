@@ -90,3 +90,18 @@ test('read company networking skills of other', async (t) => {
   t.equal(response.statusCode, 200)
   t.same(response.payload, '[]')
 })
+
+test('read company networking skills of other with includeUnconnectedCompanies = true', async (t) => {
+  const company = 'test company'
+  const token = getToken(company)
+  const response = await app.inject({
+    method: 'GET',
+    url: '/api/networking/skills?includeUnconnectedCompanies=true',
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
+
+  t.equal(response.statusCode, 200)
+  t.notSame(response.payload, '[]')
+})
