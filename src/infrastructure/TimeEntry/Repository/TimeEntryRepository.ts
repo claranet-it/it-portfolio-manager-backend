@@ -144,7 +144,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
           },
           task: {
             project: {
-              name: 'Assenze',
+              id: 'be474592-e958-4892-b3a4-c3d6ff43b700',
             },
           },
         },
@@ -192,7 +192,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     const result = await this.prismaDBConnection.getClient().timeEntry.findMany({ where: {
         task: {
           project: {
-            name: 'Assenze',
+            id: 'be474592-e958-4892-b3a4-c3d6ff43b700',
             customer: {
               company_id: params.company,
             },
