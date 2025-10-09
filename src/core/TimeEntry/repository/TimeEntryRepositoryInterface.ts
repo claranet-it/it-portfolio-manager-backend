@@ -27,4 +27,5 @@ export interface TimeEntryRepositoryInterface {
   getTimeEntriesFilterBy(params: ReportProjectsWithCompanyType,
   ): Promise<TimeEntryRowWithProjectEntityType[]>
   getTimeEntriesByCompany(companyName: string): Promise<TimeEntriesToEncryptType[]>
+  getProjectOverSeventy(companyName: string): Promise<any[]>
 }

@@ -393,4 +393,40 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       description: timeEntry.description ?? '',
     }));
   }
+
+  async getProjectOverSeventy(companyName: string): Promise<any[]> {
+    const result = await this.prismaDBConnection.getClient().$queryRaw<Array<{
+      project_id: string;
+      project_name: string;
+      customer_id: string;
+      customer_name: string;
+      planned_hours: number;
+      total_hours: number;
+      completion_percentage: number;
+    }>>`
+      SELECT 
+        p.id as project_id,
+        p.name as project_name,
+        c.id as customer_id,
+        c.name as customer_name,
+        p.plannedHours as planned_hours,
+        COALESCE(SUM(te.hours), 0) as total_hours,
+        CASE 
+          WHEN p.plannedHours > 0 THEN (COALESCE(SUM(te.hours), 0) / p.plannedHours) * 100
+          ELSE 0
+        END as completion_percentage
+      FROM Project p
+      INNER JOIN Customer c ON p.customer_id = c.id
+      LEFT JOIN ProjectTask pt ON pt.project_id = p.id
+      LEFT JOIN TimeEntry te ON te.task_id = pt.id
+      WHERE c.company_id = ${companyName}
+        AND p.is_inactive = 0
+        AND p.completed = 0
+      GROUP BY p.id, p.name, c.id, c.name, p.plannedHours
+      HAVING completion_percentage > 70
+      ORDER BY completion_percentage DESC
+    `;
+
+    return result;
+  }
 }

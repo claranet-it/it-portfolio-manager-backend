@@ -327,8 +327,9 @@ functions:
     environment:
       STAGE_NAME: ${opt:stage, 'dev'}
       DATABASE_URL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/database-url}
+      SENDER_EMAIL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/unsubscribe-email/sender, ''}
     events:
-      - schedule: cron(0 9 ? * MON *)
+      - schedule: cron(0 7 ? * MON *)
 
 resources:
   Resources:

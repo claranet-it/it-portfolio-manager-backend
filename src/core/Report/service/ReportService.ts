@@ -10,6 +10,7 @@ import { DateRangeError } from '@src/core/customExceptions/DateRangeError'
 import { CompleteUserProfileType } from '@src/core/User/model/user.model'
 import { ProductivityCalculator } from '@src/core/Report/service/ProductivityCalculator'
 import { CrewRepositoryInterface } from '@src/core/Configuration/repository/CrewRepositoryInterface'
+import { Mailer } from '@src/infrastructure/mailer/Mailer'
 
 export class ReportService {
   constructor(
@@ -17,6 +18,8 @@ export class ReportService {
     private crewRepository: CrewRepositoryInterface,
     private userProfileRepository: UserProfileRepositoryInterface,
     private productivityCalculator: ProductivityCalculator,
+    private taskRepository: ReportRepositoryInterface,
+    private readonly mailer: Mailer
   ) {}
 
   async getProductivityReport(
@@ -183,6 +186,10 @@ export class ReportService {
         }
       }),
     )
+  }
+
+  async sendReportProjectOverSeventy () {
+    const projectList = this.taskRepository.getProjectOverSeventy()
   }
 
   private async emptyWorkedHoursFor(
