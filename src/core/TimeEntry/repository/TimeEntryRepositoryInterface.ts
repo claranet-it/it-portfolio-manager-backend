@@ -1,4 +1,4 @@
-import { ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
+import { ProjectOverSeventyType, ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
 import {
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
@@ -27,5 +27,5 @@ export interface TimeEntryRepositoryInterface {
   getTimeEntriesFilterBy(params: ReportProjectsWithCompanyType,
   ): Promise<TimeEntryRowWithProjectEntityType[]>
   getTimeEntriesByCompany(companyName: string): Promise<TimeEntriesToEncryptType[]>
-  getProjectOverSeventy(companyName: string): Promise<any[]>
+  getProjectOverSeventy(companyName: string): Promise<ProjectOverSeventyType[]>
 }

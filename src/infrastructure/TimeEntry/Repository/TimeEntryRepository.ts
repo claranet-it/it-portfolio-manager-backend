@@ -1,6 +1,7 @@
 import {
   CnaReadParamType,
-  deleteTimeEntryWithUserType, TimeEntriesToEncryptType,
+  deleteTimeEntryWithUserType,
+  TimeEntriesToEncryptType,
   TimeEntryReadParamWithCompanyAndCrewType,
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
@@ -11,7 +12,7 @@ import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/Tim
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { invariant } from '@src/helpers/invariant'
 import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
-import { ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
+import { ProjectOverSeventyType, ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
 import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -394,16 +395,8 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
     }));
   }
 
-  async getProjectOverSeventy(companyName: string): Promise<any[]> {
-    const result = await this.prismaDBConnection.getClient().$queryRaw<Array<{
-      project_id: string;
-      project_name: string;
-      customer_id: string;
-      customer_name: string;
-      planned_hours: number;
-      total_hours: number;
-      completion_percentage: number;
-    }>>`
+  async getProjectOverSeventy(companyName: string): Promise<ProjectOverSeventyType[]> {
+    return await this.prismaDBConnection.getClient().$queryRaw<Array<ProjectOverSeventyType>>`
       SELECT 
         p.id as project_id,
         p.name as project_name,
@@ -426,7 +419,5 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       HAVING completion_percentage > 70
       ORDER BY completion_percentage DESC
     `;
-
-    return result;
   }
 }

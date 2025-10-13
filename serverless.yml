@@ -320,17 +320,6 @@ functions:
 
         output_format: {"start": mm_yy "month_number": ...}"'
 
-  mondayProjectReportMailer:
-    handler: src/handlers/mondayProjectReportMailer.handler
-    vpc: ${self:custom.vpc.${opt:stage, 'dev'}}
-    timeout: 900
-    environment:
-      STAGE_NAME: ${opt:stage, 'dev'}
-      DATABASE_URL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/database-url}
-      SENDER_EMAIL: ${ssm:/it-portfolio-manager/${opt:stage, 'dev'}/unsubscribe-email/sender, ''}
-    events:
-      - schedule: cron(0 7 ? * MON *)
-
 resources:
   Resources:
     ItPortfolioManagerSkillMatrix:
