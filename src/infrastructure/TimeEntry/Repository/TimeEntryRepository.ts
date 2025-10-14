@@ -405,7 +405,7 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
         p.plannedHours as planned_hours,
         COALESCE(SUM(te.hours), 0) as total_hours,
         CASE 
-          WHEN p.plannedHours > 0 THEN (COALESCE(SUM(te.hours), 0) / p.plannedHours) * 100
+          WHEN p.plannedHours > 0 THEN ROUND(((COALESCE(SUM(te.hours), 0) / p.plannedHours) * 100), 0)
           ELSE 0
         END as completion_percentage
       FROM Project p
