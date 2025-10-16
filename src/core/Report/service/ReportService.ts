@@ -190,8 +190,8 @@ export class ReportService {
     )
   }
 
-  async sendReportProjectOverSeventy (): Promise<ProjectOverSeventyType[]> {
-    return await this.timeEntryRepository.getProjectOverSeventy('it');
+  async sendReportProjectOverSeventy (companyName: string): Promise<ProjectOverSeventyType[]> {
+    return await this.timeEntryRepository.getProjectOverSeventy(companyName);
   }
 
   private async emptyWorkedHoursFor(

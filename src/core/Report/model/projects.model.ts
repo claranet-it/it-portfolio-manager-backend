@@ -26,13 +26,13 @@ export type ReportProjectsWithCompanyType = Static<
 >
 
 export const ProjectOverSeventy = Type.Object({
-  project_id: Type.String(),
-  project_name: Type.String(),
-  customer_id: Type.String(),
-  customer_name: Type.String(),
-  planned_hours: Type.Number(),
-  total_hours: Type.Number(),
-  completion_percentage: Type.Number(),
+  projectId: Type.String(),
+  projectName: Type.String(),
+  customerId: Type.String(),
+  customerName: Type.String(),
+  plannedHours: Type.Number(),
+  totalHours: Type.Number(),
+  completionPercentage: Type.Number(),
 })
 
 export const ProjectOverSeventyList = Type.Array(ProjectOverSeventy)

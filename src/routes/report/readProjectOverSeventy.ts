@@ -10,8 +10,7 @@ import { ProjectOverSeventyList } from '@src/core/Report/model/projects.model'
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   fastify.get<{
-    Querystring: CnaReadParamType
-    Reply: TimeEntriesForCnaListType | string
+    Querystring: {company: string}
   }>(
     '/projects-over',
     {
@@ -51,7 +50,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         return await fastify
           .dependencyInjectionContainer()
           .resolve('reportService')
-          .sendReportProjectOverSeventy()
+          .sendReportProjectOverSeventy(request.query.company)
       } catch (error) {
         request.log.error(error)
         let errorMessage = ''
