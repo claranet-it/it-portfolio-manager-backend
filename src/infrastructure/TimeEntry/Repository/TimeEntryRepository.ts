@@ -1,6 +1,7 @@
 import {
   CnaReadParamType,
-  deleteTimeEntryWithUserType, TimeEntriesToEncryptType,
+  deleteTimeEntryWithUserType,
+  TimeEntriesToEncryptType,
   TimeEntryReadParamWithCompanyAndCrewType,
   TimeEntryReadParamWithUserType,
   TimeEntryRowType,
@@ -11,7 +12,7 @@ import { TimeEntryRepositoryInterface } from '@src/core/TimeEntry/repository/Tim
 import { ProjectType } from '@src/core/Report/model/productivity.model'
 import { invariant } from '@src/helpers/invariant'
 import { flowingUsers } from '@src/core/Configuration/service/ConfigurationService'
-import { ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
+import { ProjectOverSeventyType, ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
 import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -392,5 +393,31 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
       id: timeEntry.id,
       description: timeEntry.description ?? '',
     }));
+  }
+
+  async getProjectOverSeventy(companyName: string): Promise<ProjectOverSeventyType[]> {
+    return await this.prismaDBConnection.getClient().$queryRaw<Array<ProjectOverSeventyType>>`
+      SELECT 
+        p.id as projectId,
+        p.name as projectName,
+        c.id as customerId,
+        c.name as customerName,
+        p.plannedHours as plannedHours,
+        COALESCE(SUM(te.hours), 0) as totalHours,
+        CASE 
+          WHEN p.plannedHours > 0 THEN ROUND(((COALESCE(SUM(te.hours), 0) / p.plannedHours) * 100), 0)
+          ELSE 0
+        END as completionPercentage
+      FROM Project p
+      INNER JOIN Customer c ON p.customer_id = c.id
+      LEFT JOIN ProjectTask pt ON pt.project_id = p.id
+      LEFT JOIN TimeEntry te ON te.task_id = pt.id
+      WHERE c.company_id = ${companyName}
+        AND p.is_inactive = 0
+        AND p.completed = 0
+      GROUP BY p.id, p.name, c.id, c.name, p.plannedHours
+      HAVING completionPercentage > 70
+      ORDER BY completionPercentage DESC
+    `;
   }
 }
