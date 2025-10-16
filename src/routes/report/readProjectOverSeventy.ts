@@ -1,10 +1,4 @@
 import { FastifyInstance } from 'fastify'
-import {
-  CnaReadParamType,
-  CnaReadParam,
-  TimeEntriesForCnaList,
-  TimeEntriesForCnaListType,
-} from '@src/core/TimeEntry/model/timeEntry.model'
 import { UnauthorizedError } from '@src/core/customExceptions/UnauthorizedError'
 import { ProjectOverSeventyList } from '@src/core/Report/model/projects.model'
 
