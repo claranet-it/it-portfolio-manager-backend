@@ -8,6 +8,7 @@ import {
   TaskUpdateParamsType,
   CustomerReadParamsType, CustomerType, TaskStructureType, TaskListType, ProjectToEncryptType,
 } from '../model/task.model'
+import { ProjectWithPercentageListType } from '@src/core/Report/model/projects.model'
 
 export interface TaskRepositoryInterface {
   getCustomers(params: CustomerReadParamsType): Promise<CustomerType[]>
@@ -27,4 +28,5 @@ export interface TaskRepositoryInterface {
   getTasksByCompany(companyName: string): Promise<TaskListType>
   getProjectsByCompany(companyName: string): Promise<ProjectToEncryptType[]>
   deleteCustomersAndRelatedDataByCompany(id: string): Promise<void>
+  getProjectsWithPercentage(company: string): Promise<ProjectWithPercentageListType>
 }

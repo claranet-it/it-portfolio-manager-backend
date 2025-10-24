@@ -13,6 +13,7 @@ import {
 import { TaskRepositoryInterface } from '@src/core/Task/repository/TaskRepositoryInterface'
 import { TaskError } from '@src/core/customExceptions/TaskError'
 import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
+import { ProjectWithPercentageListType } from '@src/core/Report/model/projects.model'
 
 export class TaskRepository implements TaskRepositoryInterface {
   
@@ -533,5 +534,92 @@ export class TaskRepository implements TaskRepositoryInterface {
     })
 
     await this.prismaDBConnection.getClient().$transaction([deleteTemplate, deleteTimeEntries, deleteTasks, deleteProjects, deleteCustomers])
+  }
+
+  async getProjectsWithPercentage(company: string): Promise<ProjectWithPercentageListType> {
+    const projectsData = await this.prismaDBConnection.getClient().$queryRaw<{
+      projectId: string
+      projectName: string
+      projectPlannedHours: number
+      projectTotalHours: number
+      projectCompletionPercentage: number
+      taskId: string | null
+      taskName: string | null
+      taskPlannedHours: number | null
+      taskTotalHours: number | null
+      taskCompletionPercentage: number | null
+    }[]>`
+      SELECT 
+        p.id as projectId,
+        p.name as projectName,
+        p.plannedHours as projectPlannedHours,
+        COALESCE(SUM(te_project.hours), 0) as projectTotalHours,
+        CASE 
+          WHEN p.plannedHours > 0 THEN ROUND(((COALESCE(SUM(te_project.hours), 0) / p.plannedHours) * 100), 0)
+          ELSE 0
+        END as projectCompletionPercentage,
+        pt.id as taskId,
+        pt.name as taskName,
+        pt.planned_hours as taskPlannedHours,
+        COALESCE(SUM(te_task.hours), 0) as taskTotalHours,
+        CASE 
+          WHEN pt.planned_hours > 0 THEN ROUND(((COALESCE(SUM(te_task.hours), 0) / pt.planned_hours) * 100), 0)
+          ELSE 0
+        END as taskCompletionPercentage
+      FROM Project p
+      INNER JOIN Customer c ON p.customer_id = c.id
+      LEFT JOIN ProjectTask pt ON pt.project_id = p.id
+      LEFT JOIN TimeEntry te_project ON te_project.task_id = pt.id
+      LEFT JOIN TimeEntry te_task ON te_task.task_id = pt.id
+      WHERE c.company_id = ${company}
+        AND p.is_inactive = 0
+        AND p.completed = 0
+      GROUP BY p.id, p.name, p.plannedHours, pt.id, pt.name, pt.planned_hours
+      HAVING projectCompletionPercentage > 70
+      ORDER BY projectCompletionPercentage DESC, pt.name ASC
+    `;
+
+    // Raggruppa i risultati per progetto
+    const projectsMap = new Map<string, {
+      id: string
+      name: string
+      plannedHours: number
+      totalHours: number
+      completionPercentage: number
+      tasks: Array<{
+        id: string
+        name: string
+        plannedHours: number
+        totalHours: number
+        completionPercentage: number
+      }>
+    }>();
+
+    for (const row of projectsData) {
+      if (!projectsMap.has(row.projectId)) {
+        projectsMap.set(row.projectId, {
+          id: row.projectId,
+          name: row.projectName,
+          plannedHours: row.projectPlannedHours,
+          totalHours: row.projectTotalHours,
+          completionPercentage: row.projectCompletionPercentage,
+          tasks: [],
+        });
+      }
+
+      const project = projectsMap.get(row.projectId)!;
+      
+      if (row.taskId && row.taskName !== null) {
+        project.tasks.push({
+          id: row.taskId,
+          name: row.taskName,
+          plannedHours: row.taskPlannedHours ?? 0,
+          totalHours: row.taskTotalHours ?? 0,
+          completionPercentage: row.taskCompletionPercentage ?? 0,
+        });
+      }
+    }
+
+    return Array.from(projectsMap.values());
   }
 }

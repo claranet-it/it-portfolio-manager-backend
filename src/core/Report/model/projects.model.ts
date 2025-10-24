@@ -39,4 +39,20 @@ export const ProjectOverSeventyList = Type.Array(ProjectOverSeventy)
 
 export type ProjectOverSeventyType = Static<typeof ProjectOverSeventy>
 
-
+export const ProjectWithPercentage = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+  plannedHours: Type.Number(),
+  totalHours: Type.Number(),
+  completionPercentage: Type.Number(),
+  tasks: Type.Array(Type.Object({
+    id: Type.String(),
+    name: Type.String(),
+    plannedHours: Type.Number(),
+    totalHours: Type.Number(),
+    completionPercentage: Type.Number(),
+  })),
+})
+export type ProjectWithPercentageType = Static<typeof ProjectWithPercentage>
+export const ProjectWithPercentageList = Type.Array(ProjectWithPercentage)
+export type ProjectWithPercentageListType = Static<typeof ProjectWithPercentageList>
