@@ -3,7 +3,7 @@ import {
   CnaReadParamType,
   CSVImportErrorsType,
   CSVImportTimeEntryType,
-  deleteTimeEntryWithUserType,
+  deleteTimeEntryWithUserType, ReadProjectsReportType,
   TimeEntriesForCnaType,
   TimeEntryReadParamWithCompanyAndCrewType,
   TimeEntryReadParamWithUserType,
@@ -19,7 +19,6 @@ import { TimeEntryError } from '@src/core/customExceptions/TimeEntryError'
 import { CompleteUserProfileType } from '@src/core/User/model/user.model'
 import { parseString, writeToString } from 'fast-csv'
 import { ReportProjectsWithCompanyType } from '@src/core/Report/model/projects.model'
-
 
 export class TimeEntryService {
   constructor(
@@ -249,9 +248,34 @@ export class TimeEntryService {
     return !(dayOfWeek === 0 || dayOfWeek === 6)
   }
 
-  private async generateCsvFrom(data: TimeEntryReportType[]): Promise<string> {
+  private async generateCsvFrom(data: ReadProjectsReportType | TimeEntryReportType[]): Promise<string> {
+    // Gestisci sia il vecchio formato (array di TimeEntryReportType) che il nuovo (ReadProjectsReportList)
+    const timeEntries = Array.isArray(data) ? data : (data.timeEntries || []);
+
+    // Crea una mappa per recuperare i nomi di progetti e task dagli ID se disponibili
+    let projectsMap = new Map();
+    if (!Array.isArray(data) && data.projects) {
+      projectsMap = new Map(
+        data.projects.map((p: any) => [p.id, { name: p.name, tasks: new Map(p.tasks.map((t: any) => [t.id, t.name] as const)) }] as const)
+      );
+    }
+
     // use fixed headers instead of { headers: true } to be sure of the key order
-    const dataToWrite = data.map((row) => {
+    const dataToWrite = timeEntries.map((row: any) => {
+      // Se abbiamo projectId/taskId (nuovo formato), recupera i nomi dalla mappa
+      let projectName = '';
+      let taskName = '';
+
+      if (row.projectId && projectsMap.size > 0) {
+        const project = projectsMap.get(row.projectId);
+        projectName = project?.name || '';
+        taskName = project?.tasks.get(row.taskId) || '';
+      } else {
+        // Formato vecchio con oggetti project/task
+        projectName = row.project?.name || '';
+        taskName = row.task?.name || '';
+      }
+
       return {
         date: row.date,
         email: row.email,
@@ -259,10 +283,10 @@ export class TimeEntryService {
         company: row.company,
         crew: row.crew,
         customer: row.customer.name,
-        project: row.project.name,
-        task: row.task.name,
+        project: projectName,
+        task: taskName,
         projectType: row.projectType,
-        plannedHours: row.plannedHours,
+        plannedHours: row.plannedHours || 0,
         hours: row.hours,
         description: row.description,
         startHour: row.startHour,
@@ -283,7 +307,7 @@ export class TimeEntryService {
 
   async getReportProjectsFilterBy(
     params: ReportProjectsWithCompanyType,
-  ): Promise<TimeEntryReportType[] | string> {
+  ): Promise<ReadProjectsReportType | string> {
     const userProfileCache = new Map();
     let filteredUsers: CompleteUserProfileType[] = []
 
@@ -305,12 +329,14 @@ export class TimeEntryService {
       params.user = filteredUsers.map(user => user.uid)
     }
 
-    const timeEntries = await this.timeEntryRepository.getTimeEntriesFilterBy(params)
+    const projects = await this.taskRepository.getProjectsWithPercentage(params.company);
 
-    const reportData =
-      timeEntries.length > 0
+    const timeEntriesList = await this.timeEntryRepository.getTimeEntriesFilterBy(params)
+
+    const timeEntries =
+      timeEntriesList.length > 0
         ? await Promise.all(
-          timeEntries.map(async (entry) => {
+          timeEntriesList.map(async (entry) => {
             const user: CompleteUserProfileType | null = filteredUsers.find((user) => user.uid === entry.user) || await getUserProfile(entry.user);
             return {
               date: entry.date,
@@ -318,11 +344,10 @@ export class TimeEntryService {
               name: user?.name ?? '',
               company: user?.company ?? '',
               crew: user?.crew ?? '',
-              customer: { id: entry.customer.id, name: entry.customer.name }, //TODO: entry.customer,
-              project: { id: entry.project.id ?? '', name: entry.project.name },
-              task: { id: entry.task.id ?? '', name: entry.task.name }, //TODO: entry.task,
+              customer: { id: entry.customer.id, name: entry.customer.name },
+              projectId: entry.project.id ?? '',
+              taskId: entry.task.id ?? '',
               projectType: entry.project.type,
-              plannedHours: entry.project.plannedHours,
               hours: entry.hours,
               description: entry.description,
               startHour: entry.startHour,
@@ -330,6 +355,11 @@ export class TimeEntryService {
             }
           }))
         : []
+
+    const reportData: ReadProjectsReportType = {
+      projects: projects,
+      timeEntries: timeEntries
+    }
 
     return params.format === 'json'
       ? reportData

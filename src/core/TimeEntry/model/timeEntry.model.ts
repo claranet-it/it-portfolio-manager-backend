@@ -1,5 +1,6 @@
 import { Static, Type } from '@sinclair/typebox'
 import { Customer, Project, TaskMin } from '@src/core/Task/model/task.model'
+import { ProjectWithPercentageList } from '@src/core/Report/model/projects.model'
 
 const dateFormat = /([0-9][0-9][0-9][0-9])-(0[1-9]|1[012])-([0-9][0-9])$/
 export const TimeEntryReadParam = Type.Object({
@@ -199,3 +200,24 @@ export const TimeEntriesToEncrypt = Type.Object({
   description: Type.String(),
 })
 export type TimeEntriesToEncryptType = Static<typeof TimeEntriesToEncrypt>
+
+
+export const ReadProjectsReport = Type.Object({
+  projects: ProjectWithPercentageList,
+  timeEntries: Type.Array(Type.Object({
+    date: Type.String(),
+    email: Type.String(),
+    name: Type.String(),
+    company: Type.String(),
+    crew: Type.String(),
+    customer: Customer,
+    projectId: Type.String(),
+    taskId: Type.String(),
+    projectType: Type.String(),
+    hours: Type.Number(),
+    description: Type.String(),
+    startHour: Type.String(),
+    endHour: Type.String(),
+  }))
+})
+export type ReadProjectsReportType = Static<typeof ReadProjectsReport>

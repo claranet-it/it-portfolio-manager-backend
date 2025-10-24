@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import {
-  TimeEntryReportList,
+  ReadProjectsReport,
 } from '@src/core/TimeEntry/model/timeEntry.model'
 import { ReportProjectsType, ReportProjects } from '@src/core/Report/model/projects.model'
 
@@ -20,7 +20,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
           },
         ],
         response: {
-          200: TimeEntryReportList,
+          200: ReadProjectsReport,
           401: {
             type: 'null',
             description: 'Unauthorized',
