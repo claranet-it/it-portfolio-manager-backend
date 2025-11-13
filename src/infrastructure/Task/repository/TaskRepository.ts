@@ -537,7 +537,7 @@ export class TaskRepository implements TaskRepositoryInterface {
   }
 
   async getProjectsWithPercentage(company: string): Promise<ProjectWithPercentageListType> {
-    const projectsData = await this.prismaDBConnection.getClient().$queryRaw<{
+    const projectsData = await this.prismaDBConnection.getClient().$queryRawUnsafe<{
       projectId: string
       projectName: string
       projectPlannedHours: number
@@ -548,36 +548,44 @@ export class TaskRepository implements TaskRepositoryInterface {
       taskPlannedHours: number | null
       taskTotalHours: number | null
       taskCompletionPercentage: number | null
-    }[]>`
-      SELECT 
-        p.id as projectId,
-        p.name as projectName,
-        p.plannedHours as projectPlannedHours,
-        COALESCE(SUM(te_project.hours), 0) as projectTotalHours,
-        CASE 
-          WHEN p.plannedHours > 0 THEN ROUND(((COALESCE(SUM(te_project.hours), 0) / p.plannedHours) * 100), 0)
-          ELSE 0
-        END as projectCompletionPercentage,
-        pt.id as taskId,
-        pt.name as taskName,
-        pt.planned_hours as taskPlannedHours,
-        COALESCE(SUM(te_task.hours), 0) as taskTotalHours,
-        CASE 
-          WHEN pt.planned_hours > 0 THEN ROUND(((COALESCE(SUM(te_task.hours), 0) / pt.planned_hours) * 100), 0)
-          ELSE 0
-        END as taskCompletionPercentage
-      FROM Project p
-      INNER JOIN Customer c ON p.customer_id = c.id
-      LEFT JOIN ProjectTask pt ON pt.project_id = p.id
-      LEFT JOIN TimeEntry te_project ON te_project.task_id = pt.id
-      LEFT JOIN TimeEntry te_task ON te_task.task_id = pt.id
-      WHERE c.company_id = ${company}
-        AND p.is_inactive = 0
-        AND p.completed = 0
-      GROUP BY p.id, p.name, p.plannedHours, pt.id, pt.name, pt.planned_hours
-      HAVING projectCompletionPercentage > 70
-      ORDER BY projectCompletionPercentage DESC, pt.name ASC
-    `;
+    }[]>(`
+      SELECT
+        p.id AS projectId,
+        p.name AS projectName,
+        p.plannedHours AS projectPlannedHours,
+        COALESCE(project_hours.total_hours, 0) AS projectTotalHours,
+        CASE
+            WHEN p.plannedHours > 0 THEN ROUND((COALESCE(project_hours.total_hours, 0) / p.plannedHours) * 100, 0)
+            ELSE 0
+        END AS projectCompletionPercentage,
+        pt.id AS taskId,
+        pt.name AS taskName,
+        pt.planned_hours AS taskPlannedHours,
+        COALESCE(task_hours.total_hours, 0) AS taskTotalHours,
+        CASE
+            WHEN pt.planned_hours > 0 THEN ROUND((COALESCE(task_hours.total_hours, 0) / pt.planned_hours) * 100, 0)
+            ELSE 0
+        END AS taskCompletionPercentage
+    FROM Project p
+    INNER JOIN Customer c ON p.customer_id = c.id
+    LEFT JOIN ProjectTask pt ON pt.project_id = p.id
+    LEFT JOIN (
+        -- somma ore per task specifica
+        SELECT task_id, SUM(hours) AS total_hours
+        FROM TimeEntry
+        GROUP BY task_id
+    ) AS task_hours ON task_hours.task_id = pt.id
+    LEFT JOIN (
+        -- somma ore per progetto (tutte le task collegate)
+        SELECT pt2.project_id, SUM(te2.hours) AS total_hours
+        FROM ProjectTask pt2
+        LEFT JOIN TimeEntry te2 ON te2.task_id = pt2.id
+        GROUP BY pt2.project_id
+    ) AS project_hours ON project_hours.project_id = p.id
+    WHERE c.company_id = '${company}'
+      AND p.is_inactive = 0
+      AND p.completed = 0
+    `);
 
     // Raggruppa i risultati per progetto
     const projectsMap = new Map<string, {

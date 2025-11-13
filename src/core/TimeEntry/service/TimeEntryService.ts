@@ -254,11 +254,13 @@ export class TimeEntryService {
     let projectsMap = new Map();
     if (!Array.isArray(data) && data.projects) {
       projectsMap = new Map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data.projects.map((p: any) => [p.id, { name: p.name, tasks: new Map(p.tasks.map((t: any) => [t.id, t.name] as const)) }] as const)
       );
     }
 
     // use fixed headers instead of { headers: true } to be sure of the key order
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dataToWrite = timeEntries.map((row: any) => {
       // Se abbiamo projectId/taskId (nuovo formato), recupera i nomi dalla mappa
       let projectName = '';
@@ -329,7 +331,10 @@ export class TimeEntryService {
 
     const projects = await this.taskRepository.getProjectsWithPercentage(params.company);
 
+    console.log('Params passed to getTimeEntriesFilterBy:', JSON.stringify(params, null, 2));
     const timeEntriesList = await this.timeEntryRepository.getTimeEntriesFilterBy(params)
+
+    console.log('timeEntriesList length:', timeEntriesList.length);
 
     const timeEntries =
       timeEntriesList.length > 0

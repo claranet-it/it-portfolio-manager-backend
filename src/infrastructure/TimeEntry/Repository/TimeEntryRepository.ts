@@ -304,32 +304,39 @@ export class TimeEntryRepository implements TimeEntryRepositoryInterface {
   async getTimeEntriesFilterBy(
     params: ReportProjectsWithCompanyType,
   ): Promise<TimeEntryRowWithProjectEntityType[]> {
-    const result = await this.prismaDBConnection.getClient().timeEntry.findMany({
-      where: {
-        time_entry_date: {
-          lte: new Date(params.to),
-          gte: new Date(params.from),
-        },
-        email: {
-          in: params.user
-        },
-        task: {
-          id: {
-            in: params.task
-          },
-          project: {
-            id: {
-              in: params.project
-            },
-            customer: {
-              id: {
-                in: params.customer
-              },
-              company_id: params.company,
-            },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const whereClause: any = {
+      time_entry_date: {
+        lte: new Date(params.to),
+        gte: new Date(params.from),
+      },
+      task: {
+        project: {
+          customer: {
+            company_id: params.company,
           },
         },
       },
+    };
+
+    if (params.user && params.user.length > 0) {
+      whereClause.email = { in: params.user };
+    }
+
+    if (params.task && params.task.length > 0) {
+      whereClause.task.id = { in: params.task };
+    }
+
+    if (params.project && params.project.length > 0) {
+      whereClause.task.project.id = { in: params.project };
+    }
+
+    if (params.customer && params.customer.length > 0) {
+      whereClause.task.project.customer.id = { in: params.customer };
+    }
+
+    const result = await this.prismaDBConnection.getClient().timeEntry.findMany({
+      where: whereClause,
       include: {
         task: {
           include: {
