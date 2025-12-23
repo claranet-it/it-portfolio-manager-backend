@@ -57,6 +57,8 @@ import { EncryptionService } from '@src/core/Encryption/service/encryptionServic
 import { UnsubscribeService } from '../Unsubscribe/service'
 import { Mailer } from '@src/infrastructure/mailer/Mailer'
 import { PrismaDBConnection } from '@src/infrastructure/db/PrismaDBConnection'
+import { HolidayRepository } from '@src/infrastructure/Holiday/Repository/HolidayRepository'
+import { HolidayService } from '../Holiday/service/HolidayService'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -312,6 +314,14 @@ async function dependencyInjectionContainerPlugin(
 
     container.register({
       templateRepository: asClass(TemplateRepository),
+    })
+
+    container.register({
+      holidayRepository: asClass(HolidayRepository),
+    })
+
+    container.register({
+      holidayService: asClass(HolidayService),
     })
 
     return container
