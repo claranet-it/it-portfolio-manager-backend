@@ -43,6 +43,11 @@ export class AuthService {
     let userProfile = await this.userProfileRepository.getCompleteUserProfile(
       authInfo.email,
     )
+
+     if (userProfile?.disabled) {
+      throw new UnauthorizedError()
+    }
+
     if (!userProfile) {
       await this.userProfileRepository.saveUserProfile(
         authInfo.email,
