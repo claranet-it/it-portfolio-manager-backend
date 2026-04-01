@@ -31,3 +31,11 @@ p, TEAM_LEADER, time_entry, read
 p, TEAM_LEADER, time_entry, write
 p, TEAM_LEADER, skill, read
 p, TEAM_LEADER, skill, write
+p, SUPERADMIN, holiday, read
+p, SUPERADMIN, holiday, write
+p, SUPERADMIN, holiday, delete
+p, ADMIN, holiday, read
+p, ADMIN, holiday, write
+p, ADMIN, holiday, delete
+p, TEAM_LEADER, holiday, read
+p, TEAM_LEADER, holiday, write
